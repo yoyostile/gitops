@@ -1,0 +1,6 @@
+brew "age"
+brew "sops"
+brew "direnv"
+brew "go-task/tap/go-task"
+brew "fluxcd/tap/flux"
+brew "ipcalc"
