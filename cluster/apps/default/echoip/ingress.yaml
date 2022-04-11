@@ -5,6 +5,8 @@ metadata:
   name: echoip
   namespace: default
   annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "connection"
     cert-manager.io/cluster-issuer: "letsencrypt-production"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     external-dns.alpha.kubernetes.io/target: "${SECRET_DOMAIN}"
