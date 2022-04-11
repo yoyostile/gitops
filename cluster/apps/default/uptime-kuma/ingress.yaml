@@ -1,0 +1,26 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: uptime-kuma
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_DOMAIN}"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - uptime.${SECRET_DOMAIN}
+      secretName: uptime.${SECRET_DOMAIN}
+  rules:
+    - host: uptime.${SECRET_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: uptime-kuma
+                port:
+                  name: http
