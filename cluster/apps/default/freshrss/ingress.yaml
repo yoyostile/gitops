@@ -20,7 +20,9 @@ spec:
     - host: rss.${SECRET_DOMAIN}
       http:
         paths:
-          - backend:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
               service:
                 name: freshrss
                 port:
