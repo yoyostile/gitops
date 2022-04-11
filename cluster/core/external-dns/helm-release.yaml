@@ -25,11 +25,9 @@ spec:
     replicaCount: 1
     rbac:
       create: true
+    provider: cloudflare
     extraArgs:
-      - --source=ingress
-      - --source=service
-      - --provider=cloudflare
-      - "--fqdn-template={{.Name}}.k3s.lan.${BOOTSTRAP_CLOUDFLARE_DOMAIN}"
+      - "--fqdn-template={{.Name}}.k3s.lan.${SECRET_DOMAIN}"
     env:
       - name: CF_API_TOKEN
         valueFrom:
