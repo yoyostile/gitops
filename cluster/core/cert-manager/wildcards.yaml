@@ -1,0 +1,30 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "${SECRET_DOMAIN/./-}"
+  namespace: network
+spec:
+  secretName: "${SECRET_DOMAIN/./-}-tls"
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "${SECRET_DOMAIN}"
+  dnsNames:
+    - "${SECRET_DOMAIN}"
+    - "*.${SECRET_DOMAIN}"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "${SECRET_LAB_DOMAIN/./-}"
+  namespace: network
+spec:
+  secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "${SECRET_LAB_DOMAIN}"
+  dnsNames:
+    - "${SECRET_LAB_DOMAIN}"
+    - "*.${SECRET_LAB_DOMAIN}"
