@@ -1,0 +1,15 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: freshrss
+  namespace: default
+  labels:
+    app: freshrss
+spec:
+  selector:
+    app: freshrss
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
