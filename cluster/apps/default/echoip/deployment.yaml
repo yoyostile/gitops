@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: echoip
+  name: echoip
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: echoip
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: echoip
+    spec:
+      containers:
+        - args:
+            - -H
+            - X-Real-IP
+          image: mpolden/echoip
+          imagePullPolicy: Always
+          name: echoip
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
