@@ -28,6 +28,7 @@ spec:
     provider: cloudflare
     extraArgs:
       - --fqdn-template={{.Name}}.k3s.lan.${SECRET_DOMAIN}
+    txtOwnerId: gitops
     env:
       - name: CF_API_TOKEN
         valueFrom:
