@@ -7,3 +7,4 @@ resources:
   - metallb-system
   - system-upgrade
   - external-dns
+  - nfs-subdir-external-provisioner
