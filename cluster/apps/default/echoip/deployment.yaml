@@ -5,6 +5,7 @@ metadata:
   labels:
     app: echoip
   name: echoip
+  namespace: default
 spec:
   replicas: 1
   selector:
