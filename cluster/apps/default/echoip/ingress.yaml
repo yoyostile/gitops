@@ -5,11 +5,11 @@ metadata:
   name: echoip
   namespace: default
   annotations:
-    kubernetes.io/ingress.class: "traefik"
     cert-manager.io/cluster-issuer: "letsencrypt-production"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     external-dns.alpha.kubernetes.io/target: "${SECRET_DOMAIN}"
 spec:
+  ingressClassName: traefik
   tls:
     - secretName: i.${SECRET_DOMAIN}
       hosts:
