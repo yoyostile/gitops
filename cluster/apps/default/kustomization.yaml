@@ -6,3 +6,4 @@ resources:
   - echoip
   - uptime-kuma
   - freshrss
+  - minio
