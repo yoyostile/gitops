@@ -7,17 +7,16 @@ metadata:
   annotations:
     hajimari.io/enable: "true"
     hajimari.io/icon: "rss"
-    cert-manager.io/cluster-issuer: "letsencrypt-production"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    external-dns.alpha.kubernetes.io/target: "${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
 spec:
   ingressClassName: traefik
   tls:
-    - secretName: rss.${SECRET_DOMAIN}
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
-        - rss.${SECRET_DOMAIN}
+        - rss.${SECRET_LAB_DOMAIN}
   rules:
-    - host: rss.${SECRET_DOMAIN}
+    - host: rss.${SECRET_LAB_DOMAIN}
       http:
         paths:
           - path: /
