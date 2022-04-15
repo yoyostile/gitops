@@ -15,10 +15,10 @@ spec:
   ingressClassName: "traefik"
   tls:
     - hosts:
-        - "traefik.${SECRET_DOMAIN}"
-      secretName: "traefik-dashboard-tls"
+        - "traefik.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
-    - host: "traefik.${SECRET_DOMAIN}"
+    - host: "traefik.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /

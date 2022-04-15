@@ -106,7 +106,8 @@ spec:
           hajimari.io/enable: "true"
           hajimari.io/icon: "weather-sunset"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-          external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+          traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+          # external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
         hosts:
           - host: "hajimari.${SECRET_LAB_DOMAIN}"
             paths:
@@ -124,7 +125,5 @@ spec:
       configmap.reloader.stakater.com/reload: "hajimari-settings"
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        memory: 256Mi
+        cpu: 50m
+        memory: 32Mi
