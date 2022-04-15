@@ -34,6 +34,11 @@ spec:
     resources:
       requests:
         memory: 128Mi
+    environment:
+      - name: MINIO_SERVER_URL
+        value: "https://s3.${SECRET_LAB_DOMAIN}"
+      - name: MINIO_BROWSER_REDIRECT_URL
+        value: https://minio.${SECRET_LAB_DOMAIN}
     ingress:
       enabled: true
       annotations:
