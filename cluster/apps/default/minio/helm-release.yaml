@@ -34,3 +34,30 @@ spec:
     resources:
       requests:
         memory: 128Mi
+    ingress:
+      enabled: true
+      annotations:
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "bucket-outline"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+        external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+      hosts:
+        - s3.${SECRET_LAB_DOMAIN}
+      tls:
+        - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+          hosts:
+            - s3.${SECRET_LAB_DOMAIN}
+    consoleIngress:
+      enabled: true
+      annotations:
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "bucket-outline"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+      hosts:
+        - minio.${SECRET_LAB_DOMAIN}
+      tls:
+        - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+          hosts:
+            - minio.${SECRET_LAB_DOMAIN}
