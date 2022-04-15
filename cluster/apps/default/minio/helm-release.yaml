@@ -8,8 +8,8 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: tenant
-      version: 4.4.15
+      chart: minio
+      version: 3.6.5
       sourceRef:
         kind: HelmRepository
         name: minio-charts
@@ -23,15 +23,11 @@ spec:
     remediation:
       retries: 3
   values:
-    tenants:
-      - name: s3.${SECRET_LAB_DOMAIN}
-        pools:
-          - name: pool-0
-            servers: 1
-            volumesPerServer: 1
-            storageClassName: "nfs-client"
-            size: 10Gi
-        mountPath: /storage
-        secrets:
-          enabled: false
-          name: minio
+    mode: standalone
+    mountPath: /storage
+    existingSecret: minio
+    replicas: 1
+    persistence:
+      enabled: true
+      storageClass: "nfs-client"
+      size: 10Gi
