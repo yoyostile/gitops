@@ -33,5 +33,5 @@ spec:
             size: 10Gi
         mountPath: /storage
         secrets:
-          enabled: true
+          enabled: false
           name: minio
