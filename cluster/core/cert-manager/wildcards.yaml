@@ -28,3 +28,4 @@ spec:
   dnsNames:
     - "${SECRET_LAB_DOMAIN}"
     - "*.${SECRET_LAB_DOMAIN}"
+    - "*.lan.${SECRET_LAB_DOMAIN}"
