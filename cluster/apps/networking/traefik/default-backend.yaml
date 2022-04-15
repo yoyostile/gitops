@@ -1,0 +1,34 @@
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: default-backend
+  namespace: networking
+subsets:
+  - addresses:
+      - ip: 192.168.220.129
+    ports:
+      - port: 443
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: default-backend
+  namespace: networking
+spec:
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: default-backend
+  namespace: networking
+spec:
+  defaultBackend:
+    service:
+      name: default-backend
+      port:
+        number: 443
