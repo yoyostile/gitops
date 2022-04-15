@@ -26,7 +26,16 @@ kind: Ingress
 metadata:
   name: default-backend
   namespace: networking
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
 spec:
+  tls:
+    - secretName: "${SECRET_DOMAIN/./-}-tls"
+      hosts:
+        - "*.${SECRET_DOMAIN}"
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - "*.${SECRET_LAB_DOMAIN}"
   defaultBackend:
     service:
       name: default-backend
