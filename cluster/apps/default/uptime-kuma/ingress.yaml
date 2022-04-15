@@ -7,17 +7,16 @@ metadata:
   annotations:
     hajimari.io/enable: "true"
     hajimari.io/icon: "trending-up"
-    cert-manager.io/cluster-issuer: "letsencrypt-production"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    external-dns.alpha.kubernetes.io/target: "${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
 spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - uptime.${SECRET_DOMAIN}
-      secretName: uptime.${SECRET_DOMAIN}
+        - uptime.${SECRET_LAB_DOMAIN}
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
-    - host: uptime.${SECRET_DOMAIN}
+    - host: uptime.${SECRET_LAB_DOMAIN}
       http:
         paths:
           - path: /
