@@ -2244,7 +2244,7 @@ data:
             },
             {
               "$$hashKey": "object:2168",
-              "alias": "/\\stemperature/",
+              "alias": "/temperature/",
               "fill": 3,
               "linewidth": 0,
               "zindex": 3
