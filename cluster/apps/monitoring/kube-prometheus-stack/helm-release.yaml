@@ -98,6 +98,9 @@ spec:
             hosts:
               - "g.${SECRET_LAB_DOMAIN}"
               - "grafana.${SECRET_LAB_DOMAIN}"
+    prometheus:
+      prometheusSpec:
+        serviceMonitorSelectorNilUsesHelmValues: false
     prometheus-node-exporter:
       hostRootFsMount:
         enabled: false
