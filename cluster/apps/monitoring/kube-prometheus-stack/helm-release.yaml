@@ -57,3 +57,6 @@ spec:
             hosts:
               - "g.${SECRET_LAB_DOMAIN}"
               - "grafana.${SECRET_LAB_DOMAIN}"
+    prometheus-node-exporter:
+      hostRootFsMount:
+        enabled: false
