@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shhh
+  name: shhh
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shhh
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: shhh
+    spec:
+      containers:
+        - name: shhh
+          envFrom:
+            - secretRef:
+                name: shhh
+          env:
+            - name: FLASK_ENV
+              value: production
+          image: yoyostile/shhh
+          imagePullPolicy: Always
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30

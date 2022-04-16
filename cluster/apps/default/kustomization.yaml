@@ -9,4 +9,5 @@ resources:
   - postgresql
   - redis
   - requestbin
+  - shhh
   - uptime-kuma
