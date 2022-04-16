@@ -22,7 +22,7 @@ spec:
         - name: requestbin
           envFrom:
             - secretRef:
-                name: redis
+                name: requestbin
           image: yoyostile/requestbin
           imagePullPolicy: Always
           terminationMessagePath: /dev/termination-log
