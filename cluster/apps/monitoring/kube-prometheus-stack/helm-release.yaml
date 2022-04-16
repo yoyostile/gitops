@@ -103,6 +103,7 @@ spec:
     prometheus:
       prometheusSpec:
         retention: 365d
+        walCompression: true
         serviceMonitorSelectorNilUsesHelmValues: false
         storageSpec:
           volumeClaimTemplate:
