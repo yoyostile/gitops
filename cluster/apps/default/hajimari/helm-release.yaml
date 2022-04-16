@@ -31,8 +31,9 @@ spec:
       namespaceSelector:
         matchNames:
           - default
+          - monitoring
           - networking
-      name: "you"
+      name: "Johannes"
       groups:
         - name: Communicate
           links:
