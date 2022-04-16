@@ -56,7 +56,6 @@ spec:
               editable: true
               options:
                 path: /var/lib/grafana/dashboards/unifi
-
       dashboards:
         unifi:
           unifiPollerClientDPI:
@@ -103,7 +102,16 @@ spec:
         - grafana-clock-panel
     prometheus:
       prometheusSpec:
+        retention: 365d
         serviceMonitorSelectorNilUsesHelmValues: false
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: "nfs-client"
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 50Gi
     prometheus-node-exporter:
       hostRootFsMount:
         enabled: false
