@@ -23,6 +23,8 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      tag: 2.1.1-alpine
     persistence:
       enabled: true
       storageClass: "nfs-client"
