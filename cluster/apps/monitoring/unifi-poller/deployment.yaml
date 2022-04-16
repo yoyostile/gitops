@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: unifi-poller
+  name: unifi-poller
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-poller
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: unifi-poller
+    spec:
+      containers:
+        - name: unifi-poller
+          image: golift/unifi-poller:2
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: unifi-poller
+          env:
+            - name: UP_POLLER_DEBUG
+              value: "false"
+            - name: UP_UNIFI_DEFAULT_SAVE_DPI
+              value: "true"
+            - name: UP_INFLUXDB_DISABLE
+              value: "true"
+            - name: UP_POLLER_DEBUG
+              value: "false"
+            - name: UP_UNIFI_DYNAMIC
+              value: "false"
+            - name: UP_PROMETHEUS_HTTP_LISTEN
+              value: 0.0.0.0:9130
+            - name: UP_PROMETHEUS_NAMESPACE
+              value: unifipoller
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
