@@ -32,11 +32,14 @@ spec:
         external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
         external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
       hosts:
-        - smokeping.${SECRET_LAB_DOMAIN}
+        - host: "smokeping.${SECRET_LAB_DOMAIN}"
+          paths:
+            - path: /
+              pathType: Prefix
       tls:
         - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
           hosts:
-            - smokeping.${SECRET_LAB_DOMAIN}
+            - "smokeping.${SECRET_LAB_DOMAIN}"
 
     persistence:
       config:
