@@ -44,6 +44,45 @@ spec:
         kubeScheduler: false
         kubeStateMetrics: false
     grafana:
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+            - name: 'unifi'
+              orgId: 1
+              folder: 'UniFi'
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/unifi
+
+      dashboards:
+        unifi:
+          unifiPollerClientDPI:
+            gnetId: 11310
+            revision: 4
+            datasource: Prometheus
+          unifiPollerClientInsights:
+            gnetId: 11315
+            revision: 8
+            datasource: Prometheus
+          unifiPollerNetworkSites:
+            gnetId: 11311
+            revision: 4
+            datasource: Prometheus
+          unifiPollerUAPInsights:
+            gnetId: 11314
+            revision: 8
+            datasource: Prometheus
+          unifiPollerUSGInsights:
+            gnetId: 11313
+            revision: 8
+            datasource: Prometheus
+          unifiPollerUSWInsights:
+            gnetId: 11312
+            revision: 8
+            datasource: Prometheus
       ingress:
         enabled: true
         annotations:
