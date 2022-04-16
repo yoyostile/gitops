@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: requestbin
+  name: requestbin
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: requestbin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: requestbin
+    spec:
+      containers:
+        - name: requestbin
+          env:
+            - name: REDIS_URL
+              value: redis://redis-master.default:6379/0
+          image: yoyostile/requestbin
+          imagePullPolicy: Always
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
