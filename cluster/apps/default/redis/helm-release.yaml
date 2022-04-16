@@ -25,3 +25,6 @@ spec:
     global:
       storageClass: "nfs-client"
     architecture: standalone
+    auth:
+      existingSecret: redis
+      existingSecretPasswordKey: redis-password
