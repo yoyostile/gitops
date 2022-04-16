@@ -6,6 +6,7 @@ resources:
   - freshrss
   - hajimari
   - minio
+  - postgresql
   - redis
   - requestbin
   - uptime-kuma
