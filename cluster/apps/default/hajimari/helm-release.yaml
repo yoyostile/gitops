@@ -45,8 +45,6 @@ spec:
               url: "https://slack.com/signin"
         - name: Cloud
           links:
-            - name: Box
-              url: "https://box.com"
             - name: Dropbox
               url: "https://dropbox.com"
             - name: Drive
