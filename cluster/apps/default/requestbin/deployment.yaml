@@ -20,9 +20,9 @@ spec:
     spec:
       containers:
         - name: requestbin
-          env:
-            - name: REDIS_URL
-              value: redis://redis-master.default:6379/0
+          envFrom:
+            - secretRef:
+                name: redis
           image: yoyostile/requestbin
           imagePullPolicy: Always
           terminationMessagePath: /dev/termination-log
