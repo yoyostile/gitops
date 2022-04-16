@@ -5,3 +5,4 @@ resources:
   - secret.sops.yaml
   - deployment.yaml
   - service.yaml
+  - service-monitor.yaml
