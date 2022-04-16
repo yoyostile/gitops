@@ -24,12 +24,9 @@ spec:
       retries: 3
   values:
     env:
-      - name: TZ
-        value: Europe/Berling
-      - name: PUID
-        value: "911"
-      - name: PGID
-        value: "911"
+      TZ: Europe/Berling
+      PUID: "911"
+      PGID: "911"
     ingress:
       enabled: true
       annotations:
