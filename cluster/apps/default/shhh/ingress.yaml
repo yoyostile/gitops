@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shhh
+  namespace: default
+  annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "safe-square-outline"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+spec:
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - shhh.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: shhh.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: shhh
+                port:
+                  number: 80
