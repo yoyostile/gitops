@@ -87,6 +87,7 @@ spec:
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "monitor-eye"
+          hajimari.io/appName: "Grafana"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
         hosts:
