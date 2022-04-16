@@ -98,6 +98,9 @@ spec:
             hosts:
               - "g.${SECRET_LAB_DOMAIN}"
               - "grafana.${SECRET_LAB_DOMAIN}"
+      plugins:
+        - grafana-piechart-panel
+        - grafana-clock-panel
     prometheus:
       prometheusSpec:
         serviceMonitorSelectorNilUsesHelmValues: false
