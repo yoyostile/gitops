@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: unifi-poller
   namespace: monitoring
+  labels:
+    app: unifi-poller
 spec:
   ports:
     - port: 9130
