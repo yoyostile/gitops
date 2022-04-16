@@ -38,7 +38,7 @@ spec:
       - name: MINIO_SERVER_URL
         value: "https://s3.${SECRET_LAB_DOMAIN}"
       - name: MINIO_BROWSER_REDIRECT_URL
-        value: https://minio.${SECRET_LAB_DOMAIN}
+        value: "https://minio.${SECRET_LAB_DOMAIN}"
     ingress:
       enabled: true
       annotations:
@@ -48,11 +48,11 @@ spec:
         external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
         external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
       hosts:
-        - s3.${SECRET_LAB_DOMAIN}
+        - "s3.${SECRET_LAB_DOMAIN}"
       tls:
         - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
           hosts:
-            - s3.${SECRET_LAB_DOMAIN}
+            - "s3.${SECRET_LAB_DOMAIN}"
     consoleIngress:
       enabled: true
       annotations:
@@ -61,8 +61,8 @@ spec:
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
         external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
       hosts:
-        - minio.${SECRET_LAB_DOMAIN}
+        - "minio.${SECRET_LAB_DOMAIN}"
       tls:
         - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
           hosts:
-            - minio.${SECRET_LAB_DOMAIN}
+            - "minio.${SECRET_LAB_DOMAIN}"
