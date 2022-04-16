@@ -7,4 +7,5 @@ resources:
   - hajimari
   - minio
   - redis
+  - requestbin
   - uptime-kuma
