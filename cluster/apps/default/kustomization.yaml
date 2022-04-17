@@ -6,6 +6,7 @@ resources:
   - freshrss
   - hajimari
   - minio
+  - mosquitto
   - postgresql
   - redis
   - requestbin
