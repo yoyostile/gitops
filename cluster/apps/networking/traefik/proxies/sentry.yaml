@@ -1,0 +1,51 @@
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: sentry-proxy
+  namespace: networking
+subsets:
+  - addresses:
+      - ip: 192.168.200.146
+    ports:
+      - name: http
+        port: 9000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sentry-proxy
+  namespace: networking
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sentry-proxy
+  namespace: networking
+  annotations:
+    hajimari.io/appName: "Sentry"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "alert-circle"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+spec:
+  tls:
+    - hosts:
+        - "sentry.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "sentry.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sentry-proxy
+                port:
+                  name: http
