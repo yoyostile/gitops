@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - helm-release.yaml
   - dashboard
-  - middlewares.yaml
   - default-backend.yaml
+  - middlewares.yaml
+  - proxies
