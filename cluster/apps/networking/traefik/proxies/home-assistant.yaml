@@ -26,7 +26,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: home-assistant
+  name: home-assistant-proxy
   namespace: networking
   annotations:
     hajimari.io/appName: "Home Assistant"
@@ -47,6 +47,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: home-assistant
+                name: home-assistant-proxy
                 port:
                   number: 8123
