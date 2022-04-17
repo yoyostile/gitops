@@ -33,6 +33,7 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "alert-circle"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
 spec:
   tls:
     - hosts:
