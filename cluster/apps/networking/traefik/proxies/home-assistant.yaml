@@ -1,0 +1,52 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: home-assistant-proxy
+  namespace: networking
+subsets:
+  - addresses:
+      - ip: 192.168.200.173
+    ports:
+      - port: 8123
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-assistant-proxy
+  namespace: networking
+  labels:
+    app: home-assistant-proxy
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8123
+      targetPort: 8123
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: home-assistant
+  namespace: networking
+  annotations:
+    hajimari.io/appName: "Home Assistant"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "home-assistant"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+spec:
+  tls:
+    - hosts:
+        - "hass.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "hass.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: home-assistant
+                port:
+                  number: 8123
