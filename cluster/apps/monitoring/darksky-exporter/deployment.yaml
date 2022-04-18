@@ -23,7 +23,8 @@ spec:
           imagePullPolicy: Always
           name: darksky-exporter
           envFrom:
-            secretRef:
-              name: darksky-exporter
+            - secretRef:
+                name: darksky-exporter
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      terminationGracePeriodSeconds: 30
