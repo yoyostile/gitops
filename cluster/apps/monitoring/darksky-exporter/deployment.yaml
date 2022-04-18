@@ -26,11 +26,11 @@ spec:
             - /go/bin/darksky-exporter
             - -listen-address
             - :8086
-            - -latitude
-            - ${LATITUDE}
-            - -longitude
-            - ${LONGITUDE}
-            - -api-key
-            - ${DARKSKY_TOKEN}
+            # - -latitude
+            # - ${LATITUDE}
+            # - -longitude
+            # - ${LONGITUDE}
+            # - -api-key
+            # - ${DARKSKY_TOKEN}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
