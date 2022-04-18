@@ -27,9 +27,9 @@ spec:
             - -listen-address
             - :8086
             - -latitude
-            - ${LATITUDE}
+            - "${LATITUDE}"
             - -longitude
-            - ${LONGITUDE}
+            - "${LONGITUDE}"
             - -api-key
             - ${DARKSKY_TOKEN}
       dnsPolicy: ClusterFirst
