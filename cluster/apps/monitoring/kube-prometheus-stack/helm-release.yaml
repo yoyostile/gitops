@@ -106,7 +106,7 @@ spec:
           access: proxy
           orgId: 1
           type: influxdb
-          url: "https://influxdb.lan.${SECRET_LAB_DOMAIN}"
+          url: "http://influx-influxdb2.monitoring"
           jsonData:
             defaultBucket: sn0w
             httpMode: POST
