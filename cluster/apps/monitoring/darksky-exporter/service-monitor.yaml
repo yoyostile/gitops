@@ -12,4 +12,4 @@ spec:
       - monitoring
   selector:
     matchLabels:
-      app: unifi-poller
+      app: darksky-exporter

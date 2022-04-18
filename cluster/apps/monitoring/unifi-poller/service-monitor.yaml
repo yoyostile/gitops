@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: darksky-exporter
+  name: unifi-poller
   namespace: monitoring
 spec:
   endpoints:
@@ -12,4 +12,4 @@ spec:
       - monitoring
   selector:
     matchLabels:
-      app: darksky-exporter
+      app: unifi-poller
