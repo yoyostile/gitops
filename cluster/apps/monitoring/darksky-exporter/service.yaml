@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: darksky-exporter
   namespace: monitoring
+  labels:
+    app: darksky-exporter
 spec:
   type: ClusterIP
   ports:
