@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: darksky-exporter
+  name: darksky-exporter
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: darksky-exporter
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: darksky-exporter
+    spec:
+      containers:
+        - image: yoyostile/darksky-exporter
+          imagePullPolicy: Always
+          name: darksky-exporter
+          command:
+            - /go/bin/darksky-exporter
+            - -listen-address
+            - :8086
+            - -latitude
+            - "${LATITUDE}"
+            - -longitude
+            - "${LONGITUDE}"
+            - -api-key
+            - ${DARKSKY_TOKEN}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
