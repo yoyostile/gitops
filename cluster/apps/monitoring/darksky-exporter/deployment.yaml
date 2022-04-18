@@ -24,10 +24,8 @@ spec:
           name: darksky-exporter
           command:
             - /go/bin/darksky-exporter
-            - -listen-address
-            - :8086
-            # - -latitude
-            # - ${LATITUDE}
+            - -listen-address :8086
+            - -latitude ${LATITUDE}
             # - -longitude
             # - ${LONGITUDE}
             # - -api-key
