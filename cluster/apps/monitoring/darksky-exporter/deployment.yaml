@@ -19,19 +19,11 @@ spec:
         app: darksky-exporter
     spec:
       containers:
-        - image: yoyostile/darksky-exporter
+        - image: billykwooten/darksky-exporter
           imagePullPolicy: Always
           name: darksky-exporter
-          command:
-            - /go/bin/darksky-exporter
-          args:
-            - -listen-address
-            - :8086
-            - -latitude
-            - "${LATITUDE}"
-            - -longitude
-            - "${LONGITUDE}"
-            - -api-key
-            - "${DARKSKY_TOKEN}"
+          envFrom:
+            secretRef:
+              name: darksky-exporter
       dnsPolicy: ClusterFirst
       restartPolicy: Always
