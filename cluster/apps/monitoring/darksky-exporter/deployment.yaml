@@ -27,12 +27,10 @@ spec:
             - -listen-address
             - :8086
             - -latitude
-            - "${LATITUDE}"
+            - ${LATITUDE}
             - -longitude
-            - "${LONGITUDE}"
+            - ${LONGITUDE}
             - -api-key
             - ${DARKSKY_TOKEN}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      schedulerName: default-scheduler
-      terminationGracePeriodSeconds: 30
