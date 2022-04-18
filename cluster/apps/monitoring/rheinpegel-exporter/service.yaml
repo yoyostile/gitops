@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: rheinpegel-exporter
   namespace: monitoring
+  labels:
+    app: rheinpegel-exporter
 spec:
   type: ClusterIP
   ports:
