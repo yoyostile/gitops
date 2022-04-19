@@ -22,6 +22,8 @@ spec:
     remediation:
       retries: 3
   values:
+    nodeSelector:
+      node-role.kubernetes.io/master: "true"
     enivronment:
       TZ: Europe/Berlin
       PGID: 1000
