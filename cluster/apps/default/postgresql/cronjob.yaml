@@ -18,7 +18,7 @@ spec:
               image: alpine
               env:
                 - name: DATABASES
-                  value: "shhh teslamate"
+                  value: "freshrss shhh teslamate"
                 - name: POSTGRES_HOST
                   value: postgresql.default
                 - name: POSTGRES_USER
