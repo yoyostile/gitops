@@ -44,6 +44,7 @@ spec:
         kubeScheduler: false
         kubeStateMetrics: false
     grafana:
+      adminPassword: ${SECRET_GRAFANA_PASSWORD}
       dashboardProviders:
         dashboardproviders.yaml:
           apiVersion: 1
