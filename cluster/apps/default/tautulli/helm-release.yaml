@@ -27,7 +27,7 @@ spec:
       PGID: 1000
       PUID: 1000
     persistence:
-      data:
+      config:
         accessMode: ReadWriteOnce
         enabled: true
         size: 500Mi
