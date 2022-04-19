@@ -8,3 +8,13 @@ spec:
   ipWhiteList:
     sourceRange:
       - 192.168.0.0/16
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: smokeping-redirect
+  namespace: networking
+spec:
+  redirectRegex:
+    regex: ^https:\/\/([^\/]+)\/?$
+    replacement: https://${1}/smokeping/smokeping.cgi
