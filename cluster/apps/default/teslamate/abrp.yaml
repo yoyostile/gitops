@@ -25,9 +25,9 @@ spec:
             - name: MQTT_SERVER
               value: mosquitto.default
             - name: USER_TOKEN
-              value: ${SECRET_ABRP_USER_TOKEN}
+              value: "${SECRET_ABRP_USER_TOKEN}"
             - name: CAR_NUMBER
-              value: 1
+              value: "1"
           imagePullPolicy: Always
           resources: {}
           terminationMessagePath: /dev/termination-log
