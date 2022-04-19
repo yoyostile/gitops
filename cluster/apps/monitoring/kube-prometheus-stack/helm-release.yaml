@@ -140,6 +140,7 @@ spec:
           secureJsonData:
             token: ${INFLUX_TOKEN}
         - name: TeslaMate
+          access: proxy
           orgId: 1
           type: postgres
           url: postgresql.default:5432
