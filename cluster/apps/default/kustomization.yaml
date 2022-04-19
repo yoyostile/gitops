@@ -12,4 +12,5 @@ resources:
   - redis
   - requestbin
   - shhh
+  - teslamate
   - uptime-kuma
