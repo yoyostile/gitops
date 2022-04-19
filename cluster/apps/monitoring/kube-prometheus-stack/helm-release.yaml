@@ -101,9 +101,8 @@ spec:
             datasource: Prometheus
       extraVolumeMounts:
         - name: panodata-map-panel
+          existingClaim: panodata-map-panel
           mountPath: /var/lib/grafana/plugins/panodata-map-panel
-          size: 32Mi
-          storageClass: "nfs-client"
       sidecar:
         dashboards:
           enabled: "true"
