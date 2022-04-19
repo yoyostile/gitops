@@ -5,7 +5,8 @@ metadata:
   name: main-grafana-dashboard
   namespace: monitoring
   labels:
-    grafana_dashboard: "1"
+    grafana_dashboard: "true"
+    grafana_folder: "Home"
 data:
   main-dashboard.json: |-
     {
