@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: teslamate-abrp
+  name: teslamate-abrp
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: teslamate-abrp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: teslamate-abrp
+    spec:
+      containers:
+        - name: teslamate-abrp
+          image: fetzu/teslamate-abrp:latest
+          env:
+            - name: MQTT_SERVER
+              value: mosquitto.default
+            - name: USER_TOKEN
+              value: ${SECRET_ABRP_USER_TOKEN}
+            - name: CAR_NUMBER
+              value: 1
+          imagePullPolicy: Always
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
