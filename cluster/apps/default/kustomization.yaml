@@ -13,6 +13,7 @@ resources:
   - requestbin
   - sabnzbd
   - shhh
+  - st0rage
   - tautulli
   - teslamate
   - uptime-kuma
