@@ -27,5 +27,5 @@ spec:
     primary:
       service:
         type: "LoadBalancer"
-        loadBalancerIP: "192.168.230.52"
+        loadBalancerIP: "192.168.230.53"
         externalTrafficPolicy: Local
