@@ -6,7 +6,10 @@ metadata:
   namespace: monitoring
 spec:
   endpoints:
-    - port: metrics
+    - path: /probe
+      port: metrics
+      interval: 120m
+      scrapeTimeout: 2m
   namespaceSelector:
     matchNames:
       - monitoring
