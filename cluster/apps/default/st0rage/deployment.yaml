@@ -5,6 +5,7 @@ metadata:
   labels:
     app: st0rage
   name: st0rage
+  namespace: default
 spec:
   replicas: 1
   selector:
