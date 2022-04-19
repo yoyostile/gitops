@@ -33,6 +33,7 @@ spec:
         hajimari.io/enable: "true"
         hajimari.io/icon: "table-tennis"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        traefik.ingress.kubernetes.io/router.middlewares: "networking-smokeping-redirect@kubernetescrd"
         external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
       hosts:
         - host: "smokeping.${SECRET_LAB_DOMAIN}"
