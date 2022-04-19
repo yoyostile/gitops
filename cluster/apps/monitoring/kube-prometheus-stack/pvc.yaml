@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: panodata-map-panel
+  name: grafana-plugins
   namespace: monitoring
 spec:
   accessModes:
@@ -10,4 +10,4 @@ spec:
   storageClassName: "nfs-client"
   resources:
     requests:
-      storage: 32Mi
+      storage: 128Mi
