@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: speedtest-exporter
+  namespace: monitoring
+  labels:
+    app: speedtest-exporter
+spec:
+  ports:
+    - port: 9516
+      targetPort: 9516
+      protocol: TCP
+      name: metrics
+  selector:
+    app: speedtest-exporter

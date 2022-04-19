@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speedtest-exporter
+  namespace: monitoring
+  labels:
+    app: speedtest-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: speedtest-exporter
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: speedtest-exporter
+    spec:
+      containers:
+        - image: jraviles/prometheus_speedtest:latest
+          imagePullPolicy: Always
+          name: speedtest-exporter
+          args: ["--port=9516"]
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
