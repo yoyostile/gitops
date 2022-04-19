@@ -107,6 +107,11 @@ spec:
           folderAnnotation: grafana_folder
           provider:
             foldersFromFilesStructure: true
+        plugins:
+          enabled: "true"
+          label: "grafana_plugin"
+          labelValue: "1"
+          searchNamespace: "ALL"
       ingress:
         enabled: true
         annotations:
@@ -128,7 +133,6 @@ spec:
         - grafana-clock-panel
         - pr0ps-trackmap-panel
         - natel-plotly-panel
-        - panodata-map-panel
       additionalDataSources:
         - name: influxdb
           access: proxy
