@@ -147,6 +147,9 @@ spec:
           user: teslamate
           secureJsonData:
             password: ${SECRET_TESLAMATE_POSTGRES_PASSWORD}
+          jsonData:
+            postgresVersion: 1000
+            sslmode: disable
     prometheus:
       prometheusSpec:
         additionalScrapeConfigs:
