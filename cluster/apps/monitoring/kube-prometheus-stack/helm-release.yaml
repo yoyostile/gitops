@@ -126,6 +126,9 @@ spec:
       plugins:
         - grafana-piechart-panel
         - grafana-clock-panel
+        - pr0ps-trackmap-panel
+        - natel-plotly-panel
+        - panodata-map-panel
       additionalDataSources:
         - name: influxdb
           access: proxy
