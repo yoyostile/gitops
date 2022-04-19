@@ -7,6 +7,7 @@ resources:
   - hajimari
   - minio
   - mosquitto
+  - mysql
   - postgresql
   - redis
   - requestbin
