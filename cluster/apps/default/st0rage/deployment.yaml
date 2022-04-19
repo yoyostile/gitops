@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: st0rage
+  name: st0rage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: st0rage
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: st0rage
+      name: st0rage
+    spec:
+      containers:
+        - name: st0rage
+          image: nginx:alpine
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html/st0rage/documents
+              name: documents
+            - mountPath: /usr/share/nginx/html/st0rage/movies
+              name: movies
+            - mountPath: /usr/share/nginx/html/st0rage/music
+              name: music
+            - mountPath: /usr/share/nginx/html/st0rage/tvshows
+              name: tvshows
+            - mountPath: /etc/nginx/conf.d
+              name: config-volume
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+        - name: documents
+          nfs:
+            server: ${SECRET_NFS_HOST}
+            path: ${SECRET_NFS_ST0RAGE_PATH}/documents
+        - name: movies
+          nfs:
+            server: ${SECRET_NFS_HOST}
+            path: ${SECRET_NFS_ST0RAGE_PATH}/Filme
+        - name: music
+          nfs:
+            server: ${SECRET_NFS_HOST}
+            path: ${SECRET_NFS_ST0RAGE_PATH}/music
+        - name: tvshows
+          nfs:
+            server: ${SECRET_NFS_HOST}
+            path: ${SECRET_NFS_ST0RAGE_PATH}/Serien
+        - configMap:
+            defaultMode: 420
+            name: st0rage
+          name: config-volume
