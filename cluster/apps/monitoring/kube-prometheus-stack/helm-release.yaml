@@ -99,6 +99,11 @@ spec:
             gnetId: 11312
             revision: 8
             datasource: Prometheus
+      extraVolumeMounts:
+        - name: panodata-map-panel
+          mountPath: /var/lib/grafana/plugins/panodata-map-panel
+          size: 32Mi
+          storageClass: "nfs-client"
       sidecar:
         dashboards:
           enabled: "true"
@@ -107,11 +112,6 @@ spec:
           folderAnnotation: grafana_folder
           provider:
             foldersFromFilesStructure: true
-        plugins:
-          enabled: "true"
-          label: "grafana_plugin"
-          labelValue: "1"
-          searchNamespace: "ALL"
       ingress:
         enabled: true
         annotations:
