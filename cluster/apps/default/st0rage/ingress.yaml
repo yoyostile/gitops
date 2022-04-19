@@ -3,6 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: st0rage
+  namespace: default
   annotations:
     hajimari.io/enable: "true"
     hajimari.io/icon: "nas"
