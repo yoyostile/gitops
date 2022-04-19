@@ -1,0 +1,51 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: tautulli
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: tautulli
+      version: v11.2.0
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    enivronment:
+      TZ: Europe/Berlin
+      PGID: 1000
+      PUID: 1000
+    persistence:
+      data:
+        accessMode: ReadWriteOnce
+        enabled: true
+        size: 500Mi
+        storageClass: "nfs-client"
+    ingress:
+      main:
+        enabled: true
+        annotations:
+          hajimari.io/enable: "true"
+          hajimari.io/icon: "playlist-play"
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+        hosts:
+          - host: "tautulli.${SECRET_LAB_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+            hosts:
+              - "tautulli.${SECRET_LAB_DOMAIN}"
