@@ -114,6 +114,14 @@ spec:
             version: Flux
           secureJsonData:
             token: ${INFLUX_TOKEN}
+        - name: TeslaMate
+          orgId: 1
+          type: postgres
+          url: postgresql.default:5432
+          database: teslamate
+          user: teslamate
+          secureJsonData:
+            password: ${SECRET_TESLAMATE_POSTGRES_PASSWORD}
     prometheus:
       prometheusSpec:
         additionalScrapeConfigs:
