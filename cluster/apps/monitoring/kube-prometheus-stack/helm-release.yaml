@@ -104,6 +104,8 @@ spec:
           existingClaim: grafana-plugins
           mountPath: /var/lib/grafana/plugins
           readOnly: false
+      grafana.ini:
+        allow_loading_unsigned_plugins: panodata-map-panel
       sidecar:
         dashboards:
           enabled: "true"
