@@ -7,4 +7,5 @@ resources:
   - kube-prometheus-stack
   - rheinpegel-exporter
   - smokeping
+  - speedtest-exporter
   - unifi-poller
