@@ -17,4 +17,4 @@ metadata:
 spec:
   redirectRegex:
     regex: ^https:\/\/([^\/]+)\/?$
-    replacement: https://${1}/smokeping/smokeping.cgi
+    replacement: https://$1/smokeping/smokeping.cgi
