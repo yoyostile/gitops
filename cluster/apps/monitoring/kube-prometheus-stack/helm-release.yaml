@@ -103,6 +103,7 @@ spec:
         - name: panodata-map-panel
           existingClaim: panodata-map-panel
           mountPath: /var/lib/grafana/plugins/panodata-map-panel
+          readOnly: false
       sidecar:
         dashboards:
           enabled: "true"
