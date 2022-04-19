@@ -11,6 +11,7 @@ resources:
   - postgresql
   - redis
   - requestbin
+  - sabnzbd
   - shhh
   - tautulli
   - teslamate
