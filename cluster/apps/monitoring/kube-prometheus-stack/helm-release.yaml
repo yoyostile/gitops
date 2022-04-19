@@ -82,6 +82,11 @@ spec:
             gnetId: 11312
             revision: 8
             datasource: Prometheus
+      sidecar:
+        dashboards:
+          labelValue: "true"
+          searchNamespace: "ALL"
+          folderAnnotation: grafana_folder
       ingress:
         enabled: true
         annotations:
