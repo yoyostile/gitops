@@ -92,9 +92,12 @@ spec:
             datasource: Prometheus
       sidecar:
         dashboards:
+          enabled: "true"
           labelValue: "1"
           searchNamespace: "ALL"
           folderAnnotation: grafana_folder
+          provider:
+            foldersFromFilesStructure: true
       ingress:
         enabled: true
         annotations:
