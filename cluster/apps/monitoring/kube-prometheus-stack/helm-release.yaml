@@ -100,9 +100,9 @@ spec:
             revision: 8
             datasource: Prometheus
       extraVolumeMounts:
-        - name: panodata-map-panel
-          existingClaim: panodata-map-panel
-          mountPath: /var/lib/grafana/plugins/panodata-map-panel
+        - name: grafana-plugins
+          existingClaim: grafana-plugins
+          mountPath: /var/lib/grafana/plugins
           readOnly: false
       sidecar:
         dashboards:
