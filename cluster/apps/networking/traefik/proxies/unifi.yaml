@@ -1,0 +1,57 @@
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: unifi-proxy
+  namespace: networking
+subsets:
+  - addresses:
+      - ip: 192.168.200.113
+    ports:
+      - port: 8080
+        name: http
+      - port: 8443
+        name: https
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: unifi-proxy
+  namespace: networking
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      name: http
+    - protocol: TCP
+      port: 8443
+      targetPort: 8443
+      name: https
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: unifi-proxy
+  annotations:
+    hajimari.io/appName: "Sentry"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "lan"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+spec:
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - unifi.lan.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: unifi.lan.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: unifi-proxy
+                port:
+                  name: https
