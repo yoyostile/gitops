@@ -6,8 +6,6 @@ metadata:
   namespace: networking
 spec:
   secretName: sn0w-lan-${SECRET_LAB_DOMAIN/./-}-tls
-  organization:
-    - Let's Encrypt
   commonName: sn0w.lan.${SECRET_LAB_DOMAIN}
   dnsNames:
     - sn0w.lan.${SECRET_LAB_DOMAIN}
