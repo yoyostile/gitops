@@ -42,7 +42,7 @@ metadata:
     external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
 spec:
   tls:
-    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+    - secretName: "unifi-lan-${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
         - unifi.lan.${SECRET_LAB_DOMAIN}
   rules:
