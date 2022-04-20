@@ -35,7 +35,7 @@ metadata:
   name: unifi-proxy
   namespace: networking
   annotations:
-    hajimari.io/appName: "Sentry"
+    hajimari.io/appName: "Unifi"
     hajimari.io/enable: "true"
     hajimari.io/icon: "lan"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
