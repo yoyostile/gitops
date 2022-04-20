@@ -1,0 +1,23 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: unifi-lan-${SECRET_LAB_DOMAIN/./-}
+  namespace: default
+spec:
+  secretName: unifi-lan-${SECRET_LAB_DOMAIN/./-}-tls
+  organization:
+    - Let's Encrypt
+  commonName: unifi.lan.${SECRET_LAB_DOMAIN}
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  isCA: false
+  keySize: 2048
+  keyAlgorithm: rsa
+  keyEncoding: pkcs1
+  dnsNames:
+    - unifi.lan.${SECRET_LAB_DOMAIN}
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+    group: cert-manager.io
