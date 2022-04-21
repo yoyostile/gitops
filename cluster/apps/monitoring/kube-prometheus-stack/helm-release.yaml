@@ -74,7 +74,7 @@ spec:
               options:
                 path: /var/lib/grafana/dashboards/home
       dashboards:
-        general:
+        default:
           traefik:
             gnetId: 4475
             revision: 5
