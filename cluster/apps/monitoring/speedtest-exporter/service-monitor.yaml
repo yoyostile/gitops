@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: speedtest-explorer
+  name: speedtest-exporter
   namespace: monitoring
 spec:
   endpoints:
@@ -15,4 +15,4 @@ spec:
       - monitoring
   selector:
     matchLabels:
-      app: speedtest-explorer
+      app: speedtest-exporter
