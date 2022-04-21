@@ -1,0 +1,69 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: plex
+  namespace: media
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts
+      chart: plex
+      version: 6.2.1
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home-charts
+        namespace: flux-system
+      interval: 5m
+
+  dependsOn:
+    - name: traefik
+      namespace: network
+
+  values:
+    env:
+      TZ: "Europe/Berlin"
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "traefik"
+        annotations:
+          hajimari.io/enable: "true"
+          hajimari.io/icon: "movie-play"
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+        hosts:
+          - host: "plex.${SECRET_LAB_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "plex.${SECRET_LAB_DOMAIN}"
+            secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        enabled: true
+        size: 50Gi
+        storageClass: "nfs-client"
+      media:
+        enabled: true
+        type: custom
+        volumeSpec:
+          nfs:
+            server: "${NFS_SERVER}"
+            path: "${SECRET_NFS_ST0RAGE_PATH}"
+        mountPath: /media
+      transcode:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+
+    resources:
+      requests:
+        cpu: 4000m
+        memory: 1024M
