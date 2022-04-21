@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: random-gif
+  name: random-gif
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: random-gif
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: random-gif
+    spec:
+      containers:
+        - image: registry.gitlab.com/yoyostile/random-gif
+          imagePullPolicy: Always
+          name: random-gif
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: random-gif
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
