@@ -32,14 +32,12 @@ data:
       },
       "editable": true,
       "fiscalYearStartMonth": 0,
-      "gnetId": null,
       "graphTooltip": 1,
-      "iteration": 1638349908588,
+      "iteration": 1650534180215,
       "links": [],
       "liveNow": false,
       "panels": [
         {
-          "datasource": null,
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -88,7 +86,7 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "exemplar": true,
@@ -102,8 +100,6 @@ data:
           "type": "gauge"
         },
         {
-          "cacheTimeout": null,
-          "datasource": null,
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -163,7 +159,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "exemplar": true,
@@ -173,13 +169,14 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": null,
           "title": "WiFi Users",
           "type": "stat"
         },
         {
-          "cacheTimeout": null,
-          "datasource": "influxdb",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -241,7 +238,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "dsType": "influxdb",
@@ -282,13 +279,14 @@ data:
               "tags": []
             }
           ],
-          "timeFrom": null,
           "title": "Power Usage",
           "type": "stat"
         },
         {
-          "cacheTimeout": null,
-          "datasource": "influxdb",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -349,7 +347,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "dsType": "influxdb",
@@ -388,8 +386,10 @@ data:
           "type": "stat"
         },
         {
-          "cacheTimeout": null,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -431,7 +431,6 @@ data:
           },
           "hideTimeOverride": true,
           "id": 2,
-          "interval": null,
           "links": [],
           "maxDataPoints": 100,
           "options": {
@@ -449,7 +448,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "expr": "time() - node_boot_time_seconds{instance=\"$server\"} ",
@@ -467,8 +466,10 @@ data:
           "type": "stat"
         },
         {
-          "cacheTimeout": null,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -517,7 +518,6 @@ data:
           },
           "hideTimeOverride": true,
           "id": 5,
-          "interval": null,
           "links": [],
           "maxDataPoints": 100,
           "options": {
@@ -533,7 +533,7 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "expr": "(node_memory_MemAvailable_bytes{instance=~\"$server\"})",
@@ -547,13 +547,14 @@ data:
             }
           ],
           "timeFrom": "1h",
-          "timeShift": null,
           "title": "sn0w: Available Memory",
           "type": "gauge"
         },
         {
-          "cacheTimeout": null,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -601,7 +602,6 @@ data:
           },
           "hideTimeOverride": true,
           "id": 3,
-          "interval": null,
           "links": [],
           "maxDataPoints": 100,
           "options": {
@@ -617,7 +617,7 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "expr": "sum(node_filesystem_avail_bytes{device='stor01/enc',instance='$server'})",
@@ -635,8 +635,10 @@ data:
           "type": "gauge"
         },
         {
-          "cacheTimeout": null,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -678,7 +680,6 @@ data:
           },
           "hideTimeOverride": true,
           "id": 4,
-          "interval": null,
           "links": [],
           "maxDataPoints": 100,
           "options": {
@@ -696,7 +697,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "expr": "node_filesystem_size_bytes{device='stor01/enc',instance='$server'}",
@@ -718,7 +719,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "links": []
@@ -753,7 +757,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -778,9 +782,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "sn0w: CPU Frequency",
           "tooltip": {
             "shared": true,
@@ -789,33 +791,24 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
           "yaxes": [
             {
               "format": "hertz",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "format": "short",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -826,7 +819,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "editable": true,
           "error": false,
           "fieldConfig": {
@@ -864,7 +860,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -905,9 +901,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "sn0w: Traffic",
           "tooltip": {
             "msResolution": false,
@@ -917,9 +911,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -929,26 +921,20 @@ data:
               "format": "bps",
               "label": "bits out (-) / bits in (+)",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "$$hashKey": "object:1245",
               "format": "short",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": false
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
-          "datasource": null,
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1065,7 +1051,8 @@ data:
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "single",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.0.3",
@@ -1086,8 +1073,6 @@ data:
               "refId": "B"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "WAN Traffic",
           "type": "timeseries"
         },
@@ -1098,7 +1083,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "decimals": 2,
           "editable": true,
           "error": false,
@@ -1140,7 +1128,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1165,9 +1153,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "sn0w: Detailed CPU Usage",
           "tooltip": {
             "msResolution": false,
@@ -1177,9 +1163,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -1195,18 +1179,15 @@ data:
             {
               "format": "short",
               "logBase": 1,
-              "max": null,
               "min": 0,
               "show": true
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
-          "datasource": null,
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1279,7 +1260,8 @@ data:
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "single",
+              "sort": "none"
             }
           },
           "pluginVersion": "8.0.3",
@@ -1314,7 +1296,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "decimals": 2,
           "editable": true,
           "error": false,
@@ -1353,7 +1338,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1392,9 +1377,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "sn0w: Load Avg.",
           "tooltip": {
             "msResolution": false,
@@ -1404,9 +1387,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -1415,21 +1396,16 @@ data:
               "format": "short",
               "label": "Load Avg.",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "format": "short",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": false
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -1437,7 +1413,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "influxdb",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
+          },
           "editable": true,
           "error": false,
           "fieldConfig": {
@@ -1478,7 +1457,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1654,9 +1633,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "sn0w: Temperatures",
           "tooltip": {
             "msResolution": false,
@@ -1666,9 +1643,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -1676,25 +1651,18 @@ data:
             {
               "$$hashKey": "object:485",
               "format": "celsius",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "$$hashKey": "object:486",
               "format": "rotrpm",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -1705,7 +1673,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "influxdb",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
+          },
           "editable": true,
           "error": false,
           "fieldConfig": {
@@ -1755,7 +1726,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1818,9 +1789,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "APCUPSD Stromverbrauch",
           "tooltip": {
             "msResolution": false,
@@ -1830,9 +1799,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -1840,25 +1807,18 @@ data:
             {
               "$$hashKey": "object:1713",
               "format": "watt",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "$$hashKey": "object:1714",
               "format": "kwatth",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": false
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -1866,7 +1826,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "editable": true,
           "error": false,
           "fieldConfig": {
@@ -1904,7 +1867,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1927,9 +1890,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "sn0w: Disk Utilization per Device",
           "tooltip": {
             "msResolution": false,
@@ -1939,9 +1900,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -1950,20 +1909,16 @@ data:
               "format": "percent",
               "logBase": 1,
               "max": 100,
-              "min": null,
               "show": true
             },
             {
               "format": "short",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -1971,7 +1926,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "influxdb",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
+          },
           "decimals": 1,
           "editable": true,
           "error": false,
@@ -2010,7 +1968,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2069,9 +2027,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "UPS",
           "tooltip": {
             "msResolution": false,
@@ -2081,9 +2037,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -2093,23 +2047,17 @@ data:
               "format": "volt",
               "label": "Voltage",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "$$hashKey": "object:1594",
               "format": "short",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -2117,7 +2065,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "influxdb",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
+          },
           "decimals": 1,
           "editable": true,
           "error": false,
@@ -2232,7 +2183,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2331,9 +2282,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "FHEM: Temperaturen",
           "tooltip": {
             "msResolution": false,
@@ -2343,9 +2292,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -2355,7 +2302,6 @@ data:
               "format": "celsius",
               "label": "Temperature",
               "logBase": 1,
-              "max": null,
               "min": "15",
               "show": true
             },
@@ -2364,14 +2310,11 @@ data:
               "format": "percent",
               "label": "Valve position",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -2379,7 +2322,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "influxdb",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
+          },
           "fieldConfig": {
             "defaults": {
               "links": []
@@ -2437,7 +2383,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2546,9 +2492,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "Klima",
           "tooltip": {
             "shared": true,
@@ -2557,9 +2501,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -2568,25 +2510,18 @@ data:
               "$$hashKey": "object:2398",
               "decimals": 1,
               "format": "celsius",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "$$hashKey": "object:2399",
               "format": "pressurehpa",
-              "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -2599,8 +2534,6 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prometheus",
-          "decimals": null,
           "fieldConfig": {
             "defaults": {
               "links": []
@@ -2635,7 +2568,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2660,7 +2593,12 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "darksky_apparent_temperature_celcius",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "darksky_apparent_temperature",
               "format": "time_series",
               "instant": false,
               "interval": "10m",
@@ -2669,7 +2607,12 @@ data:
               "refId": "A"
             },
             {
-              "expr": "darksky_temperature_celcius",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "darksky_temperature",
               "format": "time_series",
               "instant": false,
               "interval": "10m",
@@ -2678,6 +2621,10 @@ data:
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "expr": "darksky_humidity",
               "format": "time_series",
               "interval": "10m",
@@ -2687,9 +2634,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "Weather Cologne",
           "tooltip": {
             "shared": true,
@@ -2698,9 +2643,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -2711,15 +2654,12 @@ data:
               "format": "celsius",
               "label": "Temperature",
               "logBase": 1,
-              "max": null,
-              "min": null,
               "show": true
             },
             {
               "$$hashKey": "object:2502",
               "decimals": 1,
               "format": "humidity",
-              "label": null,
               "logBase": 1,
               "max": "1",
               "min": "0",
@@ -2727,8 +2667,7 @@ data:
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         },
         {
@@ -2738,7 +2677,10 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "links": []
@@ -2772,7 +2714,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.2.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2841,9 +2783,7 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
           "timeRegions": [],
-          "timeShift": null,
           "title": "Rheinpegel Köln",
           "tooltip": {
             "shared": true,
@@ -2852,9 +2792,7 @@ data:
           },
           "type": "graph",
           "xaxis": {
-            "buckets": null,
             "mode": "time",
-            "name": null,
             "show": true,
             "values": []
           },
@@ -2862,16 +2800,13 @@ data:
             {
               "decimals": 1,
               "format": "lengthm",
-              "label": null,
               "logBase": 1,
-              "max": null,
               "min": "0",
               "show": true
             },
             {
               "decimals": 0,
               "format": "none",
-              "label": null,
               "logBase": 1,
               "max": "1",
               "min": "-1",
@@ -2879,22 +2814,18 @@ data:
             }
           ],
           "yaxis": {
-            "align": false,
-            "alignLevel": null
+            "align": false
           }
         }
       ],
       "refresh": false,
-      "schemaVersion": 31,
+      "schemaVersion": 35,
       "style": "dark",
       "tags": [],
       "templating": {
         "list": [
           {
-            "description": null,
-            "error": null,
             "hide": 2,
-            "label": null,
             "name": "server",
             "query": "sn0w.lan.${SECRET_LAB_DOMAIN}:9100",
             "skipUrlSync": false,
@@ -2934,7 +2865,8 @@ data:
       "timezone": "browser",
       "title": "Main",
       "uid": "000000017",
-      "version": 2
+      "version": 1,
+      "weekStart": ""
     }
   ttn.json: |-
     {
