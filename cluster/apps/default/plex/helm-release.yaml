@@ -25,6 +25,13 @@ spec:
     env:
       TZ: "Europe/Berlin"
 
+    service:
+      main:
+        type: LoadBalancer
+        externalIPs:
+          - "192.168.230.54"
+        externalTrafficPolicy: Local
+
     ingress:
       main:
         enabled: true
