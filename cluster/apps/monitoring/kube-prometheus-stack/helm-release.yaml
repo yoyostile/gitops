@@ -65,14 +65,14 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/teslamate
-            - name: 'home'
+            - name: 'default'
               orgId: 1
-              folder: Home
+              folder: default
               type: file
               disableDeletion: false
               allowUiUpdates: true
               options:
-                path: /var/lib/grafana/dashboards/home
+                path: /var/lib/grafana/dashboards/default
       dashboards:
         default:
           traefik:
