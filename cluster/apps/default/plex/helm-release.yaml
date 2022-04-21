@@ -55,7 +55,7 @@ spec:
         type: custom
         volumeSpec:
           nfs:
-            server: "${NFS_SERVER}"
+            server: "${SECRET_NFS_HOST}"
             path: "${SECRET_NFS_ST0RAGE_PATH}"
         mountPath: /media
       transcode:
