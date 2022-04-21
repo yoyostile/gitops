@@ -9,6 +9,7 @@ resources:
   - mosquitto
   - mysql
   - postgresql
+  - random-gif
   - redis
   - requestbin
   - sabnzbd
