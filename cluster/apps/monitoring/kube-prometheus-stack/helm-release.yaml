@@ -65,20 +65,7 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/teslamate
-            - name: 'default'
-              orgId: 1
-              folder: default
-              type: file
-              disableDeletion: false
-              allowUiUpdates: true
-              options:
-                path: /var/lib/grafana/dashboards/default
       dashboards:
-        default:
-          traefik:
-            gnetId: 4475
-            revision: 5
-            datasource: Prometheus
         unifi:
           unifiPollerClientDPI:
             gnetId: 11310
