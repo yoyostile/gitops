@@ -22,8 +22,10 @@ spec:
     remediation:
       retries: 3
   values:
-    nodeSelector:
-      node-role.kubernetes.io/master: "true"
+    resources:
+      requests:
+        cpu: 4000m
+        memory: 1024M
     enivronment:
       TZ: Europe/Berlin
       PGID: 1000
