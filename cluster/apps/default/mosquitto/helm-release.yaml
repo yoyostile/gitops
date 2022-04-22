@@ -8,6 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts
       chart: mosquitto
       version: v4.2.0
       sourceRef:
@@ -22,6 +23,9 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      repository: eclipse-mosquitto
+      tag: 2.0.11
     persistence:
       data:
         accessMode: ReadWriteOnce

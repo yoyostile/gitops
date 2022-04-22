@@ -8,6 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts
       chart: sabnzbd
       version: v9.2.0
       sourceRef:
@@ -22,6 +23,9 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      repository: ghcr.io/k8s-at-home/sabnzbd
+      tag: v3.3.1
     resources:
       requests:
         cpu: 4000m
