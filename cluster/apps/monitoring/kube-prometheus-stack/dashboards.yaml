@@ -33,7 +33,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
-      "iteration": 1650662225961,
+      "iteration": 1650662659417,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -241,6 +241,10 @@ data:
           "pluginVersion": "8.4.5",
           "targets": [
             {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -253,7 +257,7 @@ data:
               "measurement": "ups_load.value",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"ups_load.value\")\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 }))\n  |> last()",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load_percent\")\n  |> group(columns: [\"ups_name\"])\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 }))\n  |> last()",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -1829,14 +1833,12 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:108",
               "$$hashKey": "object:1713",
               "format": "watt",
               "logBase": 1,
               "show": true
             },
             {
-              "$$hashKey": "object:109",
               "$$hashKey": "object:1714",
               "format": "kwatth",
               "logBase": 1,
@@ -2906,7 +2908,7 @@ data:
       "timezone": "browser",
       "title": "Main",
       "uid": "000000017",
-      "version": 3,
+      "version": 4,
       "weekStart": ""
     }
   ttn.json: |-
