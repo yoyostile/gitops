@@ -23,7 +23,7 @@ spec:
     remediation:
       retries: 3
   valuesFrom:
-    - kind: Secret
+    - kind: ConfigMap
       name: hajimari
   values:
     image:
