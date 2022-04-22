@@ -33,7 +33,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
-      "iteration": 1650660625178,
+      "iteration": 1650662225961,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -350,12 +350,16 @@ data:
           "pluginVersion": "8.4.5",
           "targets": [
             {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "ups_load.value",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"ups_load.value\")\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 * 24.0 * 30.0 * 0.001 * 0.2442 }))\n  |> mean()",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load_percent\")\n  |> group(columns: [\"ups_name\"])\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 * 24.0 * 30.0 * 0.001 * 0.2442 }))\n  |> mean()",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -1683,7 +1687,8 @@ data:
         {
           "aliasColors": {
             "Energy": "#BF1B00",
-            "Power": "super-light-orange"
+            "Power": "super-light-orange",
+            "sn0w": "super-light-red"
           },
           "bars": false,
           "dashLength": 10,
@@ -1743,7 +1748,7 @@ data:
           "percentage": false,
           "pluginVersion": "8.4.5",
           "pointradius": 1,
-          "points": true,
+          "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
@@ -1824,14 +1829,14 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:100",
+              "$$hashKey": "object:108",
               "$$hashKey": "object:1713",
               "format": "watt",
               "logBase": 1,
               "show": true
             },
             {
-              "$$hashKey": "object:101",
+              "$$hashKey": "object:109",
               "$$hashKey": "object:1714",
               "format": "kwatth",
               "logBase": 1,
@@ -2000,7 +2005,6 @@ data:
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:268",
               "$$hashKey": "object:1578",
               "alias": "/.*voltage$/",
               "fill": 0,
@@ -2080,7 +2084,6 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:279",
               "$$hashKey": "object:1593",
               "format": "volt",
               "label": "Voltage",
@@ -2088,7 +2091,6 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:280",
               "$$hashKey": "object:1594",
               "format": "short",
               "logBase": 1,
@@ -2873,7 +2875,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-30m",
+        "from": "now-24h",
         "to": "now"
       },
       "timepicker": {
@@ -2904,7 +2906,7 @@ data:
       "timezone": "browser",
       "title": "Main",
       "uid": "000000017",
-      "version": 2,
+      "version": 3,
       "weekStart": ""
     }
   ttn.json: |-
