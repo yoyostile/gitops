@@ -8,6 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts
       chart: tautulli
       version: v11.2.0
       sourceRef:
@@ -22,6 +23,9 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      repository: ghcr.io/k8s-at-home/tautulli
+      tag: v2.7.7
     enivronment:
       TZ: Europe/Berlin
       PGID: 1000
