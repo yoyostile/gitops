@@ -33,7 +33,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
-      "iteration": 1650534180215,
+      "iteration": 1650632519743,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -1191,28 +1191,35 @@ data:
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
+                "mode": "continuous-YlBl"
               },
               "custom": {
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 1,
-                "drawStyle": "bars",
-                "fillOpacity": 0,
-                "gradientMode": "none",
+                "drawStyle": "line",
+                "fillOpacity": 28,
+                "gradientMode": "opacity",
                 "hideFrom": {
                   "legend": false,
                   "tooltip": false,
                   "viz": false
                 },
                 "lineInterpolation": "linear",
-                "lineWidth": 4,
-                "pointSize": 8,
+                "lineStyle": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
                 "scaleDistribution": {
                   "type": "linear"
                 },
-                "showPoints": "never",
-                "spanNulls": false,
+                "showPoints": "always",
+                "spanNulls": true,
                 "stacking": {
                   "group": "A",
                   "mode": "none"
@@ -1223,7 +1230,7 @@ data:
               },
               "mappings": [],
               "max": 550000000,
-              "min": -60000000,
+              "min": -90000000,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1267,8 +1274,12 @@ data:
           "pluginVersion": "8.0.3",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": false,
-              "expr": "download_speed_bps{job=\"speedtest\"}",
+              "expr": "download_speed_bps{job=\"speedtest-exporter\"}",
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
@@ -1276,8 +1287,12 @@ data:
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": true,
-              "expr": "-upload_speed_bps{job=\"speedtest\"}",
+              "expr": "-upload_speed_bps{job=\"speedtest-exporter\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "Upload",
