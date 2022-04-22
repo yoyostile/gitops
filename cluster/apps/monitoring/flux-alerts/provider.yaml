@@ -1,0 +1,11 @@
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Provider
+metadata:
+  name: sentry
+  namespace: flux-system
+spec:
+  type: sentry
+  channel: general
+  secretRef:
+    name: cluster-secrets
