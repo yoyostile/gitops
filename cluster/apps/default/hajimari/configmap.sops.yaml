@@ -1,41 +1,6 @@
 apiVersion: v1
 data:
-    hajimari:
-        groups:
-            - links:
-                - name: ENC[AES256_GCM,data:fNfg6Q==,iv:QO0plovnDIKsSetjn2MhUyc/EYSzGZvYRpzdip6yU2o=,tag:GKC29BObC5nFhF7Mkz7cYA==,type:str]
-                  url: ENC[AES256_GCM,data:5fOAl1E5C5ArVBy9cob8pm99,iv:jT00m+rTjIspLlnaim9FK+EZT2E0CRGnBDA0M18imKA=,tag:Tz20ukUo/X8zys4DMwreow==,type:str]
-                - name: ENC[AES256_GCM,data:Vl7Hdg==,iv:Q7+tSqFGSpr+x2LaP6GLFpacVfzReT0efG5TlbzYgw4=,tag:3gPYo6z/rJJ119M2SXrpyg==,type:str]
-                  url: ENC[AES256_GCM,data:i4WnAAYVBlHyHKMQp0KL,iv:LLaNET3M1PhMQZpRi2JS1NzTJ1XbyaPfWwTxDyVk2bA=,tag:KtZvb+9OouB/sBC2GV9Ubg==,type:str]
-                - name: ENC[AES256_GCM,data:VGcufg==,iv:R6BLEdSJ/mJx0zAeiP0Cs2czGChPIy/elpZV+auqa1o=,tag:lmGdP/uMAHASsopBpRGKmA==,type:str]
-                  url: ENC[AES256_GCM,data:mB3koDzLqdehMxUi7EWb,iv:U54kF7Ll6pL5djaFBetRST5Y5HUayKwTq+e0FQ1BRPs=,tag:ThyUOhpCIXdWyhNfwlqesw==,type:str]
-                - name: ENC[AES256_GCM,data:9TuFho9s2d7a+Q8=,iv:hKCE6qL2cqd/8DX5oZWIO8LKJOBKtG11XRSPxOgam8Y=,tag:eTpSWKlLKJixvCP82LiusQ==,type:str]
-                  url: ENC[AES256_GCM,data:33DFvqQ/CGm0ouPEW8yBqv5PKDjxfqVEeb9/W2E=,iv:T2e3rwlRw3hDJZGsN7gbyAZ1PXGfwmhZfuVXeUJZvG8=,tag:oeti0+2CX5wbAhka05nVYg==,type:str]
-              name: ENC[AES256_GCM,data:zePv+1xTdeM9WZU=,iv:uzeawg99NXDl0V8O/wJuflwvwsmxSyuAXjPA0gBGYtE=,tag:niNWcVLNV1jRDWRTxcEP/w==,type:str]
-            - links:
-                - name: ENC[AES256_GCM,data:9UJMcbRMiA==,iv:zuQfIEuZeqOZMICn9na27S0oq6QweAwbjLOavpN1U78=,tag:7acSM/DGPeKQ7tsRGnZOrQ==,type:str]
-                  url: ENC[AES256_GCM,data:cytNKmL8SrWP/I+wy0t1F0NPqCU38WC9h3wb5tQ=,iv:BLfJivO2pEQlmCbaCJbz/YK7pVs1R1nmKIauH679mt0=,tag:8w6F5FD/zVO+0aTo1F3gjg==,type:str]
-                - name: ENC[AES256_GCM,data:BLax4A==,iv:cl2DtoKnU86KY3TTGiv7GhNBGrwtIfdLHB3HvfExoTg=,tag:bNpxsNKs/HML4VByQrbJkA==,type:str]
-                  url: ENC[AES256_GCM,data:e7bmrzVpt/lKU9uiqXKjaJQPCB+7Tg==,iv:wpPo1pMDvADzBHctzz16UbAqVxu+BR/EnB54dK5oTj8=,tag:SvUYDRl5RHL7nbZ+fIv1+w==,type:str]
-                - name: ENC[AES256_GCM,data:wZe0Azs=,iv:5nwCgqOEHmKAYHvjyjnCxpB9UMj73TQWdbTevfQ5cNw=,tag:RXZAxPc6ILgZAyabF85T8A==,type:str]
-                  url: ENC[AES256_GCM,data:IQZR3ZZSDLJVMKvfi0ssmaeelcySq6KxnuimR2pO,iv:JOKBrO3YK61cfG+ZImkMufWtQOeyCzK7gk333tXLCdY=,tag:NGBvox4kPm1JT59AyBNq6Q==,type:str]
-              name: ENC[AES256_GCM,data:CjpLJHd0uA==,iv:YwVqwbDYOeItT/Gd40pH9oSRARnFq+XPA0d4cNmi5v0=,tag:aJmP7onUHRFfYV+st39UJg==,type:str]
-            - links:
-                - name: ENC[AES256_GCM,data:k8mj5aP9,iv:6/vHcrDOtvC0XV0vSyzxHblOJVYYTxWXIjO0CJKuRcY=,tag:0eiX1sbuC7eSw4/8nHUwUw==,type:str]
-                  url: ENC[AES256_GCM,data:tL3VU+XSer0r5ZTIc8NCOr8Y,iv:JFE0LWLB7r4wdAKcj/WMTw9HzTNVEElgfpO1zm0ox6k=,tag:97vQESvzO1/yVXLOmaDPeg==,type:str]
-                - name: ENC[AES256_GCM,data:9i4j2UxQT/IHFDszHM3PYak=,iv:hJg0p3zJ5miwdatBMgO4LoCMIqjaz4I6KOP4NBKnuJU=,tag:zmKh5nb+HWaI2/ux7Ql0dA==,type:str]
-                  url: ENC[AES256_GCM,data:ycdxIce6ohSwD2d0NLX5+xM5j17r2nfFvHzEwb6r,iv:erUF23FYMYt1Ie5I8uRv7LNShxNjLXF4mZFUAErsDUg=,tag:hjTZ9WHiHPkP6z3hMaVtcw==,type:str]
-                - name: ENC[AES256_GCM,data:LLXcyf8=,iv:ozy5Mr2rhcDcZRTruvoshVdHawdSdA4XiOwzUcNxaxY=,tag:0aeN4xc6EkN8v2DG2UExbQ==,type:str]
-                  url: ENC[AES256_GCM,data:ohtbdzVvR6ZuxgsqQaOUYxdOBE2/jQ==,iv:/eDTrVIJ7KQAnCtPIJvDes4vmNwkzCm13hoe6i+Qzig=,tag:oqF/4EaeuuWCy93Crc5d1w==,type:str]
-              name: ENC[AES256_GCM,data:SPW4,iv:b0WuV25PZszGGJuLaGHOrlIgGf3gRBS6txA5jPHunS0=,tag:GROM1uX3HwOjXg0chfLZOg==,type:str]
-            - links:
-                - name: ENC[AES256_GCM,data:w2mt,iv:lTGh9XVmGrAf/FSJoup6TaHQ5xoONAXI5emJEV+VMiQ=,tag:Y+27j1lzRwjhi+q+pC7Aog==,type:str]
-                  url: ENC[AES256_GCM,data:GqlOvxMHwyF7V493JRkBoRIpTOHp4UU=,iv:xUK+NHijcqQwVpIBCtDOQX/Qte08FOrkR3vHhUcAeto=,tag:xfLZvVCkBYw9BxLpo/19Kg==,type:str]
-                - name: ENC[AES256_GCM,data:co28qFrB11EJxTlKRCQ=,iv:LmFT4u/a/h1+PxW+WbcViMquSZYKsMA7/wyAmfQwRUM=,tag:OY9UfRSWoVVDOAQ4mT3giA==,type:str]
-                  url: ENC[AES256_GCM,data:tVEMnlT/kpXCCk1G5TSUNmZrCDgI4iNZBlStUashX+sw5fl4KNw3ZabFIy9xmpKFnw==,iv:ApSfZKIfYiFcF7Dw9rZgXdgf2mE2IzJ0KUERMtMk/X8=,tag:jf/zK02UVXMZELZNbBNrNA==,type:str]
-                - name: ENC[AES256_GCM,data:I0VGVroik7w=,iv:q3HttCzwetJ16ItKmAntiAFvinorO7+zmYLFzqgVbFw=,tag:04CTuTSptkSD/LZkZ+Ugkw==,type:str]
-                  url: ENC[AES256_GCM,data:fTBiHudb+G284VuqQ+dyCG2azVU=,iv:lRkLe7ZHHhRO4sBXKefcFjuu4jU/awpTUPCOcrLHvKE=,tag:9I0A4vCNu0eYKcnJ1SCiBg==,type:str]
-              name: ENC[AES256_GCM,data:eTYLAI/Sf2k=,iv:bgDm0Nrhj07OqKYYWmMirwxpwqWs6yvp93DJbGu6X+c=,tag:crpZrwlEGONbeGqS5AjqxQ==,type:str]
+    values.yaml: ENC[AES256_GCM,data:9B2YpLP3qsMlv2I88Ao7kO3+DzcQ/5+NKztS3gz87wpNv431L41WtMYnCnCtO5EQjm4TP2wwlSDYShalMgZW1VOL8MREIZOy7h6OKsRT+B0MBpjkrS7Fs+OU8NAH75gq54uc7W/9hSws+I9rJOTj4Qpoz4fBE1olRcZ/YiEF8TkjsPYuMUrnyjlt35OtfyavTQ8FrDjWCCSXdrK7miAUy2lEbKhJoJLF0qaKL8UTpctoT+eIsxzuNAMKbnTqoWofYFEOi33eZngzM3e/3QkM0KNvRWwMohlcVwxHaLgvH7ZVzeC9WfFsmS9fVSvn6kLCOmcTF93gUFhBjatiKXnGfTf1vRB+EEi24CxeuvitKmezydn+ogprVhYg/MaP9C+v8rJ3B1V2XJl0CEz6/CJYNUeUbJ5fTgFekpLSwZ7Yi0tEGN4kngmHoby1hfzdkRwy+qUHBUr97HAYXJ8oBgEU1UaJBLV8vmz5JjkyT9zEl4VlmYe7W9qBJzt2dGJOx9RqYLgedJziyncgzGAkOsFDmJVwU1xp4Eeebw1HphTVnHzYD0vRErvhNtM6/ACgCw2i6wfHRYujRAt9Z+aaEyqNU/Sfbk490QObjY+mCAoYoQbgFMj2uI3aCvgvWpukfGdPSRJh26O14fAE1LALu2OniIXXqm1N+XKfLujyfIAacvexkH9uxHJJd99IXSQN5FxTrkGgryu9kArn7UaGwyTq5+0tDXvrgv9ujjuLnoR5vLjf/7eTvTxLDj8In/SV6Zsen3A3PFxReIB70TwiKoL1EZePLJNmH2Jhvlvd52nTv6sMZsK/Tf6MQ+7gsdgTIcr1VDRJxFBsqfQoVuOOaUeuiw3r6x3oOCm5nq5ztUYSF1JdJ/ItNT9PsPrFQ65nHFyL1FzpEW9I29hPI9053K+AKl4W2L8hi1yW7AUR8TL4vGMhGh8T5I9GFOlXmPJwEqgfD1hhynxazDBxoyF/X6VBPbN7yCiaI+znUYe30ICN4jLTiKGsD3JDzy9uOzG33qYRfUQsoLwbxb3BkbWjOAwQAmT19//89Tm5u6rHfDHZydUuaPO4i8Yu97IL5Q6nPLUBYWuJPM6QltuQAylS08Zu02XjbpyiizLG3Vbo6KBArwRegMej8LJbCoJfpexJ2bP1k9XspB+bMxlf2VhUxeXoGLD2MBx0Y2L8BbmCOHU/ugBve1Ok8lXVqUKe2EMdju8pKE5mfJ8xTa2UCwvzpN2kf9HoSqz+YbM78P15CDhUvuRu+fnjABNorW1UHYVGn1wAdx2FaTcZ8jiFljoNUtq5jZ4kAvEBDKA29NdQ75XcegqNhE9aA49VjZAcLUga1vmoMI4OTSjQ/hyk6X1EXDG6vBqNDdQ0scYH9COqe4vu0oQkMX8BiOgL17r1sMp8XntONUVMoadSvLvo65N/VEutVSOC84fD4SkEBdyz2KKhYSZGTr5c/THv6h6NX7/wTM3tA261oPAHarOLvbK9xMN8ZrzNQ81Ph6jfj9p+ujWxZWJIXydCDco/YtRfkDW/gymRtUnjBszhfYTFx6qRhx+doG7OxInFeZoCcVwxGKVaXQWqUTdPLYjt3yQkhMJCCyaxuO8JYvcsGUsxlG7pEP36hltJJad97Erdghj6KMKSNC63XVntbqT5qitrRYLOyh8u7ybHbrqSw73hinqM4iNpdINh0LrGi2+KkGGpgm1eBm0N8PbvdUVm2b7LO2k=,iv:j2Jg5eogZCOLVcCSS0RLQc02JCY/1TKTOn0N1KoR5Eo=,tag:RG7D5fXmeoJrydf19IBW8w==,type:str]
 kind: ConfigMap
 metadata:
     name: hajimari
@@ -49,14 +14,14 @@ sops:
         - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBINm9mMWdpNEZaSk91YmlK
-            blBWM2Mra0Y1NVVZZUZabnRoNnBpRUpyRGlrCkVXckdCaHlvbG1nUnk4cEVoRWY0
-            a3VaWGNNVEt2Z2hCNFptem0xek9COUEKLS0tIGJDK3BnNnVJekFUZDVxNU5tUk5Z
-            dWZTalZUaEJYL0FwOFUyaitsRUxYWk0K4J1R7MzMAW+Ap6RF/AydsaLcDSqUpc0Z
-            PxHd/DWkTIXMSDb1f7hz4HpohKKgYjmQxoCPnMlIBUOReW5KaafaNA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBuYkJOM2czdCttS2g3eGZa
+            dkplL2lzUzduWGJ1S243NUdPOHVYbDY1WlVJCkpNUXBmeWtScSthRyt1ckRaUjZY
+            Q3JUWEJMclRJQmVXdUFTN3Fac1ZodGcKLS0tIEhLNndJb3h6VWx1NlhPWmQwU091
+            SlZhVmk4RmhCbk03WnVFUzFYV01jSXcK/faeMR/dVitzV5wi7YbudvNOxn07CS6t
+            ZAEY6IhYoB0NVBvRKwBfJ5x5yvhxb2IUTDxsYmaLAkVgAtdvThqs9A==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2022-04-22T22:11:39Z"
-    mac: ENC[AES256_GCM,data:9k6wgqvR00Ge7JoLq5ZnmOEmB2U+YVsYYBvAaOUEWK75SSNYYTL36LPdD/2kq4opFQCiYGk+6J8kDxvpMlPn6iiPi7yjg/f8gh6KIs3ZEsojuN1zI/0AP/P58tHyXmmUByiZ4G7+ENdHEAAhFlEMBqKOdbfv2rZymaWt0I0Qh8I=,iv:3+ljzm1vH6rPES7GssuAUVtBwInf7JdjPDlWnpUaI/Y=,tag:IYDJwPhW7RYfLSFaQ481KQ==,type:str]
+    lastmodified: "2022-04-22T22:17:54Z"
+    mac: ENC[AES256_GCM,data:1x7TI/TvgoaPY9oWuh07xaCNXFp2E4ZQjBjkmleqr0AXGBdLynaI53jg/rR9OcY/7l0feave4AZ979ifxW0HJ3wo3LZbqjETgunZhO/vm+PNjfy0wEDtpM7hU+zy74Av38DSVnGkhXZ+fNK4detxrMByPPFr5ik/IIZVL1Qi90Q=,iv:iRhwZi5H+fNk0KHgrCHtq/qZmK3PqW0+IEd6cmCaJD8=,tag:m8PG75NyeNuNHFMondKCOQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.7.2
