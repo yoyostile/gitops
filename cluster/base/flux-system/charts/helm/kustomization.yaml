@@ -9,6 +9,7 @@ resources:
   - ealenn-charts.yaml
   - emberstack-charts.yaml
   - external-dns-charts.yaml
+  - fairwinds-charts.yaml
   - grafana-charts.yaml
   - hajimari-charts.yaml
   - infracloudio-charts.yaml
