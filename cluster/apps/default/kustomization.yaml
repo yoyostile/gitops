@@ -5,6 +5,7 @@ resources:
   - echoip
   - freshrss
   - hajimari
+  - k10
   - minio
   - mosquitto
   - mysql
