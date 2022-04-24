@@ -18,6 +18,8 @@ spec:
       labels:
         app: requestbin
     spec:
+      nodeSelector:
+        beta.kubernetes.io/arch: amd64
       containers:
         - name: requestbin
           envFrom:
