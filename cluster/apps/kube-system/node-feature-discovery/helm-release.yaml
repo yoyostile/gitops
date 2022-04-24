@@ -8,12 +8,12 @@ spec:
   interval: 5m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts
+      # renovate: registryUrl=https://kubernetes-sigs.github.io/node-feature-discovery/charts
       chart: node-feature-discovery
       version: 0.11.0
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: node-feature-discovery-charts
         namespace: flux-system
       interval: 5m
 
