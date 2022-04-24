@@ -23,6 +23,8 @@ spec:
     remediation:
       retries: 3
   values:
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64
     image:
       registry: docker.io
       repository: bitnami/postgresql
