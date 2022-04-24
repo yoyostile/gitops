@@ -8,6 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
       chart: nfs-subdir-external-provisioner
       version: v4.0.16
       sourceRef:

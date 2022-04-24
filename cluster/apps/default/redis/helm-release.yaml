@@ -8,6 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://charts.bitnami.com/bitnami
       chart: redis
       version: 16.8.7
       sourceRef:
@@ -22,6 +23,10 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      registry: docker.io
+      repository: bitnami/redis
+      tag: 6.2.6-debian-10-r192
     global:
       storageClass: "nfs-client"
     architecture: standalone

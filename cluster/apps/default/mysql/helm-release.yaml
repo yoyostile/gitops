@@ -8,6 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://charts.bitnami.com/bitnami
       chart: mysql
       version: 8.9.2
       sourceRef:
@@ -22,6 +23,10 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      registry: docker.io
+      repository: bitnami/mysql
+      tag: 8.0.28-debian-10-r74
     global:
       storageClass: "nfs-client"
     primary:
