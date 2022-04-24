@@ -25,5 +25,7 @@ spec:
     crds: CreateReplace
 
   values:
+    image:
+      repository: k8s.gcr.io/nfd/node-feature-discovery
     nodeFeatureRule:
       createCRD: true
