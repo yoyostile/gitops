@@ -8,6 +8,7 @@ resources:
   - minio
   - mosquitto
   - mysql
+  - paperless
   - plex
   - postgresql
   - random-gif
