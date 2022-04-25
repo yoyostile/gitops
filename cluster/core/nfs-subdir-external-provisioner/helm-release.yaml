@@ -28,6 +28,6 @@ spec:
       create: true
     nfs:
       server: ${SECRET_NFS_HOST}
-      path: ${SECRET_NFS_PATH}
+      path: ${SECRET_NFS_PATH}/k3s-nfs-provisioner
     storageClass:
       defaultClass: true
