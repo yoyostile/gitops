@@ -51,7 +51,7 @@ spec:
         volumeSpec:
           nfs:
             server: "${SECRET_NFS_HOST}"
-            path: "${SECRET_NFS_PATH}/documents/paperless/import"
+            path: "${SECRET_NFS_PATH}/paperless/import"
         mountPath: /usr/src/paperless/consume
       export:
         enabled: true
@@ -59,7 +59,7 @@ spec:
         volumeSpec:
           nfs:
             server: "${SECRET_NFS_HOST}"
-            path: "${SECRET_NFS_PATH}/documents/paperless/export"
+            path: "${SECRET_NFS_PATH}/paperless/export"
         mountPath: /usr/src/paperless/export
 
     ingress:
