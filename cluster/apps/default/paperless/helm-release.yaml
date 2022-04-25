@@ -72,11 +72,11 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
         hosts:
-          - host: "paperless.${SECRET_DOMAIN}"
+          - host: "paperless.${SECRET_LAB_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
         tls:
           - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
             hosts:
-              - "paperless.${SECRET_DOMAIN}"
+              - "paperless.${SECRET_LAB_DOMAIN}"
