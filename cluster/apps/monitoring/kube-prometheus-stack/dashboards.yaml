@@ -3370,7 +3370,6 @@ data:
       "uid": "o_Bvag8Wk",
       "version": 1
     }
-
   smartmontools.json: |-
     {
       "annotations": {
@@ -3397,8 +3396,7 @@ data:
       "fiscalYearStartMonth": 0,
       "gnetId": 10664,
       "graphTooltip": 0,
-      "id": 56,
-      "iteration": 1651172277715,
+      "iteration": 1651183645853,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -3795,35 +3793,7 @@ data:
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
+                "mode": "thresholds"
               },
               "displayName": "",
               "mappings": [],
@@ -3859,15 +3829,16 @@ data:
           "id": 8,
           "links": [],
           "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom"
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
           },
           "pluginVersion": "8.4.6",
           "targets": [
@@ -3881,7 +3852,7 @@ data:
             }
           ],
           "title": "Wear Level on SSDs",
-          "type": "timeseries"
+          "type": "gauge"
         },
         {
           "columns": [],
@@ -4215,7 +4186,7 @@ data:
           },
           {
             "current": {
-              "selected": true,
+              "selected": false,
               "text": [
                 "All"
               ],
@@ -4245,7 +4216,7 @@ data:
           },
           {
             "current": {
-              "selected": true,
+              "selected": false,
               "text": [
                 "All"
               ],
@@ -4275,7 +4246,7 @@ data:
           },
           {
             "current": {
-              "selected": true,
+              "selected": false,
               "text": [
                 "All"
               ],
@@ -4306,7 +4277,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-2d",
+        "from": "now-6h",
         "to": "now"
       },
       "timepicker": {
@@ -4334,6 +4305,6 @@ data:
       "timezone": "browser",
       "title": "SMART disk data",
       "uid": "eak7BovZk",
-      "version": 14,
+      "version": 1,
       "weekStart": ""
     }
