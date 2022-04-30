@@ -57,3 +57,32 @@ spec:
         hostPath: /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_a4f05232d393eb11a13c1b4f3d98b6d1-if00-port0
     securityContext:
       privileged: true
+    config:
+      homeassistant: true
+      permit_join: true
+      serial:
+        port: /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_a4f05232d393eb11a13c1b4f3d98b6d1-if00-port0
+      mqtt:
+        base_topic: zigbee2mqtt
+        server: mqtt://mosquitto.default
+      advanced:
+        ikea_ota_use_test_url: true
+        homeassistant_legacy_entity_attributes: false
+        legacy_api: false
+        pan_id: 10372
+        network_key: ${ZIGBEE2MQTT_NETWORK_KEY}
+      devices:
+        '0x7cb03eaa0a00c635':
+          friendly_name: '0x7cb03eaa0a00c635'
+          transition: 0.1
+        '0x7cb03eaa0a00b3b8':
+          friendly_name: '0x7cb03eaa0a00b3b8'
+          transition: 0.1
+        '0x7cb03eaa0a00b08f':
+          friendly_name: '0x7cb03eaa0a00b08f'
+          transition: 0.1
+        '0x7cb03eaa0a00b4d9':
+          friendly_name: '0x7cb03eaa0a00b4d9'
+          transition: 0.1
+      device_options:
+        legacy: false
