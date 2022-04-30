@@ -38,7 +38,7 @@ spec:
         value: "arm64"
         effect: "NoSchedule"
     image:
-      repository: koenkk/zigbee2mqt
+      repository: koenkk/zigbee2mqtt
       tag: 1.19.1
     resources:
       requests:
