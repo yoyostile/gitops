@@ -20,3 +20,4 @@ resources:
   - tautulli
   - teslamate
   - uptime-kuma
+  - zigbee2mqtt
