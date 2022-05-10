@@ -43,7 +43,7 @@ spec:
       PHOTOPRISM_DISABLE_WEBDAV: "true"
       PHOTOPRISM_DETECT_NSFW: "true"
       PHOTOPRISM_UPLOAD_NSFW: "true"
-      PHOTOPRISM_WORKERS: 4
+      PHOTOPRISM_WORKERS: 16
 
     resources:
       requests:
