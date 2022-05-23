@@ -40,11 +40,11 @@ spec:
         externalTrafficPolicy: Local
     logs:
       general:
-        format: json
-        level: DEBUG
+        format: common
+        level: ERROR
       access:
         enabled: true
-        format: json
+        format: common
     ingressClass:
       enabled: true
       isDefaultClass: true
