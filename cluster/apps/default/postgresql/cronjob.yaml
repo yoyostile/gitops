@@ -58,5 +58,5 @@ spec:
                     pg_dump -h $POSTGRES_HOST -U $POSTGRES_USER $DATABASE | gzip > $DATE/$DATABASE.sql.gz
                   done
 
-                  b2 sync . b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups
+                  b2 sync . b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/postgresql
           restartPolicy: OnFailure
