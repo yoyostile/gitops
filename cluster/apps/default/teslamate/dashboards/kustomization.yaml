@@ -8,7 +8,7 @@ configMapGenerator:
       - charge-level.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/charge-level.json
   - name: teslamate-charges
     files:
-      - charges.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/charges.json
+      - charges.json=https://raw.githubusercontent.com/yoyostile/teslamate/avg_cost_per_kWh/grafana/dashboards/charges.json
   - name: teslamate-charge-details
     files:
       - charge-details.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/internal/charge-details.json
