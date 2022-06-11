@@ -23,3 +23,11 @@ spec:
       - "k3s-server"
   upgrade:
     image: rancher/k3s-upgrade
+
+  tolerations:
+    - key: kubernetes.io/arch
+      operator: Equal
+      value: amd64
+    - key: kubernetes.io/arch
+      operator: Equal
+      value: arm64
