@@ -31,3 +31,6 @@ spec:
     - key: kubernetes.io/arch
       operator: Equal
       value: arm64
+    - key: arch
+      operator: Equal
+      value: arm64
