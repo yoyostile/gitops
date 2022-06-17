@@ -25,7 +25,7 @@ spec:
       retries: 3
   values:
     env:
-      TZ: Europe/Berling
+      TZ: ${TZ}
       PUID: "911"
       PGID: "911"
     ingress:

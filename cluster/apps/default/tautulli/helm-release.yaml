@@ -27,7 +27,7 @@ spec:
       repository: ghcr.io/k8s-at-home/tautulli
       tag: v2.10.1
     enivronment:
-      TZ: Europe/Berlin
+      TZ: ${TZ}
       PGID: 1000
       PUID: 1000
     persistence:
