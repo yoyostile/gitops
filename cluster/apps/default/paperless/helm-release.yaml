@@ -29,7 +29,7 @@ spec:
 
     env:
       PAPERLESS_OCR_LANGUAGE: deu
-      PAPERLESS_TIME_ZONE: "Europe/Berlin"
+      PAPERLESS_TIME_ZONE: "${TZ}"
       PAPERLESS_CONSUMER_POLLING: "60"
       PAPERLESS_REDIS: "${SECRET_PAPERLESS_REDIS}"
       PAPERLESS_DBHOST: "postgresql.default"

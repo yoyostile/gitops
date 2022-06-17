@@ -39,7 +39,7 @@ spec:
               readOnly: true
           env:
             - name: TZ
-              value: Europe/Berlin
+              value: ${TZ}
       volumes:
         - name: freshrss-config
           persistentVolumeClaim:

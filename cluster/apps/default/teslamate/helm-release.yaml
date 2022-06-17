@@ -29,7 +29,7 @@ spec:
       pullPolicy: IfNotPresent
 
     env:
-      TZ: Europe/Berlin
+      TZ: ${TZ}
       DATABASE_HOST: "postgresql.default"
       DATABASE_USER: "teslamate"
       DATABASE_PASS: "${SECRET_TESLAMATE_POSTGRES_PASSWORD}"

@@ -31,7 +31,7 @@ spec:
         cpu: 4000m
         memory: 1024M
     enivronment:
-      TZ: Europe/Berlin
+      TZ: ${TZ}
       PGID: 1000
       PUID: 1000
     persistence:
