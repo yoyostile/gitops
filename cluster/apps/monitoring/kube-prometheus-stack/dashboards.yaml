@@ -15,7 +15,10 @@ data:
           {
             "$$hashKey": "object:2180",
             "builtIn": 1,
-            "datasource": "-- Grafana --",
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -33,11 +36,15 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
-      "iteration": 1650662659417,
+      "iteration": 1655806920758,
       "links": [],
       "liveNow": false,
       "panels": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -86,7 +93,7 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "exemplar": true,
@@ -100,6 +107,10 @@ data:
           "type": "gauge"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -159,7 +170,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "exemplar": true,
@@ -238,7 +249,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "datasource": {
@@ -351,7 +362,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "datasource": {
@@ -456,7 +467,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "expr": "time() - node_boot_time_seconds{instance=\"$server\"} ",
@@ -541,7 +552,7 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "expr": "(node_memory_MemAvailable_bytes{instance=~\"$server\"})",
@@ -625,7 +636,7 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "expr": "sum(node_filesystem_avail_bytes{device='stor01/enc',instance='$server'})",
@@ -705,7 +716,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "targets": [
             {
               "expr": "node_filesystem_size_bytes{device='stor01/enc',instance='$server'}",
@@ -765,7 +776,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -868,7 +879,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -943,6 +954,10 @@ data:
           }
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1136,7 +1151,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1196,6 +1211,10 @@ data:
           }
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1361,7 +1380,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1480,7 +1499,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1750,7 +1769,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 1,
           "points": false,
           "renderer": "flot",
@@ -1895,7 +1914,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2001,7 +2020,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2226,7 +2245,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2426,7 +2445,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2568,85 +2587,110 @@ data:
           }
         },
         {
-          "aliasColors": {
-            "Humidity": "#e0f9d7",
-            "Temperature": "#82b5d8",
-            "Temperature Outside": "#82b5d8",
-            "Wind Speed": "#fce2de"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
           "fieldConfig": {
             "defaults": {
-              "links": []
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 4,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 3,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "conμgm3"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sensor.luftreiniger_schlafzimmer_fan_speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              }
+            ]
           },
-          "fill": 2,
-          "fillGradient": 0,
           "gridPos": {
-            "h": 12,
+            "h": 8,
             "w": 12,
             "x": 12,
             "y": 55
           },
-          "hiddenSeries": false,
-          "id": 25,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "nullPointMode": "null",
+          "id": 54,
           "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "8.4.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:2471",
-              "alias": "/Humidity/",
-              "color": "#f29191",
-              "dashes": true,
-              "fill": 0,
-              "linewidth": 1,
-              "yaxis": 2
+            "legend": {
+              "calcs": [
+                "last",
+                "min",
+                "max",
+                "mean"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            {
-              "$$hashKey": "object:2472",
-              "alias": "/Temperature/",
-              "zindex": 1
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
             }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
+          },
           "targets": [
             {
               "datasource": {
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "exemplar": true,
-              "expr": "darksky_apparent_temperature",
-              "format": "time_series",
-              "instant": false,
-              "interval": "10m",
-              "intervalFactor": 1,
-              "legendFormat": "Apparent Temperature",
+              "editorMode": "code",
+              "expr": "hass_sensor_pm25_u0xb5g_per_mu0xb3{instance=\"homeassistant.lan.${SECRET_LAB_DOMAIN}:8123\"}",
+              "legendFormat": "{{entity}}",
+              "range": true,
               "refId": "A"
             },
             {
@@ -2654,64 +2698,16 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "exemplar": true,
-              "expr": "darksky_temperature",
-              "format": "time_series",
-              "instant": false,
-              "interval": "10m",
-              "intervalFactor": 1,
-              "legendFormat": "Temperature",
+              "editorMode": "code",
+              "expr": "hass_sensor_state{instance=\"homeassistant.lan.${SECRET_LAB_DOMAIN}:8123\", entity=\"sensor.luftreiniger_schlafzimmer_fan_speed\"}",
+              "hide": false,
+              "legendFormat": "{{entity}}",
+              "range": true,
               "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "darksky_humidity",
-              "format": "time_series",
-              "interval": "10m",
-              "intervalFactor": 1,
-              "legendFormat": "Humidity",
-              "refId": "D"
             }
           ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "Weather Cologne",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:2501",
-              "decimals": 1,
-              "format": "celsius",
-              "label": "Temperature",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:2502",
-              "decimals": 1,
-              "format": "humidity",
-              "logBase": 1,
-              "max": "1",
-              "min": "0",
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
+          "title": "Luftqualität",
+          "type": "timeseries"
         },
         {
           "aliasColors": {
@@ -2757,7 +2753,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "8.5.3",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2859,10 +2855,160 @@ data:
           "yaxis": {
             "align": false
           }
+        },
+        {
+          "aliasColors": {
+            "Humidity": "#e0f9d7",
+            "Temperature": "#82b5d8",
+            "Temperature Outside": "#82b5d8",
+            "Wind Speed": "#fce2de"
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 2,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 63
+          },
+          "hiddenSeries": false,
+          "id": 25,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 0,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.3",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:2471",
+              "alias": "/Humidity/",
+              "color": "#f29191",
+              "dashes": true,
+              "fill": 0,
+              "linewidth": 1,
+              "yaxis": 2
+            },
+            {
+              "$$hashKey": "object:2472",
+              "alias": "/Temperature/",
+              "zindex": 1
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "darksky_apparent_temperature",
+              "format": "time_series",
+              "instant": false,
+              "interval": "10m",
+              "intervalFactor": 1,
+              "legendFormat": "Apparent Temperature",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "darksky_temperature",
+              "format": "time_series",
+              "instant": false,
+              "interval": "10m",
+              "intervalFactor": 1,
+              "legendFormat": "Temperature",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "darksky_humidity",
+              "format": "time_series",
+              "interval": "10m",
+              "intervalFactor": 1,
+              "legendFormat": "Humidity",
+              "refId": "D"
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Weather Cologne",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:2501",
+              "decimals": 1,
+              "format": "celsius",
+              "label": "Temperature",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:2502",
+              "decimals": 1,
+              "format": "humidity",
+              "logBase": 1,
+              "max": "1",
+              "min": "0",
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
         }
       ],
       "refresh": false,
-      "schemaVersion": 35,
+      "schemaVersion": 36,
       "style": "dark",
       "tags": [],
       "templating": {
@@ -2908,7 +3054,7 @@ data:
       "timezone": "browser",
       "title": "Main",
       "uid": "000000017",
-      "version": 4,
+      "version": 1,
       "weekStart": ""
     }
   ttn.json: |-
