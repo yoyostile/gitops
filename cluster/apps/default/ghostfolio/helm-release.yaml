@@ -44,6 +44,7 @@ spec:
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "bank"
+          hajimari.io/appName: "Ghostfolio"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
         hosts:
