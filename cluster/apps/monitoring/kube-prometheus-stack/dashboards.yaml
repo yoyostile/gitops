@@ -13,7 +13,7 @@ data:
       "annotations": {
         "list": [
           {
-            "$$hashKey": "object:2180",
+            "'$$'hashKey": "object:2180",
             "builtIn": 1,
             "datasource": "-- Grafana --",
             "enable": true,
@@ -628,7 +628,7 @@ data:
           "pluginVersion": "8.4.5",
           "targets": [
             {
-              "expr": "sum(node_filesystem_avail_bytes{device='stor01/enc',instance='$server'})",
+              "expr": "sum(node_filesystem_avail_bytes{device='stor01/enc',instance='$$server'})",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
@@ -708,7 +708,7 @@ data:
           "pluginVersion": "8.4.5",
           "targets": [
             {
-              "expr": "node_filesystem_size_bytes{device='stor01/enc',instance='$server'}",
+              "expr": "node_filesystem_size_bytes{device='stor01/enc',instance='$$server'}",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
@@ -775,14 +775,14 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "node_cpu_scaling_frequency_hertz{instance='$server'}",
+              "expr": "node_cpu_scaling_frequency_hertz{instance='$$server'}",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "CPU {{cpu}}",
               "refId": "A"
             },
             {
-              "expr": "node_cpu_frequency_hertz{instance='$server'} ",
+              "expr": "node_cpu_frequency_hertz{instance='$$server'} ",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "CPU {{cpu}}",
@@ -887,7 +887,7 @@ data:
           "targets": [
             {
               "exemplar": true,
-              "expr": "irate(node_network_receive_bytes_total{instance=~'$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
+              "expr": "irate(node_network_receive_bytes_total{instance=~'$$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
@@ -899,7 +899,7 @@ data:
             },
             {
               "exemplar": true,
-              "expr": "irate(node_network_transmit_bytes_total{instance=~'$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
+              "expr": "irate(node_network_transmit_bytes_total{instance=~'$$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
@@ -3002,7 +3002,7 @@ data:
               "measurement": "mqtt_consumer",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT last(\"metadata_gateways_0_rssi\") FROM \"fhem\"..\"mqtt_consumer\" WHERE (\"host\" = 'fhem') AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "query": "SELECT last(\"metadata_gateways_0_rssi\") FROM \"fhem\"..\"mqtt_consumer\" WHERE (\"host\" = 'fhem') AND $timeFilter GROUP BY time($$__interval) fill(null)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -3047,7 +3047,7 @@ data:
               "measurement": "mqtt_consumer",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT last(\"metadata_gateways_1_rssi\") FROM \"fhem\"..\"mqtt_consumer\" WHERE (\"host\" = 'fhem') AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "query": "SELECT last(\"metadata_gateways_1_rssi\") FROM \"fhem\"..\"mqtt_consumer\" WHERE (\"host\" = 'fhem') AND $timeFilter GROUP BY time($$__interval) fill(null)",
               "rawQuery": true,
               "refId": "B",
               "resultFormat": "time_series",
@@ -3461,7 +3461,7 @@ data:
                 "type": "influxdb",
                 "uid": "P3C6603E967DC8568"
               },
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_device\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temp_c\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${instance:regex}$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^${device:regex}$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^${model:regex}$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^${serial_no:regex}$/)\n  |> group(columns: [\"device\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_device\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temp_c\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^$${instance:regex}$$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^$${device:regex}$$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^$${model:regex}$$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^$${serial_no:regex}$$/)\n  |> group(columns: [\"device\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
               "refId": "A"
             }
           ],
@@ -3563,7 +3563,7 @@ data:
                 "type": "influxdb",
                 "uid": "P3C6603E967DC8568"
               },
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_device\")\n  |> filter(fn: (r) => r[\"_field\"] == \"health_ok\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${instance:regex}$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^${device:regex}$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^${model:regex}$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^${serial_no:regex}$/)\n  |> filter(fn: (r) => r[\"_value\"] == false)\n  |> group(columns: [\"device\"])\n  |> last()",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_device\")\n  |> filter(fn: (r) => r[\"_field\"] == \"health_ok\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^$${instance:regex}$$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^$${device:regex}$$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^$${model:regex}$$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^$${serial_no:regex}$$/)\n  |> filter(fn: (r) => r[\"_value\"] == false)\n  |> group(columns: [\"device\"])\n  |> last()",
               "refId": "A"
             }
           ],
@@ -3676,7 +3676,7 @@ data:
                 "type": "influxdb",
                 "uid": "P3C6603E967DC8568"
               },
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_attribute\")\n  |> filter(fn: (r) => r[\"_field\"] == \"raw_value\")\n  |> filter(fn: (r) => r[\"name\"] == \"Current_Pending_Sector\" or r[\"name\"] == \"Reallocated_Sector_Ct\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${instance:regex}$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^${device:regex}$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^${model:regex}$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^${serial_no:regex}$/)\n  |> group(columns: [\"device\", \"name\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_attribute\")\n  |> filter(fn: (r) => r[\"_field\"] == \"raw_value\")\n  |> filter(fn: (r) => r[\"name\"] == \"Current_Pending_Sector\" or r[\"name\"] == \"Reallocated_Sector_Ct\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^$${instance:regex}$$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^$${device:regex}$$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^$${model:regex}$$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^$${serial_no:regex}$$/)\n  |> group(columns: [\"device\", \"name\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
               "refId": "A"
             }
           ],
@@ -3747,7 +3747,7 @@ data:
                 "type": "influxdb",
                 "uid": "P3C6603E967DC8568"
               },
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_attribute\")\n  |> filter(fn: (r) => r[\"_field\"] == \"raw_value\")\n  |> filter(fn: (r) => r[\"name\"] == \"Raw_Read_Error_Rate\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${instance:regex}$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^${device:regex}$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^${model:regex}$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^${serial_no:regex}$/)\n  |> group(columns: [\"device\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n\n\n\n\n\n",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_attribute\")\n  |> filter(fn: (r) => r[\"_field\"] == \"raw_value\")\n  |> filter(fn: (r) => r[\"name\"] == \"Raw_Read_Error_Rate\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^$${instance:regex}$$/)\n  |> filter(fn: (r) => r[\"device\"] =~ /^$${device:regex}$$/)\n  |> filter(fn: (r) => r[\"model\"] =~ /^$${model:regex}$$/)\n  |> filter(fn: (r) => r[\"serial_no\"] =~ /^$${serial_no:regex}$$/)\n  |> group(columns: [\"device\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n\n\n\n\n\n",
               "refId": "A"
             }
           ],
