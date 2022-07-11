@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - echoip
   - freshrss
-  - ghostfolio
   - hajimari
   - mariadb
   - minio
