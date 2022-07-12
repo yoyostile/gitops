@@ -10,7 +10,6 @@ resources:
   - mosquitto
   - mysql
   - paperless
-  - photoprism
   - plex
   - postgresql
   - random-gif
