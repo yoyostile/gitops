@@ -25,7 +25,7 @@ spec:
   values:
     image:
       repository: teslamate/teslamate
-      tag: 1.26.1
+      tag: 1.27.0
       pullPolicy: IfNotPresent
 
     env:
@@ -35,6 +35,7 @@ spec:
       DATABASE_PASS: "${SECRET_TESLAMATE_POSTGRES_PASSWORD}"
       DATABASE_NAME: "teslamate"
       MQTT_HOST: "mosquitto.default"
+      ENCRYPTION_KEY: "${SECRET_TESLAMATE_ENCRYPTION_KEY}"
 
     ingress:
       main:
