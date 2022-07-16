@@ -35,6 +35,7 @@ spec:
       DATABASE_PASS: "${SECRET_TESLAMATE_POSTGRES_PASSWORD}"
       DATABASE_NAME: "teslamate"
       MQTT_HOST: "mosquitto.default"
+      ENCRYPTION_KEY: "${SECRET_TESLAMATE_ENCRYPTION_KEY}"
 
     ingress:
       main:
