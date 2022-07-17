@@ -29,6 +29,8 @@ spec:
     env:
       TZ: "${TZ}"
 
+    hostNetwork: true
+
     service:
       main:
         type: LoadBalancer
