@@ -42,6 +42,7 @@ spec:
     resources:
       requests:
         memory: 128Mi
+    users: []
     environment:
       MINIO_SERVER_URL: "https://s3.${SECRET_LAB_DOMAIN}"
       MINIO_BROWSER_REDIRECT_URL: "https://minio.${SECRET_LAB_DOMAIN}"
