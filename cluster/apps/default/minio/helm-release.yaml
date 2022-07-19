@@ -29,7 +29,7 @@ spec:
       tag: RELEASE.2022-07-15T03-44-22Z
     mcImage:
       repository: quay.io/minio/mc
-      tag: RELEASE.2022-07-11T16-16-12Z
+      tag: RELEASE.2022-07-15T09-20-55Z
       pullPolicy: IfNotPresent
     mode: standalone
     mountPath: /storage
