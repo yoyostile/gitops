@@ -978,7 +978,6 @@ data:
               },
               "links": [],
               "mappings": [],
-              "max": 550000000,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
