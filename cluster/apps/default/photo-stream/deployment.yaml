@@ -1,0 +1,84 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: photo-stream
+  name: photo-stream
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photo-stream
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: photo-stream
+    spec:
+      containers:
+        - image: waschinski/photo-stream:latest
+          imagePullPolicy: Always
+          name: photo-stream
+          env:
+            - name: TITLE
+              value: "Photos"
+            - name: EMAIL
+              value: "jheck@me.com"
+            - name: AUTHOR_NAME
+              value: "Johannes"
+            - name: AUTHOR_EMAIL
+              value: "jheck@me.com"
+            - name: AUTHOR_WEBSITE
+              value: "https://photos.${SECRET_LAB_DOMAIN}"
+            - name: DESCRIPTION
+              value: "My photo-stream"
+            - name: BASEURL
+              value: ""
+            - name: URL
+              value: "https://photos.${SECRET_LAB_DOMAIN}/"
+            - name: SHOW_RSS_FEED
+              value: "1"
+            - name: SHOW_OFFICIAL_GITHUB
+              value: "0"
+            - name: ALLOW_ORDER_SORT_CHANGE
+              value: "1"
+            - name: ALLOW_ORIGINAL_DOWNLOAD
+              value: "0"
+            - name: ALLOW_INDEXING
+              value: "1"
+            - name: ALLOW_IMAGE_SHARING
+              value: "1"
+            - name: PHOTO_PATH
+              value: "/photos"
+            - name: TWITTER_USERNAME
+              value: ""
+            - name: GITHUB_USERNAME
+              value: ""
+            - name: INSTAGRAM_USERNAME
+              value: ""
+            - name: CUSTOM_LINK_NAME
+              value: ""
+            - name: CUSTOM_LINK_URL
+              value: ""
+            - name: SYNCUSER
+              value: ""
+            - name: SYNCPASS
+              value: ""
+            - name: SYNCSERVER
+              value: ""
+            - name: SYNCFOLDER
+              value: ""
+          volumeMounts:
+            - name: photo-stream
+              mountPath: /photos
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: photo-stream
+          persistentVolumeClaim:
+            claimName: photo-stream
