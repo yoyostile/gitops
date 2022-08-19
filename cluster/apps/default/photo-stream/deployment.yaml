@@ -52,7 +52,7 @@ spec:
             - name: ALLOW_IMAGE_SHARING
               value: "1"
             - name: PHOTO_PATH
-              value: "/photos"
+              value: "./photos"
             - name: TWITTER_USERNAME
               value: ""
             - name: GITHUB_USERNAME
@@ -73,7 +73,7 @@ spec:
               value: ""
           volumeMounts:
             - name: photo-stream
-              mountPath: /photos
+              mountPath: /photo-stream/photos
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
