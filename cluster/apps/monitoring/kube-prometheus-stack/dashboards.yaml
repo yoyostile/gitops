@@ -363,7 +363,7 @@ data:
               "measurement": "ups_load.value",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load_percent\")\n  |> group(columns: [\"ups_name\"])\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 * 24.0 * 30.0 * 0.001 * 0.2442 }))\n  |> mean()",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load_percent\")\n  |> group(columns: [\"ups_name\"])\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 * 30.49 * 30.0 * 0.001 * 0.2442 }))\n  |> mean()",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
