@@ -9,7 +9,6 @@ resources:
   - metabase
   - minio
   - mosquitto
-  - mysql
   - paperless
   - photo-stream
   - plex
