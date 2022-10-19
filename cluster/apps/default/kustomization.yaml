@@ -6,6 +6,7 @@ resources:
   - freshrss
   - hajimari
   - mariadb
+  - metabase
   - minio
   - mosquitto
   - mysql

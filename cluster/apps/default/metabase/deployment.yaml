@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: metabase
+  name: metabase
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metabase
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: metabase
+    spec:
+      containers:
+        - image: metabase/metabase:v0.44.5
+          imagePullPolicy: Always
+          name: metabase
+          envFrom:
+            - secretRef:
+                name: metabase
+          ports:
+            - containerPort: 3000
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
