@@ -5,9 +5,10 @@ metadata:
   name: k3s-server
   namespace: system-upgrade
 spec:
+  # renovate: datasource=github-releases depName=k3s-io/k3s
+  version: "v1.24.9-k3s2"
   serviceAccountName: system-upgrade
   concurrency: 1
-  channel: https://update.k3s.io/v1-release/channels/v1.25
   cordon: true
   nodeSelector:
     matchExpressions:
