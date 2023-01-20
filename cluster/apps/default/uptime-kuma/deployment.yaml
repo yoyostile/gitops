@@ -19,7 +19,7 @@ spec:
         app: uptime-kuma
     spec:
       containers:
-        - image: louislam/uptime-kuma:1.19.5
+        - image: louislam/uptime-kuma:1.19.6
           imagePullPolicy: Always
           name: uptime-kuma
           env:
