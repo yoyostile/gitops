@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: cloudflared
+    namespace: networking
+data:
+    config.yaml: ENC[AES256_GCM,data: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,iv:3kV46kxQExu/VHpgwMVS/+Qtp2pv0m+Etk791pxXLLs=,tag:3fNQo3mRdMAn8E4NlZ0DBg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlOE43eVpaMFp6bkVwSlo1
+            d0psL1BLR1YwZWw2S0dKbkQ5UStrRnREUEEwClorVlhPNGU2ZzE5V2RHVjdCellw
+            d1lLWVNiRzBDbXhOdkJxc3FoWGRtb1kKLS0tIEsrMk9FUFdmOGVlVFNEQXlFaFhl
+            L1BpSjE4TGNULys5ZE42TWdqVmhzQ0EK9CWG2wOhG6YALR+S/hzBqY3JsVK6iV6O
+            sN0sQWJ9lNYLiMScxE4o5MV4VAfe+rGSY0iB0+qOwLw0Uj4xRnSZjg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-04-12T20:24:45Z"
+    mac: ENC[AES256_GCM,data:Ge7q93/Rvlct7ffAGDEqnJpsuYe0/vTfqEWwGnwaomoy8jSRH8kOg0B5YF+7iwbxFUwWO37PgWCYObMq9BkLtNrX445p/xWSgXkHdVHUWfRKSAuQDSXjjgEEJGENUBz5cMAbZOtV4/17qIc596BU1OtTsB5wRLmdprm1XMzkmww=,iv:8xW4244e8yc9BpYQq6aQRIh9c90SIKqyN0r9jFWQcUw=,tag:U/5JkcU6VcWdjbSS46aQPw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
