@@ -29,7 +29,7 @@ spec:
     policy: sync
     provider: cloudflare
     extraArgs:
-      - --fqdn-template={{name}}.k3s.lan.${SECRET_LAB_DOMAIN}
+      - --fqdn-template={{.Name}}.k3s.lan.${SECRET_LAB_DOMAIN}
     txtOwnerId: gitops
     env:
       - name: CF_API_TOKEN
