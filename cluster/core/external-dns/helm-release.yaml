@@ -26,6 +26,8 @@ spec:
     replicaCount: 1
     rbac:
       create: true
+    sources:
+      - ingress
     policy: sync
     provider: cloudflare
     extraArgs:
