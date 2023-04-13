@@ -8,8 +8,9 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "nas"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "default-st0rage-auth@kubernetescrd"
-    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,default-st0rage-auth@kubernetescrd"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
 spec:
   tls:
     - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
