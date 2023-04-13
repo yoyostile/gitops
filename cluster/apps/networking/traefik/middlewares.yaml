@@ -26,8 +26,7 @@ metadata:
   name: cloudflarewrap
   namespace: networking
 spec:
-  middlewares:
-    cloudflarewarp:
-      plugin:
-        cloudflarewarp:
-          disableDefault: false
+  cloudflarewarp:
+    plugin:
+      cloudflarewarp:
+        disableDefault: false
