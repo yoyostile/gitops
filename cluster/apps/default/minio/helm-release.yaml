@@ -52,7 +52,7 @@ spec:
         hajimari.io/enable: "true"
         hajimari.io/icon: "bucket-outline"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-        external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+        external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
         external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
       hosts:
         - "s3.${SECRET_LAB_DOMAIN}"
@@ -66,7 +66,8 @@ spec:
         hajimari.io/enable: "true"
         hajimari.io/icon: "bucket-outline"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-        external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+        external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+        external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
       hosts:
         - "minio.${SECRET_LAB_DOMAIN}"
       tls:
