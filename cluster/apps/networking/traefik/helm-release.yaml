@@ -68,8 +68,8 @@ spec:
       - "--providers.kubernetesingress.ingressendpoint.ip=${METALLB_TRAEFIK_ADDR}"
       - "--providers.kubernetesingress.allowexternalnameservices=true"
       - "--providers.kubernetescrd.allowexternalnameservices=true"
-      - "--experimental.plugins.cloudflarewarp.moduleName=github.com/BetterCorp/cloudflarewarp"
-      - "--experimental.plugins.cloudflarewarp.version=v1.3.0"
+      # - "--experimental.plugins.cloudflarewarp.moduleName=github.com/BetterCorp/cloudflarewarp"
+      # - "--experimental.plugins.cloudflarewarp.version=v1.3.0"
     ports:
       traefik:
         expose: true
@@ -92,7 +92,9 @@ spec:
       enabled: false
     experimental:
       plugins:
-        enabled: true
+        cloudflarewarp:
+          moduleName: github.com/BetterCorp/cloudflarewarp
+          version: v1.3.0
     resources:
       requests:
         memory: 100Mi
