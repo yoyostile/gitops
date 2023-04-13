@@ -19,3 +19,15 @@ spec:
   redirectRegex:
     regex: ^https:\/\/([^\/]+)\/?$
     replacement: https://$1/smokeping/smokeping.cgi
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: cloudflarewrap
+  namespace: networking
+spec:
+  middlewares:
+    cloudflarewarp:
+      plugin:
+        cloudflarewarp:
+          disableDefault: false
