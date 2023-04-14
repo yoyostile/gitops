@@ -32,6 +32,7 @@ spec:
     policy: sync
     provider: cloudflare
     extraArgs:
+      - --service-type-filter=LoadBalancer
       - --fqdn-template={{.Name}}.k3s.lan.${SECRET_LAB_DOMAIN}
     txtOwnerId: gitops
     env:
