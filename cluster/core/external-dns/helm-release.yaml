@@ -28,6 +28,7 @@ spec:
       create: true
     sources:
       - ingress
+      - service
     policy: sync
     provider: cloudflare
     extraArgs:
