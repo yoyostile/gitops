@@ -25,3 +25,13 @@ spec:
   values:
     crds:
       enabled: false
+    speaker:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: name
+                    operator: NotIn
+                    values:
+                      - ext-node01
