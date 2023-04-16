@@ -18,10 +18,10 @@ spec:
     - address-pool
   nodeSelectors:
     - matchLabels:
-      kubernetes.io/hostname: arm-node01
+        kubernetes.io/hostname: arm-node01
     - matchLabels:
-      kubernetes.io/hostname: master
+        kubernetes.io/hostname: master
     - matchLabels:
-      kubernetes.io/hostname: node01
+        kubernetes.io/hostname: node01
     - matchLabels:
-      kubernetes.io/hostname: node02
+        kubernetes.io/hostname: node02
