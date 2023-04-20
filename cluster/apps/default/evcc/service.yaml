@@ -1,0 +1,22 @@
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: evcc
+  namespace: default
+subsets:
+  - addresses:
+      - ip: 192.168.2.115
+    ports:
+      - port: 7070
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: evcc
+  namespace: default
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 7070
