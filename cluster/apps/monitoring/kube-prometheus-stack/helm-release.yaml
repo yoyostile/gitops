@@ -66,6 +66,14 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/teslamate
+            - name: 'osnapv'
+              orgId: 1
+              folder: OsnaPV
+              type: file
+              disableDeletion: false
+              allowUiUpdates: true
+              options:
+                path: /var/lib/grafana/dashboards/osna_pv
       dashboards:
         unifi:
           unifiPollerClientDPI:
