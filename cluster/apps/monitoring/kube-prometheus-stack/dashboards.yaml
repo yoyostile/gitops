@@ -4316,7 +4316,7 @@ metadata:
   namespace: monitoring
   labels:
     grafana_dashboard: "1"
-    grafana_folder: "Osna PV"
+    grafana_folder: "OsnaPV"
 data:
   osna-pv-overview.json: |-
     {
