@@ -4359,6 +4359,7 @@ data:
                 "mode": "thresholds"
               },
               "mappings": [],
+              "max": 100,
               "thresholds": {
                 "mode": "percentage",
                 "steps": [
@@ -4424,6 +4425,7 @@ data:
                 "mode": "thresholds"
               },
               "mappings": [],
+              "max": 100,
               "thresholds": {
                 "mode": "percentage",
                 "steps": [
