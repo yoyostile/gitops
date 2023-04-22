@@ -14,7 +14,10 @@ data:
           {
             "'$$'hashKey": "object:2180",
             "builtIn": 1,
-            "datasource": "-- Grafana --",
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -32,11 +35,14 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
-      "iteration": 1650662659417,
       "links": [],
       "liveNow": false,
       "panels": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -85,9 +91,13 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": true,
               "expr": "hass_sensor_unit_u0x200b{entity=\"sensor.inzidenz_rki\"}",
               "interval": "",
@@ -99,6 +109,10 @@ data:
           "type": "gauge"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -158,9 +172,13 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": true,
               "expr": "count(count(unifipoller_client_uptime_seconds{essid=~\"Saunaclub Paradies|Saunaclub Paradies Guest\"}) by (name))",
               "interval": "",
@@ -237,7 +255,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
               "datasource": {
@@ -350,7 +368,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
               "datasource": {
@@ -455,10 +473,14 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
-              "expr": "time() - node_boot_time_seconds{instance=\"$server\"} ",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - node_boot_time_seconds{instance=\"$$server\"} ",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
@@ -540,10 +562,14 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
-              "expr": "(node_memory_MemAvailable_bytes{instance=~\"$server\"})",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "(node_memory_MemAvailable_bytes{instance=~\"$$server\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -624,9 +650,13 @@ data:
             "showThresholdMarkers": true,
             "text": {}
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "expr": "sum(node_filesystem_avail_bytes{device='stor01/enc',instance='$$server'})",
               "format": "time_series",
               "interval": "",
@@ -704,9 +734,13 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "expr": "node_filesystem_size_bytes{device='stor01/enc',instance='$$server'}",
               "format": "time_series",
               "interval": "",
@@ -764,7 +798,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -774,6 +808,10 @@ data:
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "expr": "node_cpu_scaling_frequency_hertz{instance='$$server'}",
               "format": "time_series",
               "intervalFactor": 1,
@@ -781,6 +819,10 @@ data:
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "expr": "node_cpu_frequency_hertz{instance='$$server'} ",
               "format": "time_series",
               "intervalFactor": 1,
@@ -867,7 +909,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -885,6 +927,10 @@ data:
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": true,
               "expr": "irate(node_network_receive_bytes_total{instance=~'$$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
               "format": "time_series",
@@ -897,6 +943,10 @@ data:
               "target": ""
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": true,
               "expr": "irate(node_network_transmit_bytes_total{instance=~'$$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
               "format": "time_series",
@@ -942,12 +992,18 @@ data:
           }
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -1054,7 +1110,8 @@ data:
                 "max"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "mode": "single",
@@ -1064,6 +1121,10 @@ data:
           "pluginVersion": "8.0.3",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": true,
               "expr": "rate(unifipoller_device_wan_receive_bytes_total{name=\"USG\"}[2m])*8",
               "interval": "",
@@ -1071,6 +1132,10 @@ data:
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "exemplar": true,
               "expr": "-rate(unifipoller_device_wan_transmit_bytes_total{name=\"USG\"}[2m])*8",
               "hide": false,
@@ -1134,7 +1199,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1145,9 +1210,13 @@ data:
           "targets": [
             {
               "calculatedInterval": "2s",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "datasourceErrors": {},
               "errors": {},
-              "expr": "sum(rate(node_cpu_seconds_total{instance=\"$server\"}[1m])) by (mode) * 100 / scalar(count(node_cpu_seconds_total{mode=\"user\", instance=\"$server\"})) or sum(irate(node_cpu_seconds_total{instance=\"$server\"}[1m])) by (mode) * 100 / scalar(count(node_cpu_seconds_total{mode=\"user\",instance=\"$server\"}))\n",
+              "expr": "sum(rate(node_cpu_seconds_total{instance=\"$$server\"}[1m])) by (mode) * 100 / scalar(count(node_cpu_seconds_total{mode=\"user\", instance=\"$$server\"})) or sum(irate(node_cpu_seconds_total{instance=\"$$server\"}[1m])) by (mode) * 100 / scalar(count(node_cpu_seconds_total{mode=\"user\",instance=\"$$server\"}))\n",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -1194,12 +1263,18 @@ data:
           }
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "continuous-YlBl"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 1,
@@ -1270,7 +1345,8 @@ data:
                 "mean"
               ],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "mode": "single",
@@ -1359,7 +1435,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1370,7 +1446,11 @@ data:
           "steppedLine": true,
           "targets": [
             {
-              "expr": "node_load1{instance=~\"$server\"}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "node_load1{instance=~\"$$server\"}",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
@@ -1381,7 +1461,11 @@ data:
               "target": ""
             },
             {
-              "expr": "node_load5{instance=~\"$server\"}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "node_load5{instance=~\"$$server\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Load 5m",
@@ -1389,7 +1473,11 @@ data:
               "step": 60
             },
             {
-              "expr": "node_load15{instance=~\"$server\"}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "node_load15{instance=~\"$$server\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Load 15m",
@@ -1478,7 +1566,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1497,7 +1585,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "alias": "$tag_name",
+              "alias": "$$tag_name",
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1549,6 +1641,10 @@ data:
             },
             {
               "alias": "$tag_feature",
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "groupBy": [
                 {
                   "params": [
@@ -1604,7 +1700,11 @@ data:
               ]
             },
             {
-              "alias": "$tag_name",
+              "alias": "$$tag_name",
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "groupBy": [
                 {
                   "params": [
@@ -1748,7 +1848,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 1,
           "points": false,
           "renderer": "flot",
@@ -1893,7 +1993,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1904,7 +2004,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "irate(node_disk_io_time_seconds_total{instance=~\"$server\"}[5m])*100",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "irate(node_disk_io_time_seconds_total{instance=~\"$$server\"}[5m])*100",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
@@ -1999,7 +2103,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2224,7 +2328,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2259,6 +2363,10 @@ data:
           "targets": [
             {
               "alias": "Küche $col",
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -2317,6 +2425,10 @@ data:
               ]
             },
             {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "hide": false,
               "query": "from(bucket: \"fhem\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\" and r[\"_field\"] == \"valveposition\")\n  |> map(fn: (r) => ({ _value: r._value, _time: r._time, _field: r._field + \" \" + r.path }))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n\n",
               "refId": "B"
@@ -2424,7 +2536,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2446,6 +2558,10 @@ data:
           "targets": [
             {
               "alias": "Schlafzimmer $col",
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
+              },
               "groupBy": [
                 {
                   "params": [
@@ -2566,150 +2682,117 @@ data:
           }
         },
         {
-          "aliasColors": {
-            "Humidity": "#e0f9d7",
-            "Temperature": "#82b5d8",
-            "Temperature Outside": "#82b5d8",
-            "Wind Speed": "#fce2de"
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P3C6603E967DC8568"
           },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
           "fieldConfig": {
             "defaults": {
-              "links": []
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 26,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "power {host=\"fhem\", topic=\"zigbee2mqtt/0xa4c138bcd445ed4d\"}"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
           },
-          "fill": 2,
-          "fillGradient": 0,
           "gridPos": {
-            "h": 12,
+            "h": 9,
             "w": 12,
             "x": 12,
             "y": 55
           },
-          "hiddenSeries": false,
-          "id": 25,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "nullPointMode": "null",
+          "id": 54,
           "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "8.4.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:2471",
-              "alias": "/Humidity/",
-              "color": "#f29191",
-              "dashes": true,
-              "fill": 0,
-              "linewidth": 1,
-              "yaxis": 2
+            "legend": {
+              "calcs": [
+                "mean",
+                "min",
+                "max"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
             },
-            {
-              "$$hashKey": "object:2472",
-              "alias": "/Temperature/",
-              "zindex": 1
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
             }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
+          },
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
               },
-              "exemplar": true,
-              "expr": "darksky_apparent_temperature",
-              "format": "time_series",
-              "instant": false,
-              "interval": "10m",
-              "intervalFactor": 1,
-              "legendFormat": "Apparent Temperature",
+              "query": "from(bucket: \"fhem\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mqtt_consumer\")\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\n  |> filter(fn: (r) => r[\"topic\"] == \"zigbee2mqtt/0xa4c138bcd445ed4d\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
               "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "darksky_temperature",
-              "format": "time_series",
-              "instant": false,
-              "interval": "10m",
-              "intervalFactor": 1,
-              "legendFormat": "Temperature",
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "darksky_humidity",
-              "format": "time_series",
-              "interval": "10m",
-              "intervalFactor": 1,
-              "legendFormat": "Humidity",
-              "refId": "D"
             }
           ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "Weather Cologne",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:2501",
-              "decimals": 1,
-              "format": "celsius",
-              "label": "Temperature",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:2502",
-              "decimals": 1,
-              "format": "humidity",
-              "logBase": 1,
-              "max": "1",
-              "min": "0",
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
+          "title": "Leistung Steckdose",
+          "type": "timeseries"
         },
         {
           "aliasColors": {
@@ -2755,7 +2838,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.4.5",
+          "pluginVersion": "9.3.8",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2777,6 +2860,10 @@ data:
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "expr": "rheinpegel_measurement{location='KÖLN'} / 100",
               "format": "time_series",
               "groupBy": [
@@ -2816,6 +2903,10 @@ data:
               "tags": []
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
               "expr": "rheinpegel_trend{location='KÖLN'}",
               "format": "time_series",
               "intervalFactor": 1,
@@ -2859,8 +2950,8 @@ data:
           }
         }
       ],
-      "refresh": false,
-      "schemaVersion": 35,
+      "refresh": "10s",
+      "schemaVersion": 37,
       "style": "dark",
       "tags": [],
       "templating": {
@@ -2868,7 +2959,7 @@ data:
           {
             "hide": 2,
             "name": "server",
-            "query": "sn0w.lan.${SECRET_LAB_DOMAIN}:9100",
+            "query": "sn0w.lan.r4r3.me:9100",
             "skipUrlSync": false,
             "type": "constant"
           }
@@ -2906,467 +2997,8 @@ data:
       "timezone": "browser",
       "title": "Main",
       "uid": "000000017",
-      "version": 4,
+      "version": 1,
       "weekStart": ""
-    }
-  ttn.json: |-
-    {
-      "annotations": {
-        "list": [
-          {
-            "builtIn": 1,
-            "datasource": "-- Grafana --",
-            "enable": true,
-            "hide": true,
-            "iconColor": "rgba(0, 211, 255, 1)",
-            "name": "Annotations & Alerts",
-            "type": "dashboard"
-          }
-        ]
-      },
-      "editable": true,
-      "gnetId": null,
-      "graphTooltip": 0,
-      "id": 27,
-      "links": [],
-      "panels": [
-        {
-          "aliasColors": {
-            "RSSI": "red",
-            "RSSI gw01": "dark-red",
-            "RSSI gw02": "super-light-orange"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "influxdb",
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 8,
-            "w": 20,
-            "x": 0,
-            "y": 0
-          },
-          "hiddenSeries": false,
-          "id": 4,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": false,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "8.0.3",
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "RSSI gw01",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "mqtt_consumer",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"metadata_gateways_0_rssi\") FROM \"fhem\"..\"mqtt_consumer\" WHERE (\"host\" = 'fhem') AND $timeFilter GROUP BY time($$__interval) fill(null)",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "metadata_gateways_0_rssi"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "host",
-                  "operator": "=",
-                  "value": "fhem"
-                }
-              ]
-            },
-            {
-              "alias": "RSSI gw02",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "mqtt_consumer",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"metadata_gateways_1_rssi\") FROM \"fhem\"..\"mqtt_consumer\" WHERE (\"host\" = 'fhem') AND $timeFilter GROUP BY time($$__interval) fill(null)",
-              "rawQuery": true,
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "metadata_gateways_1_rssi"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "host",
-                  "operator": "=",
-                  "value": "fhem"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "RSSI",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "influxdb",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "fixedColor": "rgb(31, 120, 193)",
-                "mode": "fixed"
-              },
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "text": "N/A"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 4,
-            "x": 20,
-            "y": 0
-          },
-          "id": 6,
-          "interval": "",
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "none",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "sum"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.0.3",
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "mqtt_consumer",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT \"payload_fields_mail\" FROM \"fhem\"..\"mqtt_consumer\" WHERE $timeFilter",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "payload_fields_mail"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "timeFrom": "24h",
-          "timeShift": null,
-          "title": "Post",
-          "type": "stat"
-        },
-        {
-          "aliasColors": {
-            "Battery Voltage": "super-light-blue",
-            "PAX": "semi-dark-yellow",
-            "mqtt_consumer.mean": "dark-blue"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "influxdb",
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 24,
-            "x": 0,
-            "y": 8
-          },
-          "hiddenSeries": false,
-          "id": 8,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "8.0.3",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "Battery Voltage",
-              "groupBy": [
-                {
-                  "params": [
-                    "5m"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "previous"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "mqtt_consumer",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"payload_fields_voltage\") FROM \"fhem\"..\"mqtt_consumer\" WHERE $timeFilter GROUP BY time(5m) fill(previous)",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "payload_fields_voltage"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Battery Voltage",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "decimals": 2,
-              "format": "mvolt",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        }
-      ],
-      "refresh": "10s",
-      "schemaVersion": 30,
-      "style": "dark",
-      "tags": [],
-      "templating": {
-        "list": []
-      },
-      "time": {
-        "from": "now-6h",
-        "to": "now"
-      },
-      "timepicker": {
-        "refresh_intervals": [
-          "5s",
-          "10s",
-          "30s",
-          "1m",
-          "5m",
-          "15m",
-          "30m",
-          "1h",
-          "2h",
-          "1d"
-        ]
-      },
-      "timezone": "",
-      "title": "TheThingsNetwork",
-      "uid": "o_Bvag8Wk",
-      "version": 1
     }
   smartmontools.json: |-
     {
