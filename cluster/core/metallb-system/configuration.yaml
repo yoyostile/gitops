@@ -28,10 +28,6 @@ spec:
   nodeSelectors:
     - matchLabels:
         kubernetes.io/hostname: master
-    - matchLabels:
-        kubernetes.io/hostname: node01
-    - matchLabels:
-        kubernetes.io/hostname: node02
   interfaces:
     - eth0
 ---
