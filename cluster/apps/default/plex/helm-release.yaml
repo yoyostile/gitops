@@ -77,8 +77,3 @@ spec:
         enabled: true
         type: emptyDir
         medium: Memory
-
-    resources:
-      requests:
-        cpu: 4000m
-        memory: 1024M
