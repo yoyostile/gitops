@@ -9,15 +9,6 @@ spec:
     - "${METALLB_LB_RANGE}"
 ---
 apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
-  name: lab-address-pool
-  namespace: metallb-system
-spec:
-  addresses:
-    - "10.0.0.200-10.0.0.254"
----
-apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
   name: advertisement
@@ -25,26 +16,3 @@ metadata:
 spec:
   ipAddressPools:
     - address-pool
-  nodeSelectors:
-    - matchLabels:
-        kubernetes.io/hostname: master
-  interfaces:
-    - eth0
----
-apiVersion: metallb.io/v1beta1
-kind: L2Advertisement
-metadata:
-  name: lab-advertisement
-  namespace: metallb-system
-spec:
-  ipAddressPools:
-    - lab-address-pool
-  nodeSelectors:
-    - matchLabels:
-        kubernetes.io/hostname: k3s1
-    - matchLabels:
-        kubernetes.io/hostname: k3s2
-    - matchLabels:
-        kubernetes.io/hostname: k3s3
-  interfaces:
-    - ens18
