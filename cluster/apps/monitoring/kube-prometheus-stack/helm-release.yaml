@@ -180,7 +180,7 @@ spec:
             static_configs:
               - targets: ['homeassistant.lan.${SECRET_LAB_DOMAIN}:8123']
         retention: 365d
-        retentionSize: 50Gi
+        retentionSize: 50GB
         walCompression: true
         serviceMonitorSelectorNilUsesHelmValues: false
         storageSpec:
