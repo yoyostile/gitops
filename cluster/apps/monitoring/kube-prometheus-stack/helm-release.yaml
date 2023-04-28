@@ -170,6 +170,7 @@ spec:
               - targets:
                   - 'sn0w.lan.${SECRET_LAB_DOMAIN}:9100'
                   - 'pve01.lab.${SECRET_LAB_DOMAIN}:9100'
+                  - 'pve02.lab.${SECRET_LAB_DOMAIN}:9100'
           - job_name: "hass"
             scrape_interval: 60s
             metrics_path: /api/prometheus
