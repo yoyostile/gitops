@@ -46,76 +46,6 @@ data:
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "#EAB839",
-                    "value": 35
-                  },
-                  {
-                    "color": "red",
-                    "value": 50
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 2,
-            "x": 0,
-            "y": 0
-          },
-          "id": 51,
-          "options": {
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true,
-            "text": {}
-          },
-          "pluginVersion": "9.3.8",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "hass_sensor_unit_u0x200b{entity=\"sensor.inzidenz_rki\"}",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Inzidenz Köln",
-          "type": "gauge"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
                 "fixedColor": "light-purple",
                 "mode": "fixed"
               },
@@ -149,8 +79,8 @@ data:
           },
           "gridPos": {
             "h": 4,
-            "w": 2,
-            "x": 2,
+            "w": 4,
+            "x": 0,
             "y": 0
           },
           "id": 33,
@@ -172,7 +102,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -191,8 +121,8 @@ data:
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -231,7 +161,7 @@ data:
           },
           "gridPos": {
             "h": 4,
-            "w": 3,
+            "w": 4,
             "x": 4,
             "y": 0
           },
@@ -255,49 +185,18 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
+                "type": "prometheus",
+                "uid": "prometheus"
               },
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "auto"
-                  ],
-                  "type": "time"
-                }
-              ],
-              "measurement": "ups_load.value",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load_percent\")\n  |> group(columns: [\"ups_name\"])\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 }))\n  |> last()",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  },
-                  {
-                    "params": [
-                      " / 100*390"
-                    ],
-                    "type": "math"
-                  }
-                ]
-              ],
-              "tags": []
+              "editorMode": "code",
+              "expr": "hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
             }
           ],
           "title": "Power Usage",
@@ -305,8 +204,8 @@ data:
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -345,7 +244,7 @@ data:
           "gridPos": {
             "h": 4,
             "w": 4,
-            "x": 7,
+            "x": 8,
             "y": 0
           },
           "hideTimeOverride": true,
@@ -360,7 +259,7 @@ data:
             "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
-                "sum"
+                "mean"
               ],
               "fields": "",
               "values": false
@@ -368,42 +267,20 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
+                "type": "prometheus",
+                "uid": "prometheus"
               },
-              "dsType": "influxdb",
-              "groupBy": [],
-              "measurement": "ups_load.value",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load_percent\")\n  |> group(columns: [\"ups_name\"])\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 * 30.49 * 30.0 * 0.001 * 0.2442 }))\n  |> mean()",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
-                    "params": [
-                      "/100*390*24*30*0.001*0.2442"
-                    ],
-                    "type": "math"
-                  }
-                ]
-              ],
-              "tags": []
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"} * 24 / 1000 * 30 * 0.30",
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
             }
           ],
           "timeFrom": "30d",
@@ -411,349 +288,139 @@ data:
           "type": "stat"
         },
         {
+          "aliasColors": {
+            "bond0_in": "super-light-blue",
+            "bond0_out": "light-red"
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
+          "editable": true,
+          "error": false,
           "fieldConfig": {
             "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "text": "N/A"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "dtdurations"
+              "links": []
             },
             "overrides": []
           },
+          "fill": 6,
+          "fillGradient": 6,
+          "grid": {},
           "gridPos": {
-            "h": 4,
-            "w": 3,
-            "x": 11,
+            "h": 7,
+            "w": 12,
+            "x": 12,
             "y": 0
           },
-          "hideTimeOverride": true,
-          "id": 2,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "none",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
+          "hiddenSeries": false,
+          "id": 7,
+          "legend": {
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
           },
-          "pluginVersion": "9.3.8",
-          "targets": [
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "maxPerRow": 6,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "9.4.7",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": "node",
+          "repeatDirection": "h",
+          "seriesOverrides": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "time() - node_boot_time_seconds{instance=\"$$server\"} ",
-              "format": "time_series",
-              "hide": false,
-              "intervalFactor": 2,
-              "legendFormat": "",
-              "metric": "",
-              "refId": "A",
-              "step": 2
+              "$$hashKey": "object:1208",
+              "alias": "/.*_out/",
+              "transform": "negative-Y"
             }
           ],
-          "timeFrom": "1m",
-          "title": "sn0w: Uptime",
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "decimals": 2,
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "text": "N/A"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "max": 33620627456,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "#ea6460",
-                    "value": null
-                  },
-                  {
-                    "color": "#fceaca",
-                    "value": 2000000000
-                  },
-                  {
-                    "color": "#b7dbab",
-                    "value": 8000000000
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 4,
-            "x": 14,
-            "y": 0
-          },
-          "hideTimeOverride": true,
-          "id": 5,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true,
-            "text": {}
-          },
-          "pluginVersion": "9.3.8",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
           "targets": [
             {
               "datasource": {
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "(node_memory_MemAvailable_bytes{instance=~\"$$server\"})",
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "irate(node_network_receive_bytes_total{instance=~\"pve01\\\\.lab\\\\.r4r3\\\\.me:9100|pve02\\\\.lab\\\\.r4r3\\\\.me:9100\",device=~\"vmbr0\"}[2m])*8",
               "format": "time_series",
+              "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "",
-              "metric": "node_memory_",
+              "legendFormat": "{{instance}} {{device}}_in",
+              "metric": "",
+              "range": true,
               "refId": "A",
               "step": 60,
               "target": ""
-            }
-          ],
-          "timeFrom": "1h",
-          "title": "sn0w: Available Memory",
-          "type": "gauge"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "text": "N/A"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "max": 24751701766144,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "#ea6460",
-                    "value": null
-                  },
-                  {
-                    "color": "#fceaca",
-                    "value": 1051701766144
-                  },
-                  {
-                    "color": "#b7dbab",
-                    "value": 2551701766144
-                  }
-                ]
-              },
-              "unit": "bytes"
             },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 4,
-            "x": 18,
-            "y": 0
-          },
-          "hideTimeOverride": true,
-          "id": 3,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true,
-            "text": {}
-          },
-          "pluginVersion": "9.3.8",
-          "targets": [
             {
               "datasource": {
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "sum(node_filesystem_avail_bytes{device='stor01/enc',instance='$$server'})",
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "irate(node_network_transmit_bytes_total{instance=~\"pve01\\\\.lab\\\\.r4r3\\\\.me:9100|pve02\\\\.lab\\\\.r4r3\\\\.me:9100\",device=~\"vmbr0\"}[2m])*8",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
-              "legendFormat": "",
-              "metric": "node_filesystem_free",
-              "refId": "A",
-              "step": 2
+              "legendFormat": "{{instance}} {{device}}_out",
+              "range": true,
+              "refId": "B",
+              "step": 60
             }
           ],
-          "timeFrom": "1m",
-          "title": "st0rage: Free Space",
-          "type": "gauge"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "sn0w: Traffic",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "text": "N/A"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
           },
-          "gridPos": {
-            "h": 4,
-            "w": 2,
-            "x": 22,
-            "y": 0
-          },
-          "hideTimeOverride": true,
-          "id": 4,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "none",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.3.8",
-          "targets": [
+          "yaxes": [
             {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "node_filesystem_size_bytes{device='stor01/enc',instance='$$server'}",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "",
-              "metric": "",
-              "refId": "A",
-              "step": 2
+              "$$hashKey": "object:1244",
+              "format": "bps",
+              "label": "bits out (-) / bits in (+)",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1245",
+              "format": "short",
+              "logBase": 1,
+              "show": false
             }
           ],
-          "timeFrom": "1m",
-          "title": "st0rage: Total Space",
-          "type": "stat"
+          "yaxis": {
+            "align": false
+          }
         },
         {
           "aliasColors": {},
@@ -798,7 +465,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -812,27 +479,18 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "node_cpu_scaling_frequency_hertz{instance='$$server'}",
+              "editorMode": "code",
+              "expr": "sum by (instance) (node_cpu_scaling_frequency_hertz{instance=~\"pve01\\\\.lab\\\\.r4r3\\\\.me:9100|pve02\\\\.lab\\\\.r4r3\\\\.me:9100\"} / 4)",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "CPU {{cpu}}",
+              "legendFormat": "{{instance}} CPU {{cpu}}",
+              "range": true,
               "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "node_cpu_frequency_hertz{instance='$$server'} ",
-              "format": "time_series",
-              "intervalFactor": 1,
-              "legendFormat": "CPU {{cpu}}",
-              "refId": "B"
             }
           ],
           "thresholds": [],
           "timeRegions": [],
-          "title": "sn0w: CPU Frequency",
+          "title": "pve: CPU Frequency",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -854,137 +512,6 @@ data:
               "format": "short",
               "logBase": 1,
               "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {
-            "bond0_in": "super-light-blue",
-            "bond0_out": "light-red"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 6,
-          "fillGradient": 6,
-          "grid": {},
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 4
-          },
-          "hiddenSeries": false,
-          "id": 7,
-          "legend": {
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "maxPerRow": 6,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.3.8",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "repeat": "node",
-          "repeatDirection": "h",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:1208",
-              "alias": "/.*_out/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "irate(node_network_receive_bytes_total{instance=~'$$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "{{device}}_in",
-              "metric": "",
-              "refId": "A",
-              "step": 60,
-              "target": ""
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "irate(node_network_transmit_bytes_total{instance=~'$$server',device=~\"bond0|vmbr0|vmbr1\"}[2m])*8",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "{{device}}_out",
-              "refId": "B",
-              "step": 60
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "sn0w: Traffic",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1244",
-              "format": "bps",
-              "label": "bits out (-) / bits in (+)",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1245",
-              "format": "short",
-              "logBase": 1,
-              "show": false
             }
           ],
           "yaxis": {
@@ -1097,7 +624,7 @@ data:
             "h": 7,
             "w": 12,
             "x": 12,
-            "y": 11
+            "y": 7
           },
           "id": 52,
           "interval": "",
@@ -1149,7 +676,9 @@ data:
         },
         {
           "aliasColors": {
-            "idle": "#fceaca"
+            "Load 15m": "#F9934E",
+            "Load 1m": "#890F02",
+            "Load 5m": "#E24D42"
           },
           "bars": false,
           "dashLength": 10,
@@ -1167,26 +696,22 @@ data:
             },
             "overrides": []
           },
-          "fill": 3,
+          "fill": 1,
           "fillGradient": 0,
           "grid": {},
           "gridPos": {
-            "h": 10,
+            "h": 7,
             "w": 12,
             "x": 0,
             "y": 13
           },
-          "height": "260px",
           "hiddenSeries": false,
-          "id": 21,
+          "id": 8,
           "legend": {
-            "alignAsTable": false,
             "avg": true,
-            "current": false,
-            "hideEmpty": false,
-            "max": true,
-            "min": true,
-            "rightSide": false,
+            "current": true,
+            "max": false,
+            "min": false,
             "show": true,
             "total": false,
             "values": true
@@ -1194,47 +719,76 @@ data:
           "lines": true,
           "linewidth": 0,
           "links": [],
+          "maxPerRow": 6,
           "nullPointMode": "null",
           "options": {
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
+          "repeat": "node",
           "seriesOverrides": [],
           "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
+          "stack": false,
+          "steppedLine": true,
           "targets": [
             {
-              "calculatedInterval": "2s",
               "datasource": {
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "datasourceErrors": {},
-              "errors": {},
-              "expr": "sum(rate(node_cpu_seconds_total{instance=\"$$server\"}[1m])) by (mode) * 100 / scalar(count(node_cpu_seconds_total{mode=\"user\", instance=\"$$server\"})) or sum(irate(node_cpu_seconds_total{instance=\"$$server\"}[1m])) by (mode) * 100 / scalar(count(node_cpu_seconds_total{mode=\"user\",instance=\"$$server\"}))\n",
+              "editorMode": "code",
+              "expr": "node_load1{instance=~\"pve01\\\\.lab\\\\.r4r3\\\\.me:9100|pve02\\\\.lab\\\\.r4r3\\\\.me:9100\"}",
               "format": "time_series",
               "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{ mode }}",
-              "metric": "",
-              "prometheusLink": "/api/datasources/proxy/1/graph#%5B%7B%22expr%22%3A%22sum(rate(node_cpu%7Balias%3D%5C%22%24host%5C%22%7D%5B%24interval%5D))%20by%20(mode)%20*%20100%22%2C%22range_input%22%3A%223600s%22%2C%22end_input%22%3A%222015-10-22%2015%3A27%22%2C%22step_input%22%3A%22%22%2C%22stacked%22%3Atrue%2C%22tab%22%3A0%7D%5D",
+              "intervalFactor": 2,
+              "legendFormat": "{{instance}} Load 1m",
+              "metric": "node_load5",
+              "range": true,
               "refId": "A",
-              "step": 15
+              "step": 60,
+              "target": ""
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "node_load5{instance=~\"pve01\\\\.lab\\\\.r4r3\\\\.me:9100|pve02\\\\.lab\\\\.r4r3\\\\.me:9100\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "{{instance}} Load 5m",
+              "range": true,
+              "refId": "B",
+              "step": 60
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "node_load15{instance=~\"pve01\\\\.lab\\\\.r4r3\\\\.me:9100|pve02\\\\.lab\\\\.r4r3\\\\.me:9100\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "{{instance}} Load 15m",
+              "range": true,
+              "refId": "C",
+              "step": 60
             }
           ],
           "thresholds": [],
           "timeRegions": [],
-          "title": "sn0w: Detailed CPU Usage",
+          "title": "sn0w: Load Avg.",
           "tooltip": {
             "msResolution": false,
             "shared": true,
             "sort": 0,
-            "value_type": "individual"
+            "value_type": "cumulative"
           },
           "type": "graph",
           "xaxis": {
@@ -1244,18 +798,15 @@ data:
           },
           "yaxes": [
             {
-              "format": "percent",
-              "label": "",
+              "format": "short",
+              "label": "Load Avg.",
               "logBase": 1,
-              "max": 100,
-              "min": 0,
               "show": true
             },
             {
               "format": "short",
               "logBase": 1,
-              "min": 0,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -1333,7 +884,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 18
+            "y": 14
           },
           "id": 49,
           "options": {
@@ -1383,827 +934,6 @@ data:
           ],
           "title": "WAN Speedtest",
           "type": "timeseries"
-        },
-        {
-          "aliasColors": {
-            "Load 15m": "#F9934E",
-            "Load 1m": "#890F02",
-            "Load 5m": "#E24D42"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "decimals": 2,
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "grid": {},
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 0,
-            "y": 23
-          },
-          "hiddenSeries": false,
-          "id": 8,
-          "legend": {
-            "avg": true,
-            "current": true,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "maxPerRow": 6,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.3.8",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "repeat": "node",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": true,
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "node_load1{instance=~\"$$server\"}",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Load 1m",
-              "metric": "node_load5",
-              "refId": "A",
-              "step": 60,
-              "target": ""
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "node_load5{instance=~\"$$server\"}",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "Load 5m",
-              "refId": "B",
-              "step": 60
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "node_load15{instance=~\"$$server\"}",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "Load 15m",
-              "refId": "C",
-              "step": 60
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "sn0w: Load Avg.",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Load Avg.",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
-          },
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 12,
-            "w": 12,
-            "x": 12,
-            "y": 26
-          },
-          "hiddenSeries": false,
-          "id": 15,
-          "interval": ">10s",
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "connected",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.3.8",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:466",
-              "alias": "/^fan/",
-              "fill": 0,
-              "linewidth": 1,
-              "steppedLine": false,
-              "yaxis": 2
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$$tag_name",
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "name"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "0"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "ipmi_sensor",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"ipmi_sensor\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"unit\"] == \"degrees_c\" or r[\"unit\"] == \"rpm\")\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: r.name }))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "unit",
-                  "operator": "=",
-                  "value": "rpm"
-                }
-              ]
-            },
-            {
-              "alias": "$tag_feature",
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "feature"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "0"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "hide": false,
-              "measurement": "sensors",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "temp_input"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "temp_input",
-                  "operator": ">",
-                  "value": "0"
-                },
-                {
-                  "condition": "AND",
-                  "key": "feature",
-                  "operator": "!~",
-                  "value": "/^temp/"
-                }
-              ]
-            },
-            {
-              "alias": "$$tag_name",
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "name"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "0"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "ipmi_sensor",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "C",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "unit",
-                  "operator": "=",
-                  "value": "degrees_c"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "sn0w: Temperatures",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:485",
-              "format": "celsius",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:486",
-              "format": "rotrpm",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {
-            "Energy": "#BF1B00",
-            "Power": "super-light-orange",
-            "sn0w": "super-light-red"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
-          },
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "value sn0w"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Stromverbrauch"
-                  }
-                ]
-              }
-            ]
-          },
-          "fill": 2,
-          "fillGradient": 7,
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 30
-          },
-          "hiddenSeries": false,
-          "id": 38,
-          "interval": "1m",
-          "legend": {
-            "avg": true,
-            "current": true,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.3.8",
-          "pointradius": 1,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$col",
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "hide": false,
-              "measurement": "ups_load.value",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"apcupsd\")\n  |> filter(fn: (r) => r._field == \"load_percent\")\n  |> group(columns: [\"ups_name\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> map(fn: (r) => ({ r with _value: r._value / 100.0 * 390.0 }))\n",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
-                    "params": [
-                      " / 100 * 390"
-                    ],
-                    "type": "math"
-                  },
-                  {
-                    "params": [
-                      "Power"
-                    ],
-                    "type": "alias"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "APCUPSD Stromverbrauch",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1713",
-              "format": "watt",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1714",
-              "format": "kwatth",
-              "logBase": 1,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "grid": {},
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 38
-          },
-          "hiddenSeries": false,
-          "id": 10,
-          "legend": {
-            "avg": true,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "maxPerRow": 6,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.3.8",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "repeat": "node",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "irate(node_disk_io_time_seconds_total{instance=~\"$$server\"}[5m])*100",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "{{device}}",
-              "metric": "",
-              "refId": "A",
-              "step": 60,
-              "target": ""
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "sn0w: Disk Utilization per Device",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "percent",
-              "logBase": 1,
-              "max": 100,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {
-            "battery_charge_percent": "super-light-purple",
-            "battery_voltage": "dark-blue",
-            "input_voltage": "dark-red",
-            "load_percent": "dark-orange"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
-          },
-          "decimals": 1,
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 12,
-            "y": 38
-          },
-          "hiddenSeries": false,
-          "id": 20,
-          "interval": ">10s",
-          "legend": {
-            "alignAsTable": false,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.3.8",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:1578",
-              "alias": "/.*voltage$/",
-              "fill": 0,
-              "linewidth": 1,
-              "yaxis": 1
-            },
-            {
-              "$$hashKey": "object:431",
-              "alias": "/.*percent$/",
-              "fill": 1,
-              "yaxis": 2
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$0",
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "hide": false,
-              "measurement": "/^ups/",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"battery_charge_percent\" or r[\"_field\"] == \"load_percent\" or r[\"_field\"] == \"input_voltage\" or r[\"_field\"] == \"battery_voltage\")\n  |> map(fn: (r) => ({ _value:r._value, _time: r._time, _field: r._field }))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "UPS",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1593",
-              "format": "volt",
-              "label": "Voltage",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1594",
-              "format": "short",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
         },
         {
           "aliasColors": {},
@@ -2302,7 +1032,7 @@ data:
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 47
+            "y": 20
           },
           "hiddenSeries": false,
           "id": 13,
@@ -2328,7 +1058,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2371,7 +1101,7 @@ data:
               "groupBy": [
                 {
                   "params": [
-                    "$interval"
+                    "$$interval"
                   ],
                   "type": "time"
                 },
@@ -2471,7 +1201,12 @@ data:
           }
         },
         {
-          "aliasColors": {},
+          "aliasColors": {
+            "battery_charge_percent": "super-light-purple",
+            "battery_voltage": "dark-blue",
+            "input_voltage": "dark-red",
+            "load_percent": "dark-orange"
+          },
           "bars": false,
           "dashLength": 10,
           "dashes": false,
@@ -2479,36 +1214,160 @@ data:
             "type": "influxdb",
             "uid": "P3C6603E967DC8568"
           },
+          "decimals": 1,
+          "editable": true,
+          "error": false,
           "fieldConfig": {
             "defaults": {
               "links": []
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/0x00158d0004657fb8/"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Schlafzimmer $${__field.name}"
-                  }
-                ]
+            "overrides": []
+          },
+          "fill": 2,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 22
+          },
+          "hiddenSeries": false,
+          "id": 20,
+          "interval": ">10s",
+          "legend": {
+            "alignAsTable": false,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 0,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "9.4.7",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:1578",
+              "alias": "/.*voltage$/",
+              "fill": 0,
+              "linewidth": 1,
+              "yaxis": 1
+            },
+            {
+              "$$hashKey": "object:431",
+              "alias": "/.*percent$/",
+              "fill": 1,
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$$0",
+              "datasource": {
+                "type": "influxdb",
+                "uid": "P3C6603E967DC8568"
               },
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/0x00158d00051e0e66/"
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$$__interval"
+                  ],
+                  "type": "time"
                 },
-                "properties": [
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "measurement": "/^ups/",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"battery_charge_percent\" or r[\"_field\"] == \"load_percent\" or r[\"_field\"] == \"input_voltage\" or r[\"_field\"] == \"battery_voltage\")\n  |> map(fn: (r) => ({ _value:r._value, _time: r._time, _field: r._field }))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
                   {
-                    "id": "displayName",
-                    "value": "Arbeitszimmer $${__field.name}"
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
                   }
                 ]
-              }
-            ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "UPS",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1593",
+              "format": "volt",
+              "label": "Voltage",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1594",
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
           },
           "fill": 2,
           "fillGradient": 0,
@@ -2516,7 +1375,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 47
+            "y": 31
           },
           "hiddenSeries": false,
           "id": 42,
@@ -2536,19 +1395,24 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:425",
               "$$hashKey": "object:2373",
-              "alias": "/temperature/",
+              "alias": "/temperatur/",
               "yaxis": 1
             },
             {
+              "$$hashKey": "object:426",
               "$$hashKey": "object:2374",
-              "alias": "/pressure/",
+              "alias": "/Luftfeuchtigkeit/",
+              "fill": 0,
+              "lines": true,
+              "linewidth": 1,
               "yaxis": 2
             }
           ],
@@ -2557,95 +1421,27 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "alias": "Schlafzimmer $col",
               "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
+                "type": "prometheus",
+                "uid": "prometheus"
               },
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "previous"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "mqtt_consumer",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"fhem\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mqtt_consumer\")\n  |> filter(fn: (r) => r[\"_field\"] == \"valveposition\" or r[\"_field\"] == \"pressure\" or r[\"_field\"] == \"temperature\" or r[\"_field\"] == \"humidity\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "humidity"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  },
-                  {
-                    "params": [
-                      "Humidity"
-                    ],
-                    "type": "alias"
-                  }
-                ],
-                [
-                  {
-                    "params": [
-                      "temperature"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  },
-                  {
-                    "params": [
-                      "Temperature"
-                    ],
-                    "type": "alias"
-                  }
-                ],
-                [
-                  {
-                    "params": [
-                      "pressure"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  },
-                  {
-                    "params": [
-                      "Pressure"
-                    ],
-                    "type": "alias"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "topic",
-                  "operator": "=",
-                  "value": "zigbee2mqtt/0x00158d0004657fb8"
-                }
-              ]
+              "editorMode": "code",
+              "expr": "hass_sensor_temperature_celsius{entity=~\"sensor.0x00158d00051e0e66_temperature|sensor.0x00158d0004657fb8_temperature\"}",
+              "legendFormat": "{{friendly_name}}",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "hass_sensor_humidity_percent",
+              "hide": false,
+              "legendFormat": "{{friendly_name}}",
+              "range": true,
+              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -2664,6 +1460,7 @@ data:
           },
           "yaxes": [
             {
+              "$$hashKey": "object:445",
               "$$hashKey": "object:2398",
               "decimals": 1,
               "format": "celsius",
@@ -2671,8 +1468,9 @@ data:
               "show": true
             },
             {
+              "$$hashKey": "object:446",
               "$$hashKey": "object:2399",
-              "format": "pressurehpa",
+              "format": "humidity",
               "logBase": 1,
               "show": true
             }
@@ -2680,119 +1478,6 @@ data:
           "yaxis": {
             "align": false
           }
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 26,
-                "gradientMode": "opacity",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineStyle": {
-                  "fill": "solid"
-                },
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "watt"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "power {host=\"fhem\", topic=\"zigbee2mqtt/0xa4c138bcd445ed4d\"}"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "orange",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 12,
-            "y": 55
-          },
-          "id": 54,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "min",
-                "max"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "query": "from(bucket: \"fhem\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mqtt_consumer\")\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\n  |> filter(fn: (r) => r[\"topic\"] == \"zigbee2mqtt/0xa4c138bcd445ed4d\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
-              "refId": "A"
-            }
-          ],
-          "title": "Leistung Steckdose",
-          "type": "timeseries"
         },
         {
           "aliasColors": {
@@ -2817,7 +1502,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 59
+            "y": 32
           },
           "hiddenSeries": false,
           "id": 29,
@@ -2838,7 +1523,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "9.4.7",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -2869,7 +1554,7 @@ data:
               "groupBy": [
                 {
                   "params": [
-                    "$__interval"
+                    "$$__interval"
                   ],
                   "type": "time"
                 },
@@ -2948,10 +1633,142 @@ data:
           "yaxis": {
             "align": false
           }
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 26,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "power {host=\"fhem\", topic=\"zigbee2mqtt/0xa4c138bcd445ed4d\"}"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Leistung Steckdose"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "super-light-red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 39
+          },
+          "id": 54,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "min",
+                "max"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}",
+              "legendFormat": "Leistung Steckdose",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Leistung Steckdose",
+          "type": "timeseries"
         }
       ],
       "refresh": "10s",
-      "schemaVersion": 37,
+      "revision": 1,
+      "schemaVersion": 38,
       "style": "dark",
       "tags": [],
       "templating": {
