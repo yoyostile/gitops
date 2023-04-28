@@ -34,10 +34,6 @@ spec:
     global:
       storageClass: "nfs-client"
     primary:
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 0
-        runAsNonRoot: false
       service:
         type: "LoadBalancer"
         loadBalancerIP: "192.168.230.55"
