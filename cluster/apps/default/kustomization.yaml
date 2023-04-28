@@ -6,7 +6,7 @@ resources:
   - evcc
   - freshrss
   - hajimari
-  - mariadb
+  # - mariadb
   - metabase
   - minio
   - mosquitto
