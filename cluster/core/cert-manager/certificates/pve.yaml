@@ -1,0 +1,16 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pve-lab-${SECRET_LAB_DOMAIN/./-}
+  namespace: networking
+spec:
+  secretName: pve-lab-${SECRET_LAB_DOMAIN/./-}-tls
+  commonName: pve01.lab.${SECRET_LAB_DOMAIN}
+  dnsNames:
+    - pve01.lab.${SECRET_LAB_DOMAIN}
+    - pve02.lab.${SECRET_LAB_DOMAIN}
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+    group: cert-manager.io
