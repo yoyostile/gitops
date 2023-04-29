@@ -10,7 +10,7 @@ subsets:
       - ip: 10.0.0.20
       - ip: 10.0.0.30
     ports:
-      - name: http
+      - name: https
         port: 6443
 ---
 kind: Service
