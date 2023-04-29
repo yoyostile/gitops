@@ -6,6 +6,7 @@ resources:
   - evcc
   - freshrss
   - hajimari
+  - kubernetes
   # - mariadb
   - metabase
   - minio
