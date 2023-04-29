@@ -23,3 +23,24 @@ spec:
         kubernetes.io/hostname: node01
     - matchLabels:
         kubernetes.io/hostname: node02
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: lab-address-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - "10.0.0.200-10.0.0.254"
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: lab-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - lab-address-pool
+  nodeSelectors:
+    - matchLabels:
+        kubernetes.io/hostname: k3s1
