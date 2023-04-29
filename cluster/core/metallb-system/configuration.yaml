@@ -44,3 +44,7 @@ spec:
   nodeSelectors:
     - matchLabels:
         kubernetes.io/hostname: k3s1
+    - matchLabels:
+        kubernetes.io/hostname: k3s2
+    - matchLabels:
+        kubernetes.io/hostname: k3s3
