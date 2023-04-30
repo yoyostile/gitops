@@ -26,6 +26,6 @@ spec:
 
   values:
     image:
-      repository: k8s.gcr.io/nfd/node-feature-discovery
+      repository: registry.k8s.io/nfd/node-feature-discovery
     nodeFeatureRule:
       createCRD: true
