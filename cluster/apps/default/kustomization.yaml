@@ -9,7 +9,7 @@ resources:
   - kubernetes
   # - mariadb
   - metabase
-  - minio
+  # - minio
   - mosquitto
   - paperless
   - photo-stream
