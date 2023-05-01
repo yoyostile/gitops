@@ -6,7 +6,7 @@ metadata:
   namespace: networking
 subsets:
   - addresses:
-      - ip: 192.168.200.146
+      - ip: 10.0.0.15
     ports:
       - name: http
         port: 9000
