@@ -33,8 +33,7 @@ spec:
     provider: cloudflare
     extraArgs:
       - --service-type-filter=LoadBalancer
-      - "{{`--fqdn-template={{.Name}}.k3s.lan.${SECRET_LAB_DOMAIN}`}}"
-      - "{{`--fqdn-template={{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
+      - "{{`--fqdn-template={{.Name}}.k3s.lan.${SECRET_LAB_DOMAIN},{{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
     txtOwnerId: gitops
     env:
       - name: CF_API_TOKEN
