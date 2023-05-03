@@ -36,6 +36,6 @@ spec:
       enabled: true
       tls: true
       secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
-      hostname: "influxdb.lan.${SECRET_LAB_DOMAIN}"
+      hostname: "influxdb.lab.${SECRET_LAB_DOMAIN}"
       annotations:
         traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"

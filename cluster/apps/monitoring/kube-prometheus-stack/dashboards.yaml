@@ -1776,7 +1776,7 @@ data:
           {
             "hide": 2,
             "name": "server",
-            "query": "sn0w.lan.r4r3.me:9100",
+            "query": "pve01.lab.r4r3.me:9100",
             "skipUrlSync": false,
             "type": "constant"
           }
