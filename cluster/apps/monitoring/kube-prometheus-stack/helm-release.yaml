@@ -75,6 +75,11 @@ spec:
               options:
                 path: /var/lib/grafana/dashboards/osna_pv
       dashboards:
+        mktxp:
+          mktxpDashboard:
+            gnetId: 13679
+            revision: 17
+            datasource: Prometheus
         unifi:
           unifiPollerClientDPI:
             gnetId: 11310
@@ -180,6 +185,9 @@ spec:
             scheme: http
             static_configs:
               - targets: ['hass.lab.${SECRET_LAB_DOMAIN}:8123']
+          - job_name: 'mktxp'
+            static_configs:
+              - targets: ['mktxp.monitoring:49090']
         retention: 365d
         retentionSize: 50GB
         walCompression: true
