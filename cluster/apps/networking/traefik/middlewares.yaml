@@ -9,6 +9,7 @@ spec:
     sourceRange:
       - 10.0.0.0/24
       - 10.0.10.0/24
+      - 10.13.37.0/24
       - 10.42.0.0/16
 ---
 apiVersion: traefik.containo.us/v1alpha1
