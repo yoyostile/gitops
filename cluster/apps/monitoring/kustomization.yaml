@@ -6,6 +6,7 @@ resources:
   - flux-alerts
   - influx
   - kube-prometheus-stack
+  - mktxp
   - rheinpegel-exporter
   - smokeping
   - speedtest-exporter
