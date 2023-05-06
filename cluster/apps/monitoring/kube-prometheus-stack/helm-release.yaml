@@ -87,7 +87,9 @@ spec:
           mktxpDashboard:
             gnetId: 13679
             revision: 17
-            datasource: Prometheus
+            datasource:
+              - name: DS_PROMETHEUS
+                value: Prometheus
         unifi:
           unifiPollerClientDPI:
             gnetId: 11310
