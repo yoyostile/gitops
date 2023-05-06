@@ -91,10 +91,10 @@ spec:
               - name: DS_PROMETHEUS
                 value: Prometheus
         unifi:
-          unifiPollerClientDPI:
-            gnetId: 11310
-            revision: 4
-            datasource: Prometheus
+          # unifiPollerClientDPI:
+          #   gnetId: 11310
+          #   revision: 4
+          #   datasource: Prometheus
           unifiPollerClientInsights:
             gnetId: 11315
             revision: 8
@@ -107,10 +107,10 @@ spec:
             gnetId: 11314
             revision: 8
             datasource: Prometheus
-          unifiPollerUSGInsights:
-            gnetId: 11313
-            revision: 8
-            datasource: Prometheus
+          # unifiPollerUSGInsights:
+          #   gnetId: 11313
+          #   revision: 8
+          #   datasource: Prometheus
           unifiPollerUSWInsights:
             gnetId: 11312
             revision: 8
