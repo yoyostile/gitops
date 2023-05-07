@@ -652,10 +652,12 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "rate(unifipoller_device_wan_receive_bytes_total{name=\"USG\"}[2m])*8",
+              "expr": "rate(mktxp_interface_rx_byte_total{name=\"ether8[WAN]\"}[2m])*8",
               "interval": "",
               "legendFormat": "WAN in",
+              "range": true,
               "refId": "A"
             },
             {
@@ -663,11 +665,13 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "-rate(unifipoller_device_wan_transmit_bytes_total{name=\"USG\"}[2m])*8",
+              "expr": "-rate(mktxp_interface_tx_byte_total{name=\"ether8[WAN]\"}[2m])*8",
               "hide": false,
               "interval": "",
               "legendFormat": "WAN out",
+              "range": true,
               "refId": "B"
             }
           ],
@@ -1401,13 +1405,11 @@ data:
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:425",
               "$$hashKey": "object:2373",
               "alias": "/temperatur/",
               "yaxis": 1
             },
             {
-              "$$hashKey": "object:426",
               "$$hashKey": "object:2374",
               "alias": "/Luftfeuchtigkeit/",
               "fill": 0,
@@ -1460,7 +1462,6 @@ data:
           },
           "yaxes": [
             {
-              "$$hashKey": "object:445",
               "$$hashKey": "object:2398",
               "decimals": 1,
               "format": "celsius",
@@ -1468,7 +1469,6 @@ data:
               "show": true
             },
             {
-              "$$hashKey": "object:446",
               "$$hashKey": "object:2399",
               "format": "humidity",
               "logBase": 1,
