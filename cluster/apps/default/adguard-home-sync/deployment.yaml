@@ -1,0 +1,23 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguard-home-sync
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adguard-home-sync
+  template:
+    metadata:
+      labels:
+        app: adguard-home-sync
+    spec:
+      containers:
+        - name: adguard-home-sync
+          image: ghcr.io/bakito/adguardhome-sync
+          envFrom:
+            - secretRef:
+                name: adguard-home-sync
+          args: ["run"]
