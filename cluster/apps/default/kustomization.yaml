@@ -8,7 +8,6 @@ resources:
   - freshrss
   - hajimari
   - kubernetes
-  # - mariadb
   - metabase
   # - minio
   - mosquitto
