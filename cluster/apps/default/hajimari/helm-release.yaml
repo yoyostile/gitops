@@ -25,7 +25,7 @@ spec:
       retries: 3
   valuesFrom:
     - kind: ConfigMap
-      name: hajimari
+      name: hajimari-settings
   values:
     image:
       repository: ghcr.io/toboshii/hajimari
