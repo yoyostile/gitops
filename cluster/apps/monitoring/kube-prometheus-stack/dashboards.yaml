@@ -276,7 +276,7 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"} * 24 / 1000 * 30 * 0.30",
+              "expr": "avg_over_time(hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}[1d]) * 24 / 1000 * 30 * 0.30",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
