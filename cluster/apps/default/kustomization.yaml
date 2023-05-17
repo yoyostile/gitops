@@ -20,7 +20,7 @@ resources:
   - requestbin
   - sabnzbd
   - shhh
-  # - st0rage
+  - st0rage
   - teslamate
   - uptime-kuma
   - zigbee2mqtt
