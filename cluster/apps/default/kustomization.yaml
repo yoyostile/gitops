@@ -13,7 +13,7 @@ resources:
   - mosquitto
   - paperless
   - photo-stream
-  # - plex
+  - plex
   - postgresql
   - random-gif
   - redis
