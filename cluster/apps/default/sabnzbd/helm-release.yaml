@@ -24,8 +24,8 @@ spec:
       retries: 3
   values:
     image:
-      repository: ghcr.io/k8s-at-home/sabnzbd
-      tag: v3.7.0
+      repository: ghcr.io/onedr0p/sabnzbd
+      tag: 4.0.1
     enivronment:
       TZ: ${TZ}
       PGID: 1000
