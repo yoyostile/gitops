@@ -22,15 +22,6 @@ spec:
       namespace: networking
 
   values:
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: feature.node.kubernetes.io/pci-0300_8086.present
-                  operator: In
-                  values:
-                    - "true"
     image:
       repository: lscr.io/linuxserver/plex
       tag: 1.32.2.7100-248a2daf0-ls168
