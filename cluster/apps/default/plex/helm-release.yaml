@@ -37,6 +37,9 @@ spec:
 
     env:
       TZ: "${TZ}"
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
 
     hostNetwork: true
 
