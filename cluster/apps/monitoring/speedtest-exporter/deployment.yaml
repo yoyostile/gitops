@@ -22,6 +22,6 @@ spec:
         - image: jraviles/prometheus_speedtest:latest
           imagePullPolicy: Always
           name: speedtest-exporter
-          args: ["--port=9516", "--servers=23095"]
+          args: ["--port=9516"]
       restartPolicy: Always
       dnsPolicy: ClusterFirst
