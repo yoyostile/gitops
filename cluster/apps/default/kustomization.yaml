@@ -9,7 +9,6 @@ resources:
   - hajimari
   - kubernetes
   - metabase
-  # - minio
   - mosquitto
   - paperless
   - photo-stream
