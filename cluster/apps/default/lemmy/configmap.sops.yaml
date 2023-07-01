@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: lemmy
+    namespace: default
+data:
+    config.hjson: ENC[AES256_GCM,data:LTHFFA/Z2N6Szos2XhbzVKXPa4TtsHTwgtRZ/twD7HwbxCMcdWVDB91GhvamW8gl9CuKyUxHYzSwDq2/V1Aaecm5bNtRoUPzjZQihBZRzmHC6Z7nFAHqDD6HatHNzyT64ptGj9xMRJieEYeXJNX2RVkcNf2uSimCscUUo/Q2xy9KpGBrIDqq9waFi8xI9JIJa9tPBri1WgHVxCjMVqBuGBBH1N4zXkTnEtkHRn/17lYgjdTVawEPeGBVHSXRcrytpRKFoqZ3tz80U/2TICqLl/49yFgeAJTR3nmtx8HXthgWMpNo/t0ZPHDqdaVdOV8Xi7GUkyGP97PLx1D3Zvo1DVPtpMspiijljblV6R0nwxDj+Z+31qhN2PYfDcro+xZWRpTBplYPO0d69sj5YKLmKhctXIJ7lnzGhfHhrbLmcUGoldhe/MoGkPhsOUIpupCmyWKPOvZDfw1aiH7Y2GftCN0K0Vzt5xpoDHfHsOIe1MU17fZY0KXze3SyNr+6f0T1l1T26AeSAkgD4n3E82WYTUoIhEJDfrb0eab+FaxPzemjHh0HC3/VRZbfWsmM4No4oN/YjqfsZ1/Lj5QuVWLgGjv+jCzmXXBmbJ5hhkIfHMT263LHOM9IoxqA3pV+cJbPpv6C+gn1JOYQTQ==,iv:u0bIBiRLWVrIbOsSfCbuN7Dx7FSKHk/dlHXA/zq3K5E=,tag:uNodci3xT2+nU4+M4mZZQg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBuMkIxdlY3d2szMERvS2Nj
+            a0hSTndSVjV2Qi9EcDVYSERCY21vMUZrUUQwClNkNlcyR3pXcE8zbDBaS0hhQmp5
+            enFGVWg3Z0RDNnczdWh3Y0Z1RC91Q00KLS0tIDM2R1JPeVpydmlydm1YS0tkeEl5
+            Q1AvMDVKTGdISDZNWnl4ZEFlU1gzMkUKt58I5p6u8i63gZbHCv55xtAFPGu+91Dr
+            1V2CQTHqNwKQH12qMOnGWjXjcO3G5Bz+Mxd35wGeaQBzZMNRCih1bQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-07-01T11:43:13Z"
+    mac: ENC[AES256_GCM,data:uCWMTitPOAZUAP7qfljHXZ8LGbCsN8Lewh0pRPX1+UmgtkoRrHsrVeGfSd80g2hlnM3G1PZqrRhJplkpLgFSIGiVDGEnOHClo5Um1bFfC72gqVf9HCO/Qyy5ZoEad6143DDIdABxM5WzLHY70SwgjcuQYUK/GYDDxNYvDeG0I4Q=,iv:QkIgSCbylfQuSv320ftWrEN+JMwxOg0qNg2F0DlSS6U=,tag:VsCQ+E+Y8xvH8jwySsPzQQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
