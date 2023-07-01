@@ -8,6 +8,7 @@ resources:
   - freshrss
   - hajimari
   - kubernetes
+  - lemmy
   - metabase
   - mosquitto
   - paperless
