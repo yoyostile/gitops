@@ -6,13 +6,9 @@ metadata:
   namespace: default
 spec:
   ports:
-    - port: 1234
-      targetPort: 1234
+    - port: 8080
+      targetPort: 8080
       protocol: TCP
-      name: lemmy-ui
-    - port: 8536
-      targetPort: 8536
-      protocol: TCP
-      name: lemmy
+      name: nginx
   selector:
     app: lemmy

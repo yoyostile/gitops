@@ -18,7 +18,51 @@ spec:
       labels:
         app: lemmy
     spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
       containers:
+        - name: nginx
+          image: "ghcr.io/nginxinc/nginx-unprivileged:1.25-alpine"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "nginx -s quit; while killall -0 nginx; do sleep 1; done"]
+          startupProbe:
+            failureThreshold: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/01-lemmy.conf
+              readOnly: true
+              name: lemmy-nginx
+              subPath: 01-lemmy.conf
+            - mountPath: /etc/nginx/nginx.conf
+              readOnly: true
+              name: lemmy-nginx
+              subPath: nginx.conf
         - name: lemmy
           image: dessalines/lemmy:0.18.0
           env:
@@ -58,11 +102,8 @@ spec:
               port: 1234
         - name: pictrs
           image: asonix/pictrs:0.4.0-rc.9
-          securityContext:
-            runAsUser: 991
-            runAsGroup: 991
           ports:
-            - containerPort: 8080
+            - containerPort: 8090
           # readinessProbe:
           #   httpGet:
           #     path: /
@@ -84,6 +125,9 @@ spec:
         - configMap:
             name: lemmy
           name: lemmy
+        - configMap:
+            name: lemmy-nginx
+          name: lemmy-nginx
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
