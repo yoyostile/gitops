@@ -9,6 +9,10 @@ spec:
     - port: 1234
       targetPort: 1234
       protocol: TCP
-      name: http
+      name: lemmy-ui
+    - port: 8536
+      targetPort: 8536
+      protocol: TCP
+      name: lemmy
   selector:
     app: lemmy
