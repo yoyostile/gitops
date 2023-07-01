@@ -28,7 +28,7 @@ spec:
                 name: lemmy
                 port:
                   name: lemmy-ui
-          - path: "^/(api|pictrs|feeds|nodeinfo|.well-known)"
+          - path: "/(api|pictrs|feeds|nodeinfo|.well-known)"
             pathType: Prefix
             backend:
               service:
