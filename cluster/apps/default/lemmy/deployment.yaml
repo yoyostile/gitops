@@ -1,0 +1,90 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: lemmy
+  name: lemmy
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lemmy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: lemmy
+    spec:
+      containers:
+        - name: lemmy
+          image: dessalines/lemmy:0.18.0
+          env:
+            - name: RUST_LOG
+              value: warn
+          ports:
+            - containerPort: 8536
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8536
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8536
+          volumeMounts:
+            - mountPath: /config/
+              name: lemmy
+        - name: lemmy-ui
+          image: dessalines/lemmy-ui:0.18.0
+          env:
+            - name: LEMMY_UI_LEMMY_INTERNAL_HOST
+              value: localhost:8536
+            - name: LEMMY_UI_LEMMY_EXTERNAL_HOST
+              value: lemmy.${SECRET_LAB_DOMAIN}
+            - name: LEMMY_UI_HTTPS
+              value: "true"
+          ports:
+            - containerPort: 1234
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 1234
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 1234
+        - name: pictrs
+          image: asonix/pictrs:0.4.0-rc.9
+          securityContext:
+            runAsUser: 991
+            runAsGroup: 991
+          ports:
+            - containerPort: 8080
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8080
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8080
+          envFrom:
+            - secretRef:
+                name: lemmy-pictrs
+          volumeMounts:
+            - name: lemmy-pictrs
+              mountPath: /mnt
+      volumes:
+        - name: lemmy-pictrs
+          persistentVolumeClaim:
+            claimName: lemmy-pictrs
+        - configMap:
+            name: lemmy
+          name: lemmy
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
