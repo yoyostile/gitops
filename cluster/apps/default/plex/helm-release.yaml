@@ -66,8 +66,8 @@ spec:
       config:
         accessMode: ReadWriteOnce
         enabled: true
-        size: 50Gi
-        storageClass: "nfs-client"
+        size: 16Gi
+        storageClass: "local-storage"
       media:
         enabled: true
         type: custom
