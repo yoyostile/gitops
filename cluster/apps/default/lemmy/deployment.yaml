@@ -82,7 +82,7 @@ spec:
             - mountPath: /config/
               name: lemmy
         - name: lemmy-ui
-          image: dessalines/lemmy-ui:0.18.0
+          image: dessalines/lemmy-ui:0.18.2
           env:
             - name: LEMMY_UI_LEMMY_INTERNAL_HOST
               value: localhost:8536
