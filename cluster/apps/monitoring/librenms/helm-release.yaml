@@ -1,0 +1,41 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: librenms
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://midokura.github.io/helm-charts-community/
+      chart: librenms
+      version: 0.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: midokura-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    image:
+      repository: librenms/librenms
+      tag: 23.5.0
+      pullPolicy: IfNotPresent
+
+    ingress:
+      enabled: true
+      tls: true
+      hostname: librenms.${SECRET_LAB_DOMAIN}
+      existingSecret: "${SECRET_LAB_DOMAIN/./-}-tls"
+      ingressClassName: traefik
+      annotations:
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "chart-box-outline"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"

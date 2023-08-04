@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: midokura-charts
+  namespace: flux-system
+spec:
+  interval: 30m
+  url: https://midokura.github.io/helm-charts-community/
+  timeout: 3m
