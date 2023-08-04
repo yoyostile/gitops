@@ -29,6 +29,23 @@ spec:
           volumeMounts:
             - name: librenms
               mountPath: /data
+        - name: dispatcher
+          image: librenms/librenms
+          tag: 23.5.0
+          securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+              - NET_RAW
+          envFrom:
+            - secretRef:
+                name: librenms
+          volumeMounts:
+            - name: librenms
+              mountPath: /data
+          env:
+            - key: SIDECAR_DISPATCHER
+              value: "1"
       volumes:
         - name: librenms
           persistentVolumeClaim:
