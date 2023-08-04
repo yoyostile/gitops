@@ -39,6 +39,13 @@ spec:
         hajimari.io/icon: "chart-box-outline"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
         traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    app:
+      persistence:
+        enabled: true
+        size: 4Gi
+        storageClass: "nfs-client"
+        accessModes:
+          - ReadWriteOnce
 
     syslog:
       service:
