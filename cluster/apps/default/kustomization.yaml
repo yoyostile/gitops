@@ -9,6 +9,7 @@ resources:
   - hajimari
   - kubernetes
   - lemmy
+  - mariadb
   - metabase
   - mosquitto
   - paperless
