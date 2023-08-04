@@ -10,6 +10,7 @@ resources:
   - kubernetes
   - lemmy
   - mariadb
+  - memcached
   - metabase
   - mosquitto
   - paperless
