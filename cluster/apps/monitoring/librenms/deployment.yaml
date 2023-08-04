@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: librenms
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: librenms
+  template:
+    metadata:
+      labels:
+        app: librenms
+    spec:
+      containers:
+        - name: librenms
+          image: librenms/librenms
+          tag: 23.5.0
+          envFrom:
+            - secretRef:
+                name: librenms
+          volumeMounts:
+            - name: librenms
+              mountPath: /data
+      volumes:
+        - name: librenms
+          persistentVolumeClaim:
+            claimName: librenms
