@@ -18,6 +18,11 @@ spec:
         - name: librenms
           image: librenms/librenms
           tag: 23.5.0
+          securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+              - NET_RAW
           envFrom:
             - secretRef:
                 name: librenms
