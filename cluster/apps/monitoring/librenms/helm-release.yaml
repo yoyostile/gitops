@@ -39,3 +39,7 @@ spec:
         hajimari.io/icon: "chart-box-outline"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
         traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+
+    syslog:
+      service:
+        type: LoadBalancer
