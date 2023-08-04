@@ -44,7 +44,7 @@ spec:
             - name: librenms
               mountPath: /data
           env:
-            - key: SIDECAR_DISPATCHER
+            - name: SIDECAR_DISPATCHER
               value: "1"
       volumes:
         - name: librenms
