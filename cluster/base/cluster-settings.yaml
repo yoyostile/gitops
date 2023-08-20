@@ -6,4 +6,4 @@ metadata:
   namespace: flux-system
 data:
   METALLB_LB_RANGE: 10.0.0.200-10.0.0.254
-  METALLB_TRAEFIK_ADDR: 10.0.0.200
+  METALLB_TRAEFIK_ADDR: 172.16.38.200
