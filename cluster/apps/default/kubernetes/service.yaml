@@ -20,7 +20,7 @@ metadata:
   namespace: default
 spec:
   type: LoadBalancer
-  loadBalancerIP: "10.0.0.254"
+  loadBalancerIP: "172.16.38.254"
   ports:
     - name: https
       protocol: TCP
