@@ -16,3 +16,41 @@ metadata:
 spec:
   ipAddressPools:
     - address-pool
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: bgp-address-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 172.16.38.200-172.16.38.254
+---
+apiVersion: metallb.io/v1beta1
+kind: BFDProfile
+metadata:
+  name: bfd-profile
+  namespace: metallb-system
+spec:
+  receiveInterval: 380
+  transmitInterval: 270
+---
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: bgp-k3s
+  namespace: metallb-system
+spec:
+  myASN: 65123
+  peerASN: 65123
+  peerAddress: 172.16.0.1
+  bfdProfile: bfd-profile
+---
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: bgp-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - bgp-address-pool
