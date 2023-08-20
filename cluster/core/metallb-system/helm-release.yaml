@@ -25,3 +25,6 @@ spec:
   values:
     crds:
       enabled: false
+    speaker:
+      frr:
+        enabled: true
