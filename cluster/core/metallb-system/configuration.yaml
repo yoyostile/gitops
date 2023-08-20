@@ -2,29 +2,11 @@
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: address-pool
-  namespace: metallb-system
-spec:
-  addresses:
-    - "${METALLB_LB_RANGE}"
----
-apiVersion: metallb.io/v1beta1
-kind: L2Advertisement
-metadata:
-  name: advertisement
-  namespace: metallb-system
-spec:
-  ipAddressPools:
-    - address-pool
----
-apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
   name: bgp-address-pool
   namespace: metallb-system
 spec:
   addresses:
-    - 172.16.38.200-172.16.38.254
+    - "${METALLB_LB_RANGE}"
 ---
 apiVersion: metallb.io/v1beta1
 kind: BFDProfile
