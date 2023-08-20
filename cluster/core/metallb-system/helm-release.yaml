@@ -27,4 +27,4 @@ spec:
       enabled: false
     speaker:
       frr:
-        enabled: false
+        enabled: true
