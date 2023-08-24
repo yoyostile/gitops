@@ -8,7 +8,7 @@ spec:
   endpoints:
     - path: /probe
       port: metrics
-      interval: 120m
+      interval: 1440m
       scrapeTimeout: 2m
   namespaceSelector:
     matchNames:
