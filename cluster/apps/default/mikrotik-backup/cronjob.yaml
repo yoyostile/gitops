@@ -1,0 +1,32 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mikrotik-backup
+  namespace: default
+spec:
+  schedule: "@hourly"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: alpine
+              image: alpine
+              envFrom:
+                - secretRef:
+                    name: mikrotik-backup
+              command: ["/bin/sh"]
+              args:
+                - -c
+                - |
+                  set -e
+                  apk update && apk add curl bash openssh-client jq git
+                  mkdir /mikrotik-backup
+                  cd /mikrotik-backup
+                  curl -H "Authorization: token $GITHUB_TOKEN" -O https://raw.githubusercontent.com/$GITHUB_REPO/main/backup.sh
+                  /bin/bash backup.sh
+          restartPolicy: OnFailure
