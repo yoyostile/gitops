@@ -12,6 +12,7 @@ resources:
   - mariadb
   - memcached
   - metabase
+  - mikrotik-backup
   - mosquitto
   - paperless
   - photo-stream
