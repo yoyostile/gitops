@@ -27,6 +27,6 @@ spec:
                   apk update && apk add curl bash openssh-client jq git
                   mkdir /mikrotik-backup
                   cd /mikrotik-backup
-                  curl -H "Authorization: token $GITHUB_TOKEN" -O https://raw.githubusercontent.com/$GITHUB_REPO/main/backup.sh
+                  curl -H "Authorization: token $GITHUB_TOKEN" -O https://raw.githubusercontent.com/$GITHUB_REPO/main/backup.sh?token=$(date +%s)
                   /bin/bash backup.sh
           restartPolicy: OnFailure
