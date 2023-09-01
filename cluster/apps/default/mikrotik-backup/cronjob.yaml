@@ -20,3 +20,7 @@ spec:
                 - secretRef:
                     name: mikrotik-backup
           restartPolicy: OnFailure
+          dnsConfig:
+            options:
+              - name: ndots
+                value: "1"
