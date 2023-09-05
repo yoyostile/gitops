@@ -27,12 +27,24 @@ spec:
     remediation:
       retries: 3
   values:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - traefik
+              topologyKey: kubernetes.io/hostname
+            weight: 90
     additionalVolumeMounts:
       - name: plugins
         mountPath: /plugins-storage
     deployment:
       kind: Deployment
-      replicas: 2
+      replicas: 3
       additionalVolumes:
         - name: plugins
     service:
