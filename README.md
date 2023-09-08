@@ -12,7 +12,7 @@ _... managed by Flux and serviced with RenovateBot_ :robot:
 This repository utilizes Flux. Flux is a tool for keeping Kubernetes clusters in sync with sources of configuration (like Git repositories), and automating updates to configuration when there is new code to deploy. Please have a look at the [docs](https://fluxcd.io/docs/).
 
 Also have a look at this great chart:
-![overview](https://github.com/fluxcd/flux2/raw/main/docs/_files/gitops-toolkit.png)
+![overview](https://cdn.r4r3.me/random/gitops-toolkit.png)
 
 ## 🏁 Quickstart
 
