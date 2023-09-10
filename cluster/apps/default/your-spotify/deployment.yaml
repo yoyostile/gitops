@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: your-spotify
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -27,12 +28,12 @@ spec:
             - name: SPOTIFY_PUBLIC
               valueFrom:
                 secretKeyRef:
-                  name: spotify-secret
+                  name: your-spotify
                   key: SPOTIFY_PUBLIC
             - name: SPOTIFY_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: spotify-secret
+                  name: your-spotify
                   key: SPOTIFY_SECRET
         - name: web
           image: yooooomi/your_spotify_client

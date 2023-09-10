@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: spotify-service
+  name: your-spotify
+  namespace: default
 spec:
   selector:
-    app: spotify
+    app: your-spotify
   ports:
     - protocol: TCP
       port: 8080
