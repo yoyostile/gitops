@@ -11,7 +11,7 @@ spec:
   template:
     metadata:
       labels:
-        app: you-spotify
+        app: your-spotify
     spec:
       containers:
         - name: server
