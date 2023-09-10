@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: your-spotify
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: your-spotify
+  template:
+    metadata:
+      labels:
+        app: you-spotify
+    spec:
+      containers:
+        - name: server
+          image: yooooomi/your_spotify_server
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TIMEZONE
+              value: "Europe/Berlin"
+            - name: API_ENDPOINT
+              value: "https://spotify.r4r3.me/api"
+            - name: CLIENT_ENDPOINT
+              value: "https://spotify.r4r3.me"
+            - name: SPOTIFY_PUBLIC
+              valueFrom:
+                secretKeyRef:
+                  name: spotify-secret
+                  key: SPOTIFY_PUBLIC
+            - name: SPOTIFY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: spotify-secret
+                  key: SPOTIFY_SECRET
+        - name: web
+          image: yooooomi/your_spotify_client
+          ports:
+            - containerPort: 3000
+          env:
+            - name: API_ENDPOINT
+              value: "https://spotify.r4r3.me"
+      volumes:
+        - name: mongo-data
+          emptyDir: {}
