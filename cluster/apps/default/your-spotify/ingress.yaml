@@ -7,8 +7,10 @@ metadata:
   annotations:
     hajimari.io/enable: "true"
     hajimari.io/icon: "connection"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd,networking-your-spotify-strip-api-prefix@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-your-spotify-strip-api-prefix@kubernetescrd,networking-cloudflarewarp@kubernetescrd"
 spec:
   ingressClassName: traefik
   tls:
