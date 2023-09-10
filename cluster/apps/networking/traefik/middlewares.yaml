@@ -35,3 +35,13 @@ spec:
       disableDefault: false
       trustip:
         - 10.42.0.0/16
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: your-spotify-strip-api-prefix
+  namespace: networking
+spec:
+  stripPrefix:
+    prefixes:
+      - /api
