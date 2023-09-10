@@ -27,4 +27,5 @@ resources:
   - st0rage
   - teslamate
   - uptime-kuma
+  - your-spotify
   - zigbee2mqtt
