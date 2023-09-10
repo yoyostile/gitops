@@ -27,11 +27,11 @@ spec:
               service:
                 name: your-spotify
                 port:
-                  number: 8080
+                  number: 3000
           - path: /api
             pathType: Prefix
             backend:
               service:
                 name: your-spotify
                 port:
-                  number: 3000
+                  number: 8080
