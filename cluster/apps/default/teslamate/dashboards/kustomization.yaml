@@ -15,9 +15,12 @@ configMapGenerator:
   - name: teslamate-charging-stats
     files:
       - charging-stats.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/charging-stats.json
+  # - name: teslamate-drive-stats
+  #   files:
+  #     - drive-stats.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/drive-stats.json
   - name: teslamate-drive-stats
     files:
-      - drive-stats.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/drive-stats.json
+      - drive-stats.json=https://raw.githubusercontent.com/yoyostile/teslamate/show-all-on-drive-stats/grafana/dashboards/drive-stats.json
   - name: teslamate-drive-details
     files:
       - drive-details.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/internal/drive-details.json
