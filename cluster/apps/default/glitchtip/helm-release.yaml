@@ -1,0 +1,212 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: glitchtip
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://gitlab.com/api/v4/projects/16325141/packages/helm/stable
+      chart: glitchtip
+      version: 3.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: glitchtip-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    # Default values for glitchtip.
+    image:
+      repository: glitchtip/glitchtip
+      tag: v3.2.2
+      pullPolicy: IfNotPresent
+
+    imagePullSecrets: []
+    nameOverride: ""
+    fullnameOverride: ""
+
+    env:
+      normal:
+        ENABLE_SOCIAL_AUTH: false
+        GLITCHTIP_DOMAIN: https://glitchtip.r4r3.me
+        CELERY_WORKER_AUTOSCALE: "1,3"
+        CELERY_WORKER_MAX_TASKS_PER_CHILD: "10000"
+      secret:
+        SECRET_KEY: "${GLITCHTIP_SECRET_KEY}"
+        DATABASE_URL: "${GLITCHTIP_DATABASE_URL}"
+        REDIS_URL: "${GLITCHTIP_REDIS_URL}"
+
+    preInstall:
+      enabled: true
+      activeDeadlineSeconds: 900
+
+    web:
+      replicaCount: 1
+      autoscaling:
+        enabled: false
+        minReplicas: 2
+        maxReplicas: 10
+        targetCPU: 80
+        # targetMemory: 80
+      budget:
+        minAvailable: 1
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      nodeSelector: {}
+      tolerations: []
+      podAnnotations: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/component
+                      operator: In
+                      values:
+                        - web # Change this as needed
+                topologyKey: kubernetes.io/hostname
+      livenessProbe:
+        failureThreshold: 5
+        initialDelaySeconds: 5
+        timeoutSeconds: 3
+      readinessProbe:
+        failureThreshold: 10
+        initialDelaySeconds: 5
+        timeoutSeconds: 2
+      service:
+        type: ClusterIP
+        port: 80
+
+      ingress:
+        enabled: true
+        annotations:
+          hajimari.io/enable: "true"
+          hajimari.io/icon: "alert-circle"
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+        hosts:
+          - host: glitchtip.${SECRET_LAB_DOMAIN}
+            paths:
+              - path: /
+                pathType: ImplementationSpecific
+        tls:
+          - hosts:
+              - "glitchtip.${SECRET_LAB_DOMAIN}"
+            secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+
+    worker:
+      enabled: true
+      replicaCount: 1
+      autoscaling:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 10
+        targetCPU: 100
+        # targetMemory: 80
+      livenessProbe:
+        initialDelaySeconds: 10
+        periodSeconds: 60
+        timeoutSeconds: 30
+        exec:
+          command:
+            - "bash"
+            - "-c"
+            - "celery -A glitchtip inspect ping -d celery@$HOSTNAME | grep -q OK"
+      resources:
+        limits:
+          cpu: 900m
+          memory: 768Mi
+        requests:
+          cpu: 100m
+          memory: 350Mi
+      nodeSelector: {}
+      tolerations: []
+      podAnnotations: {}
+      affinity: {}
+
+    beat:
+      enabled: true
+      resources:
+        limits:
+          cpu: 100m
+          memory: 130Mi
+        requests:
+          cpu: 1m
+          memory: 110Mi
+      nodeSelector: {}
+      tolerations: []
+      podAnnotations: {}
+      affinity: {}
+
+    flower:
+      enabled: false
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 50m
+          memory: 256Mi
+      nodeSelector: {}
+      tolerations: []
+      podAnnotations: {}
+      affinity: {}
+      service:
+        type: ClusterIP
+        port: 80
+      ingress:
+        enabled: false
+        annotations:
+          {}
+          # kubernetes.io/ingress.class: nginx
+          # kubernetes.io/tls-acme: "true"
+        hosts:
+          - host: chart-example.local
+            paths:
+              - path: /
+                pathType: ImplementationSpecific
+        tls: []
+        #  - secretName: chart-example-tls
+        #    hosts:
+        #      - chart-example.local
+
+    serviceAccount:
+      # Specifies whether a service account should be created
+      create: false
+      # The name of the service account to use.
+      # If not set and create is true, a name is generated using the fullname template
+      name:
+
+    # For configuration options, see https://artifacthub.io/packages/helm/bitnami/redis
+    redis:
+      enabled: false
+      architecture: standalone
+      # auth:
+      #  password: # Set this to avoid remaking redis on each release
+      master:
+        persistence:
+          enabled: false
+
+    # Default to disabled, use a managed database service. But can be enabled here.
+    # For configuration options, see https://artifacthub.io/packages/helm/bitnami/postgresql
+    postgresql:
+      enabled: false
+      # auth:
+      #   postgresPassword: # Must be set
