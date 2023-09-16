@@ -9,7 +9,6 @@ resources:
   - glitchtip
   - hajimari
   - kubernetes
-  - lemmy
   - mariadb
   - memcached
   - metabase
