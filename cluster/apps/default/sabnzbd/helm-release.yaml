@@ -23,6 +23,10 @@ spec:
     remediation:
       retries: 3
   values:
+    dnsConfig:
+      options:
+        - name: ndots
+          value: "1"
     image:
       repository: ghcr.io/onedr0p/sabnzbd
       tag: 4.0.3
