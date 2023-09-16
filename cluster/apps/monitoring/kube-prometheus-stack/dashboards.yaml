@@ -102,7 +102,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "targets": [
             {
               "datasource": {
@@ -185,7 +185,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "targets": [
             {
               "datasource": {
@@ -267,7 +267,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "targets": [
             {
               "datasource": {
@@ -336,7 +336,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -465,7 +465,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -542,6 +542,7 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -702,6 +703,7 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -800,6 +802,7 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineStyle": {
                   "dash": [
@@ -949,7 +952,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1089,7 +1092,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1113,7 +1116,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "alias": "$$0",
+              "alias": "$0",
               "datasource": {
                 "type": "influxdb",
                 "uid": "P3C6603E967DC8568"
@@ -1314,7 +1317,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.5.1",
+          "pluginVersion": "10.1.1",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1497,7 +1500,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.1.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1601,6 +1604,7 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineStyle": {
                   "fill": "solid"
@@ -1625,7 +1629,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1639,28 +1644,52 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "power {host=\"fhem\", topic=\"zigbee2mqtt/0xa4c138bcd445ed4d\"}"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "orange",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "Leistung Steckdose"
                 },
                 "properties": [
                   {
                     "id": "color",
                     "value": {
-                      "fixedColor": "super-light-red",
+                      "fixedColor": "super-light-yellow",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min. Leistung Steckdose"
+                },
+                "properties": [
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 21
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Leistung Steckdose"
+                },
+                "properties": [
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
                       "mode": "fixed"
                     }
                   }
@@ -1698,10 +1727,37 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}",
+              "expr": "avg_over_time(hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}[5m])\n\n",
+              "hide": false,
               "legendFormat": "Leistung Steckdose",
               "range": true,
               "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "min_over_time(hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}[5m])\n\n",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "Min. Leistung Steckdose",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max_over_time(hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}[5m])\n\n",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "Max Leistung Steckdose",
+              "range": true,
+              "refId": "C"
             }
           ],
           "title": "Leistung Steckdose",
@@ -1751,7 +1807,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.1.1",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
