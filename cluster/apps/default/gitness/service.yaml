@@ -1,0 +1,16 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: gitness
+  namespace: default
+  labels:
+    app: gitness
+spec:
+  selector:
+    app: gitness
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      name: http

@@ -6,6 +6,7 @@ resources:
   - echoip
   - evcc
   - freshrss
+  - gitness
   - glitchtip
   - hajimari
   - kubernetes
