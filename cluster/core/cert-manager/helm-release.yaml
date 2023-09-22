@@ -27,3 +27,6 @@ spec:
     webhook:
       enabled: true
     replicaCount: 1
+    extraArgs:
+      - --dns01-recursive-nameservers-only
+      - --dns01-recursive-nameservers=3.3.3.3:53
