@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitness
+  namespace: default
+  labels:
+    app: gitness
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitness
+  template:
+    metadata:
+      labels:
+        app: gitness
+    spec:
+      containers:
+        - name: gitness
+          image: harness/gitness
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 35
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          volumeMounts:
+            - name: gitness
+              mountPath: /data
+          env:
+            - name: DOCKER_HOST
+              value: tcp://localhost:2375
+        - name: dind-daemon
+          image: docker:1.12.6-dind
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: docker-graph-storage
+              mountPath: /var/lib/docker
+      volumes:
+        - name: gitness
+          persistentVolumeClaim:
+            claimName: gitness
+        - name: docker-graph-storage
+          emptyDir: {}
