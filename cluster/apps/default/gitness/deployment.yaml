@@ -38,9 +38,12 @@ spec:
             - name: DOCKER_HOST
               value: tcp://localhost:2375
         - name: dind-daemon
-          image: docker:1.12.6-dind
+          image: docker:24.0.6-dind
           securityContext:
             privileged: true
+            runAsUser: 0
+            capabilities:
+              add: ["SYS_ADMIN"]
           volumeMounts:
             - name: docker-graph-storage
               mountPath: /var/lib/docker
