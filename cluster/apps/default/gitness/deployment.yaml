@@ -36,7 +36,7 @@ spec:
               mountPath: /data
           env:
             - name: DOCKER_HOST
-              value: tcp://localhost:2375
+              value: tcp://localhost:2376
         - name: dind-daemon
           image: docker:24.0.6-dind
           securityContext:
