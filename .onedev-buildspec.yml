@@ -23,7 +23,7 @@ jobs:
     remoteUrl: https://github.com/yoyostile/gitops.git
     syncToChildProject: false
     passwordSecret: github_pat
-    refs: refs/heads/* refs/tags/*
+    refs: refs/heads/*
     withLfs: false
     force: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
