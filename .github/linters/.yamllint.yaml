@@ -1,6 +1,7 @@
 ignore: |
   *.sops.*
   gotk-components.yaml
+  .onedev-buildspec.yml
 extends: default
 rules:
   truthy:
