@@ -3,6 +3,20 @@ jobs:
 - name: Push to Github
   jobExecutor: k3s-runner
   steps:
+  - !PushRepository
+    name: Push to Github
+    remoteUrl: https://github.com/yoyostile/gitops.git
+    passwordSecret: github_pat
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: Pull from Github
+  steps:
   - !PullRepository
     name: Pull from Github
     remoteUrl: https://github.com/yoyostile/gitops.git
@@ -12,14 +26,6 @@ jobs:
     withLfs: false
     force: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  - !PushRepository
-    name: Push to Github
-    remoteUrl: https://github.com/yoyostile/gitops.git
-    passwordSecret: github_pat
-    force: false
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  triggers:
-  - !BranchUpdateTrigger {}
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
