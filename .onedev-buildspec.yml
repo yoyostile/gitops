@@ -22,8 +22,9 @@ jobs:
     name: Pull from Github
     remoteUrl: https://github.com/yoyostile/gitops.git
     syncToChildProject: false
+    userName: yoyostile
     passwordSecret: github_pat
-    refs: refs/heads/*
+    refs: refs/heads/* refs/tags/*
     withLfs: false
     force: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
