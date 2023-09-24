@@ -16,6 +16,7 @@ jobs:
   retryDelay: 30
   timeout: 3600
 - name: Pull from Github
+  jobExecutor: k3s-runner
   steps:
   - !PullRepository
     name: Pull from Github
