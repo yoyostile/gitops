@@ -16,6 +16,7 @@ resources:
   - mikrotik-backup
   - mongodb
   - mosquitto
+  - onedev
   - paperless
   - photo-stream
   - plex
