@@ -50,3 +50,7 @@ spec:
         - name: librenms
           persistentVolumeClaim:
             claimName: librenms
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
