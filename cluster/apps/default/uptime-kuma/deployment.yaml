@@ -34,3 +34,7 @@ spec:
         - name: uptime-kuma
           persistentVolumeClaim:
             claimName: uptime-kuma
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
