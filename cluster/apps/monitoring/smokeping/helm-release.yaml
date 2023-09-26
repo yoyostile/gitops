@@ -24,10 +24,6 @@ spec:
     remediation:
       retries: 3
   values:
-    dnsConfig:
-      options:
-        - name: ndots
-          value: "1"
     env:
       TZ: ${TZ}
       PUID: "911"
