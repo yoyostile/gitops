@@ -29,7 +29,7 @@ spec:
 
     image:
       repository: lscr.io/linuxserver/plex
-      tag: 1.32.6.7468-07e0d4a7e-ls183
+      tag: 1.32.6.7557-1cf77d501-ls186
 
     env:
       TZ: "${TZ}"
