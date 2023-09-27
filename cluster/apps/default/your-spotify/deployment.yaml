@@ -23,9 +23,9 @@ spec:
             - name: TIMEZONE
               value: "Europe/Berlin"
             - name: API_ENDPOINT
-              value: "https://spotify.r4r3.me/api"
+              value: "https://sptfy.${SECRET_LAB_DOMAIN}/api"
             - name: CLIENT_ENDPOINT
-              value: "https://spotify.r4r3.me"
+              value: "https://sptfy.${SECRET_LAB_DOMAIN}"
           envFrom:
             - secretRef:
                 name: your-spotify
@@ -36,4 +36,4 @@ spec:
             - containerPort: 3000
           env:
             - name: API_ENDPOINT
-              value: "https://spotify.r4r3.me/api"
+              value: "https://sptfy.${SECRET_LAB_DOMAIN}/api"
