@@ -24,7 +24,7 @@ resources:
   - random-gif
   - redis
   - requestbin
-  - sabnzbd
+  - sabnzbd/ks.yaml
   - shhh
   - st0rage
   - teslamate
