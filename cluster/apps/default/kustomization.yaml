@@ -4,10 +4,10 @@ kind: Kustomization
 commonAnnotations:
   kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
-  - adguard-home-sync/ks.yaml
-  - echoip/ks.yaml
-  - evcc
-  - freshrss
+  - ./adguard-home-sync/ks.yaml
+  - ./echoip/ks.yaml
+  - ./evcc/ks.yaml
+  - ./freshrss/ks.yaml
   - gitness
   - glitchtip
   - hajimari
@@ -26,7 +26,7 @@ resources:
   - random-gif
   - redis
   - requestbin
-  - sabnzbd/ks.yaml
+  - ./sabnzbd/ks.yaml
   - shhh
   - st0rage
   - teslamate
