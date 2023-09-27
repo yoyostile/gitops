@@ -3,16 +3,20 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: apps-default-echoip
+  name: apps-default-freshrss
   namespace: flux-system
 spec:
   interval: 5m
-  path: ./cluster/apps/default/echoip/app
+  path: ./cluster/apps/default/freshrss/app
   prune: true
   wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
   postBuild:
     substitute: {}
     substituteFrom:
