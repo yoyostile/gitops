@@ -5,7 +5,7 @@ commonAnnotations:
   kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
   - adguard-home-sync/ks.yaml
-  - echoip
+  - echoip/ks.yaml
   - evcc
   - freshrss
   - gitness
