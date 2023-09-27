@@ -11,25 +11,25 @@ resources:
   - ./gitness/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml
-  - kubernetes
-  - mariadb
-  - memcached
-  - metabase
-  - mikrotik-backup
-  - mongodb
-  - mosquitto
-  - onedev
-  - paperless
-  - photo-stream
-  - plex
-  - postgresql
-  - random-gif
-  - redis
-  - requestbin
+  - ./kubernetes/ks.yaml
+  - ./mariadb/ks.yaml
+  - ./memcached/ks.yaml
+  - ./metabase/ks.yaml
+  - ./mikrotik-backup/ks.yaml
+  - ./mongodb/ks.yaml
+  - ./mosquitto/ks.yaml
+  - ./onedev/ks.yaml
+  - ./paperless/ks.yaml
+  - ./photo-stream/ks.yaml
+  - ./plex/ks.yaml
+  - ./postgresql/ks.yaml
+  - ./random-gif/ks.yaml
+  - ./redis/ks.yaml
+  - ./requestbin/ks.yaml
   - ./sabnzbd/ks.yaml
-  - shhh
-  - st0rage
-  - teslamate
-  - uptime-kuma
-  - your-spotify
-  - zigbee2mqtt
+  - ./shhh/ks.yaml
+  - ./st0rage/ks.yaml
+  - ./teslamate/ks.yaml
+  - ./uptime-kuma/ks.yaml
+  - ./your-spotify/ks.yaml
+  - ./zigbee2mqtt/ks.yaml
