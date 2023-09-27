@@ -16,9 +16,9 @@ spec:
   tls:
     - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
-        - spotify.${SECRET_LAB_DOMAIN}
+        - sptfy.${SECRET_LAB_DOMAIN}
   rules:
-    - host: spotify.${SECRET_LAB_DOMAIN}
+    - host: sptfy.${SECRET_LAB_DOMAIN}
       http:
         paths:
           - path: /
