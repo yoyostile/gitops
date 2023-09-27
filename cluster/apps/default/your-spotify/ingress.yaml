@@ -17,8 +17,26 @@ spec:
     - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
         - sptfy.${SECRET_LAB_DOMAIN}
+        - spotify.${SECRET_LAB_DOMAIN}
   rules:
     - host: sptfy.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: your-spotify
+                port:
+                  number: 3000
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: your-spotify
+                port:
+                  number: 8080
+    - host: spotify.${SECRET_LAB_DOMAIN}
       http:
         paths:
           - path: /
