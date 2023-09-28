@@ -4,8 +4,8 @@ kind: Kustomization
 commonAnnotations:
   kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
-  - descheduler
-  - metrics-server
-  - node-feature-discovery
-  - reflector
-  - reloader
+  - ./descheduler/ks.yaml
+  - ./metrics-server/ks.yaml
+  - ./node-feature-discovery/ks.yaml
+  - ./reflector/ks.yaml
+  - ./reloader/ks.yaml
