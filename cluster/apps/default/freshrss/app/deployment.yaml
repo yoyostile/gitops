@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: freshrss
-          image: linuxserver/freshrss
+          image: linuxserver/freshrss:1.21.0
           readinessProbe:
             httpGet:
               path: /
