@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: gitness
-          image: harness/gitness:v3.0.0-beta.3
+          image: harness/gitness:v3.0.0-beta.4
           readinessProbe:
             httpGet:
               path: /
