@@ -15,12 +15,9 @@ configMapGenerator:
   - name: teslamate-charging-stats
     files:
       - charging-stats.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/charging-stats.json
-  # - name: teslamate-drive-stats
-  #   files:
-  #     - drive-stats.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/drive-stats.json
   - name: teslamate-drive-stats
     files:
-      - drive-stats.json=https://raw.githubusercontent.com/yoyostile/teslamate/show-all-on-drive-stats/grafana/dashboards/drive-stats.json
+      - drive-stats.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/drive-stats.json
   - name: teslamate-drive-details
     files:
       - drive-details.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/internal/drive-details.json
@@ -29,10 +26,7 @@ configMapGenerator:
       - drives.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/drives.json
   - name: teslamate-efficiency
     files:
-      - efficiency.json=https://raw.githubusercontent.com/yoyostile/teslamate/show-all-on-drive-stats/grafana/dashboards/efficiency.json
-  # - name: teslamate-efficiency
-  #   files:
-  #     - efficiency.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/efficiency.json
+      - efficiency.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/efficiency.json
   - name: teslamate-locations
     files:
       - locations.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/locations.json
@@ -44,10 +38,7 @@ configMapGenerator:
       - overview.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/overview.json
   - name: teslamate-projected-range
     files:
-      - projected-range.json=https://raw.githubusercontent.com/yoyostile/teslamate/show-all-on-drive-stats/grafana/dashboards/projected-range.json
-  # - name: teslamate-projected-range
-  #   files:
-  #     - projected-range.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/projected-range.json
+      - projected-range.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/projected-range.json
   - name: teslamate-states
     files:
       - states.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/states.json
@@ -69,7 +60,6 @@ configMapGenerator:
   - name: teslamate-visited
     files:
       - visited.json=https://raw.githubusercontent.com/adriankumpf/teslamate/master/grafana/dashboards/visited.json
-
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
