@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: librenms
-          image: librenms/librenms:23.9.1
+          image: librenms/librenms:23.11.0
           securityContext:
           capabilities:
             add:
@@ -29,7 +29,7 @@ spec:
             - name: librenms
               mountPath: /data
         - name: dispatcher
-          image: librenms/librenms:23.9.1
+          image: librenms/librenms:23.11.0
           securityContext:
           capabilities:
             add:
