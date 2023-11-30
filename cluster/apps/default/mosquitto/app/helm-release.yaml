@@ -37,3 +37,14 @@ spec:
         type: "LoadBalancer"
         loadBalancerIP: "172.16.38.202"
         externalTrafficPolicy: Local
+        ports:
+          main:
+            port: 1883
+            targetPort: 1883
+      websockets:
+        enabled: false
+        ports:
+          websockets:
+            enabled: false
+            port: 9001
+            targetPort: 9001
