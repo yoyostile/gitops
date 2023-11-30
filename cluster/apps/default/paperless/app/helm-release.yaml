@@ -30,13 +30,18 @@ spec:
       main:
         enabled: false
 
-    env:
-      PAPERLESS_OCR_LANGUAGE: deu
-      PAPERLESS_TIME_ZONE: "${TZ}"
-      PAPERLESS_CONSUMER_POLLING: "60"
-      PAPERLESS_REDIS: "${SECRET_PAPERLESS_REDIS}"
-      PAPERLESS_DBHOST: "postgresql.default"
-      PAPERLESS_DBPASS: "${SECRET_PAPERLESS_POSTGRES_PASSWORD}"
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              env:
+                PAPERLESS_OCR_LANGUAGE: deu
+                PAPERLESS_TIME_ZONE: "${TZ}"
+                PAPERLESS_CONSUMER_POLLING: "60"
+                PAPERLESS_REDIS: "${SECRET_PAPERLESS_REDIS}"
+                PAPERLESS_DBHOST: "postgresql.default"
+                PAPERLESS_DBPASS: "${SECRET_PAPERLESS_POSTGRES_PASSWORD}"
 
     persistence:
       data:
