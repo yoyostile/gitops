@@ -44,3 +44,4 @@ spec:
         ports:
           mqtt:
             port: 1883
+            protocol: TCP
