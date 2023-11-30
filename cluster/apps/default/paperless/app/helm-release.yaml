@@ -26,6 +26,10 @@ spec:
       repository: ghcr.io/paperless-ngx/paperless-ngx
       tag: 1.17.4
 
+    cnpg:
+      main:
+        enabled: false
+
     env:
       PAPERLESS_OCR_LANGUAGE: deu
       PAPERLESS_TIME_ZONE: "${TZ}"
