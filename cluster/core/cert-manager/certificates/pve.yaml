@@ -10,6 +10,7 @@ spec:
   dnsNames:
     - pve01.lab.${SECRET_LAB_DOMAIN}
     - pve02.lab.${SECRET_LAB_DOMAIN}
+    - pve03.lab.${SECRET_LAB_DOMAIN}
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
