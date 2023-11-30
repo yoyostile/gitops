@@ -8,12 +8,12 @@ spec:
   interval: 5m
   chart:
     spec:
-      # renovate: registryUrl=https://bjw-s.github.io/helm-charts
-      chart: app-template
-      version: 2.3.0
+      # renovate: registryUrl=https://k8s-at-home.com/charts
+      chart: mosquitto
+      version: 4.8.2
       sourceRef:
         kind: HelmRepository
-        name: bjw-s-charts
+        name: k8s-at-home-charts
         namespace: flux-system
   install:
     createNamespace: true
@@ -23,13 +23,9 @@ spec:
     remediation:
       retries: 3
   values:
-    controllers:
-      main:
-        containers:
-          main:
-            image:
-              repository: eclipse-mosquitto
-              tag: 2.0.18
+    image:
+      repository: eclipse-mosquitto
+      tag: 2.0.18
     persistence:
       data:
         accessMode: ReadWriteOnce
@@ -41,7 +37,3 @@ spec:
         type: "LoadBalancer"
         loadBalancerIP: "172.16.38.202"
         externalTrafficPolicy: Local
-        ports:
-          http:
-            port: 1883
-            protocol: TCP
