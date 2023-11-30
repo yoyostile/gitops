@@ -41,3 +41,6 @@ spec:
         type: "LoadBalancer"
         loadBalancerIP: "172.16.38.202"
         externalTrafficPolicy: Local
+        ports:
+          mqtt:
+            port: 1883
