@@ -18,10 +18,10 @@ spec:
         - name: librenms
           image: librenms/librenms:23.9.1
           securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-              - NET_RAW
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
           envFrom:
             - secretRef:
                 name: librenms
@@ -31,10 +31,10 @@ spec:
         - name: dispatcher
           image: librenms/librenms:23.9.1
           securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-              - NET_RAW
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
           envFrom:
             - secretRef:
                 name: librenms
