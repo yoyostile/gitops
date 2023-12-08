@@ -5,7 +5,7 @@ metadata:
   name: mariadb-backup
   namespace: default
 spec:
-  suspend: true
+  suspend: false
   schedule: "@daily"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
@@ -19,7 +19,7 @@ spec:
               image: alpine
               env:
                 - name: DATABASES
-                  value: ""
+                  value: "librenms onedev"
                 - name: MARIADB_HOST
                   value: mariadb.default
                 - name: MARIADB_USER
