@@ -48,7 +48,7 @@ spec:
 
                   apk update
                   apk add postgresql py-pip
-                  pip install --upgrade b2
+                  pip install --break-system-packages --upgrade b2
                   b2 authorize-account $BACKBLAZE_B2_KEY_ID $BACKBLAZE_B2_APPLICATION_KEY
 
                   mkdir -p backups/$DATE
