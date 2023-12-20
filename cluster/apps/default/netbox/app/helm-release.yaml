@@ -54,7 +54,7 @@ spec:
     persistence:
       storageClass: nfs-client
     plugins:
-      - netbox-napalm-plugin
+      - netbox_napalm_plugin
     ingress:
       enabled: true
       className: traefik
