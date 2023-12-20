@@ -37,7 +37,7 @@ spec:
       AWS_ACCESS_KEY_ID: ${NETBOX_AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${NETBOX_AWS_SECRET_ACCESS_KEY}
       AWS_STORAGE_BUCKET_NAME: ${NETBOX_AWS_STORAGE_BUCKET_NAME}
-      AWS_S3_ENDPOINT_URL: 'https://s3.eu-central-003.backblazeb2.com/${NETBOX_AWS_STORAGE_BUCKET_NAME}'
+      AWS_S3_ENDPOINT_URL: 'https://s3.eu-central-003.backblazeb2.com'
       AWS_S3_REGION_NAME: 'eu-central-003'
     postgresql:
       enabled: false
