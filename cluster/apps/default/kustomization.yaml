@@ -16,6 +16,7 @@ resources:
   - ./mikrotik-backup/ks.yaml
   - ./mongodb/ks.yaml
   - ./mosquitto/ks.yaml
+  - ./netbox/ks.yaml
   - ./onedev/ks.yaml
   - ./paperless/ks.yaml
   - ./photo-stream/ks.yaml
