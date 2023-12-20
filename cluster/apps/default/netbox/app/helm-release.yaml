@@ -24,8 +24,10 @@ spec:
       retries: 3
   values:
     image:
-      repository: netboxcommunity/netbox
-      tag: v3.6-2.7.0
+      # repository: netboxcommunity/netbox
+      # tag: v3.6-2.7.0
+      repository: yoyostile/netbox
+      tag: latest
     existingSecret: netbox
     email:
       server: pve01.lab.${SECRET_LAB_DOMAIN}
@@ -51,6 +53,8 @@ spec:
       host: redis-headless.default
     persistence:
       storageClass: nfs-client
+    plugins:
+      - netbox-napalm-plugin
     ingress:
       enabled: true
       className: traefik
