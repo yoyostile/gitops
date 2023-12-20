@@ -55,6 +55,10 @@ spec:
       storageClass: nfs-client
     plugins:
       - netbox_napalm_plugin
+    pluginsConfig:
+      netbox_napalm_plugin:
+        NAPALM_USERNAME: xxx
+        NAPALM_PASSWORD: yyy
     ingress:
       enabled: true
       className: traefik
