@@ -1,0 +1,69 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: mosquitto
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.boo.tc
+      chart: netbox
+      version: 4.1.1
+      sourceRef:
+        kind: HelmRepository
+        name: bootc-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    image:
+      repository: netboxcommunity/netbox
+      tag: v3.6-2.7.0
+    existingSecret: netbox
+    email:
+      server: pve01.lab.${SECRET_LAB_DOMAIN}
+    loginRequired: true
+    storageBackend: storages.backends.s3boto3.S3Boto3Storage
+    storageConfig:
+      AWS_ACCESS_KEY_ID: ${NETBOX_AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${NETBOX_AWS_SECRET_ACCESS_KEY}
+      AWS_STORAGE_BUCKET_NAME: ${NETBOX_AWS_STORAGE_BUCKET_KEY}
+      AWS_S3_ENDPOINT_URL: 's3.eu-central-003.backblazeb2.com'
+      AWS_S3_REGION_NAME: 'eu-central-003'
+    postgresql:
+      enabled: false
+    externalDatabase:
+      host: postgresql-hl.default
+    redis:
+      enabled: false
+    tasksRedis:
+      database: 4
+      host: redis-headless.default
+    cachingRedis:
+      database: 5
+      host: redis-headless.default
+    persistence:
+      storageClass: nfs-client
+    ingress:
+      enabled: true
+      className: traefik
+      annotations:
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "network"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+      hosts:
+        - host: netbox.${SECRET_LAB_DOMAIN}
+          paths:
+            - /
+      tls:
+        - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+          hosts:
+            - netbox.${SECRET_LAB_DOMAIN}
