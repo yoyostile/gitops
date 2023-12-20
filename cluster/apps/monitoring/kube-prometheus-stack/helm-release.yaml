@@ -115,11 +115,11 @@ spec:
             gnetId: 11312
             revision: 8
             datasource: Prometheus
-      extraVolumeMounts:
-        - name: grafana-plugins
-          existingClaim: grafana-plugins
-          mountPath: /var/lib/grafana/plugins
-          readOnly: false
+      # extraVolumeMounts:
+      #   - name: grafana-plugins
+      #     existingClaim: grafana-plugins
+      #     mountPath: /var/lib/grafana/plugins
+      #     readOnly: false
       grafana.ini:
         plugins:
           allow_loading_unsigned_plugins: panodata-map-panel
