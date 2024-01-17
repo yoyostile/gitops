@@ -29,7 +29,7 @@ spec:
           value: "1"
     image:
       repository: ghcr.io/onedr0p/sabnzbd
-      tag: 4.1.0
+      tag: 4.2.1
     enivronment:
       TZ: ${TZ}
       PGID: 1000
