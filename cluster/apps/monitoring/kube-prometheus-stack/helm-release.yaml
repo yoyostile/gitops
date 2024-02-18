@@ -45,6 +45,8 @@ spec:
         kubeScheduler: false
         kubeStateMetrics: false
     grafana:
+      env:
+        GF_STRAVA_DS_DATA_PATH: /var/lib/grafana/plugins/grafana-strava-datasource
       adminPassword: ${SECRET_GRAFANA_PASSWORD}
       dashboardProviders:
         dashboardproviders.yaml:
@@ -115,11 +117,11 @@ spec:
             gnetId: 11312
             revision: 8
             datasource: Prometheus
-      # extraVolumeMounts:
-      #   - name: grafana-plugins
-      #     existingClaim: grafana-plugins
-      #     mountPath: /var/lib/grafana/plugins
-      #     readOnly: false
+      extraVolumeMounts:
+        - name: grafana-plugins
+          existingClaim: grafana-plugins
+          mountPath: /var/lib/grafana/plugins
+          readOnly: false
       grafana.ini:
         plugins:
           allow_loading_unsigned_plugins: panodata-map-panel
