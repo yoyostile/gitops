@@ -185,10 +185,10 @@ spec:
           type: grafana-strava-datasource
           jsonData:
             stravaAuthType: refresh_token
-            clientID: 121788
+            clientID: "121788"
           secureJsonData:
-            clientSecret: ${GRAFANA_STRAVA_DATASOURCE_SECRET}
-            refreshToken: ${GRAFANA_STRAVA_REFRESH_TOKEN}
+            clientSecret: "${GRAFANA_STRAVA_DATASOURCE_SECRET}"
+            refreshToken: "${GRAFANA_STRAVA_REFRESH_TOKEN}"
     prometheus:
       prometheusSpec:
         additionalScrapeConfigs:
