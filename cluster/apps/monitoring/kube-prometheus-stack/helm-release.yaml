@@ -179,6 +179,16 @@ spec:
           jsonData:
             postgresVersion: 1000
             sslmode: disable
+        - name: strava
+          access: proxy
+          orgId: 1
+          type: strava
+          jsonData:
+            stravaAuthType: refresh_token
+            clientID: 121788
+          secureJsonData:
+            clientSecret: ${GRAFANA_STRAVA_DATASOURCE_SECRET}
+            refreshToken: ${GRAFANA_STRAVA_REFRESH_TOKEN}
     prometheus:
       prometheusSpec:
         additionalScrapeConfigs:
