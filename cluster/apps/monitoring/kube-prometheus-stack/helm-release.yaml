@@ -182,7 +182,7 @@ spec:
         - name: strava
           access: proxy
           orgId: 1
-          type: Strava
+          type: grafana-strava-datasource
           jsonData:
             stravaAuthType: refresh_token
             clientID: 121788
