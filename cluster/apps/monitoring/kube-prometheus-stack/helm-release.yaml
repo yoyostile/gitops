@@ -153,6 +153,7 @@ spec:
         - pr0ps-trackmap-panel
         - natel-plotly-panel
         - flant-statusmap-panel
+        - grafana-strava-datasource
       additionalDataSources:
         - name: influxdb
           access: proxy
