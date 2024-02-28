@@ -1,4 +1,4 @@
-<img src="[https://cdn.r4r3.me/Kubernetes_logo_without_workmark.svg.png](https://cdn.r4r3.me/Kubernetes_logo_without_workmark.svg.png)" align="left" width="144px" />
+<img src="https://cdn.r4r3.me/Kubernetes_logo_without_workmark.svg.png" align="left" width="144px" />
 
 ### My home Kubernetes cluster :sailboat:
 _... managed by Flux and serviced with RenovateBot_ :robot:
