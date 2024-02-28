@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://charts.truecharts.org/
       chart: mosquitto
-      version: 13.2.0
+      version: 13.3.0
       sourceRef:
         kind: HelmRepository
         name: truecharts-charts
