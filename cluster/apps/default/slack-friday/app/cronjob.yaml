@@ -26,6 +26,8 @@ spec:
                 - |
                   set -xe
 
+                  apk update && apk add curl
+
                   # Send the message using the Slack API
                   curl -X POST -H 'Content-type: application/json' \
                       -H "Authorization: Bearer $TOKEN" \
