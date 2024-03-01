@@ -1,0 +1,37 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: slack-friday
+  namespace: default
+spec:
+  suspend: false
+  schedule: "0 10 * * 5"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: alpine
+              image: alpine
+              envFrom:
+                - secretRef:
+                    name: slack-friday
+              command: ["/bin/sh"]
+              args:
+                - -c
+                - |
+                  set -xe
+
+                  # Send the message using the Slack API
+                  curl -X POST -H 'Content-type: application/json' \
+                      -H "Authorization: Bearer $TOKEN" \
+                      --data "{
+                          \"channel\": \"$CHANNEL\",
+                          \"text\": \"$MESSAGE\"
+                      }" \
+                      https://slack.com/api/chat.postMessage
+          restartPolicy: OnFailure
