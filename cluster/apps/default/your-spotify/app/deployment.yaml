@@ -29,7 +29,7 @@ spec:
             - secretRef:
                 name: your-spotify
         - name: web
-          image: yooooomi/your_spotify_client:1.7.3
+          image: yooooomi/your_spotify_client:1.10.1
           ports:
             - containerPort: 3000
           env:
