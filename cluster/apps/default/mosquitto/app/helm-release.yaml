@@ -32,6 +32,9 @@ spec:
         enabled: true
         size: 500Mi
         storageClass: "nfs-client"
+    ingress:
+      websockets:
+        enabled: false
     service:
       main:
         type: "LoadBalancer"
