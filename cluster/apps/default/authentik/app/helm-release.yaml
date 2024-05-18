@@ -25,4 +25,3 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: authentik-values
-  values: {}
