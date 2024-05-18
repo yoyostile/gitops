@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: airbyte-values
+    namespace: default
+data:
+    values.yaml: ENC[AES256_GCM,data:VUu0ha/IaQX0yypsqeoBojhX6WhMN2mVywSdsY+ntqK1muJZGCQ/lQxEbFFNiUB3n7XUR8G4T1xBLbnigD20wDilq/jsrcY62K26GcYejhfYy23K0x28g0Y9bssqEX9Yw4MDoR/BNgZi3P7g9/VGuSlhcKX6MHLkWpeKtKW2gZXQIEvNHDi0cOOxv+tN0KbR/LGbqR4YrLm3HFbO63Vx8AA900EaHl9eTekkyssvUsbvAiff9XmruZNJ3NKsSg==,iv:KgB529fjGP9cIlaF5rXkV/jM50nC5fp0f/v9hK9wHSA=,tag:u27GB26X8IAFWwjyc8MWSQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB1NDRlKzFHSk9rejE5VEdn
+            K2lHVlRkWmVaZ1FNY0hFdzZ3VFdUdTBpdlRFCjIraG5kTEVKRmVXOVFwa0t6OU4r
+            UklaMU1GcnZnM0V1aGIxNU44VndveHMKLS0tIG9EOUVUMHNBeTFnVnV5eEZ3dWVH
+            UVZtRjlwa251MU52NDNNQ3dtQ09SRDgK6CB+cX7gZyTfDDj5l1nHGoJnMQh7ZT7l
+            RtTxR9PB2iYuKAI1gS+cAFCwOaUC3zOBHIqYkqRTv98wEachh+eWvw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-18T18:43:41Z"
+    mac: ENC[AES256_GCM,data:aSDXRwBma8OtGmY6w6meX0eBzDMoTTaEGGnkZajUlFMb59T2gIVSQj4+r5fzY/PCe/b/y40A/hGsxWAQtP7hM/MgT5hKen7AgH+DCe7+x5P9fIG429hV3BZrGu0gyTECDVO8lnRZ8LV+G2zwg25KWp9gSrw5KK5ns3bQvoRxnSA=,iv:fYWAsmUuIRIEuh07kl5hELLQMBsEvlijutAfJRnFSEE=,tag:3Q8bL5Wx8nIDuc7xJD+mhw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1
