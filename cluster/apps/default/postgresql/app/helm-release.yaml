@@ -32,6 +32,7 @@ spec:
     global:
       storageClass: "nfs-client"
     primary:
+      resourcesPreset: "xlarge"
       persistence:
         existingClaim: "postgresql-local-pvc"
       service:
