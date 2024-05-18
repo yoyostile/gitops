@@ -32,6 +32,8 @@ spec:
     global:
       storageClass: "nfs-client"
     primary:
+      persistence:
+        existingClaim: "postgresql-local-pvc"
       service:
         type: "LoadBalancer"
         loadBalancerIP: "172.16.38.201"
