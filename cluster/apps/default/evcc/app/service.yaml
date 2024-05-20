@@ -20,4 +20,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 7070
-      name: http
