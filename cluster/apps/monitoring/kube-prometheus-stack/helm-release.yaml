@@ -47,6 +47,7 @@ spec:
     grafana:
       env:
         GF_STRAVA_DS_DATA_PATH: /var/lib/grafana/plugins/grafana-strava-datasource
+        GF_SERVER_ROOT_URL: "https://g.${SECRET_LAB_DOMAIN}"
         GF_AUTH_GENERIC_OAUTH_ENABLED: "true"
         GF_AUTH_GENERIC_OAUTH_NAME: "authentik"
         GF_AUTH_GENERIC_OAUTH_CLIENT_ID: ${GRAFANA_OAUTH_CLIENT_ID}
@@ -156,12 +157,10 @@ spec:
           traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
         hosts:
           - "g.${SECRET_LAB_DOMAIN}"
-          - "grafana.${SECRET_LAB_DOMAIN}"
         tls:
           - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
             hosts:
               - "g.${SECRET_LAB_DOMAIN}"
-              - "grafana.${SECRET_LAB_DOMAIN}"
       plugins:
         - grafana-piechart-panel
         - grafana-clock-panel
