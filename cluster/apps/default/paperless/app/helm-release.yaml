@@ -34,6 +34,8 @@ spec:
       PAPERLESS_REDIS: "${SECRET_PAPERLESS_REDIS}"
       PAPERLESS_DBHOST: "postgresql.default"
       PAPERLESS_DBPASS: "${SECRET_PAPERLESS_POSTGRES_PASSWORD}"
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: "${SECRET_PAPERLESS_SOCIALACCOUNT_PROVIDERS}"
 
     persistence:
       data:
