@@ -23,6 +23,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: evcc
+                name: authentik-server
                 port:
-                  number: 80
+                  name: http
