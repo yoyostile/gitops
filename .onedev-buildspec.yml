@@ -1,4 +1,4 @@
-version: 25
+version: 33
 jobs:
 - name: Push to Github
   jobExecutor: k3s-runner
@@ -21,12 +21,11 @@ jobs:
   - !PullRepository
     name: Pull from Github
     remoteUrl: https://github.com/yoyostile/gitops.git
-    syncToChildProject: false
     userName: yoyostile
     passwordSecret: github_pat
     refs: refs/heads/* refs/tags/*
     withLfs: false
-    force: false
+    force: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:
   - !ScheduleTrigger
