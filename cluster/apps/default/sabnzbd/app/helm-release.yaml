@@ -47,7 +47,7 @@ spec:
         storageClass: "nfs-client"
     ingress:
       main:
-        enabled: true
+        enabled: false
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "cloud-download-outline"
