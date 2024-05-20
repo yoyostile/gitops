@@ -1,0 +1,28 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: metabase
+  namespace: default
+  annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "chart-box-outline"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - metabase.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: metabase.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: metabase
+                port:
+                  name: http
