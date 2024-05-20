@@ -25,6 +25,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: uptime-kuma
+                name: authentik-server
                 port:
                   name: http
