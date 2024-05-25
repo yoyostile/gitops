@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://airbytehq.github.io/helm-charts
       chart: airbyte
-      version: 0.82.1
+      version: 0.92.10
       sourceRef:
         kind: HelmRepository
         name: airbyte-charts
