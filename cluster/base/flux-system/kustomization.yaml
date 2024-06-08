@@ -10,7 +10,7 @@ patches:
   - patch: |
       - op: add
         path: /spec/template/spec/containers/0/args/-
-        value: --helm-index-max-size=90000000
+        value: --helm-index-max-size=130000000
     target:
       kind: Deployment
       name: "source-controller"
