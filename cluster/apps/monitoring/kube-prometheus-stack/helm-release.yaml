@@ -102,7 +102,7 @@ spec:
         mktxp:
           mktxpDashboard:
             gnetId: 13679
-            revision: 17
+            revision: 22
             datasource:
               - name: DS_PROMETHEUS
                 value: Prometheus
@@ -113,15 +113,15 @@ spec:
           #   datasource: Prometheus
           unifiPollerClientInsights:
             gnetId: 11315
-            revision: 8
+            revision: 9
             datasource: Prometheus
           unifiPollerNetworkSites:
             gnetId: 11311
-            revision: 4
+            revision: 5
             datasource: Prometheus
           unifiPollerUAPInsights:
             gnetId: 11314
-            revision: 8
+            revision: 10
             datasource: Prometheus
           # unifiPollerUSGInsights:
           #   gnetId: 11313
@@ -129,7 +129,7 @@ spec:
           #   datasource: Prometheus
           unifiPollerUSWInsights:
             gnetId: 11312
-            revision: 8
+            revision: 9
             datasource: Prometheus
       # extraVolumeMounts:
       #   - name: grafana-plugins
