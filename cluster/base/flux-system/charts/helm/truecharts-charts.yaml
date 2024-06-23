@@ -17,5 +17,3 @@ metadata:
 spec:
   interval: 5m0s
   url: oci://tccr.io/truecharts/mosquitto
-  ref:
-    tag: latest
