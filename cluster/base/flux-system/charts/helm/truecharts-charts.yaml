@@ -17,5 +17,6 @@ metadata:
 spec:
   interval: 5m0s
   url: oci://tccr.io/truecharts/mosquitto
+  # renovate: registryUrl=oci://tccr.io/truecharts/mosquitto
   ref:
     tag: 16.1.3
