@@ -8,3 +8,14 @@ spec:
   interval: 30m
   url: https://charts.truecharts.org/
   timeout: 3m
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: truecharts-mosquitto
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  url: oci://tccr.io/truecharts/mosquitto
+  ref:
+    tag: latest
