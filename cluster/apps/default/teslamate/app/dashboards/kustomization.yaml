@@ -3,9 +3,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: monitoring
 configMapGenerator:
-  - name: teslamate-battery-health-lfp
-    files:
-      - battery-health-lfp.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/battery-health-lfp.json
   - name: teslamate-battery-health
     files:
       - battery-health.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/battery-health.json
@@ -18,9 +15,6 @@ configMapGenerator:
   - name: teslamate-charge-details
     files:
       - charge-details.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/internal/charge-details.json
-  - name: teslamate-charging-stats-lfp
-    files:
-      - charging-stats-lfp.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/charging-stats-lfp.json
   - name: teslamate-charging-stats
     files:
       - charging-stats.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/charging-stats.json
@@ -42,9 +36,6 @@ configMapGenerator:
   - name: teslamate-mileage
     files:
       - mileage.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/mileage.json
-  - name: teslamate-overview-lfp
-    files:
-      - overview-lfp.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/overview-lfp.json
   - name: teslamate-overview
     files:
       - overview.json=https://raw.githubusercontent.com/teslamate-org/teslamate/master/grafana/dashboards/overview.json
