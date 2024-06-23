@@ -6,15 +6,10 @@ metadata:
   namespace: default
 spec:
   interval: 5m
-  chart:
-    spec:
-      # renovate: registryUrl=oci://tccr.io/truecharts/mosquitto
-      chart: mosquitto
-      version: 16.1.3
-      sourceRef:
-        kind: OCIRepository
-        name: truecharts-mosquitto
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: truecharts-mosquitto
+    namespace: flux-system
   install:
     createNamespace: true
     remediation:
