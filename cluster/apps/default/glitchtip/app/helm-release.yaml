@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://gitlab.com/api/v4/projects/16325141/packages/helm/stable
       chart: glitchtip
-      version: 3.0.8
+      version: 3.0.9
       sourceRef:
         kind: HelmRepository
         name: glitchtip-charts
