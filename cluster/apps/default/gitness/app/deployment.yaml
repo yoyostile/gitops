@@ -38,7 +38,7 @@ spec:
             - name: DOCKER_HOST
               value: tcp://localhost:2375
         - name: dind-daemon
-          image: docker:26.1.4-dind
+          image: docker:27.1.1-dind
           command:
             - "dockerd"
             - "-H"
