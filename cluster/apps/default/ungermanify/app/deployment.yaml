@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ungermanify
+  name: ungermanify
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ungermanify
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ungermanify
+    spec:
+      containers:
+        - image: yoyostile/ungermanify:latest
+          imagePullPolicy: Always
+          name: ungermanify
+          env:
+            - name: RACK_ENV
+              value: production
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
