@@ -36,6 +36,7 @@ spec:
       PAPERLESS_DBPASS: "${SECRET_PAPERLESS_POSTGRES_PASSWORD}"
       PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
       PAPERLESS_SOCIALACCOUNT_PROVIDERS: ${SECRET_PAPERLESS_SOCIALACCOUNT_PROVIDERS}
+      PAPERLESS_OCR_USER_ARGS: "{\"invalidate_digital_signatures\": true}"
 
     persistence:
       data:
