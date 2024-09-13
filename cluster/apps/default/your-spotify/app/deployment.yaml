@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: yooooomi/your_spotify_server:1.10.1
+          image: yooooomi/your_spotify_server:1.11.0
           ports:
             - containerPort: 8080
           env:
