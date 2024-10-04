@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: unifi-poller
-          image: golift/unifi-poller:2
+          image: ghcr.io/unpoller/unpoller:v2.11.1
           imagePullPolicy: Always
           envFrom:
             - secretRef:
