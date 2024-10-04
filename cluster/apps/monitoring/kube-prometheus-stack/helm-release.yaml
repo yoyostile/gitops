@@ -109,7 +109,7 @@ spec:
         unifi:
           # unifiPollerClientDPI:
           #   gnetId: 11310
-          #   revision: 4
+          #   revision: 5
           #   datasource: Prometheus
           unifiPollerClientInsights:
             gnetId: 11315
@@ -125,7 +125,7 @@ spec:
             datasource: Prometheus
           # unifiPollerUSGInsights:
           #   gnetId: 11313
-          #   revision: 8
+          #   revision: 9
           #   datasource: Prometheus
           unifiPollerUSWInsights:
             gnetId: 11312
