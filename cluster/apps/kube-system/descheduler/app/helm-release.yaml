@@ -59,3 +59,8 @@ spec:
         operator: "Equal"
         value: "arm64"
         effect: "NoSchedule"
+
+    resources:
+      requests:
+        cpu: 5m
+        memory: 25Mi
