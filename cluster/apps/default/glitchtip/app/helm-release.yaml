@@ -66,13 +66,6 @@ spec:
         # targetMemory: 80
       budget:
         minAvailable: 1
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 512Mi
-        requests:
-          cpu: 100m
-          memory: 256Mi
       nodeSelector: {}
       tolerations: []
       podAnnotations: {}
@@ -137,13 +130,6 @@ spec:
             - "bash"
             - "-c"
             - "celery -A glitchtip inspect ping -d celery@$HOSTNAME | grep -q OK"
-      resources:
-        limits:
-          cpu: 900m
-          memory: 768Mi
-        requests:
-          cpu: 100m
-          memory: 350Mi
       nodeSelector: {}
       tolerations: []
       podAnnotations: {}
@@ -151,13 +137,6 @@ spec:
 
     beat:
       enabled: true
-      resources:
-        limits:
-          cpu: 100m
-          memory: 130Mi
-        requests:
-          cpu: 1m
-          memory: 110Mi
       nodeSelector: {}
       tolerations: []
       podAnnotations: {}
@@ -165,13 +144,6 @@ spec:
 
     flower:
       enabled: false
-      resources:
-        limits:
-          cpu: 500m
-          memory: 512Mi
-        requests:
-          cpu: 50m
-          memory: 256Mi
       nodeSelector: {}
       tolerations: []
       podAnnotations: {}
