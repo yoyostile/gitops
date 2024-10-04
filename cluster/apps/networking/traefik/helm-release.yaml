@@ -44,7 +44,7 @@ spec:
         mountPath: /plugins-storage
     deployment:
       kind: Deployment
-      replicas: 3
+      replicas: 2
       additionalVolumes:
         - name: plugins
     service:
@@ -117,6 +117,4 @@ spec:
     resources:
       requests:
         memory: 100Mi
-        cpu: 500m
-      limits:
-        memory: 500Mi
+        cpu: 5m
