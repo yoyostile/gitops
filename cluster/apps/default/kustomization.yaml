@@ -6,7 +6,6 @@ resources:
   - ./airbyte/ks.yaml
   - ./authentik/ks.yaml
   - ./echoip/ks.yaml
-  - ./freshrss/ks.yaml
   - ./gitness/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml
