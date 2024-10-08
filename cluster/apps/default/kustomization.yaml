@@ -19,7 +19,6 @@ resources:
   - ./mongodb/ks.yaml
   - ./mosquitto/ks.yaml
   - ./netbox/ks.yaml
-  - ./onedev/ks.yaml
   - ./paperless/ks.yaml
   - ./photo-stream/ks.yaml
   - ./plex/ks.yaml
