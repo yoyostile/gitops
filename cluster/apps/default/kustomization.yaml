@@ -27,7 +27,6 @@ resources:
   - ./slack-friday/ks.yaml
   - ./st0rage/ks.yaml
   - ./teslamate/ks.yaml
-  - ./ungermanify/ks.yaml
   - ./uptime-kuma/ks.yaml
   - ./your-spotify/ks.yaml
   - ./zigbee2mqtt/ks.yaml
