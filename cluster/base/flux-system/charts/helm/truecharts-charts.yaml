@@ -19,4 +19,4 @@ spec:
   url: oci://tccr.io/truecharts/mosquitto
   # renovate: registryUrl=oci://tccr.io/truecharts/mosquitto
   ref:
-    tag: 16.1.6
+    tag: 16.2.2
