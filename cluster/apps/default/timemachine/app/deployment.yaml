@@ -22,7 +22,7 @@ spec:
         app: timemachine
       name: timemachine
     spec:
-      hostNetwork: true
+      # hostNetwork: true
       containers:
         - name: timemachine
           image: mbentley/timemachine:smb
