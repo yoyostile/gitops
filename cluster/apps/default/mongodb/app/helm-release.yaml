@@ -28,7 +28,7 @@ spec:
     image:
       registry: docker.io
       repository: bitnami/mongodb
-      tag: 7.0.12
+      tag: 7.0.15
     global:
       storageClass: "nfs-client"
     architecture: standalone
