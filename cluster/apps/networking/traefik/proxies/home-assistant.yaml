@@ -32,7 +32,10 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "home-assistant"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    # traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
 spec:
   tls:
     - hosts:
