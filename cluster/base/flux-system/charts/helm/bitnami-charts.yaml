@@ -8,3 +8,13 @@ spec:
   interval: 30m
   url: https://charts.bitnami.com/bitnami
   timeout: 3m
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: bitnami-postgresql
+  namespace: default
+spec:
+  type: "oci"
+  interval: 5m0s
+  url: oci://registry-1.docker.io/bitnamicharts/postgresql
