@@ -57,13 +57,7 @@ spec:
       activeDeadlineSeconds: 900
 
     valkey:
-      enabled: true
-      architecture: standalone
-      auth:
-        password: "${GLITCHTIP_SECRET_KEY}"
-      master:
-        persistence:
-          enabled: false
+      enabled: false
 
     web:
       replicaCount: 1
@@ -182,16 +176,6 @@ spec:
       # The name of the service account to use.
       # If not set and create is true, a name is generated using the fullname template
       name:
-
-    # For configuration options, see https://artifacthub.io/packages/helm/bitnami/redis
-    redis:
-      enabled: false
-      architecture: standalone
-      # auth:
-      #  password: # Set this to avoid remaking redis on each release
-      master:
-        persistence:
-          enabled: false
 
     # Default to disabled, use a managed database service. But can be enabled here.
     # For configuration options, see https://artifacthub.io/packages/helm/bitnami/postgresql
