@@ -56,6 +56,15 @@ spec:
       enabled: true
       activeDeadlineSeconds: 900
 
+    valkey:
+      enabled: true
+      architecture: standalone
+      auth:
+        password: "${GLITCHTIP_SECRET_KEY}"
+      master:
+        persistence:
+          enabled: false
+
     web:
       replicaCount: 1
       autoscaling:
