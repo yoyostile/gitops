@@ -13,7 +13,7 @@ spec:
       version: 16.0.3
       sourceRef:
         kind: HelmRepository
-        name: bitnami-charts
+        name: bitnami-mongodb
         namespace: flux-system
   install:
     createNamespace: true
