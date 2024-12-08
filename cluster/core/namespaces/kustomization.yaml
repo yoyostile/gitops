@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - cert-manager.yaml
   - kasten-io.yaml
+  - longhorn.yaml
   - metallb-system.yaml
   - monitoring.yaml
   - networking.yaml
