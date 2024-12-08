@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - default
   - kube-system
+  - longhorn
   - monitoring
   - networking
   - system-upgrade
