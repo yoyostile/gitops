@@ -27,5 +27,13 @@ spec:
                 name: mealie
           ports:
             - containerPort: 9000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9000
       dnsPolicy: ClusterFirst
       restartPolicy: Always
