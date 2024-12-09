@@ -52,12 +52,12 @@ spec:
         enabled: true
         mountPath: /config
         accessModes: ReadWriteOnce
-        storageClass: 'longhorn'
+        storageClass: 'nfs-client'
         size: 128Mi
 
       data:
         enabled: true
         mountPath: /data
         accessMode: ReadWriteOnce
-        storageClass: 'longhorn'
+        storageClass: 'nfs-client'
         size: 1Gi
