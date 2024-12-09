@@ -1,0 +1,31 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mealie
+  name: mealie
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mealie
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mealie
+    spec:
+      containers:
+        - image: ghcr.io/mealie-recipes/mealie:v2.3.0
+          imagePullPolicy: Always
+          name: mealie
+          envFrom:
+            - secretRef:
+                name: mealie
+          ports:
+            - containerPort: 9000
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
