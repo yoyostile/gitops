@@ -26,8 +26,8 @@ spec:
   values:
     env:
       TZ: ${TZ}
-      PUID: "911"
-      PGID: "911"
+      PUID: "3000"
+      PGID: "3000"
     ingress:
       enabled: true
       annotations:
