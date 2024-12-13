@@ -50,7 +50,7 @@ spec:
         accessMode: ReadWriteOnce
         size: 5Gi
       consume:
-        enabled: true
+        enabled: false
         type: custom
         volumeSpec:
           nfs:
@@ -58,7 +58,7 @@ spec:
             path: "${SECRET_NFS_PATH}/paperless/import"
         mountPath: /usr/src/paperless/consume
       export:
-        enabled: true
+        enabled: false
         type: custom
         volumeSpec:
           nfs:
