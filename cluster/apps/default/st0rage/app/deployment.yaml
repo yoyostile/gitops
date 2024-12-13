@@ -7,7 +7,7 @@ metadata:
   name: st0rage
   namespace: default
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: st0rage
