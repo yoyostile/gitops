@@ -10,7 +10,6 @@ resources:
   - ./hajimari/ks.yaml
   - ./kubernetes/ks.yaml
   - ./mariadb/ks.yaml
-  - ./mealie/ks.yaml
   - ./memcached/ks.yaml
   - ./metabase/ks.yaml
   - ./mikrotik-backup/ks.yaml
