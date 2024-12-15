@@ -36,5 +36,5 @@ spec:
       volumes:
         - name: icloud-photos
           nfs:
-            server: "glacier.${SECRET_LAB_DOMAIN}"
+            server: "glacier.lab.${SECRET_LAB_DOMAIN}"
             path: "${ICLOUDPD_NFS_PATH}"
