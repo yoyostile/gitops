@@ -4,6 +4,8 @@ apiVersion: v1
 metadata:
   name: minio
   namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: https
 spec:
   type: ExternalName
   externalName: glacier.lab.r4r3.me
