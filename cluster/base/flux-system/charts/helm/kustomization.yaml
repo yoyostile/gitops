@@ -15,6 +15,7 @@ resources:
   - glitchtip-charts.yaml
   - grafana-charts.yaml
   - hajimari-charts.yaml
+  - immich-charts.yaml
   - infracloudio-charts.yaml
   - influxdata-charts.yaml
   - jetstack-charts.yaml
