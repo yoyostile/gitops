@@ -76,3 +76,4 @@ spec:
     requests:
       storage: 1000Gi
   volumeName: immich-ext-kj
+  storageClassName: ""
