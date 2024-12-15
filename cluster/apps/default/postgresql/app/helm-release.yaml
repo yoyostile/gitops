@@ -25,10 +25,10 @@ spec:
   values:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
-    image:
-      registry: docker.io
-      repository: bitnami/postgresql
-      tag: 14.2.0-debian-10-r74
+    # image:
+    #   registry: docker.io
+    #   repository: bitnami/postgresql
+    #   tag: 14.2.0-debian-10-r74
     global:
       storageClass: "nfs-client"
     primary:
