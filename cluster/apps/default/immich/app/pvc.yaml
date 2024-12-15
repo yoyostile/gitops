@@ -60,8 +60,8 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: glacier.lab.r4r3.me
-    path: /mnt/tank/home/kjheck/pictures/icloud
+    server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+    path: "${ICLOUDPD_NFS_PATH}"
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
