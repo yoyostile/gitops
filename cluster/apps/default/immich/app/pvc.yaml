@@ -11,3 +11,40 @@ spec:
   resources:
     requests:
       storage: 1500G
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-psql-pv
+  namespace: default
+spec:
+  capacity:
+    storage: 32Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /srv/data/misc/immich-psql
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-psql-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 32Gi
+  storageClassName: local-storage
