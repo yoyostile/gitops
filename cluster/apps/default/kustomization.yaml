@@ -14,7 +14,6 @@ resources:
   - ./memcached/ks.yaml
   - ./metabase/ks.yaml
   - ./mikrotik-backup/ks.yaml
-  - ./mongodb/ks.yaml
   - ./mosquitto/ks.yaml
   - ./netbox/ks.yaml
   - ./paperless/ks.yaml
@@ -30,5 +29,4 @@ resources:
   - ./teslamate/ks.yaml
   - ./timemachine/ks.yaml
   - ./uptime-kuma/ks.yaml
-  - ./your-spotify/ks.yaml
   - ./zigbee2mqtt/ks.yaml
