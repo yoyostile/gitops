@@ -18,6 +18,8 @@ spec:
       containers:
         - name: icloudpd
           image: icloudpd/icloudpd:1.25.0
+          ports:
+            - containerPort: 8080
           args:
             - "icloudpd"
             - "--directory"
