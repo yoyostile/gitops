@@ -22,7 +22,7 @@ spec:
       namespace: networking
 
   values:
-    replicas: 0
+    replicas: 1
     dnsConfig:
       options:
         - name: ndots
