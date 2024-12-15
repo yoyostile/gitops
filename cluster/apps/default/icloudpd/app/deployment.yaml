@@ -33,7 +33,7 @@ spec:
             - "--watch-with-interval"
             - "3600"
             - "--password-provider"
-            - "webui"
+            - "parameter"
             - "--mfa-provider"
             - "webui"
             - "--auto-delete"
