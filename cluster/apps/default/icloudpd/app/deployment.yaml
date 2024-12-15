@@ -26,6 +26,8 @@ spec:
             - "${ICLOUD_USER}"
             - "--watch-with-interval"
             - "3600"
+            - "--password-provider"
+            - "webui"
             - "--mfa-provider"
             - "webui"
             - "--auto-delete"
