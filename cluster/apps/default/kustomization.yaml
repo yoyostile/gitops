@@ -8,6 +8,7 @@ resources:
   - ./echoip/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml
+  - ./icloudpd/ks.yaml
   - ./kubernetes/ks.yaml
   - ./mariadb/ks.yaml
   - ./memcached/ks.yaml
