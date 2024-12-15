@@ -24,6 +24,8 @@ spec:
             - "icloudpd"
             - "--directory"
             - "/data"
+            - "--cookie-directory"
+            - "/data/.pyicloud"
             - "--username"
             - "${ICLOUD_USER}"
             - "--watch-with-interval"
