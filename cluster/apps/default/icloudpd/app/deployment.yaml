@@ -27,6 +27,8 @@ spec:
             - "--watch-with-interval"
             - "3600"
             - "--auto-delete"
+            - "--mfa-provider"
+            - "webui"
           env:
             - name: TZ
               value: "Europe/Berlin"
