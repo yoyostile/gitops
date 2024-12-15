@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: icloudpd
-          image: icloudpd/icloudpd:latest
+          image: icloudpd/icloudpd:1.25.0
           args:
             - "icloudpd"
             - "--directory"
@@ -26,9 +26,9 @@ spec:
             - "${ICLOUD_USER}"
             - "--watch-with-interval"
             - "3600"
-            - "--auto-delete"
             - "--mfa-provider"
             - "webui"
+            - "--auto-delete"
           env:
             - name: TZ
               value: "Europe/Berlin"
