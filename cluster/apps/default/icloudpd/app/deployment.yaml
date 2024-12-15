@@ -28,6 +28,8 @@ spec:
             - "/data/.pyicloud"
             - "--username"
             - "${ICLOUD_USER}"
+            - "--password"
+            - "${ICLOUD_PASS}"
             - "--watch-with-interval"
             - "3600"
             - "--password-provider"
