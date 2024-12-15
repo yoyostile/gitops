@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icloudpd
+  labels:
+    app: icloudpd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icloudpd
+  template:
+    metadata:
+      labels:
+        app: icloudpd
+    spec:
+      containers:
+        - name: icloudpd
+          image: icloudpd/icloudpd:latest
+          args:
+            - "icloudpd"
+            - "--directory"
+            - "/data"
+            - "--username"
+            - "${ICLOUD_USER}"
+            - "--watch-with-interval"
+            - "3600"
+            - "--auto-delete"
+          env:
+            - name: TZ
+              value: "Europe/Berlin"
+          volumeMounts:
+            - name: icloud-photos
+              mountPath: "/data"
+      volumes:
+        - name: icloud-photos
+          nfs:
+            server: "glacier.${SECRET_LAB_DOMAIN}"
+            path: "${ICLOUDPD_NFS_PATH}"
