@@ -14,7 +14,7 @@ spec:
       protocol: TCP
       port: 9000
       targetPort: 9000
-    - name: console
+    - name:
       protocol: TCP
       port: 9002
       targetPort: 9002
@@ -29,6 +29,7 @@ metadata:
     external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     # traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "minio-console-stripprefix@kubernetescrd"
 spec:
   ingressClassName: traefik
   tls:
