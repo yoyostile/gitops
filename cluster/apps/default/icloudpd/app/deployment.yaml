@@ -36,7 +36,6 @@ spec:
             - "parameter"
             - "--mfa-provider"
             - "webui"
-            - "--auto-delete"
           env:
             - name: TZ
               value: "Europe/Berlin"
