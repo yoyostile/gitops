@@ -22,7 +22,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
 spec:
   ingressClassName: traefik
@@ -30,7 +30,7 @@ spec:
     - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
         - s3.${SECRET_LAB_DOMAIN}
-        - "*.s3.${SECRET_LAB_DOMAIN}"
+        - "cdn.s3.${SECRET_LAB_DOMAIN}"
   rules:
     - host: s3.${SECRET_LAB_DOMAIN}
       http:
@@ -42,7 +42,7 @@ spec:
                 name: minio
                 port:
                   number: 9000
-    - host: "*.s3.${SECRET_LAB_DOMAIN}"
+    - host: "cdn.s3.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /
