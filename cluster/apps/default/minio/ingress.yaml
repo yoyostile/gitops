@@ -10,10 +10,12 @@ spec:
   type: ExternalName
   externalName: glacier.lab.r4r3.me
   ports:
-    - protocol: TCP
+    - name: api
+      protocol: TCP
       port: 9000
       targetPort: 9000
-    - protocol: TCP
+    - name: console
+      protocol: TCP
       port: 9002
       targetPort: 9002
 ---
