@@ -31,18 +31,7 @@ spec:
       hosts:
         - s3.${SECRET_LAB_DOMAIN}
         - "*.s3.${SECRET_LAB_DOMAIN}"
-        - console.s3.${SECRET_LAB_DOMAIN}
   rules:
-    - host: console.s3.${SECRET_LAB_DOMAIN}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: minio
-                port:
-                  number: 9002
     - host: s3.${SECRET_LAB_DOMAIN}
       http:
         paths:
@@ -53,6 +42,13 @@ spec:
                 name: minio
                 port:
                   number: 9000
+          - path: /console
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 9002
     - host: "*.s3.${SECRET_LAB_DOMAIN}"
       http:
         paths:
