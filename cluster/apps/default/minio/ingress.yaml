@@ -29,9 +29,20 @@ spec:
   tls:
     - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
-        - s4.${SECRET_LAB_DOMAIN}
+        - s3.${SECRET_LAB_DOMAIN}
+        - "*.s3.${SECRET_LAB_DOMAIN}"
   rules:
-    - host: s4.${SECRET_LAB_DOMAIN}
+    - host: s3.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 9000
+    - host: "*.s3.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /
