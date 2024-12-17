@@ -91,11 +91,6 @@ spec:
               options:
                 path: /var/lib/grafana/dashboards/teslamate
       dashboards:
-        traefik:
-          traefikDashboard:
-            gnetId: 17347
-            revision: 9
-            datasource: Prometheus
         mktxp:
           mktxpDashboard:
             gnetId: 13679
