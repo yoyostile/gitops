@@ -90,15 +90,12 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/teslamate
-            - name: 'osnapv'
-              orgId: 1
-              folder: OsnaPV
-              type: file
-              disableDeletion: false
-              allowUiUpdates: true
-              options:
-                path: /var/lib/grafana/dashboards/osna_pv
       dashboards:
+        traefik:
+          traefikDashboard:
+            gnetId: 17347
+            revision: 9
+            datasource: Prometheus
         mktxp:
           mktxpDashboard:
             gnetId: 13679
