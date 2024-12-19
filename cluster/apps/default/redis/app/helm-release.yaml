@@ -38,3 +38,8 @@ spec:
     master:
       disableCommands:
         - FLUSHALL
+      resources:
+        requests:
+          cpu: 1
+          memory: 256Mi
+        limits: {}
