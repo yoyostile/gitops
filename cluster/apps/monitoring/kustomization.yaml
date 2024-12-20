@@ -1,14 +1,32 @@
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - flux-alerts
-  - influx
-  - kube-prometheus-stack
-  - ./librenms/ks.yaml
-  - mktxp
-  - rheinpegel-exporter
-  - ./scrutiny/ks.yaml
-  - smokeping
-  - speedtest-exporter
-  - unifi-poller
+    - flux-alerts
+    - influx
+    - kube-prometheus-stack
+    - ./librenms/ks.yaml
+    - mktxp
+    - rheinpegel-exporter
+    - smokeping
+    - speedtest-exporter
+    - unifi-poller
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB4ZmY1NExTSXNIUmUxY2dB
+            bTFxWFNzNDBhQnBTYWhTL0xWNXN3djhQQW5FCmQ1OWlPN3VWN0tHVGtJT1Bvd01Q
+            Z3lEY0lOaHlRRk5sWVhReXlPU1lMZzgKLS0tIFJ2Rk9KalFKM2xnSTRHR3oycHpj
+            UytDZmZtTnNSck91cVBhMWtIV1Y3ZWMKZ4jxni7XpGTV/zFnSepSvWW86gwleeJt
+            v6OQSVlYHuspjPIcBYentcs19x5OaH5f1p0sTpSmdjXUVN4xHU6nBw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-20T21:12:42Z"
+    mac: ENC[AES256_GCM,data:3aUTXkjLgIS6nQswcczqJmqLirRMOK1lrMKOnkw9kzar4iBeZcEtJKAXSqN81zCCiv2c8f6b9DqpWWoO1+PT27WetE0QmyfAwY8YGLVL16eWXP6Z8S3hrx8NcpZe8DXIhtsYeMNkrQjyDm96ivcjHs9pT/xN5nLDz7DFnVZKde8=,iv:aylLJ8jEUpbkKDFx056eks3DCds/VNdC5go8oO7Ygww=,tag:JRqmtNCNtVLk03vFyLS1XQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
