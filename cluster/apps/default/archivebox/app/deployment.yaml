@@ -23,14 +23,18 @@ spec:
           env:
             - name: ALLOWED_HOSTS
               value: "*"
-            - name: MEDIA_MAX_SIZE
-              value: ""
-            - name: PUBLIC_INDEX
-              value: ""
-            - name: PUBLIC_SNAPSHOTS
-              value: ""
-            - name: PUBLIC_ADD_VIEW
-              value: ""
+            - name: PUID
+              value: "3000"
+            - name: PGID
+              value: "3000"
+            # - name: MEDIA_MAX_SIZE
+            #   value: ""
+            # - name: PUBLIC_INDEX
+            #   value: ""
+            # - name: PUBLIC_SNAPSHOTS
+            #   value: ""
+            # - name: PUBLIC_ADD_VIEW
+            #   value: ""
           volumeMounts:
             - name: data
               mountPath: /data
