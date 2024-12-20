@@ -1,9 +1,28 @@
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - configmap.yaml
-  - pvc.yaml
-  - deployment.yaml
-  - service.yaml
-  - ingress.yaml
+    - configmap.sops.yaml
+    - pvc.yaml
+    - deployment.yaml
+    - service.yaml
+    - ingress.yaml
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxeldMbjRqWERmb2NJQXZ4
+            WU1MRVlpWUFyK0RIRWFUbXlIekRtOUVJeVYwCnhMc2lWeVlwSkplMlpXZEpGSXZm
+            b0doZEFPU3N1UDYvazBBWldVQitlc3MKLS0tIHJpb0Z6ZHE1YmdMRUk4djBtUCtV
+            aHZWVlMwZnNYRmN4YS82a2x1NlNuZmcK5tovoQYvTn4xXrnvrPB8BmHrvLtGdqFM
+            EP43wH15yshhuXpof0qLjdhANpGqZbcBCr/iHADZpUeyPV5dLaYCkw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-20T19:35:50Z"
+    mac: ENC[AES256_GCM,data:WbYcCq4GOL4sJGKfLFGZ9yrr5a66MJ+snZoa4QPsIgdPftuLLOtNkYorOMZ7mLEa8mtJgzWRjRJrlGOcQPFZaTuxUtPVbKLGEcijMJdeQEbXhXv5wzBVIHSYDzA+gv6L1wPUsxXg/wcvZ9s1lGAnQ7UJJZGYBG79L2kJFoFhTwE=,iv:qhNUf0FuMOmJQkMBliQlZvDCFahkHvL+PlPqXIUL8lY=,tag:WDGKe5yAy7f+51EH62hdUQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
