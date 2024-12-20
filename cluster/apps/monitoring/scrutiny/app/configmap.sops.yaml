@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: scrutiny-config
+    namespace: monitoring
+data:
+    scrutiny.yaml: ENC[AES256_GCM,data:GqD2QWSYOSbw4dnhk+26xLmnRNDd1aq/lD3xZJeJGJAow+C2+j9/k/l88ZGZIdYkFkcNYvXFnMAWy22VFGF2EHB8QP9wZ7M1S72ip3f92TTgICJVWS4KDE2kiTFQchGNzcZUxKlOc5SjNfW6alu+iE90Pn5ax0XMqE38zDorZwwMTA5flYFYmN//41uDoGMmcD4s/CS6tzxTux0Fz7pZMpeMI+Kjn99aoP3PJ9Ixij9R+EHo2Vpu7XX7/jEIBTmPWaTMq087BP9msFzxmp8dBxUo0eStNz4RjzXubp9OjWp5WwqSBvV3HWYdGB5xykUU1pBWixbcSX64vCkCxS+/xudGyNlLsJ9sZBCwcmt6d5VhqA7xbckcUaUIaiSrxY87NSwYf2zX+d7nV46c4omRfD+ozGaTnq8cxBRcc7+KJoaFhQpF2iD6kLVi3DEONBm+3CN9m5dZVjpe0LbDAEBcphlrxgwsKz/uTmQ1S4PcC3L2vJUavvGI+fq4GHJBtEqnfUcPM4mIA3+qxK1NvYBk07Ue7+5pOuuKLR0kCZyV6+O1c85JRSfYZkHKjwoATpUheKCqd57+fXI=,iv:wJj65IZ7J72kku3BAqOi7CIVHEcc81nnu9OrcdwM0v8=,tag:cDu0xxzyvkHRYJw8mhYcew==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA0UUs0K0hkWUQyd1B1QzdW
+            MlNzWmo3NXlpNUNPVmJJZUdLeHY5MWJ2WjJRCkNrdGlmbGNqQnhsSVJSR2pKZ1Av
+            Rm12aXdnd2xtVDAwamxGVnpxRGxjb00KLS0tIDlCL2lIbDVveG1GZ2I2c2haV3M4
+            UW1uVDJhVGhyOFl0eHpXci9ncUxHTzgK/Yhv/PuHrUoOCLplIP0x25nal0+G5URy
+            bi4+jzB4ZjxZR2qRdg9JNJNijfbqX/2k1XwXJ5fGAQ812eWSoB4xsw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-20T19:29:45Z"
+    mac: ENC[AES256_GCM,data:NNGrZZo4Z9F30HiVQsQc9ANkTEBgB3RKbv0KOrW4t2K6/Nop00Fzjjv2ljTlipd5xHen4yWt7u26oGNWpFsYarAXj1Pp75fm4781tOd7U+yreXa9gTZsLPi16c4HB2o9aec00ducVyEEMpoU+RKE6eK7QL6DpXAj1NXZZh66JEE=,iv:qZdCzQXauYO/bUn7c+xwvOKnq1xpgqYUr49S70xvQC4=,tag:0VmWrnJdfwn4ZZ0GE4SO8Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
