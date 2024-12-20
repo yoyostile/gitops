@@ -8,6 +8,7 @@ resources:
   - ./librenms/ks.yaml
   - mktxp
   - rheinpegel-exporter
+  - ./scrutiny/ks.yaml
   - smokeping
   - speedtest-exporter
   - unifi-poller
