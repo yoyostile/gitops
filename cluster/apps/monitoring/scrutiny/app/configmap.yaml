@@ -13,7 +13,7 @@ data:
         host: 0.0.0.0
         basepath: ''
       database:
-        location: /opt/scrutiny/config/scrutiny.db
+        location: /opt/scrutiny/config/database/scrutiny.db
       src:
         frontend:
           path: /opt/scrutiny/web

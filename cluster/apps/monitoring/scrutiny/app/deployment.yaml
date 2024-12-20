@@ -22,10 +22,11 @@ spec:
               name: http
           volumeMounts:
             - name: config
-              mountPath: /opt/scrutiny/config
+              mountPath: /opt/scrutiny/config/scrutiny.yaml
+              subPath: scrutiny.yaml
             - name: data
-              mountPath: /opt/scrutiny/config/scrutiny.db
-              subPath: scrutiny.db
+              mountPath: /opt/scrutiny/config/database
+              # Ensure this directory is writable
       volumes:
         - name: config
           configMap:
