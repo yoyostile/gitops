@@ -26,4 +26,4 @@ spec:
               service:
                 name: shhh
                 port:
-                  number: 5000
+                  name: http
