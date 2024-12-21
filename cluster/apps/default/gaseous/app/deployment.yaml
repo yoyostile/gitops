@@ -53,5 +53,7 @@ spec:
           persistentVolumeClaim:
             claimName: gaseous-data
         - name: roms
-          persistentVolumeClaim:
-            claimName: gaseous-roms
+          nfs:
+            server: glacier.lab.${SECRET_DOMAIN}
+            path: /mnt/tank/media/games/RetroGames
+            readOnly: true
