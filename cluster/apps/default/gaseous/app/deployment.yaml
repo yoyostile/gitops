@@ -54,6 +54,6 @@ spec:
             claimName: gaseous-data
         - name: roms
           nfs:
-            server: glacier.lab.${SECRET_DOMAIN}
+            server: glacier.lab.${SECRET_LAB_DOMAIN}
             path: /mnt/tank/media/games/RetroGames
             readOnly: true
