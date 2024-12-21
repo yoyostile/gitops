@@ -28,6 +28,8 @@ spec:
           env:
             - name: FLASK_ENV
               value: production
+            - name: SHHH_HOST
+              value: shhh.${SECRET_LAB_DOMAIN}
           image: yoyostile/shhh:3.2.2
           imagePullPolicy: Always
           terminationMessagePath: /dev/termination-log
