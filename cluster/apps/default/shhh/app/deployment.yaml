@@ -28,7 +28,7 @@ spec:
           env:
             - name: FLASK_ENV
               value: production
-          image: yoyostile/shhh
+          image: yoyostile/shhh:3.2.2
           imagePullPolicy: Always
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
