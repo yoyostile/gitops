@@ -6,7 +6,5 @@ resources:
     - kube-prometheus-stack
     - ./librenms/ks.yaml
     - mktxp
-    - rheinpegel-exporter
     - smokeping
-    - speedtest-exporter
     - unifi-poller
