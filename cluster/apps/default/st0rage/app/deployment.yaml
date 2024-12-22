@@ -7,7 +7,7 @@ metadata:
   name: st0rage
   namespace: default
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: st0rage
@@ -27,27 +27,27 @@ spec:
           image: nginx:alpine
           imagePullPolicy: Always
           volumeMounts:
-            - mountPath: /usr/share/nginx/html/st0rage/documents
-              name: documents
+            - mountPath: /usr/share/nginx/html/st0rage/games
+              name: games
             - mountPath: /usr/share/nginx/html/st0rage/movies
               name: movies
             - mountPath: /usr/share/nginx/html/st0rage/music
               name: music
-            - mountPath: /usr/share/nginx/html/st0rage/tvshows
+            - mountPath: /usr/share/nginx/html/st0rage/series
               name: tvshows
             - mountPath: /etc/nginx/conf.d
               name: config-volume
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       volumes:
-        - name: documents
+        - name: games
           nfs:
             server: ${SECRET_NFS_HOST}
-            path: ${SECRET_NFS_ST0RAGE_PATH}/documents
+            path: ${SECRET_NFS_ST0RAGE_PATH}/games
         - name: movies
           nfs:
             server: ${SECRET_NFS_HOST}
-            path: ${SECRET_NFS_ST0RAGE_PATH}/Filme
+            path: ${SECRET_NFS_ST0RAGE_PATH}/movies
         - name: music
           nfs:
             server: ${SECRET_NFS_HOST}
@@ -55,7 +55,7 @@ spec:
         - name: tvshows
           nfs:
             server: ${SECRET_NFS_HOST}
-            path: ${SECRET_NFS_ST0RAGE_PATH}/Serien
+            path: ${SECRET_NFS_ST0RAGE_PATH}/series
         - configMap:
             defaultMode: 420
             name: st0rage
