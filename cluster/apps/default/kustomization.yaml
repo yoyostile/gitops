@@ -28,6 +28,5 @@ resources:
   - ./shhh/ks.yaml
   - ./st0rage/ks.yaml
   - ./teslamate/ks.yaml
-  - ./timemachine/ks.yaml
   - ./uptime-kuma/ks.yaml
   - ./zigbee2mqtt/ks.yaml
