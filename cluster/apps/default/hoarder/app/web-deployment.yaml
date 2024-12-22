@@ -26,8 +26,11 @@ spec:
             - name: DATA_DIR
               value: /data
           volumeMounts:
-            - mountPath: /data
-              name: data
+            - name: data
+              mountPath: /data
+            - name: data
+              mountPath: /tmp
+              subPath: tmp
           envFrom:
             - secretRef:
                 name: hoarder-config
