@@ -17,9 +17,7 @@ resources:
   - ./memcached/ks.yaml
   - ./metabase/ks.yaml
   - ./mikrotik-backup/ks.yaml
-  - ./minio
   - ./mosquitto/ks.yaml
-  - ./netbox/ks.yaml
   - ./paperless/ks.yaml
   - ./photo-stream/ks.yaml
   - ./plex/ks.yaml
