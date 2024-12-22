@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/hoarder-app/hoarder:HOARDER_VERSION_PLACEHOLDER
+          image: ghcr.io/hoarder-app/hoarder:0.20.0
           ports:
             - containerPort: 3000
           env:

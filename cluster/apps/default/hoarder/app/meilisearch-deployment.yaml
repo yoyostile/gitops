@@ -28,4 +28,4 @@ spec:
       volumes:
         - name: meilisearch
           persistentVolumeClaim:
-            claimName: meilisearch-pvc
+            claimName: hoarder-meilisearch-pvc
