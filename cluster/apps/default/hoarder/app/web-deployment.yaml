@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: hoarder-web
+      annotations:
+        reloader.stakater.com/reload: "true"
     spec:
       containers:
         - name: web
