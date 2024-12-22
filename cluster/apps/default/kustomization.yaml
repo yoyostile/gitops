@@ -26,7 +26,6 @@ resources:
   - ./redis/ks.yaml
   - ./requestbin/ks.yaml
   - ./shhh/ks.yaml
-  - ./slack-friday/ks.yaml
   - ./st0rage/ks.yaml
   - ./teslamate/ks.yaml
   - ./timemachine/ks.yaml
