@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - ./adguard-home-sync/ks.yaml
   - ./airbyte/ks.yaml
-  - ./archivebox/ks.yaml
   - ./authentik/ks.yaml
   - ./echoip/ks.yaml
   - ./gaseous/ks.yaml
