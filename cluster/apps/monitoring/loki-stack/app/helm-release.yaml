@@ -19,7 +19,7 @@ spec:
       enabled: false
     loki:
       image:
-        tag: 3.3.2
+        tag: 2.9.11
       enabled: true
       isDefault: true
       persistence:
