@@ -26,6 +26,9 @@ spec:
         enabled: true
         size: 10Gi
         storageClassName: nfs-client
+      config:
+        limits_config:
+          volume_enabled: true
     promtail:
       enabled: true
     fluent-bit:
