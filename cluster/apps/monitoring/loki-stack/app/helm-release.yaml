@@ -18,6 +18,10 @@ spec:
     test_pod:
       enabled: false
     loki:
+      image:
+        tag: 3.3.2
+      enabled: true
+      isDefault: true
       persistence:
         enabled: true
         size: 10Gi
