@@ -20,6 +20,8 @@ spec:
       auth_enabled: false
       storage:
         type: filesystem
+      commonConfig:
+        replication_factor: 1
       schemaConfig:
         configs:
           - from: "2024-11-01"
