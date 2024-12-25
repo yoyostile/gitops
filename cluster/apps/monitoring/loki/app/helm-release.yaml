@@ -25,6 +25,7 @@ spec:
         per_stream_rate_limit_burst: 20MB
         max_global_streams_per_user: 10000
         max_line_size: 2MB
+        max_label_names_per_series: 30
       storage:
         type: filesystem
       commonConfig:
