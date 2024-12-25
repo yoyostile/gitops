@@ -26,11 +26,8 @@ data:
         pipeline_stages:
           - docker: {}
         relabel_configs:
-          # Drop less useful labels
           - action: labeldrop
-            regex: 'helm_revision|pod_lifecycle|pod_name|helm_sh_chart|service_name'
-
-          # Keep the rest of your original relabel configs
+            regex: 'helm_revision|pod_lifecycle|pod_template_hash|helm_sh_chart|app_kubernetes_io_instance|app_kubernetes_io_managed_by'
           - source_labels:
               - __meta_kubernetes_pod_node_name
             target_label: __host__
