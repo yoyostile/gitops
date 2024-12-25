@@ -5,7 +5,7 @@ resources:
     - influx
     - kube-prometheus-stack
     - ./librenms/ks.yaml
-    - ./loki-stack/ks.yaml
+    - ./loki/ks.yaml
     - mktxp
     - smokeping
     - unifi-poller
