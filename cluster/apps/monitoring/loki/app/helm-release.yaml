@@ -45,4 +45,4 @@ spec:
     resultsCache:
       enabled: false
     lokiCanary:
-      enabled: false
+      enabled: true
