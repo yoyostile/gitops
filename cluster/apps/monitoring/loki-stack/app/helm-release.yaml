@@ -27,6 +27,8 @@ spec:
         size: 10Gi
         storageClassName: nfs-client
       config:
+        pattern_ingester:
+          enabled: true
         limits_config:
           volume_enabled: true
     promtail:
