@@ -27,7 +27,7 @@ data:
           - docker: {}
         relabel_configs:
           - action: labeldrop
-            regex: 'helm_revision|pod_lifecycle|pod_template_hash|helm_sh_chart|app_kubernetes_io_instance|app_kubernetes_io_managed_by'
+            regex: '^(helm\.sh/chart|app\.kubernetes\.io/managed-by|app\.kubernetes\.io/instance|pod-template-hash|helm_revision|pod_lifecycle)$'
           - source_labels:
               - __meta_kubernetes_pod_node_name
             target_label: __host__
