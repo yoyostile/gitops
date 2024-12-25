@@ -2,40 +2,35 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: loki-stack
+  name: loki
   namespace: monitoring
 spec:
   interval: 30m
   chart:
     spec:
-      chart: loki-stack
-      version: 2.10.2
+      chart: loki
+      version: 6.24.0
       sourceRef:
         kind: HelmRepository
         name: grafana-charts
         namespace: flux-system
   values:
-    test_pod:
-      enabled: false
+    deploymentMode: SingleBinary
     loki:
-      image:
-        tag: 2.9.11
-      enabled: true
-      isDefault: true
+      auth_enabled: false
+      storage:
+        type: filesystem
       persistence:
         enabled: true
         size: 10Gi
         storageClassName: nfs-client
-      config:
-        pattern_ingester:
-          enabled: true
-        limits_config:
-          volume_enabled: true
-    promtail:
+    monitoring:
+      enabled: false
+    ruler:
+      enabled: false
+    chunksCache:
+      enabled: false
+    resultsCache:
+      enabled: false
+    gateway:
       enabled: true
-    fluent-bit:
-      enabled: false
-    grafana:
-      enabled: false
-    prometheus:
-      enabled: false
