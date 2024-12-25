@@ -6,6 +6,7 @@ resources:
     - kube-prometheus-stack
     - ./librenms/ks.yaml
     - ./loki/ks.yaml
+    - ./promtail/ks.yaml
     - mktxp
     - smokeping
     - unifi-poller
