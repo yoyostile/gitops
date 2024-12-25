@@ -25,9 +25,15 @@ data:
           - role: pod
         pipeline_stages:
           - docker: {}
+          - labeldrop:
+              - stream
+              - helm\.sh/chart
+              - app\.kubernetes\.io/managed-by
+              - app\.kubernetes\.io/instance
+              - pod-template-hash
+              - helm_revision
+              - pod_lifecycle
         relabel_configs:
-          - action: labeldrop
-            regex: '^(helm\.sh/chart|app\.kubernetes\.io/managed-by|app\.kubernetes\.io/instance|pod-template-hash|helm_revision|pod_lifecycle)$'
           - source_labels:
               - __meta_kubernetes_pod_node_name
             target_label: __host__
