@@ -29,16 +29,10 @@ spec:
               mountPath: /var/log
             - name: promtail-config
               mountPath: /etc/promtail
-            - mountPath: /var/lib/docker/containers
-              name: containers
-              readOnly: true
       volumes:
         - name: logs
           hostPath:
             path: /var/log
-        - name: containers
-          hostPath:
-            path: /var/log/containers
         - name: promtail-config
           configMap:
             name: promtail-config
