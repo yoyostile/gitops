@@ -40,3 +40,9 @@ spec:
       replicas: 0
     write:
       replicas: 0
+    chunksCache:
+      enabled: false
+    resultsCache:
+      enabled: false
+    lokiCanary:
+      enabled: false
