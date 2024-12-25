@@ -165,6 +165,7 @@ spec:
           type: loki
           access: proxy
           url: http://loki-stack:3100
+          isDefault: false
           jsonData:
             maxLines: 1000
             derivedFields:
