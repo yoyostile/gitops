@@ -14,23 +14,14 @@ spec:
         kind: HelmRepository
         name: grafana-charts
         namespace: flux-system
-    values:
-      deploymentMode: SingleBinary
-      loki:
-        auth_enabled: false
-        storage:
-          type: filesystem
-        persistence:
-          enabled: true
-          size: 10Gi
-          storageClassName: nfs-client
-      monitoring:
-        enabled: false
-      ruler:
-        enabled: false
-      chunksCache:
-        enabled: false
-      resultsCache:
-        enabled: false
-      gateway:
+  values:
+    deploymentMode: SingleBinary
+    loki:
+      auth_enabled: false
+      storage:
+        type: filesystem
+    singleBinary:
+      persistence:
         enabled: true
+        size: 10Gi
+        storageClassName: nfs-client
