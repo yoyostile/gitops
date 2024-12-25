@@ -168,6 +168,10 @@ spec:
           version: "2.0"
           jsonData:
             maxLines: 1000
+            derivedFields:
+              - name: service
+                matcherRegex: '"([^"]+@kubernetes)"'
+                url: ""
         - name: influxdb
           access: proxy
           orgId: 1
