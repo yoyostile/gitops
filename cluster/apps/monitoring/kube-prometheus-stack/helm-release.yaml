@@ -164,6 +164,7 @@ spec:
         - name: Loki
           type: loki
           access: proxy
+          orgId: 1
           url: http://loki-stack:3100
           isDefault: false
           jsonData:
