@@ -25,6 +25,7 @@ resources:
   - ./random-gif/ks.yaml
   - ./redis/ks.yaml
   - ./requestbin/ks.yaml
+  - ./sabnzbd/ks.yaml
   - ./shhh/ks.yaml
   - ./st0rage/ks.yaml
   - ./teslamate/ks.yaml
