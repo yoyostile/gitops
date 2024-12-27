@@ -40,11 +40,6 @@ spec:
         enabled: true
         size: 500Mi
         storageClass: "nfs-client"
-      downloads:
-        accessMode: ReadWriteOnce
-        enabled: true
-        size: 500Gi
-        storageClass: "nfs-client"
     ingress:
       main:
         enabled: false
