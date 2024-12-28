@@ -22,6 +22,7 @@ resources:
   - ./photo-stream/ks.yaml
   - ./plex/ks.yaml
   - ./postgresql/ks.yaml
+  - ./prowlarr/ks.yaml
   - ./random-gif/ks.yaml
   - ./redis/ks.yaml
   - ./requestbin/ks.yaml
