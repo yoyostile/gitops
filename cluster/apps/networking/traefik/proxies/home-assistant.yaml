@@ -47,6 +47,13 @@ spec:
                 name: home-assistant-proxy
                 port:
                   number: 8123
+          - path: /auth/token
+            pathType: Prefix
+            backend:
+              service:
+                name: home-assistant-proxy
+                port:
+                  number: 8123
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
