@@ -25,6 +25,34 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: home-assistant-proxy-alexa
+  namespace: networking
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    # traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+spec:
+  tls:
+    - hosts:
+        - "hass.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "hass.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /api/alexa/smart_home
+            pathType: Prefix
+            backend:
+              service:
+                name: home-assistant-proxy
+                port:
+                  number: 8123
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
   name: home-assistant-proxy
   namespace: networking
   annotations:
@@ -32,10 +60,9 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "home-assistant"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
-    # traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    # external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    # external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
 spec:
   tls:
     - hosts:
