@@ -8,7 +8,7 @@ data:
   default.conf: |
     server {
       listen       80;
-      server_name  st0rage.r4r3.me;
+      server_name  st0rage.${SECRET_LAB_DOMAIN};
       charset UTF-8;
       set_real_ip_from  10.42.0.0/16;
       real_ip_header    X-Forwarded-For;

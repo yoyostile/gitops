@@ -8,7 +8,7 @@ metadata:
     traefik.ingress.kubernetes.io/service.serversscheme: https
 spec:
   type: ExternalName
-  externalName: glacier.lab.r4r3.me
+  externalName: glacier.lab.${SECRET_LAB_DOMAIN}
   ports:
     - name: api
       protocol: TCP
