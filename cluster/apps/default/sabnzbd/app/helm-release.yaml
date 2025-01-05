@@ -40,6 +40,12 @@ spec:
         enabled: true
         size: 500Mi
         storageClass: "nfs-client"
+      media:
+        enabled: true
+        type: nfs
+        server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+        path: /mnt/tank/media
+        mountPath: /mnt/tank/media
     ingress:
       main:
         enabled: false
