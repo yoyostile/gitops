@@ -42,5 +42,5 @@ spec:
             claimName: lidarr-config
         - name: music
           nfs:
-            server: "glacier.${SECRET_LAB_DOMAIN}"
+            server: "glacier.lab.${SECRET_LAB_DOMAIN}"
             path: /mnt/tank/media/music
