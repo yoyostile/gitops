@@ -39,7 +39,7 @@ spec:
         effect: "NoSchedule"
     image:
       repository: koenkk/zigbee2mqtt
-      tag: 2.0.0
+      tag: 1.42.0
     resources:
       requests:
         cpu: 50m
@@ -60,5 +60,4 @@ spec:
     config:
       serial:
         adapter: zstack
-        port: >-
-          /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_a4f05232d393eb11a13c1b4f3d98b6d1-if00-port0
+        port: /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_a4f05232d393eb11a13c1b4f3d98b6d1-if00-port0
