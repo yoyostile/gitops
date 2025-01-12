@@ -59,4 +59,5 @@ spec:
       privileged: true
     config:
       serial:
+        adapter: zstack
         port: /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_a4f05232d393eb11a13c1b4f3d98b6d1-if00-port0
