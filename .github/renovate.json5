@@ -1,172 +1,224 @@
 {
-  "enabled": true,
-  "semanticCommits": "enabled",
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": "Renovate Dashboard",
-  "suppressNotifications": ["prIgnoreNotification"],
-  "rebaseWhen": "conflicted",
-  "schedule": [
-    "every weekend"
+  enabled: true,
+  semanticCommits: 'enabled',
+  dependencyDashboard: true,
+  dependencyDashboardTitle: 'Renovate Dashboard',
+  suppressNotifications: [
+    'prIgnoreNotification',
   ],
-  // set up ignored deps
-  "ignoreDeps": [
-    "ghcr.io/fluxcd/helm-controller",
-    "ghcr.io/fluxcd/image-automation-controller",
-    "ghcr.io/fluxcd/image-reflector-controller",
-    "ghcr.io/fluxcd/kustomize-controller",
-    "ghcr.io/fluxcd/notification-controller",
-    "ghcr.io/fluxcd/source-controller"
+  rebaseWhen: 'conflicted',
+  schedule: [
+    'every weekend',
   ],
-  "pre-commit": {
-    "enabled": true
-  },
-  "flux": {
-    "fileMatch": [
-      "cluster/.+\\.ya?ml$"
-    ]
-  },
-  "helm-values": {
-    "fileMatch": [
-      "cluster/.+\\.ya?ml$"
-    ]
-  },
-  "kubernetes": {
-    "fileMatch": [
-      "cluster/.+\\.ya?ml$",
-      "provision/ansible/playbooks/templates/.+\\.ya?ml.j2$"
-    ]
-  },
-  "regexManagers": [
-    {
-      "description": "Process CRD dependencies",
-      "fileMatch": ["cluster/.+\\.ya?ml$"],
-      "matchStrings": [
-        // GitRepository where 'Git release/tag' matches 'Helm' version
-        "registryUrl=(?<registryUrl>\\S+) chart=(?<depName>\\S+)\n.*?(?<currentValue>[^-\\s]*)\n",
-        // Kustomization where 'GitHub release artifact URL' matches 'Docker image' version
-        "datasource=(?<datasource>\\S+) image=(?<depName>\\S+)\n.*?-\\s(.*?)\/(?<currentValue>[^/]+)\/[^/]+\n"
-      ],
-      "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}helm{{/if}}"
-    },
-    {
-      "description": "Process various dependencies",
-      "fileMatch": [
-        "ansible/.+\\.ya?ml$",
-        "cluster/.+\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?\"(?<currentValue>.*)\"\n"
-      ],
-      "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
-    },
-    {
-      "description": "Process raw GitHub URLs",
-      "fileMatch": ["cluster/.+\\.ya?ml$"],
-      "matchStrings": [
-        "https:\\/\\/raw.githubusercontent.com\\/(?<depName>[\\w\\d\\-_]+\\/[\\w\\d\\-_]+)\\/(?<currentValue>[\\w\\d\\.\\-_]+)\\/.*"
-      ],
-      "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver"
-    },
-    // regexManager to read and process HelmRelease files
-    {
-      "fileMatch": [
-        "cluster/.+\\.ya?ml$"
-      ],
-      "matchStrings": [
-        // helm releases
-        "registryUrl=(?<registryUrl>.*?)\n *chart: (?<depName>.*?)\n *version: (?<currentValue>.*)\n"
-      ],
-      "datasourceTemplate": "helm"
-    },
-    // regexManager to read and process cert-manager CRD's
-    {
-      "fileMatch": [
-        "cluster/crds/cert-manager/.+\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/"
-      ],
-      "datasourceTemplate": "helm"
-    },
-    // regexManager to read and process Traefik CRD's
-    {
-      "fileMatch": [
-        "cluster/crds/traefik/.+\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n *tag: v(?<currentValue>.*)\n"
-      ],
-      "datasourceTemplate": "helm"
-    }
+  ignoreDeps: [
+    'ghcr.io/fluxcd/helm-controller',
+    'ghcr.io/fluxcd/image-automation-controller',
+    'ghcr.io/fluxcd/image-reflector-controller',
+    'ghcr.io/fluxcd/kustomize-controller',
+    'ghcr.io/fluxcd/notification-controller',
+    'ghcr.io/fluxcd/source-controller',
   ],
-  "packageRules": [
-    // setup datasources
+  'pre-commit': {
+    enabled: true,
+  },
+  flux: {
+    fileMatch: [
+      'cluster/.+\\.ya?ml$',
+    ],
+  },
+  'helm-values': {
+    fileMatch: [
+      'cluster/.+\\.ya?ml$',
+    ],
+  },
+  kubernetes: {
+    fileMatch: [
+      'cluster/.+\\.ya?ml$',
+      'provision/ansible/playbooks/templates/.+\\.ya?ml.j2$',
+    ],
+  },
+  customManagers: [
     {
-      "matchDatasources": ["helm"],
-      "separateMinorPatch": true,
-      "ignoreDeprecated": true
-    },
-    // global docker datasource settings
-    {
-      "matchDatasources": ["docker"],
-      "enabled": true,
-      "commitMessageTopic": "container image {{depName}}",
-      "commitMessageExtra": "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
-      "matchUpdateTypes": ["major", "minor", "patch"]
-    },
-    // add labels according to package and update types
-    {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["major"],
-      "labels": ["renovate/image", "dep/major"]
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["minor"],
-      "labels": ["renovate/image", "dep/minor"]
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["patch"],
-      "labels": ["renovate/image", "dep/patch"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchUpdateTypes": ["major"],
-      "labels": ["renovate/helm", "dep/major"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchUpdateTypes": ["minor"],
-      "labels": ["renovate/helm", "dep/minor"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchUpdateTypes": ["patch"],
-      "labels": ["renovate/helm", "dep/patch"]
-    },
-    {
-      "matchDatasources": [
-        "docker",
-        "github-releases"
+      customType: 'regex',
+      description: 'Process CRD dependencies',
+      fileMatch: [
+        'cluster/.+\\.ya?ml$',
       ],
-      "versioning": "loose",
-      "matchPackageNames": [
-        "ghcr.io/onedr0p/plex",
-        "lscr.io/linuxserver/plex"
-      ]
+      matchStrings: [
+        'registryUrl=(?<registryUrl>\\S+) chart=(?<depName>\\S+)\n.*?(?<currentValue>[^-\\s]*)\n',
+        'datasource=(?<datasource>\\S+) image=(?<depName>\\S+)\n.*?-\\s(.*?)/(?<currentValue>[^/]+)/[^/]+\n',
+      ],
+      datasourceTemplate: '{{#if datasource}}{{{datasource}}}{{else}}helm{{/if}}',
     },
     {
-      "matchDatasources": [
-        "docker"
+      customType: 'regex',
+      description: 'Process various dependencies',
+      fileMatch: [
+        'ansible/.+\\.ya?ml$',
+        'cluster/.+\\.ya?ml$',
       ],
-      "versioning": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z(-(?<compatibility>.*))?$",
-      "matchPackageNames": [
-        "quay.io/minio/minio",
-        "quay.io/minio/mc"
-      ]
-    }
-  ]
+      matchStrings: [
+        'datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?"(?<currentValue>.*)"\n',
+      ],
+      datasourceTemplate: '{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}',
+      versioningTemplate: '{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}',
+    },
+    {
+      customType: 'regex',
+      description: 'Process raw GitHub URLs',
+      fileMatch: [
+        'cluster/.+\\.ya?ml$',
+      ],
+      matchStrings: [
+        'https:\\/\\/raw.githubusercontent.com\\/(?<depName>[\\w\\d\\-_]+\\/[\\w\\d\\-_]+)\\/(?<currentValue>[\\w\\d\\.\\-_]+)\\/.*',
+      ],
+      datasourceTemplate: 'github-releases',
+      versioningTemplate: 'semver',
+    },
+    {
+      customType: 'regex',
+      fileMatch: [
+        'cluster/.+\\.ya?ml$',
+      ],
+      matchStrings: [
+        'registryUrl=(?<registryUrl>.*?)\n *chart: (?<depName>.*?)\n *version: (?<currentValue>.*)\n',
+      ],
+      datasourceTemplate: 'helm',
+    },
+    {
+      customType: 'regex',
+      fileMatch: [
+        'cluster/crds/cert-manager/.+\\.ya?ml$',
+      ],
+      matchStrings: [
+        'registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/',
+      ],
+      datasourceTemplate: 'helm',
+    },
+    {
+      customType: 'regex',
+      fileMatch: [
+        'cluster/crds/traefik/.+\\.ya?ml$',
+      ],
+      matchStrings: [
+        'registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n *tag: v(?<currentValue>.*)\n',
+      ],
+      datasourceTemplate: 'helm',
+    },
+  ],
+  packageRules: [
+    {
+      matchDatasources: [
+        'helm',
+      ],
+      separateMinorPatch: true,
+      ignoreDeprecated: true,
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      enabled: true,
+      commitMessageTopic: 'container image {{depName}}',
+      commitMessageExtra: 'to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}',
+      matchUpdateTypes: [
+        'major',
+        'minor',
+        'patch',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      labels: [
+        'renovate/image',
+        'dep/major',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      labels: [
+        'renovate/image',
+        'dep/minor',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      labels: [
+        'renovate/image',
+        'dep/patch',
+      ],
+    },
+    {
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      labels: [
+        'renovate/helm',
+        'dep/major',
+      ],
+    },
+    {
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      labels: [
+        'renovate/helm',
+        'dep/minor',
+      ],
+    },
+    {
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      labels: [
+        'renovate/helm',
+        'dep/patch',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+        'github-releases',
+      ],
+      versioning: 'loose',
+      matchPackageNames: [
+        'ghcr.io/onedr0p/plex',
+        'lscr.io/linuxserver/plex',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z(-(?<compatibility>.*))?$',
+      matchPackageNames: [
+        'quay.io/minio/minio',
+        'quay.io/minio/mc',
+      ],
+    },
+  ],
 }
