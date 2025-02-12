@@ -14,6 +14,8 @@ spec:
       labels:
         app.kubernetes.io/name: thelounge
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s2
       containers:
         - name: thelounge
           image: ghcr.io/thelounge/thelounge:latest
@@ -29,5 +31,6 @@ spec:
               memory: 250Mi
       volumes:
         - name: config
-          persistentVolumeClaim:
-            claimName: thelounge-config
+          hostPath:
+            path: /data/thelounge
+            type: DirectoryOrCreate
