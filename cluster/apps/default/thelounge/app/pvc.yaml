@@ -4,10 +4,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: thelounge-config
   namespace: default
+  labels:
+    app.kubernetes.io/name: thelounge
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: nfs-client
+  storageClassName: local-storage
   resources:
     requests:
       storage: 1Gi
