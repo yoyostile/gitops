@@ -16,19 +16,9 @@ spec:
       containers:
         - name: navidrome
           image: deluan/navidrome:latest
-          env:
-            - name: ND_LOGLEVEL
-              value: "info"
-            - name: ND_PORT
-              value: "4533"
-            - name: ND_BASEURL
-              value: "/"
-            - name: ND_DATAFOLDER
-              value: "/data"
-            - name: ND_MUSICFOLDER
-              value: "/music"
-            - name: ND_SCANINTERVAL
-              value: "1h"
+          envFrom:
+            - secretRef:
+                name: navidrome
           ports:
             - name: http
               containerPort: 4533
