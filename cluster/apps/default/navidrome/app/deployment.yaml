@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: navidrome
+      annotations:
+        checksum/secret: "{{ include \"navidrome.secret\" . | sha256sum }}"
     spec:
       containers:
         - name: navidrome
