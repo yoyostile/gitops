@@ -26,6 +26,3 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: immich-values
-  values:
-    image:
-      tag: v1.122.3
