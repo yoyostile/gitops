@@ -9,7 +9,6 @@ resources:
   - ./gaseous/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml
-  - ./hoarder/ks.yaml
   - ./icloudpd/ks.yaml
   - ./immich/ks.yaml
   - ./kubernetes/ks.yaml
