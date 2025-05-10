@@ -36,7 +36,7 @@ spec:
             - name: UP_PROMETHEUS_HTTP_LISTEN
               value: 0.0.0.0:9130
             - name: UP_PROMETHEUS_NAMESPACE
-              value: unifipoller
+              value: unpoller
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
