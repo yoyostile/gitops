@@ -110,7 +110,7 @@ data:
                 "uid": "prometheus"
               },
               "exemplar": true,
-              "expr": "count(count(unifipoller_client_uptime_seconds{essid=~\"Saunaclub Paradies|Saunaclub Paradies Guest\"}) by (name))",
+              "expr": "count(count(unifipoller_client_uptime_seconds{essid=~\"Saunaclub Paradies Member|Saunaclub Paradies Guest\"}) by (name))",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
