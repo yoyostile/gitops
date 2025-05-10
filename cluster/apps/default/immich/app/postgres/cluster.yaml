@@ -33,5 +33,4 @@ spec:
     size: 32Gi
     storageClass: local-storage
     pvcTemplate:
-      spec:
-        volumeName: immich-cnpg-pvc
+      volumeName: immich-cnpg-pvc
