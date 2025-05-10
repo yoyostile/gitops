@@ -39,7 +39,7 @@ spec:
         effect: "NoSchedule"
     image:
       repository: koenkk/zigbee2mqtt
-      tag: 1.42.0
+      tag: 2.3.0
     resources:
       requests:
         cpu: 50m
