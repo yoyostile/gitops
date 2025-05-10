@@ -3,11 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: apps-cnpg-cnpg-system
-  namespace: flux-system
+  name: apps-cnpg-cnpg
+  namespace: cnpg
 spec:
   interval: 5m
-  path: ./cluster/apps/cnpg/cnpg-system/app
+  path: ./cluster/apps/cnpg/cnpg/app
   prune: true
   wait: true
   sourceRef:
