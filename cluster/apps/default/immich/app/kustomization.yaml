@@ -4,3 +4,4 @@ resources:
   - pvc.yaml
   - configmap.sops.yaml
   - helm-release.yaml
+  - postgres
