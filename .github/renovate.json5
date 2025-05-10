@@ -22,27 +22,27 @@
     enabled: true,
   },
   flux: {
-    fileMatch: [
-      'cluster/.+\\.ya?ml$',
+    managerFilePatterns: [
+      '/cluster/.+\\.ya?ml$/',
     ],
   },
   'helm-values': {
-    fileMatch: [
-      'cluster/.+\\.ya?ml$',
+    managerFilePatterns: [
+      '/cluster/.+\\.ya?ml$/',
     ],
   },
   kubernetes: {
-    fileMatch: [
-      'cluster/.+\\.ya?ml$',
-      'provision/ansible/playbooks/templates/.+\\.ya?ml.j2$',
+    managerFilePatterns: [
+      '/cluster/.+\\.ya?ml$/',
+      '/provision/ansible/playbooks/templates/.+\\.ya?ml.j2$/',
     ],
   },
   customManagers: [
     {
       customType: 'regex',
       description: 'Process CRD dependencies',
-      fileMatch: [
-        'cluster/.+\\.ya?ml$',
+      managerFilePatterns: [
+        '/cluster/.+\\.ya?ml$/',
       ],
       matchStrings: [
         'registryUrl=(?<registryUrl>\\S+) chart=(?<depName>\\S+)\n.*?(?<currentValue>[^-\\s]*)\n',
@@ -53,9 +53,9 @@
     {
       customType: 'regex',
       description: 'Process various dependencies',
-      fileMatch: [
-        'ansible/.+\\.ya?ml$',
-        'cluster/.+\\.ya?ml$',
+      managerFilePatterns: [
+        '/ansible/.+\\.ya?ml$/',
+        '/cluster/.+\\.ya?ml$/',
       ],
       matchStrings: [
         'datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?"(?<currentValue>.*)"\n',
@@ -66,8 +66,8 @@
     {
       customType: 'regex',
       description: 'Process raw GitHub URLs',
-      fileMatch: [
-        'cluster/.+\\.ya?ml$',
+      managerFilePatterns: [
+        '/cluster/.+\\.ya?ml$/',
       ],
       matchStrings: [
         'https:\\/\\/raw.githubusercontent.com\\/(?<depName>[\\w\\d\\-_]+\\/[\\w\\d\\-_]+)\\/(?<currentValue>[\\w\\d\\.\\-_]+)\\/.*',
@@ -77,8 +77,8 @@
     },
     {
       customType: 'regex',
-      fileMatch: [
-        'cluster/.+\\.ya?ml$',
+      managerFilePatterns: [
+        '/cluster/.+\\.ya?ml$/',
       ],
       matchStrings: [
         'registryUrl=(?<registryUrl>.*?)\n *chart: (?<depName>.*?)\n *version: (?<currentValue>.*)\n',
@@ -87,8 +87,8 @@
     },
     {
       customType: 'regex',
-      fileMatch: [
-        'cluster/crds/cert-manager/.+\\.ya?ml$',
+      managerFilePatterns: [
+        '/cluster/crds/cert-manager/.+\\.ya?ml$/',
       ],
       matchStrings: [
         'registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/',
@@ -97,8 +97,8 @@
     },
     {
       customType: 'regex',
-      fileMatch: [
-        'cluster/crds/traefik/.+\\.ya?ml$',
+      managerFilePatterns: [
+        '/cluster/crds/traefik/.+\\.ya?ml$/',
       ],
       matchStrings: [
         'registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n *tag: v(?<currentValue>.*)\n',
