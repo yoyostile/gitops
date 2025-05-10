@@ -30,6 +30,11 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
 
   storage:
-    size: 32Gi
     pvcTemplate:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 32Gi
       volumeName: immich-cnpg-pv
+      storageClassName: ""
