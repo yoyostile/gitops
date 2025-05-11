@@ -56,7 +56,7 @@ spec:
                   BACKUP_DIR="backups/$DATE"
 
                   apk update
-                  apk add mariadb-client py-pip
+                  apk add mariadb-client py-pip curl
                   pip install --break-system-packages --upgrade b2
 
                   mkdir -p "$BACKUP_DIR"
@@ -93,6 +93,8 @@ spec:
                     echo "Error uploading to B2" >&2
                     exit 1
                   fi
+
+                  curl -m 10 --retry 5 https://down.fyi/ping/55588744-c261-490f-8ca6-ec166adcd336
 
                   echo "Backup completed successfully"
           restartPolicy: OnFailure
