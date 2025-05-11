@@ -1,0 +1,62 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: immich-postgres-backup
+  namespace: default
+spec:
+  schedule: "@daily"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: alpine
+              image: alpine
+              env:
+                - name: DATABASES
+                  value: "immich"
+                - name: POSTGRES_HOST
+                  value: immich-postgres-r.default
+                - name: POSTGRES_USER
+                  value: immich
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-postgres-user
+                      key: password
+                - name: BACKBLAZE_B2_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: cluster-secrets
+                      key: BACKBLAZE_B2_KEY_ID
+                - name: BACKBLAZE_B2_APPLICATION_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: cluster-secrets
+                      key: BACKBLAZE_B2_APPLICATION_KEY
+              command: ["/bin/sh"]
+              args:
+                - -c
+                - |
+                  set -xe
+
+                  DATE=$(date +%Y-%m-%d)
+
+                  apk update
+                  apk add postgresql py-pip
+                  pip install --break-system-packages --upgrade b2
+                  b2 authorize-account $BACKBLAZE_B2_KEY_ID $BACKBLAZE_B2_APPLICATION_KEY
+
+                  mkdir -p backups/$DATE
+                  cd backups
+
+                  for DATABASE in $${DATABASES}; do
+                    pg_dump -h $POSTGRES_HOST -U $POSTGRES_USER $DATABASE | gzip > $DATE/$DATABASE.sql.gz
+                  done
+
+                  b2 sync . b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/postgresql
+          restartPolicy: OnFailure
