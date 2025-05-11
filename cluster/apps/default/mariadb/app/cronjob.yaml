@@ -70,8 +70,6 @@ spec:
                       --host="$MARIADB_HOST" \
                       --user="$MARIADB_USER" \
                       --password="$MYSQL_PWD" \
-                      --ssl \
-                      --ssl-verify-server-cert \
                       --single-transaction \
                       --quick \
                       --lock-tables=false \
