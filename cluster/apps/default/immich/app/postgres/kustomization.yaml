@@ -5,3 +5,4 @@ resources:
   - pv.yaml
   - cluster.yaml
   - secret.sops.yaml
+  - cronjob.yaml
