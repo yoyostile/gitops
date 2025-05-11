@@ -8,8 +8,8 @@ spec:
   suspend: false
   schedule: "@daily"
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:
@@ -17,9 +17,16 @@ spec:
           containers:
             - name: alpine
               image: alpine
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
               env:
                 - name: DATABASES
-                  value: "librenms onedev"
+                  value: "gaseous kuma librenms"
                 - name: MARIADB_HOST
                   value: mariadb.default
                 - name: MARIADB_USER
@@ -43,21 +50,54 @@ spec:
               args:
                 - -c
                 - |
-                  set -xe
+                  set -euo pipefail
 
                   DATE=$(date +%Y-%m-%d)
+                  BACKUP_DIR="/backups/$DATE"
 
                   apk update
-                  apk add mysql-client py-pip
+                  apk add mariadb-client py-pip
                   pip install --break-system-packages --upgrade b2
-                  b2 authorize-account $BACKBLAZE_B2_KEY_ID $BACKBLAZE_B2_APPLICATION_KEY
 
-                  mkdir -p backups/$DATE
-                  cd backups
+                  mkdir -p "$BACKUP_DIR"
+                  cd "$BACKUP_DIR"
+
+                  b2 authorize-account "$BACKBLAZE_B2_KEY_ID" "$BACKBLAZE_B2_APPLICATION_KEY"
 
                   for DATABASE in $${DATABASES}; do
-                    mysqldump -h $MARIADB_HOST -u $MARIADB_USER $DATABASE | gzip > $DATE/$DATABASE.sql.gz
+                    echo "Backing up $DATABASE..."
+                    if ! mariadb-dump \
+                      --host="$MARIADB_HOST" \
+                      --user="$MARIADB_USER" \
+                      --password="$MYSQL_PWD" \
+                      --ssl \
+                      --ssl-verify-server-cert \
+                      --single-transaction \
+                      --quick \
+                      --lock-tables=false \
+                      "$DATABASE" | gzip -9 > "$DATABASE.sql.gz"; then
+                      echo "Error backing up $DATABASE" >&2
+                      exit 1
+                    fi
                   done
 
-                  b2 sync . b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/mariadb
+                  # Verify backups
+                  for DATABASE in $${DATABASES}; do
+                    if [ ! -s "$DATABASE.sql.gz" ]; then
+                      echo "Backup file for $DATABASE is empty or missing" >&2
+                      exit 1
+                    fi
+                  done
+
+                  # Upload to B2
+                  echo "Uploading backups to B2..."
+                  if ! b2 sync . "b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/mariadb"; then
+                    echo "Error uploading to B2" >&2
+                    exit 1
+                  fi
+
+                  # Cleanup old backups (keep last 30 days)
+                  find /backups -type d -mtime +30 -exec rm -rf {} \;
+
+                  echo "Backup completed successfully"
           restartPolicy: OnFailure
