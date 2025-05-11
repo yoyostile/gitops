@@ -42,21 +42,49 @@ spec:
               args:
                 - -c
                 - |
-                  set -xe
+                  set -euo pipefail
 
                   DATE=$(date +%Y-%m-%d)
+                  BACKUP_DIR="backups/$DATE"
 
                   apk update
-                  apk add postgresql py-pip
+                  apk add postgresql py-pip curl
                   pip install --break-system-packages --upgrade b2
-                  b2 authorize-account $BACKBLAZE_B2_KEY_ID $BACKBLAZE_B2_APPLICATION_KEY
 
-                  mkdir -p backups/$DATE
-                  cd backups
+                  mkdir -p "$BACKUP_DIR"
+                  cd "$BACKUP_DIR"
+
+                  b2 authorize-account "$BACKBLAZE_B2_KEY_ID" "$BACKBLAZE_B2_APPLICATION_KEY"
 
                   for DATABASE in $${DATABASES}; do
-                    pg_dump -h $POSTGRES_HOST -U $POSTGRES_USER $DATABASE | gzip > $DATE/$DATABASE.sql.gz
+                    echo "Backing up $DATABASE..."
+                    if ! pg_dump \
+                      -h "$POSTGRES_HOST" \
+                      -U "$POSTGRES_USER" \
+                      --no-owner \
+                      --no-acl \
+                      --clean \
+                      --if-exists \
+                      "$DATABASE" | gzip -9 > "$DATABASE.sql.gz"; then
+                      echo "Error backing up $DATABASE" >&2
+                      exit 1
+                    fi
                   done
 
-                  b2 sync . b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/postgresql
+                  for DATABASE in $${DATABASES}; do
+                    if [ ! -s "$DATABASE.sql.gz" ]; then
+                      echo "Backup file for $DATABASE is empty or missing" >&2
+                      exit 1
+                    fi
+                  done
+
+                  echo "Uploading backups to B2..."
+                  if ! b2 sync . "b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/postgresql/$DATE"; then
+                    echo "Error uploading to B2" >&2
+                    exit 1
+                  fi
+
+                  curl -m 10 --retry 5 https://down.fyi/ping/52e0ec2e-b8db-42b5-a8b1-8747be470f56
+
+                  echo "Backup completed successfully"
           restartPolicy: OnFailure

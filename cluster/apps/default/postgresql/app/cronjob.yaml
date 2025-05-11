@@ -55,7 +55,7 @@ spec:
                   BACKUP_DIR="backups/$DATE"
 
                   apk update
-                  apk add postgresql py-pip
+                  apk add postgresql py-pip curl
                   pip install --break-system-packages --upgrade b2
 
                   mkdir -p "$BACKUP_DIR"
@@ -90,6 +90,8 @@ spec:
                     echo "Error uploading to B2" >&2
                     exit 1
                   fi
+
+                  curl -m 10 --retry 5 https://down.fyi/ping/1b791e54-6f2e-4a36-ad33-dd0699b8effb
 
                   echo "Backup completed successfully"
           restartPolicy: OnFailure
