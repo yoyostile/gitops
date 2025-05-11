@@ -52,7 +52,7 @@ spec:
                   set -euo pipefail
 
                   DATE=$(date +%Y-%m-%d)
-                  BACKUP_DIR="/backups/$DATE"
+                  BACKUP_DIR="backups/$DATE"
 
                   apk update
                   apk add postgresql py-pip
@@ -78,7 +78,6 @@ spec:
                     fi
                   done
 
-                  # Verify backups
                   for DATABASE in $${DATABASES}; do
                     if [ ! -s "$DATABASE.sql.gz" ]; then
                       echo "Backup file for $DATABASE is empty or missing" >&2
@@ -86,15 +85,11 @@ spec:
                     fi
                   done
 
-                  # Upload to B2
                   echo "Uploading backups to B2..."
-                  if ! b2 sync . "b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/postgresql"; then
+                  if ! b2 sync . "b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/postgresql/$DATE"; then
                     echo "Error uploading to B2" >&2
                     exit 1
                   fi
-
-                  # Cleanup old backups (keep last 30 days)
-                  find /backups -type d -mtime +30 -exec rm -rf {} \;
 
                   echo "Backup completed successfully"
           restartPolicy: OnFailure
