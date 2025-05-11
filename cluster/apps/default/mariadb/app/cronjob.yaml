@@ -72,6 +72,7 @@ spec:
                       --password="$MYSQL_PWD" \
                       --single-transaction \
                       --quick \
+                      --skip-ssl \
                       --lock-tables=false \
                       "$DATABASE" | gzip -9 > "$DATABASE.sql.gz"; then
                       echo "Error backing up $DATABASE" >&2
