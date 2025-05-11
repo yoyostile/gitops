@@ -61,8 +61,6 @@ spec:
                     if ! pg_dump \
                       -h "$POSTGRES_HOST" \
                       -U "$POSTGRES_USER" \
-                      --no-owner \
-                      --no-acl \
                       --clean \
                       --if-exists \
                       "$DATABASE" | gzip -9 > "$DATABASE.sql.gz"; then
