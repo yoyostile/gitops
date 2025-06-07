@@ -1,9 +1,11 @@
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
   name: truecharts-mosquitto
   namespace: flux-system
+  annotations:
+    api.fluxcd.io/upgrade: "v2.6.0"
 spec:
   interval: 5m0s
   url: oci://tccr.io/truecharts/mosquitto
