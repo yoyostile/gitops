@@ -24,11 +24,12 @@ spec:
           args: ["monitor"]
           env:
             - name: CONFIG_FILE
-              value: "/app/config/config.yml"
+              value: "/app/config.yml"
           volumeMounts:
             - name: config-volume
-              mountPath: /app/config
+              mountPath: /app/config.yml
               readOnly: true
+              subPath: config.yml
           resources:
             requests:
               memory: "64Mi"
@@ -51,7 +52,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - "test -f /app/config/config.yml"
+                - "test -f /app/config.yml"
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 3
