@@ -28,8 +28,8 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /app/config.yml
-              readOnly: true
               subPath: config.yml
+              readOnly: true
           resources:
             requests:
               memory: "64Mi"
