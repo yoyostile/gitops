@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: devolo-monitor
-          image: ghcr.io/yoyostile/devolo-powerbridge-monitor:latest
+          image: ghcr.io/yoyostile/devolo-powerbridge-monitor:main
           imagePullPolicy: Always
           command: ["/app/entrypoint.sh"]
           args: ["monitor"]
