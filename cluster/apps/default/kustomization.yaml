@@ -5,6 +5,7 @@ resources:
   - ./adguard-home-sync/ks.yaml
   - ./airbyte/ks.yaml
   - ./authentik/ks.yaml
+  - ./devolo-powerbridge-monitor/ks.yaml
   - ./echoip/ks.yaml
   - ./gaseous/ks.yaml
   - ./glitchtip/ks.yaml
