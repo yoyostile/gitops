@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gaseous
-          image: ghcr.io/gaseous-project/gaseousserver:v1.7.11
+          image: ghcr.io/gaseous-project/gaseousserver:v1.7.13
           ports:
             - containerPort: 80
               name: http
