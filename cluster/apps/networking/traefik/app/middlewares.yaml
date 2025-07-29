@@ -9,10 +9,13 @@ spec:
     htransformation:
       rules:
         - Rule:
-          Name: 'Header rename'
-          Header: 'Cf-Connecting-Ip'
-          Value: 'X-Forwarded-For'
-          Type: 'Rename'
+            Name: 'Header set'
+            Header: 'X-Forwarded-For'
+            HeaderPrefix: "^"
+            Sep: ','
+            Values:
+              - '^CF-Connecting-IP'
+            Type: 'Join'
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
