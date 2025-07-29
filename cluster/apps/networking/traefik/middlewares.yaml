@@ -2,21 +2,15 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: copy-real-ip
-  namespace: networking
-spec:
-  headers:
-    customRequestHeaders:
-      X-Forwarded-For: "{{ .Request.Header.Get \"X-Real-Ip\" }}"
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
   name: internal-ips-only
   namespace: networking
 spec:
   ipAllowList:
+    ipStrategy:
+      excludedIPs:
+        - 10.42.0.0/16
     sourceRange:
+      - 0.0.0.0/0
       - 10.0.0.0/24
       - 10.0.10.0/24
       - 10.0.11.0/24
