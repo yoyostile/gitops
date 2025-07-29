@@ -55,17 +55,11 @@ spec:
         externalTrafficPolicy: Local
     logs:
       general:
-        format: json
+        format: common
         level: ERROR
       access:
         enabled: true
-        format: json
-        fields:
-          defaultMode: keep
-          headers:
-            defaultMode: keep
-            names:
-              X-Forwarded-For: keep
+        format: common
     ingressClass:
       enabled: true
       isDefaultClass: true
