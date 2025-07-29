@@ -59,7 +59,7 @@ spec:
         level: ERROR
       access:
         enabled: true
-        format: json
+        format: common
         fields:
           defaultMode: keep
           headers:
