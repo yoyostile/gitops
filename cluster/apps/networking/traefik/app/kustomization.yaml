@@ -7,3 +7,4 @@ resources:
   - default-backend.yaml
   - middlewares.yaml
   - proxies
+  - service-monitor.yaml
