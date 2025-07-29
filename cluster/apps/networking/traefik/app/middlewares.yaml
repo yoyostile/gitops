@@ -8,13 +8,11 @@ spec:
   plugin:
     htransformation:
       rules:
-        - name: "Add CF-Connecting-IP to X-Forwarded-For"
-          type: "Join"
-          header: "X-Forwarded-For"
-          headerPrefix: "^"
-          sep: ","
-          values:
-            - "^CF-Connecting-IP"
+        - Rule:
+          Name: 'Header rename'
+          Header: 'X-Real-Ip'
+          Value: 'X-Forwarded-For'
+          Type: 'Rename'
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
