@@ -60,6 +60,12 @@ spec:
       access:
         enabled: true
         format: common
+        fields:
+          defaultMode: keep
+          headers:
+            defaultMode: keep
+            names:
+              X-Forwarded-For: keep
     ingressClass:
       enabled: true
       isDefaultClass: true
