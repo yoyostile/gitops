@@ -5,7 +5,7 @@ metadata:
   name: internal-ips-only
   namespace: networking
 spec:
-  ipWhiteList:
+  ipAllowList:
     sourceRange:
       - 10.0.0.0/24
       - 10.0.10.0/24
@@ -25,7 +25,7 @@ metadata:
   name: internal-ips-only-cloudflare
   namespace: networking
 spec:
-  ipWhiteList:
+  ipAllowList:
     ipStrategy:
       depth: 2
     sourceRange:
