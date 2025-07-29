@@ -56,7 +56,7 @@ spec:
     logs:
       general:
         format: common
-        level: ERROR
+        level: DEBUG
       access:
         enabled: true
         format: common
