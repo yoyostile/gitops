@@ -2,24 +2,6 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: copy-real-ip-to-forwarded-for
-  namespace: networking
-spec:
-  plugin:
-    htransformation:
-      rules:
-        - Rule:
-            Name: 'Header set'
-            Header: 'X-Forwarded-For'
-            HeaderPrefix: "^"
-            Sep: ','
-            Values:
-              - '^CF-Connecting-IP'
-            Type: 'Join'
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
   name: internal-ips-only
   namespace: networking
 spec:
