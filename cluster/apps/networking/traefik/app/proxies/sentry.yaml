@@ -37,6 +37,7 @@ metadata:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
 spec:
+  ingressClassName: traefik
   tls:
     - hosts:
         - "sentry.${SECRET_LAB_DOMAIN}"
