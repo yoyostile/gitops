@@ -30,7 +30,9 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
-    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+    # external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
 spec:
   tls:
     - hosts:
@@ -66,7 +68,9 @@ metadata:
     hajimari.io/icon: "home-assistant"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
-    external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+    # external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
 spec:
   tls:
     - hosts:
