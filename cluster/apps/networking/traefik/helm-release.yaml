@@ -114,8 +114,8 @@ spec:
     experimental:
       plugins:
         cloudflarewarp:
-          moduleName: github.com/BilikoX/cloudflarewarp
-          version: v1.3.4
+          moduleName: github.com/PseudoResonance/cloudflarewarp
+          version: v1.4.2
     resources:
       requests:
         memory: 100Mi
