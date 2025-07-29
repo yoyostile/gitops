@@ -29,7 +29,7 @@ metadata:
   namespace: networking
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-internal-ips-only-cloudflare@kubernetescrd"
     # external-dns.alpha.kubernetes.io/target: "dns.${SECRET_LAB_DOMAIN}"
     external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
