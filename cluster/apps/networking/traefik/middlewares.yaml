@@ -17,6 +17,7 @@ spec:
       - 10.0.101.0/24
       - 100.64.0.0/10
       - "${SECRET_LAB_IP}/32"
+      - "${SECRET_LAB_IPV6}"
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
