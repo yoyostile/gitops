@@ -16,9 +16,6 @@ metadata:
   namespace: networking
 spec:
   ipAllowList:
-    ipStrategy:
-      depth: 1
-      excludedIPs: []
     sourceRange:
       - 10.0.0.0/24
       - 10.0.10.0/24
