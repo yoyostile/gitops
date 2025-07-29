@@ -116,6 +116,9 @@ spec:
         cloudflarewarp:
           moduleName: github.com/PseudoResonance/cloudflarewarp
           version: v1.4.2
+        htransformation:
+          moduleName: github.com/tomMoulard/htransformation
+          version: v0.4.1
     resources:
       requests:
         memory: 100Mi
