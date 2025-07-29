@@ -59,7 +59,11 @@ spec:
         level: ERROR
       access:
         enabled: true
-        format: common
+        format: json
+        fields:
+          defaultMode: keep
+          headers:
+            defaultMode: keep
     ingressClass:
       enabled: true
       isDefaultClass: true
