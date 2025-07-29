@@ -10,7 +10,7 @@ spec:
       rules:
         - Rule:
           Name: 'Header rename'
-          Header: 'X-Real-Ip'
+          Header: 'Cf-Connecting-Ip'
           Value: 'X-Forwarded-For'
           Type: 'Rename'
 ---
