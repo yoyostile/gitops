@@ -60,10 +60,6 @@ spec:
       access:
         enabled: true
         format: common
-        fields:
-          defaultMode: keep
-          headers:
-            defaultMode: keep
     ingressClass:
       enabled: true
       isDefaultClass: true
