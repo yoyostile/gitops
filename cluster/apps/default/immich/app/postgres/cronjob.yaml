@@ -38,7 +38,7 @@ spec:
                     secretKeyRef:
                       name: cluster-secrets
                       key: BACKBLAZE_B2_APPLICATION_KEY
-              command: ["/bin/sh"]
+              command: ["/bin/bash"]
               args:
                 - -c
                 - |
@@ -48,8 +48,8 @@ spec:
                   BACKUP_DIR="backups/$DATE"
 
                   apt-get update
-                  apt-get install -y postgresql-client python3-pip curl
-                  pip install --upgrade
+                  apt-get install -y --no-install-recommends postgresql-client python3-pip curl
+                  pip install --upgrade "docutils==0.21.2" b2
 
                   mkdir -p "$BACKUP_DIR"
                   cd "$BACKUP_DIR"
