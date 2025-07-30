@@ -14,8 +14,8 @@ spec:
       template:
         spec:
           containers:
-            - name: debian
-              image: debian:bullseye-slim
+            - name: alpine
+              image: alpine
               env:
                 - name: DATABASES
                   value: "immich"
@@ -38,7 +38,7 @@ spec:
                     secretKeyRef:
                       name: cluster-secrets
                       key: BACKBLAZE_B2_APPLICATION_KEY
-              command: ["/bin/bash"]
+              command: ["/bin/sh"]
               args:
                 - -c
                 - |
@@ -47,14 +47,14 @@ spec:
                   DATE=$(date +%Y-%m-%d)
                   BACKUP_DIR="backups/$DATE"
 
-                  apt-get update
-                  apt-get install -y --no-install-recommends postgresql-client python3-pip curl
-                  pip install --upgrade "docutils==0.21.2" b2
+                  apk update
+                  apk add postgresql py-pip curl
+                  pip install --break-system-packages --upgrade "docutils==0.21.2" b2
 
                   mkdir -p "$BACKUP_DIR"
                   cd "$BACKUP_DIR"
 
-                  b2 authorize-account "$BACKBLAZE_B2_KEY_ID" "$BACKBLAZE_B2_APPLICATION_KEY"
+                  b2 account authorize "$BACKBLAZE_B2_KEY_ID" "$BACKBLAZE_B2_APPLICATION_KEY"
 
                   for DATABASE in $${DATABASES}; do
                     echo "Backing up $DATABASE..."
