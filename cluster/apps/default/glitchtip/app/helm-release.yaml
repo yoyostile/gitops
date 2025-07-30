@@ -26,7 +26,7 @@ spec:
     # Default values for glitchtip.
     image:
       repository: glitchtip/glitchtip
-      tag: v4.2.10
+      tag: v5.0.9
       pullPolicy: IfNotPresent
 
     imagePullSecrets: []
