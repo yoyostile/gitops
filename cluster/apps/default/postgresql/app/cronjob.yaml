@@ -56,12 +56,12 @@ spec:
 
                   apk update
                   apk add postgresql py-pip curl
-                  pip install --break-system-packages --upgrade "b2==4.3.3"
+                  pip install --break-system-packages --upgrade "docutils==0.21.2" b2
 
                   mkdir -p "$BACKUP_DIR"
                   cd "$BACKUP_DIR"
 
-                  b2 authorize-account "$BACKBLAZE_B2_KEY_ID" "$BACKBLAZE_B2_APPLICATION_KEY"
+                  b2 account authorize "$BACKBLAZE_B2_KEY_ID" "$BACKBLAZE_B2_APPLICATION_KEY"
 
                   for DATABASE in $${DATABASES}; do
                     echo "Backing up $DATABASE..."
