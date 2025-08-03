@@ -2,6 +2,7 @@ apiVersion: externaldns.k8s.io/v1alpha1
 kind: DNSEndpoint
 metadata:
   name: home-${SECRET_LAB_DOMAIN/./-}
+  namespace: networking
 spec:
   endpoints:
     - dnsName: home.${SECRET_LAB_DOMAIN}
