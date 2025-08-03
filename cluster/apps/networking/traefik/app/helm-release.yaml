@@ -68,6 +68,7 @@ spec:
         enabled: false
     providers:
       kubernetesIngress:
+        ingressClass: traefik
         allowExternalNameServices: true
       kubernetesCRD:
         allowExternalNameServices: true
@@ -241,6 +242,7 @@ spec:
         enabled: false
     providers:
       kubernetesIngress:
+        ingressClass: traefik-internal
         allowExternalNameServices: true
       kubernetesCRD:
         allowExternalNameServices: true
