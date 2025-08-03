@@ -35,6 +35,7 @@ spec:
     extraArgs:
       - --service-type-filter=LoadBalancer
       - "{{`--fqdn-template={{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
+      - '--annotation-filter=external-dns/external=true'
     txtOwnerId: gitops
     env:
       - name: CF_API_TOKEN

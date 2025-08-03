@@ -30,6 +30,7 @@ metadata:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
     # traefik.ingress.kubernetes.io/router.middlewares: "minio-console-stripprefix@kubernetescrd"
+    external-dns/external: "true"
 spec:
   ingressClassName: traefik
   tls:
