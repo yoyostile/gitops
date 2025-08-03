@@ -67,11 +67,11 @@ spec:
       dashboard:
         enabled: false
     providers:
-      kubernetesingress:
+      kubernetesIngress:
         ingressEndpoint:
           ip: "${METALLB_TRAEFIK_ADDR}"
-          allowExternalNameServices: true
-      kubernetescrd:
+        allowExternalNameServices: true
+      kubernetesCRD:
         allowExternalNameServices: true
     ports:
       traefik:
