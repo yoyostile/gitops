@@ -153,10 +153,10 @@ spec:
         expose:
           default: true
         exposedPort: 8082
-      traefik-internal:
+      internal:
         port: 8443
         expose:
-          default: true
+          internal: true
         exposedPort: 8443
         tls:
           enabled: true
