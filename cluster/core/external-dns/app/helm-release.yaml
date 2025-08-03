@@ -29,6 +29,7 @@ spec:
     sources:
       - ingress
       - service
+      - crd
     policy: sync
     provider:
       name: cloudflare
@@ -74,6 +75,7 @@ spec:
     sources:
       - ingress
       - service
+      - crd
     policy: sync
     provider:
       name: webhook
