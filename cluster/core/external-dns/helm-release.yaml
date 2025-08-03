@@ -30,7 +30,8 @@ spec:
       - ingress
       - service
     policy: sync
-    provider: cloudflare
+    provider:
+      name: cloudflare
     extraArgs:
       - --service-type-filter=LoadBalancer
       - "{{`--fqdn-template={{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
@@ -41,3 +42,89 @@ spec:
           secretKeyRef:
             name: cloudflare-api-token
             key: api-token
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-dns-internal
+  namespace: networking
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://kubernetes-sigs.github.io/external-dns
+      chart: external-dns
+      version: 1.18.0
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    replicaCount: 1
+    rbac:
+      create: true
+    sources:
+      - ingress
+      - service
+    policy: sync
+    provider:
+      name: webhook
+      webhook:
+        image:
+          repository: ghcr.io/mirceanton/external-dns-provider-mikrotik
+          tag: latest
+          pullPolicy: IfNotPresent
+        env:
+          - name: LOG_FORMAT
+            value: json
+          - name: LOG_LEVEL
+            value: debug
+          - name: MIKROTIK_DEFAULT_TTL
+            value: "1800"
+          - name: MIKROTIK_DEFAULT_COMMENT
+            value: Managed by ExternalDNS
+          - name: MIKROTIK_BASEURL
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_BASEURL
+          - name: MIKROTIK_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_USERNAME
+          - name: MIKROTIK_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_PASSWORD
+          - name: MIKROTIK_SKIP_TLS_VERIFY
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_SKIP_TLS_VERIFY
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+    extraArgs:
+      - "{{`--fqdn-template={{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
+      - '--request-timeout=60s'
+      - '--ignore-ingress-tls-spec'
+      - '--traefik-disable-legacy'
+      - '--annotation-filter=external-dns/internal=true'
