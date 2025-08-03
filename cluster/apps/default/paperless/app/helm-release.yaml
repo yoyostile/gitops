@@ -71,7 +71,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: "traefik"
+        ingressClassName: "traefik-internal"
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "note-multiple"

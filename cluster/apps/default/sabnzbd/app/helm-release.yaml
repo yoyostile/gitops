@@ -54,6 +54,7 @@ spec:
           hajimari.io/icon: "cloud-download-outline"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+        ingressClassName: traefik-internal
         hosts:
           - host: "sabnzbd.${SECRET_LAB_DOMAIN}"
             paths:
