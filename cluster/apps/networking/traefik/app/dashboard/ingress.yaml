@@ -11,7 +11,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
 spec:
-  ingressClassName: "traefik"
+  ingressClassName: "traefik-internal"
   tls:
     - hosts:
         - "traefik.${SECRET_LAB_DOMAIN}"

@@ -141,6 +141,7 @@ spec:
             foldersFromFilesStructure: true
       ingress:
         enabled: true
+        ingressClassName: traefik-internal
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "monitor-eye"
