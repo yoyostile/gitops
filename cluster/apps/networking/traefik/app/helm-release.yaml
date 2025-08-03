@@ -153,6 +153,14 @@ spec:
         expose:
           default: true
         exposedPort: 8082
+      insecure:
+        port: 8443
+        expose:
+          default: true
+        exposedPort: 8443
+        tls:
+          enabled: true
+          options: "default"
     tlsOptions:
       default:
         minVersion: VersionTLS12
