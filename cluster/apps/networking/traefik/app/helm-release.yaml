@@ -53,6 +53,11 @@ spec:
       spec:
         loadBalancerIP: "${METALLB_TRAEFIK_ADDR}"
         externalTrafficPolicy: Local
+      additionalServices:
+        internal:
+          type: LoadBalancer
+          loadBalancerIP: "${METALLB_TRAEFIK_INTERNAL_ADDR}"
+          externalTrafficPolicy: Local
     logs:
       general:
         format: common
