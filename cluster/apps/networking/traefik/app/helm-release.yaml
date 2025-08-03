@@ -73,8 +73,6 @@ spec:
         enabled: false
     providers:
       kubernetesIngress:
-        ingressEndpoint:
-          ip: "${METALLB_TRAEFIK_ADDR}"
         allowExternalNameServices: true
       kubernetesCRD:
         allowExternalNameServices: true
@@ -157,7 +155,7 @@ spec:
         port: 8444
         expose:
           internal: true
-        exposedPort: 8444
+        exposedPort: 443
         tls:
           enabled: true
           options: "default"
