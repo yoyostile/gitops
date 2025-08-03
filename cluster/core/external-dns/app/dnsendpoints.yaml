@@ -13,3 +13,13 @@ spec:
       recordType: A
       targets:
         - ${SECRET_LAB_IP}
+    - dnsName: cgn-core-01.${SECRET_LAB_DOMAIN}
+      recordTTL: 180
+      recordType: CNAME
+      targets:
+        - home.${SECRET_LAB_DOMAIN}
+    - dnsName: cgn-core-01.lab.${SECRET_LAB_DOMAIN}
+      recordTTL: 180
+      recordType: CNAME
+      targets:
+        - home.${SECRET_LAB_DOMAIN}
