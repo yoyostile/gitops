@@ -9,6 +9,7 @@ metadata:
     hajimari.io/icon: "chat"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    external-dns/internal: "true"
 spec:
   ingressClassName: traefik-internal
   tls:
