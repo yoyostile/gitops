@@ -37,6 +37,8 @@ spec:
         traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-smokeping-redirect@kubernetescrd"
         external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
         external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+        external-dns/external: "true"
+      ingressClassName: traefik
       hosts:
         - host: "smokeping.${SECRET_LAB_DOMAIN}"
           paths:

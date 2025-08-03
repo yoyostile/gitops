@@ -40,3 +40,4 @@ spec:
       ingressClassName: traefik-internal
       annotations:
         traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+        external-dns/internal: "true"
