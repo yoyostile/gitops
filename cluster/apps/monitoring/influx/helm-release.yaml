@@ -30,7 +30,7 @@ spec:
       enabled: true
       storageClass: "nfs-client"
       accessMode: ReadWriteOnce
-      size: 51Gi
+      size: 52Gi
       mountPath: /var/lib/influxdb2
     ingress:
       enabled: true
