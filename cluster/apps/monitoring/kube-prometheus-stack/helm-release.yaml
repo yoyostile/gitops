@@ -148,6 +148,7 @@ spec:
           hajimari.io/appName: "Grafana"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+          external-dns/internal: "true"
         hosts:
           - "g.${SECRET_LAB_DOMAIN}"
         tls:

@@ -19,6 +19,8 @@ apiVersion: v1
 metadata:
   name: kubernetes-lb
   namespace: default
+  annotations:
+    external-dns/internal: "true"
 spec:
   type: LoadBalancer
   loadBalancerIP: "172.16.38.254"

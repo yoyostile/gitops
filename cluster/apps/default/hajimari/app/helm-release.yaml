@@ -39,6 +39,7 @@ spec:
           hajimari.io/icon: "weather-sunset"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+          external-dns/internal: "true"
         hosts:
           - host: "hajimari.${SECRET_LAB_DOMAIN}"
             paths:
