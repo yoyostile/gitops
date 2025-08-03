@@ -13,3 +13,18 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: traefik
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: traefik-internal
+  namespace: monitoring
+spec:
+  endpoints:
+    - port: metrics
+  namespaceSelector:
+    matchNames:
+      - networking
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: traefik-internal
