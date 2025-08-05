@@ -24,6 +24,8 @@ spec:
     remediation:
       retries: 3
   values:
+    nodeSelector:
+      location: cgn
     env:
       TZ: ${TZ}
       PUID: "3000"

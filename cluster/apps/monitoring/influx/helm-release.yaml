@@ -26,6 +26,7 @@ spec:
   values:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+      location: cgn
     persistence:
       enabled: true
       storageClass: "nfs-client"

@@ -14,6 +14,8 @@ spec:
       labels:
         app.kubernetes.io/name: prowlarr
     spec:
+      nodeSelector:
+        location: cgn
       containers:
         - name: prowlarr
           image: lscr.io/linuxserver/prowlarr:1.37.0

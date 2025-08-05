@@ -14,6 +14,8 @@ spec:
       labels:
         app.kubernetes.io/name: lidarr
     spec:
+      nodeSelector:
+        location: cgn
       containers:
         - name: lidarr
           image: lscr.io/linuxserver/lidarr:latest

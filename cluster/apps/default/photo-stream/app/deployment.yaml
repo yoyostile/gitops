@@ -18,6 +18,8 @@ spec:
       labels:
         app: photo-stream
     spec:
+      nodeSelector:
+        location: cgn
       containers:
         - image: waschinski/photo-stream:latest
           imagePullPolicy: Always
