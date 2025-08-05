@@ -25,6 +25,7 @@ spec:
   values:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+      location: cgn
     image:
       registry: docker.io
       repository: bitnami/postgresql

@@ -27,6 +27,8 @@ spec:
     - kind: ConfigMap
       name: immich-values
   values:
+    nodeSelector:
+      location: cgn
     image:
       # renovate: datasource=docker depName=ghcr.io/immich-app/immich-server
       tag: v1.132.3

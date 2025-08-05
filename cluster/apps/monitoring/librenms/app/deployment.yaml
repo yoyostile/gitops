@@ -14,6 +14,8 @@ spec:
       labels:
         app: librenms
     spec:
+      nodeSelector:
+        location: cgn
       containers:
         - name: librenms
           image: librenms/librenms:25.7.0

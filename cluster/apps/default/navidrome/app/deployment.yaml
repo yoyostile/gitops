@@ -13,6 +13,8 @@ spec:
       labels:
         app.kubernetes.io/name: navidrome
     spec:
+      nodeSelector:
+        location: cgn
       containers:
         - name: navidrome
           image: deluan/navidrome:latest

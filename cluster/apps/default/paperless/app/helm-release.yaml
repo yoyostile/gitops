@@ -23,6 +23,8 @@ spec:
 
   # See https://github.com/k8s-at-home/charts/blob/master/charts/paperless/values.yaml
   values:
+    nodeSelector:
+      location: cgn
     image:
       repository: ghcr.io/paperless-ngx/paperless-ngx
       tag: 2.17.1

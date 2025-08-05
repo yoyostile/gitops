@@ -22,6 +22,8 @@ spec:
       namespace: networking
 
   values:
+    nodeSelector:
+      location: cgn
     replicas: 1
     dnsConfig:
       options:

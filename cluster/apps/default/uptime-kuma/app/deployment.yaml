@@ -18,6 +18,8 @@ spec:
       labels:
         app: uptime-kuma
     spec:
+      nodeSelector:
+        location: cgn
       containers:
         - image: louislam/uptime-kuma:2.0.0-beta-rootless.0
           imagePullPolicy: Always

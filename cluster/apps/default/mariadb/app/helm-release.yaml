@@ -27,6 +27,7 @@ spec:
       existingSecret: mariadb
     nodeSelector:
       beta.kubernetes.io/arch: amd64
+      location: cgn
     image:
       registry: docker.io
       repository: bitnami/mariadb

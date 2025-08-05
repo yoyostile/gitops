@@ -18,6 +18,8 @@ spec:
     remediation:
       retries: 3
   values:
+    nodeSelector:
+      location: cgn
     image:
       repository: eclipse-mosquitto
       tag: 2.0.22
