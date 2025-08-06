@@ -17,7 +17,7 @@ spec:
           dnsConfig:
             options:
               - name: ndots
-                value: "1"
+                value: "5"
           containers:
             - name: alpine
               image: alpine
