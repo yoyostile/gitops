@@ -25,7 +25,7 @@ metadata:
 spec:
   myASN: 65123
   peerASN: 65123
-  peerAddress: 172.16.0.1
+  peerAddress: 10.0.0.1
   bfdProfile: bfd-profile
 ---
 apiVersion: metallb.io/v1beta1
