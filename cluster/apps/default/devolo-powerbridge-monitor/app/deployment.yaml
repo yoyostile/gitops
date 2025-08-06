@@ -16,6 +16,10 @@ spec:
       labels:
         app: devolo-powerbridge-monitor
     spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       nodeSelector:
         location: "cgn"
       containers:
