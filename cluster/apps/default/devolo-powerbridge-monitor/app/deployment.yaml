@@ -16,6 +16,8 @@ spec:
       labels:
         app: devolo-powerbridge-monitor
     spec:
+      nodeSelector:
+        location: "cgn"
       containers:
         - name: devolo-monitor
           image: ghcr.io/yoyostile/devolo-powerbridge-monitor:main
