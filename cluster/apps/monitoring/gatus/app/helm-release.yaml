@@ -47,6 +47,14 @@ spec:
         size: 1Gi
     config:
       endpoints:
+        - name: Ping
+          url: icmp://home.${SECRET_LAB_DOMAIN}
+          interval: 1m
+          ui:
+            hide-url: true
+            hide-hostname: true
+          conditions:
+            - "[CONNECTED] == true"
         - name: "Home Assistant"
           url: "http://home-assistant-proxy.networking:8123"
           interval: "1m"
