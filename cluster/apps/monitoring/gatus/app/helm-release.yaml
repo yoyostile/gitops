@@ -47,6 +47,9 @@ spec:
     config:
       endpoints:
         - name: "Home Assistant"
-          url: "https://hass.${SECRET_LAB_DOMAIN}"
+          url: "http://home-assistant-proxy.networking:8123"
           interval: "1m"
           timeout: "10s"
+          group: "Internal"
+          conditions:
+            - "[STATUS] == 200"
