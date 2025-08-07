@@ -37,5 +37,6 @@ spec:
               - "woodpecker.${SECRET_LAB_DOMAIN}"
       persistence:
         storageClass: "nfs-client"
+      env: {}
       extraSecretNamesForEnvFrom:
         - woodpecker-env
