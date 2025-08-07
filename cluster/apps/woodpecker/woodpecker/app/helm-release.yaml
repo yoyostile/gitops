@@ -6,14 +6,10 @@ metadata:
   namespace: woodpecker
 spec:
   interval: 5m
-  chart:
-    spec:
-      chart: woodpecker
-      version: 3.2.1
-      sourceRef:
-        kind: OCIRepository
-        name: woodpecker-charts
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: woodpecker-charts
+    namespace: flux-system
   values:
     agent:
       env:
