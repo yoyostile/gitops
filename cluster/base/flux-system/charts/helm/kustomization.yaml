@@ -37,3 +37,4 @@ resources:
   - stakater-charts.yaml
   - traefik-charts.yaml
   - truecharts-charts.yaml
+  - woodpecker-charts.yaml
