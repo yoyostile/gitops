@@ -1,3 +1,4 @@
+---
 kind: Endpoints
 apiVersion: v1
 metadata:
@@ -103,10 +104,3 @@ spec:
                 name: home-assistant-proxy
                 port:
                   number: 8123
-          - path: /whoami
-            pathType: Prefix
-            backend:
-              service:
-                name: whoami
-                port:
-                  number: 80

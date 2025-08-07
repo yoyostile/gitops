@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: echoip
+  name: echo
   namespace: default
 spec:
   ports:
@@ -11,4 +11,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: echoip
+    app: echo
