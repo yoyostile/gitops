@@ -1,0 +1,48 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: woodpecker
+  namespace: woodpecker
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: woodpecker
+      version: 3.2.1
+      sourceRef:
+        kind: OCIRepository
+        name: woodpecker-charts
+        namespace: flux-system
+  values:
+    agent:
+      env:
+        WOODPECKER_BACKEND_K8S_STORAGE_CLASS: "nfs-client"
+      persistence:
+        storageClass: "nfs-client"
+    server:
+      ingress:
+        enabled: true
+        annotations:
+          hajimari.io/enable: "true"
+          hajimari.io/icon: "cogs"
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+          external-dns/external: "true"
+        ingressClassName: traefik
+        tls:
+          - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+            hosts:
+              - "woodpecker.${SECRET_LAB_DOMAIN}"
+        rules:
+          - host: "woodpecker.${SECRET_LAB_DOMAIN}"
+            http:
+              paths:
+                - path: /
+                  pathType: Prefix
+      persistence:
+        storageClass: "nfs-client"
+      extraSecretNamesForEnvFrom:
+        - woodpecker-env
