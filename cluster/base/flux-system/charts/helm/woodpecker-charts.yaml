@@ -6,6 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m0s
-  url: oci://ghcr.io/woodpecker-ci/helm
+  url: oci://ghcr.io/woodpecker-ci/helm/woodpecker
+  # renovate: registryUrl=oci://ghcr.io/woodpecker-ci/helm/woodpecker
   ref:
-    tag: ">= 3.2.1"
+    tag: "3.2.1"
