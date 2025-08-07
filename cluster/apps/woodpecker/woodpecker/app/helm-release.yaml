@@ -28,6 +28,8 @@ spec:
           traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
           external-dns/external: "true"
         ingressClassName: traefik
+        hosts:
+          - "woodpecker.${SECRET_LAB_DOMAIN}"
         tls:
           - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
             hosts:
