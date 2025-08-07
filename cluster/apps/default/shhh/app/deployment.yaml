@@ -30,7 +30,7 @@ spec:
               value: production
             - name: SHHH_HOST
               value: https://shhh.${SECRET_LAB_DOMAIN}
-          image: yoyostile/shhh:3.2.2
+          image: ghcr.io/yoyostile/shhh:latest
           imagePullPolicy: Always
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File

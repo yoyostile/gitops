@@ -15,7 +15,7 @@ spec:
         spec:
           containers:
             - name: mikrotik-backup
-              image: yoyostile/mikrotik-backup:latest
+              image: ghcr.io/yoyostile/mikrotik-backup:latest
               imagePullPolicy: Always
               envFrom:
                 - secretRef:
