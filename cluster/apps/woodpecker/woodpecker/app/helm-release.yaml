@@ -27,13 +27,12 @@ spec:
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
           external-dns/external: "true"
-        ingressClassName: traefik
         hosts:
-          - "woodpecker.${SECRET_LAB_DOMAIN}"
+          - host: "woodpecker.${SECRET_LAB_DOMAIN}"
         tls:
           - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
             hosts:
-              - host: "woodpecker.${SECRET_LAB_DOMAIN}"
+              - "woodpecker.${SECRET_LAB_DOMAIN}"
       persistence:
         storageClass: "nfs-client"
       extraSecretNamesForEnvFrom:
