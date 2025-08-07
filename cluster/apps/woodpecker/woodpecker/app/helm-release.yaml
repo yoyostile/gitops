@@ -40,5 +40,8 @@ spec:
       env:
         WOODPECKER_HOST: "https://woodpecker.${SECRET_LAB_DOMAIN}"
         WOODPECKER_ADMIN: "yoyostile"
+        WOODPECKER_OPEN: "false"
+        WOODPECKER_PLUGINS_PRIVILEGED: woodpeckerci/plugin-docker-buildx
+        WOODPECKER_GITHUB: "true"
       extraSecretNamesForEnvFrom:
         - woodpecker-env
