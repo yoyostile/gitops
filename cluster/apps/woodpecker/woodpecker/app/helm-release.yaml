@@ -33,13 +33,7 @@ spec:
         tls:
           - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
             hosts:
-              - "woodpecker.${SECRET_LAB_DOMAIN}"
-        rules:
-          - host: "woodpecker.${SECRET_LAB_DOMAIN}"
-            http:
-              paths:
-                - path: /
-                  pathType: Prefix
+              - host: "woodpecker.${SECRET_LAB_DOMAIN}"
       persistence:
         storageClass: "nfs-client"
       extraSecretNamesForEnvFrom:
