@@ -29,6 +29,8 @@ spec:
           external-dns/external: "true"
         hosts:
           - host: "woodpecker.${SECRET_LAB_DOMAIN}"
+            paths:
+              - path: /
         tls:
           - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
             hosts:
