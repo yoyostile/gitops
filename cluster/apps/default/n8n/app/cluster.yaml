@@ -18,5 +18,5 @@ spec:
       memory: "128Mi"
 
   storage:
-    storageClass: "local-storage"
+    storageClass: "local-path"
     size: 1Gi
