@@ -15,6 +15,9 @@ spec:
       namespace: networking
 
   values:
+    image:
+      repository: docker.n8n.io/n8nio/n8n
+      tag: 1.106.1
     main:
       config:
         db:
