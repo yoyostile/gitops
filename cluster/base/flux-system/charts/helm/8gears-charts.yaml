@@ -1,0 +1,12 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: 8gears-charts
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  url: oci://8gears.container-registry.com/library/n8n
+  # renovate: registryUrl=oci://8gears.container-registry.com/library/n8n
+  ref:
+    tag: "0.23.0"
