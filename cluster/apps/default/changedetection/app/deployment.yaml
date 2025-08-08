@@ -43,6 +43,10 @@ spec:
               value: "16000"
             - name: LISTEN_HOST
               value: "0.0.0.0"
+            - name: HIDE_REFERER
+              value: "true"
+            - name: PLAYWRIGHT_DRIVER_URL
+              value: "ws://localhost:3000"
           volumeMounts:
             - name: changedetection-data
               mountPath: /datastore
@@ -50,6 +54,28 @@ spec:
             requests:
               memory: 256Mi
               cpu: 100m
+        - name: browser-sockpuppet-chrome
+          image: dgtlmoon/sockpuppetbrowser:latest
+          env:
+            - name: SCREEN_WIDTH
+              value: "1920"
+            - name: SCREEN_HEIGHT
+              value: "1024"
+            - name: SCREEN_DEPTH
+              value: "16"
+            - name: MAX_CONCURRENT_CHROME_PROCESSES
+              value: "10"
+          ports:
+            - containerPort: 3000
+              name: playwright
+          securityContext:
+            capabilities:
+              add:
+                - SYS_ADMIN
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 200m
       volumes:
         - name: changedetection-data
           persistentVolumeClaim:
