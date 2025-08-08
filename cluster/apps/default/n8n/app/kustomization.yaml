@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - secrets.sops.yaml
   - cluster.yaml
-  - pvc.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml

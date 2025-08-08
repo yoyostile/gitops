@@ -16,5 +16,7 @@ spec:
   resources:
     requests:
       memory: "128Mi"
+
   storage:
+    storageClass: "local-storage"
     size: 1Gi
