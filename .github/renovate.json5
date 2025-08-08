@@ -208,6 +208,7 @@
       matchPackageNames: [
         'ghcr.io/onedr0p/plex',
         'lscr.io/linuxserver/plex',
+        'ghcr.io/immich-app/immich-server',
       ],
     },
     {
