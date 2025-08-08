@@ -46,6 +46,10 @@ spec:
               value: "Europe/Berlin"
             - name: N8N_DIAGNOSTICS_ENABLED
               value: "false"
+            - name: VUE_APP_URL_BASE_API
+              value: "https://n8n.${SECRET_LAB_DOMAIN}"
+            - name: WEBHOOK_URL
+              value: "https://n8n.${SECRET_LAB_DOMAIN}"
           envFrom:
             - secretRef:
                 name: n8n
