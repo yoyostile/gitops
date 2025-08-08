@@ -1,0 +1,97 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: n8n
+  namespace: default
+spec:
+  interval: 5m
+  chartRef:
+    kind: OCIRepository
+    name: 8gears-charts
+    namespace: flux-system
+  dependsOn:
+    - name: traefik
+      namespace: networking
+
+  values:
+    main:
+      config:
+        db:
+          type: postgresdb
+          postgresdb:
+            host: n8n-postgres-rw
+            user: n8n
+    #        password: password is read from cnpg db-app secretKeyRef
+            pool:
+              size: 10
+            ssl:
+              enabled: true
+              reject_Unauthorized: true
+              ca_file: "/home/ssl/certs/postgresql/ca.crt"
+      secret:
+        n8n:
+          encryption_key: "${N8N_ENCRYPTION_KEY}"
+
+      extraEnv:
+        DB_POSTGRESDB_PASSWORD:
+          valueFrom:
+            secretKeyRef:
+              name: n8n-postgres-user
+              key: password
+      # Mount the CNPG CA Cert into N8N container
+      extraVolumeMounts:
+        - name: n8n-postgres-ca
+          mountPath: /home/ssl/certs/postgresql
+          readOnly: true
+
+      extraVolumes:
+        - name: n8n-postgres-ca
+          secret:
+            secretName: n8n-postgres-ca
+            items:
+              - key: ca.crt
+                path: ca.crt
+      resources:
+        requests:
+          memory: 256Mi
+
+    ingress:
+      enabled: true
+      className: traefik
+      annotations:
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "robot"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+        external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+        traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+        external-dns/external: "true"
+      hosts:
+        - host: n8n.${SECRET_LAB_DOMAIN}
+          paths:
+            - /
+      tls:
+        - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+          hosts:
+            - n8n.${SECRET_LAB_DOMAIN}
+
+    extraManifests:
+      - apiVersion: postgresql.cnpg.io/v1
+        kind: Cluster
+        metadata:
+          name: n8n-postgres
+        spec:
+          instances: 1
+          bootstrap:
+            initdb:
+              database: n8n
+              owner: n8n
+          postgresql:
+            parameters:
+              shared_buffers: "64MB"
+          resources:
+            requests:
+              memory: "128Mi"
+          storage:
+            size: 1Gi
