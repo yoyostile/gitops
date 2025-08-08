@@ -38,7 +38,7 @@ spec:
             - name: DB_POSTGRESDB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: n8n-postgres-user
+                  name: n8n-postgres-app
                   key: password
             - name: GENERIC_TIMEZONE
               value: "Europe/Berlin"
