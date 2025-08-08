@@ -18,6 +18,8 @@ spec:
     image:
       repository: docker.n8n.io/n8nio/n8n
       tag: 1.106.1
+    extraEnv:
+      N8N_DIAGNOSTICS_ENABLED: "false"
     main:
       config:
         db:
