@@ -18,3 +18,5 @@ spec:
       memory: "128Mi"
   storage:
     size: 1Gi
+  postgresGID: 3000
+  postgresUID: 3000
