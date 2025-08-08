@@ -77,3 +77,32 @@ spec:
       storage: 1000Gi
   volumeName: immich-ext-kj
   storageClassName: ""
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-ext-jo
+  namespace: default
+spec:
+  capacity:
+    storage: 1500Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+    path: "${PRIVATE_ICLOUDPD_NFS_PATH}"
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-ext-jo
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1500Gi
+  volumeName: immich-ext-jo
+  storageClassName: ""
