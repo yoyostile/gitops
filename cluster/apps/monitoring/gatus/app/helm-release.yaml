@@ -40,7 +40,7 @@ spec:
             - status.${SECRET_LAB_DOMAIN}
           secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       nodeSelector:
-        location: hzn
+        location: cgn
       persistence:
         enabled: true
         storageClass: "nfs-client"
