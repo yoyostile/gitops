@@ -7,7 +7,7 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: main
+    branch: talos
   url: https://github.com/yoyostile/gitops
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1

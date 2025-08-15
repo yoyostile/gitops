@@ -35,3 +35,5 @@ spec:
       restartPolicy: Always
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30
+      securityContext:
+        allowPrivilegeEscalation: false
