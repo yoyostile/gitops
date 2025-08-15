@@ -7,7 +7,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
-  path: ./cluster/core/longhorn/app
+  path: ./cluster/core/longhorn-system/app
   prune: true
   wait: true
   sourceRef:
