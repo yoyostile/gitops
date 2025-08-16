@@ -23,3 +23,7 @@ spec:
       enabled: true
       webui:
         enabled: true
+      # config:
+      #   slack:
+      #     webhookurl: YOUR_WEBHOOK_URL_HERE
+      #     minimumpriority: warning
