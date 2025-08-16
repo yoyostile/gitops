@@ -4,8 +4,8 @@ resources:
   - ./namespaces/ks.yaml
   - ./cert-manager/ks.yaml
   - ./kube-system/ks.yaml
-  # - ./longhorn-system/ks.yaml
   - ./metallb-system/ks.yaml
+  - ./rook-ceph/ks.yaml
   # - ./system-upgrade/ks.yaml
-  - ./external-dns/ks.yaml
+  # - ./external-dns/ks.yaml
   # - ./nfs-subdir-external-provisioner/ks.yaml
