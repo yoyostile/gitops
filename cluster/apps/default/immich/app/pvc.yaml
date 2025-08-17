@@ -1,16 +1,16 @@
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: immich
-  namespace: default
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: "nfs-client"
-  resources:
-    requests:
-      storage: 1500G
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: immich
+#   namespace: default
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   storageClassName: "nfs-client"
+#   resources:
+#     requests:
+#       storage: 1500G
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -81,7 +81,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: immich-ext-jo
+  name: immich
   namespace: default
 spec:
   capacity:
@@ -90,13 +90,13 @@ spec:
     - ReadWriteMany
   nfs:
     server: "glacier.lab.${SECRET_LAB_DOMAIN}"
-    path: "${PRIVATE_ICLOUDPD_NFS_PATH}"
+    path: "${IMMICH_NFS_PATH}"
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-ext-jo
+  name: immich
   namespace: default
 spec:
   accessModes:
@@ -104,5 +104,5 @@ spec:
   resources:
     requests:
       storage: 1500Gi
-  volumeName: immich-ext-jo
+  volumeName: immich
   storageClassName: ""
