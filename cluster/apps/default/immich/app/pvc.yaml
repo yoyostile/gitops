@@ -104,5 +104,5 @@ spec:
   resources:
     requests:
       storage: 1500Gi
-  volumeName: immich
+  volumeName: immich-nfs
   storageClassName: ""
