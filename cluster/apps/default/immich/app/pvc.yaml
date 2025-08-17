@@ -1,16 +1,16 @@
-# ---
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: immich
-#   namespace: default
-# spec:
-#   accessModes:
-#     - ReadWriteOnce
-#   storageClassName: "nfs-client"
-#   resources:
-#     requests:
-#       storage: 1500G
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: "nfs-client"
+  resources:
+    requests:
+      storage: 1500G
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -81,7 +81,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: immich
+  name: immich-nfs
   namespace: default
 spec:
   capacity:
@@ -96,7 +96,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich
+  name: immich-nfs
   namespace: default
 spec:
   accessModes:
