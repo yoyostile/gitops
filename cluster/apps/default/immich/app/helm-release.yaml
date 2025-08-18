@@ -25,12 +25,127 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  valuesFrom:
-    - kind: ConfigMap
-      name: immich-values
   values:
     nodeSelector:
       location: cgn
     image:
       # renovate: datasource=docker depName=ghcr.io/immich-app/immich-server
       tag: v1.138.0
+
+    ## This chart relies on the common library chart from bjw-s
+    ## You can find it at https://github.com/bjw-s/helm-charts/tree/main/charts/library/common
+    ## Refer there for more detail about the supported values
+
+    # These entries are shared between all the Immich components
+
+    global:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+        gpu.intel.com/i915: "1"
+      limits:
+        cpu: 2000m
+        gpu.intel.com/i915: "1"
+
+    env:
+      REDIS_HOSTNAME: redis-headless
+      REDIS_PASSWORD: ${IMMICH_REDIS_PASSWORD}
+      REDIS_DBINDEX: 4
+      # DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
+      DB_HOSTNAME: "immich-postgres-rw"
+      DB_USERNAME: "immich"
+      DB_DATABASE_NAME: "immich"
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+      TZ: "Europe/Berlin"
+
+    immich:
+      metrics:
+        # Enabling this will create the service monitors needed to monitor immich with the prometheus operator
+        enabled: false
+      persistence:
+        # Main data store for all photos shared between different components.
+        library:
+          existingClaim: immich-nfs
+
+      # configuration is immich-config.json converted to yaml
+      # ref: https://immich.app/docs/install/config-file/
+      #
+      configuration: {}
+        # trash:
+        #   enabled: false
+        #   days: 30
+        # storageTemplate:
+        #   enabled: true
+        #   template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
+
+    # Dependencies
+
+    redis:
+      enabled: false
+      architecture: standalone
+      auth:
+        enabled: false
+
+    # Immich components
+
+    server:
+      enabled: true
+      controller:
+        replicas: 2
+        strategy: RollingUpdate
+      persistence:
+        ext-library-kjheck:
+          enabled: true
+          existingClaim: immich-ext-kj
+          readOnly: true
+
+      image:
+        repository: ghcr.io/immich-app/immich-server
+        pullPolicy: IfNotPresent
+      ingress:
+        main:
+          enabled: true
+          ingressClassName: "traefik-internal"
+          annotations:
+            hajimari.io/enable: "true"
+            hajimari.io/icon: "image-album"
+            traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+            traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+            external-dns/internal: "true"
+          hosts:
+            - host: "immich.${SECRET_LAB_DOMAIN}"
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - "immich.${SECRET_LAB_DOMAIN}"
+              secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+
+    machine-learning:
+      enabled: true
+      controller:
+        replicas: 2
+        strategy: RollingUpdate
+      image:
+        repository: ghcr.io/immich-app/immich-machine-learning
+        tag: v1.138.0-openvino
+        pullPolicy: IfNotPresent
+      env:
+        TRANSFORMERS_CACHE: /cache
+      persistence:
+        ext-library-kjheck:
+          enabled: true
+          existingClaim: immich-ext-kj
+          readOnly: true
+        cache:
+          enabled: true
+          size: 10Gi
+          # Optional: Set this to pvc to avoid downloading the ML models every start.
+          type: 'pvc'
+          accessMode: ReadWriteMany
+          storageClass: 'nfs-client'
