@@ -33,3 +33,7 @@ spec:
         fstype: ext4
         annotations:
           storageclass.kubernetes.io/is-default-class: "false"
+
+    node:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
