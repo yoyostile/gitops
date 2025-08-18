@@ -35,3 +35,16 @@ spec:
     requests:
       storage: 32Gi
   storageClassName: local-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-data
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 32Gi
+  storageClassName: proxmox-data-ext4
