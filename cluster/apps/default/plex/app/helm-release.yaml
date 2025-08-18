@@ -72,10 +72,7 @@ spec:
 
     persistence:
       config:
-        accessMode: ReadWriteOnce
-        enabled: true
-        size: 16Gi
-        storageClass: "local-storage"
+        existingClaim: plex-data
       media:
         enabled: true
         type: custom
