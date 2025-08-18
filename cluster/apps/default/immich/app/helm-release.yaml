@@ -128,6 +128,12 @@ spec:
 
     machine-learning:
       enabled: true
+      resources:
+        requests:
+          memory: 4Gi
+          gpu.intel.com/i915: "1"
+        limits:
+          gpu.intel.com/i915: "1"
       controller:
         replicas: 2
         strategy: RollingUpdate
@@ -137,6 +143,15 @@ spec:
         pullPolicy: IfNotPresent
       env:
         TRANSFORMERS_CACHE: /cache
+        MACHINE_LEARNING_PRELOAD__CLIP: ViT-B-32__openai
+        MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION: buffalo_l
+      probes:
+        liveness:
+          spec:
+            initialDelaySeconds: 120
+        readiness:
+          spec:
+            initialDelaySeconds: 120
       persistence:
         ext-library-kjheck:
           enabled: true
