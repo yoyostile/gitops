@@ -8,3 +8,4 @@ resources:
   - ./system-upgrade/ks.yaml
   - ./external-dns/ks.yaml
   - ./nfs-subdir-external-provisioner/ks.yaml
+  - ./proxmox-csi/ks.yaml

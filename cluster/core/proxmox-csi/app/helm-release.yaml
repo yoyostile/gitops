@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nfs-subdir-external-provisioner
+  namespace: kube-system
+spec:
+  interval: 5m
+  chartRef:
+    kind: OCIRepository
+    name: proxmox-csi-charts
+    namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    config:
+      clusters:
+        - url: https://pve01.${SECRET_LAB_DOMAIN}:8006/api2/json
+          insecure: false
+          token_id: "kubernetes-csi@pve!csi"
+          token_secret: ${SECRET_PROXMOX_CSI_TOKEN}
+          region: lab
+
+    storageClass:
+      - name: proxmox-data-ext4
+        storage: local-lvm
+        reclaimPolicy: Retain
+        fstype: ext4
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "false"
