@@ -133,7 +133,7 @@ spec:
         strategy: RollingUpdate
       image:
         repository: ghcr.io/immich-app/immich-machine-learning
-        tag: v1.138.0-openvino
+        tag: v1.138.0
         pullPolicy: IfNotPresent
       env:
         TRANSFORMERS_CACHE: /cache
