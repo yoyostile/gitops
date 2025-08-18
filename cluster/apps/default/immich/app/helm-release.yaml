@@ -95,7 +95,7 @@ spec:
     server:
       enabled: true
       controller:
-        replicas: 2
+        replicas: 1
         strategy: RollingUpdate
       persistence:
         ext-library-kjheck:
@@ -135,7 +135,7 @@ spec:
         limits:
           gpu.intel.com/i915: "1"
       controller:
-        replicas: 2
+        replicas: 1
         strategy: RollingUpdate
       image:
         repository: ghcr.io/immich-app/immich-machine-learning
@@ -148,10 +148,10 @@ spec:
       probes:
         liveness:
           spec:
-            initialDelaySeconds: 120
+            initialDelaySeconds: 180
         readiness:
           spec:
-            initialDelaySeconds: 120
+            initialDelaySeconds: 180
       persistence:
         ext-library-kjheck:
           enabled: true
