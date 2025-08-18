@@ -76,14 +76,6 @@ spec:
               editable: true
               options:
                 path: /var/lib/grafana/dashboards/unifi
-            - name: 'mktxp'
-              orgId: 1
-              folder: 'mktxp'
-              type: file
-              disableDeletion: false
-              editable: true
-              options:
-                path: /var/lib/grafana/dashboards/mktxp
             - name: 'teslamate'
               orgId: 1
               folder: Teslamate
@@ -93,13 +85,6 @@ spec:
               options:
                 path: /var/lib/grafana/dashboards/teslamate
       dashboards:
-        mktxp:
-          mktxpDashboard:
-            gnetId: 13679
-            revision: 22
-            datasource:
-              - name: DS_PROMETHEUS
-                value: Prometheus
         unifi:
           # unifiPollerClientDPI:
           #   gnetId: 11310
@@ -230,10 +215,6 @@ spec:
             scheme: http
             static_configs:
               - targets: ['hass.lab.${SECRET_LAB_DOMAIN}:8123']
-          - job_name: 'mktxp'
-            scrape_timeout: 20s
-            static_configs:
-              - targets: ['mktxp.monitoring:49090']
         retention: 365d
         retentionSize: 50GB
         walCompression: true
