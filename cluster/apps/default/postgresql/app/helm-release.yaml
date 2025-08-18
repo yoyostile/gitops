@@ -31,11 +31,11 @@ spec:
       repository: bitnami/postgresql
       tag: 17.5.0-debian-12-r10
     global:
-      storageClass: "nfs-client"
+      storageClass: "proxmox-data-ext4"
     primary:
       resourcesPreset: "large"
       persistence:
-        existingClaim: "postgresql-local-pvc"
+        existingClaim: "postgresql-data"
       service:
         type: "LoadBalancer"
         loadBalancerIP: "172.16.38.201"
