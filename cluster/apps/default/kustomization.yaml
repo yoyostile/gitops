@@ -21,7 +21,6 @@ resources:
   - ./metabase/ks.yaml
   - ./mikrotik-backup/ks.yaml
   - ./mosquitto/ks.yaml
-  - ./n8n/ks.yaml
   - ./navidrome/ks.yaml
   - ./paperless/ks.yaml
   - ./photo-stream/ks.yaml
