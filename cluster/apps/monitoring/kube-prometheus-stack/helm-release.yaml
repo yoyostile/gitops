@@ -162,18 +162,6 @@ spec:
               - name: service
                 matcherRegex: '"([^"]+@kubernetes)"'
                 url: ""
-        - name: influxdb
-          access: proxy
-          orgId: 1
-          type: influxdb
-          url: "http://influx-influxdb2.monitoring"
-          jsonData:
-            defaultBucket: sn0w
-            httpMode: POST
-            organization: influxdata
-            version: Flux
-          secureJsonData:
-            token: ${INFLUX_TOKEN}
         - name: TeslaMate
           access: proxy
           orgId: 1
@@ -216,7 +204,7 @@ spec:
             static_configs:
               - targets: ['hass.lab.${SECRET_LAB_DOMAIN}:8123']
         retention: 365d
-        retentionSize: 50GB
+        retentionSize: 100GB
         walCompression: true
         serviceMonitorSelectorNilUsesHelmValues: false
         storageSpec:

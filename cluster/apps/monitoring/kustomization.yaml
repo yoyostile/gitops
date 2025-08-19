@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
     - ./falco/ks.yaml
     - flux-alerts
-    - influx
     - kube-prometheus-stack
     - ./librenms/ks.yaml
     - smokeping
