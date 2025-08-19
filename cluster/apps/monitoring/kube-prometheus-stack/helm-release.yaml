@@ -84,8 +84,16 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/teslamate
+            - name: 'misc'
+              orgId: 1
+              folder: Misc
+              type: file
+              disableDeletion: false
+              allowUiUpdates: true
+              options:
+                path: /var/lib/grafana/dashboards/misc
       dashboards:
-        default:
+        misc:
           nodeExporterFull:
             gnetId: 1860
             revision: 41
