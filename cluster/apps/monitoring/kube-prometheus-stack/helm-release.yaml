@@ -203,8 +203,8 @@ spec:
             scheme: http
             static_configs:
               - targets: ['hass.lab.${SECRET_LAB_DOMAIN}:8123']
-        retention: 365d
-        retentionSize: 100GB
+        retention: 730d
+        retentionSize: 200GB
         walCompression: true
         serviceMonitorSelectorNilUsesHelmValues: false
         storageSpec:
