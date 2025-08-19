@@ -85,6 +85,11 @@ spec:
               options:
                 path: /var/lib/grafana/dashboards/teslamate
       dashboards:
+        home:
+          nodeExporterFull:
+            gnetId: 1860
+            revision: 41
+            datasource: Prometheus
         unifi:
           # unifiPollerClientDPI:
           #   gnetId: 11310
