@@ -85,7 +85,7 @@ spec:
               options:
                 path: /var/lib/grafana/dashboards/teslamate
       dashboards:
-        home:
+        default:
           nodeExporterFull:
             gnetId: 1860
             revision: 41
