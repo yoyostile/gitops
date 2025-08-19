@@ -35,90 +35,9 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
+      "id": 35,
       "links": [],
-      "liveNow": false,
       "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "fixedColor": "light-purple",
-                "mode": "fixed"
-              },
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "text": "N/A"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 4,
-            "x": 0,
-            "y": 0
-          },
-          "id": 33,
-          "interval": "",
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "none",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "10.1.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "count(count(unifipoller_client_uptime_seconds{essid=~\"Saunaclub Paradies Member|Saunaclub Paradies Guest\"}) by (name))",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "WiFi Users",
-          "type": "stat"
-        },
         {
           "datasource": {
             "type": "prometheus",
@@ -147,7 +66,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -162,19 +81,18 @@ data:
           "gridPos": {
             "h": 4,
             "w": 4,
-            "x": 4,
+            "x": 8,
             "y": 0
           },
-          "hideTimeOverride": true,
           "id": 22,
-          "interval": ">10s",
-          "links": [],
+          "interval": "10s",
           "maxDataPoints": 100,
           "options": {
             "colorMode": "none",
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "horizontal",
+            "percentChangeColorMode": "standard",
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -182,10 +100,12 @@ data:
               "fields": "",
               "values": false
             },
+            "showPercentChange": false,
             "text": {},
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "10.1.1",
+          "pluginVersion": "12.1.0",
           "targets": [
             {
               "datasource": {
@@ -229,7 +149,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -244,19 +164,19 @@ data:
           "gridPos": {
             "h": 4,
             "w": 4,
-            "x": 8,
+            "x": 12,
             "y": 0
           },
           "hideTimeOverride": true,
           "id": 14,
-          "interval": ">30d",
-          "links": [],
+          "interval": "30d",
           "maxDataPoints": 100,
           "options": {
             "colorMode": "none",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "horizontal",
+            "percentChangeColorMode": "standard",
             "reduceOptions": {
               "calcs": [
                 "mean"
@@ -264,10 +184,12 @@ data:
               "fields": "",
               "values": false
             },
+            "showPercentChange": false,
             "text": {},
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "10.1.1",
+          "pluginVersion": "12.1.0",
           "targets": [
             {
               "datasource": {
@@ -288,237 +210,6 @@ data:
           "type": "stat"
         },
         {
-          "aliasColors": {
-            "bond0_in": "super-light-blue",
-            "bond0_out": "light-red"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 6,
-          "fillGradient": 6,
-          "grid": {},
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 0
-          },
-          "hiddenSeries": false,
-          "id": 7,
-          "legend": {
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "maxPerRow": 6,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "10.1.1",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "repeat": "node",
-          "repeatDirection": "h",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:1208",
-              "alias": "/.*_out/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "irate(node_network_receive_bytes_total{instance=~\"pve01.lab.${SECRET_LAB_DOMAIN}:9100|pve02.lab.${SECRET_LAB_DOMAIN}:9100|pve03.lab.${SECRET_LAB_DOMAIN}:9100\",device=~\"vmbr0\"}[2m])*8",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "{{instance}} {{device}}_in",
-              "metric": "",
-              "range": true,
-              "refId": "A",
-              "step": 60,
-              "target": ""
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "irate(node_network_transmit_bytes_total{instance=~\"pve01.lab.${SECRET_LAB_DOMAIN}:9100|pve02.lab.${SECRET_LAB_DOMAIN}:9100|pve03.lab.${SECRET_LAB_DOMAIN}:9100\",device=~\"vmbr0\"}[2m])*8",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "{{instance}} {{device}}_out",
-              "range": true,
-              "refId": "B",
-              "step": 60
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "sn0w: Traffic",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1244",
-              "format": "bps",
-              "label": "bits out (-) / bits in (+)",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1245",
-              "format": "short",
-              "logBase": 1,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 4
-          },
-          "hiddenSeries": false,
-          "id": 31,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "10.1.1",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "expr": "sum by (instance) (node_cpu_scaling_frequency_hertz{instance=~\"pve01.lab.${SECRET_LAB_DOMAIN}:9100|pve02.lab.${SECRET_LAB_DOMAIN}:9100|pve03.lab.${SECRET_LAB_DOMAIN}:9100\"} / 4)",
-              "format": "time_series",
-              "intervalFactor": 1,
-              "legendFormat": "{{instance}} CPU {{cpu}}",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "pve: CPU Frequency",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "hertz",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -529,14 +220,16 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
-                "fillOpacity": 80,
-                "gradientMode": "opacity",
+                "fillOpacity": 10,
+                "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
                   "tooltip": false,
@@ -544,7 +237,7 @@ data:
                 },
                 "insertNulls": false,
                 "lineInterpolation": "linear",
-                "lineWidth": 1,
+                "lineWidth": 0,
                 "pointSize": 5,
                 "scaleDistribution": {
                   "type": "linear"
@@ -566,7 +259,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -574,79 +267,37 @@ data:
                   }
                 ]
               },
-              "unit": "bps"
+              "unit": "hertz"
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "WAN out"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#6ED0E0",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "WAN in"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#f29191",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "WAN out"
-                },
-                "properties": [
-                  {
-                    "id": "custom.fillOpacity",
-                    "value": 27
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
-            "h": 7,
+            "h": 9,
             "w": 12,
-            "x": 12,
-            "y": 7
+            "x": 0,
+            "y": 4
           },
-          "id": 52,
-          "interval": "",
-          "links": [],
+          "id": 31,
           "options": {
+            "alertThreshold": true,
             "legend": {
               "calcs": [
                 "mean",
                 "lastNotNull",
-                "max"
+                "max",
+                "min"
               ],
-              "displayMode": "list",
+              "displayMode": "table",
               "placement": "bottom",
               "showLegend": true
             },
             "tooltip": {
-              "mode": "single",
+              "hideZeros": false,
+              "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "8.0.3",
+          "pluginVersion": "12.1.0",
           "targets": [
             {
               "datasource": {
@@ -654,29 +305,15 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "exemplar": true,
-              "expr": "rate(mktxp_interface_rx_byte_total{name=\"ether8[WAN]\"}[2m])*8",
-              "interval": "",
-              "legendFormat": "WAN in",
+              "expr": "sum by (instance) (node_cpu_scaling_frequency_hertz{instance=~\"pve01.lab.${SECRET_LAB_DOMAIN}:9100|pve02.lab.${SECRET_LAB_DOMAIN}:9100|pve03.lab.${SECRET_LAB_DOMAIN}:9100\"} / 4)",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "{{instance}} CPU {{cpu}}",
               "range": true,
               "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "-rate(mktxp_interface_tx_byte_total{name=\"ether8[WAN]\"}[2m])*8",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "WAN out",
-              "range": true,
-              "refId": "B"
             }
           ],
-          "title": "WAN Traffic",
+          "title": "pve: CPU Frequency",
           "type": "timeseries"
         },
         {
@@ -690,11 +327,13 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 0,
                 "gradientMode": "none",
@@ -726,7 +365,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -739,10 +378,10 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 12,
-            "x": 0,
-            "y": 13
+            "x": 12,
+            "y": 4
           },
           "id": 55,
           "options": {
@@ -758,10 +397,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
+          "pluginVersion": "12.1.0",
           "targets": [
             {
               "datasource": {
@@ -785,182 +426,24 @@ data:
           },
           "fieldConfig": {
             "defaults": {
-              "color": {
-                "mode": "continuous-YlBl"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 1,
-                "drawStyle": "line",
-                "fillOpacity": 28,
-                "gradientMode": "opacity",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineStyle": {
-                  "dash": [
-                    10,
-                    10
-                  ],
-                  "fill": "dash"
-                },
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "always",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "line"
-                }
-              },
-              "mappings": [],
-              "max": 550000000,
-              "min": -90000000,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bps"
+              "links": []
             },
             "overrides": []
           },
           "gridPos": {
             "h": 8,
             "w": 12,
-            "x": 12,
-            "y": 14
-          },
-          "id": 49,
-          "options": {
-            "legend": {
-              "calcs": [
-                "lastNotNull",
-                "min",
-                "max",
-                "mean"
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "8.0.3",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": false,
-              "expr": "download_speed_bps{job=\"speedtest-exporter\"}",
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "Download",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "-upload_speed_bps{job=\"speedtest-exporter\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Upload",
-              "refId": "B"
-            }
-          ],
-          "title": "WAN Speedtest",
-          "type": "timeseries"
-        },
-        {
-          "aliasColors": {
-            "Load 15m": "#F9934E",
-            "Load 1m": "#890F02",
-            "Load 5m": "#E24D42"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "decimals": 2,
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "grid": {},
-          "gridPos": {
-            "h": 7,
-            "w": 12,
             "x": 0,
-            "y": 21
+            "y": 13
           },
-          "hiddenSeries": false,
           "id": 8,
-          "legend": {
-            "avg": true,
-            "current": true,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
           "maxPerRow": 6,
-          "nullPointMode": "null",
           "options": {
             "alertThreshold": true
           },
-          "percentage": false,
           "pluginVersion": "10.1.1",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
           "repeat": "node",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": true,
+          "repeatDirection": "h",
           "targets": [
             {
               "datasource": {
@@ -1008,520 +491,123 @@ data:
               "step": 60
             }
           ],
-          "thresholds": [],
-          "timeRegions": [],
           "title": "sn0w: Load Avg.",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Load Avg.",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
+          "type": "timeseries"
         },
         {
-          "aliasColors": {
-            "battery_charge_percent": "super-light-purple",
-            "battery_voltage": "dark-blue",
-            "input_voltage": "dark-red",
-            "load_percent": "dark-orange"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
-          },
-          "decimals": 1,
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 12,
-            "y": 22
-          },
-          "hiddenSeries": false,
-          "id": 20,
-          "interval": ">10s",
-          "legend": {
-            "alignAsTable": false,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "10.1.1",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:1578",
-              "alias": "/.*voltage$$/",
-              "fill": 0,
-              "linewidth": 1,
-              "yaxis": 1
-            },
-            {
-              "$$hashKey": "object:431",
-              "alias": "/.*percent$$/",
-              "fill": 1,
-              "yaxis": 2
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$0",
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "hide": false,
-              "measurement": "/^ups/",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"sn0w\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"apcupsd\")\n  |> filter(fn: (r) => r[\"_field\"] == \"battery_charge_percent\" or r[\"_field\"] == \"load_percent\" or r[\"_field\"] == \"input_voltage\" or r[\"_field\"] == \"battery_voltage\")\n  |> map(fn: (r) => ({ _value:r._value, _time: r._time, _field: r._field }))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "UPS",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1593",
-              "format": "volt",
-              "label": "Voltage",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1594",
-              "format": "short",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P3C6603E967DC8568"
-          },
-          "decimals": 1,
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/MAX_1b441a/"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Arbeitszimmer $${__field.name}"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/MAX_1a85bf/"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Badezimmer $${__field.name}"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/MAX_191ee0/"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Badezimmer Wand $${__field.name}"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/MAX_0b196b/"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Küche $${__field.name}"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/MAX_0b1ecd/"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Wohnzimmer $${__field.name}"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/MAX_121f4f/"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Wohnbereich Wand $${__field.name}"
-                  }
-                ]
-              }
-            ]
-          },
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 12,
-            "w": 12,
-            "x": 0,
-            "y": 28
-          },
-          "hiddenSeries": false,
-          "id": 13,
-          "interval": ">1m",
-          "legend": {
-            "alignAsTable": false,
-            "avg": true,
-            "current": true,
-            "hideEmpty": false,
-            "hideZero": false,
-            "max": false,
-            "min": false,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "connected",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "10.1.1",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:2167",
-              "alias": "/valveposition/",
-              "dashes": true,
-              "yaxis": 2
-            },
-            {
-              "$$hashKey": "object:2168",
-              "alias": "/temperature/",
-              "fill": 3,
-              "linewidth": 0,
-              "zindex": 3
-            },
-            {
-              "$$hashKey": "object:2169",
-              "alias": "/desired_temperature/",
-              "dashLength": 3,
-              "dashes": true,
-              "fill": 1,
-              "fillGradient": 2,
-              "spaceLength": 20,
-              "zindex": -3
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "Küche $$col",
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$$interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "room"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "hide": false,
-              "measurement": "max",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "from(bucket: \"fhem\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\" and (r[\"_field\"] == \"temperature\" or r[\"_field\"] == \"desired_temperature\"))\n  |> map(fn: (r) => ({ _value: r._value, _time: r._time, _field: r._field + \" \" + r.path }))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "valveposition"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
-                    "params": [
-                      "Öffnung"
-                    ],
-                    "type": "alias"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "room",
-                  "operator": "=~",
-                  "value": "/^MAX_0b196b/"
-                }
-              ]
-            },
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "P3C6603E967DC8568"
-              },
-              "hide": false,
-              "query": "from(bucket: \"fhem\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\" and r[\"_field\"] == \"valveposition\")\n  |> map(fn: (r) => ({ _value: r._value, _time: r._time, _field: r._field + \" \" + r.path }))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n\n",
-              "refId": "B"
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "FHEM: Temperaturen",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:2216",
-              "format": "celsius",
-              "label": "Temperature",
-              "logBase": 1,
-              "min": "15",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:2217",
-              "format": "percent",
-              "label": "Valve position",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
-              "links": []
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 20,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 0,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 1,
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "celsius"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/Luftfeuchtigkeit/"
+                },
+                "properties": [
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.drawStyle",
+                    "value": "line"
+                  },
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 1
+                  },
+                  {
+                    "id": "unit",
+                    "value": "humidity"
+                  },
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  }
+                ]
+              }
+            ]
           },
-          "fill": 2,
-          "fillGradient": 0,
           "gridPos": {
-            "h": 8,
+            "h": 10,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 13
           },
-          "hiddenSeries": false,
           "id": 42,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 0,
-          "nullPointMode": "null",
           "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "10.1.1",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:2373",
-              "alias": "/temperatur/",
-              "yaxis": 1
+            "alertThreshold": true,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
             },
-            {
-              "$$hashKey": "object:2374",
-              "alias": "/Luftfeuchtigkeit/",
-              "fill": 0,
-              "lines": true,
-              "linewidth": 1,
-              "yaxis": 2
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
             }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
+          },
+          "pluginVersion": "12.1.0",
           "targets": [
             {
               "datasource": {
@@ -1547,38 +633,8 @@ data:
               "refId": "B"
             }
           ],
-          "thresholds": [],
-          "timeRegions": [],
           "title": "Klima",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:2398",
-              "decimals": 1,
-              "format": "celsius",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:2399",
-              "format": "humidity",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
+          "type": "timeseries"
         },
         {
           "datasource": {
@@ -1591,11 +647,268 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Temperature",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 15,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/MAX_1b441a/"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Arbeitszimmer ${__field.name}"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/MAX_1a85bf/"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Badezimmer ${__field.name}"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/MAX_191ee0/"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Badezimmer Wand ${__field.name}"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/MAX_0b196b/"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Küche ${__field.name}"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/MAX_0b1ecd/"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Wohnzimmer ${__field.name}"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/MAX_121f4f/"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Wohnbereich Wand ${__field.name}"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/valveposition/"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Valve position"
+                  },
+                  {
+                    "id": "custom.lineStyle",
+                    "value": {
+                      "dash": [
+                        10,
+                        10
+                      ],
+                      "fill": "dash"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/temperature/"
+                },
+                "properties": [
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 30
+                  },
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "/desired_temperature/"
+                },
+                "properties": [
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 10
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 20
+                  },
+                  {
+                    "id": "custom.lineStyle",
+                    "value": {
+                      "dash": [
+                        3,
+                        20
+                      ],
+                      "fill": "dash"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 21
+          },
+          "id": 13,
+          "interval": "1m",
+          "options": {
+            "alertThreshold": true,
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.1.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "disableTextWrap": false,
+              "editorMode": "builder",
+              "expr": "hass_sensor_temperature_celsius",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "{{friendly_name}}",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            }
+          ],
+          "title": "Raumtemperaturen",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 26,
                 "gradientMode": "opacity",
@@ -1630,7 +943,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1698,10 +1011,10 @@ data:
             ]
           },
           "gridPos": {
-            "h": 9,
+            "h": 10,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 23
           },
           "id": 54,
           "options": {
@@ -1716,10 +1029,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
+          "pluginVersion": "12.1.0",
           "targets": [
             {
               "datasource": {
@@ -1762,167 +1077,11 @@ data:
           ],
           "title": "Leistung Steckdose",
           "type": "timeseries"
-        },
-        {
-          "aliasColors": {
-            "Höhe": "#82b5d8"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 40
-          },
-          "hiddenSeries": false,
-          "id": 29,
-          "legend": {
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "10.1.1",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "Trend",
-              "color": "#fce2de",
-              "fill": 4,
-              "yaxis": 2,
-              "zindex": -1
-            },
-            {
-              "alias": "Höhe",
-              "zindex": 1
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "rheinpegel_measurement{location='KÖLN'} / 100",
-              "format": "time_series",
-              "groupBy": [
-                {
-                  "params": [
-                    "$$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "intervalFactor": 1,
-              "legendFormat": "Höhe",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "expr": "rheinpegel_trend{location='KÖLN'}",
-              "format": "time_series",
-              "intervalFactor": 1,
-              "legendFormat": "Trend",
-              "refId": "B"
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "Rheinpegel Köln",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "decimals": 1,
-              "format": "lengthm",
-              "logBase": 1,
-              "min": "0",
-              "show": true
-            },
-            {
-              "decimals": 0,
-              "format": "none",
-              "logBase": 1,
-              "max": "1",
-              "min": "-1",
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
         }
       ],
+      "preload": false,
       "refresh": "10s",
-      "revision": 1,
-      "schemaVersion": 38,
-      "style": "dark",
+      "schemaVersion": 41,
       "tags": [],
       "templating": {
         "list": [
@@ -1930,7 +1089,7 @@ data:
             "hide": 2,
             "name": "server",
             "query": "pve01.lab.${SECRET_LAB_DOMAIN}:9100",
-            "skipUrlSync": false,
+            "skipUrlSync": true,
             "type": "constant"
           }
         ]
@@ -1939,34 +1098,9 @@ data:
         "from": "now-24h",
         "to": "now"
       },
-      "timepicker": {
-        "refresh_intervals": [
-          "5s",
-          "10s",
-          "30s",
-          "1m",
-          "5m",
-          "15m",
-          "30m",
-          "1h",
-          "2h",
-          "1d"
-        ],
-        "time_options": [
-          "5m",
-          "15m",
-          "1h",
-          "6h",
-          "12h",
-          "24h",
-          "2d",
-          "7d",
-          "30d"
-        ]
-      },
+      "timepicker": {},
       "timezone": "browser",
       "title": "Main",
       "uid": "000000017",
-      "version": 1,
-      "weekStart": ""
+      "version": 1
     }
