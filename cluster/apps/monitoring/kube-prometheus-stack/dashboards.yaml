@@ -706,7 +706,7 @@ data:
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "Arbeitszimmer ${__field.name}"
+                    "value": "Arbeitszimmer $${__field.name}"
                   }
                 ]
               },
@@ -718,7 +718,7 @@ data:
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "Badezimmer ${__field.name}"
+                    "value": "Badezimmer $${__field.name}"
                   }
                 ]
               },
@@ -730,7 +730,7 @@ data:
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "Badezimmer Wand ${__field.name}"
+                    "value": "Badezimmer Wand $${__field.name}"
                   }
                 ]
               },
@@ -742,7 +742,7 @@ data:
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "Küche ${__field.name}"
+                    "value": "Küche $${__field.name}"
                   }
                 ]
               },
@@ -754,7 +754,7 @@ data:
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "Wohnzimmer ${__field.name}"
+                    "value": "Wohnzimmer $${__field.name}"
                   }
                 ]
               },
@@ -766,7 +766,7 @@ data:
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "Wohnbereich Wand ${__field.name}"
+                    "value": "Wohnbereich Wand $${__field.name}"
                   }
                 ]
               },
