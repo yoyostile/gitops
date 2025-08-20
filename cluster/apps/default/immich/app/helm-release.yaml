@@ -172,10 +172,10 @@ spec:
       probes:
         liveness:
           spec:
-            initialDelaySeconds: 120
+            initialDelaySeconds: 90
         readiness:
           spec:
-            initialDelaySeconds: 120
+            initialDelaySeconds: 90
       persistence:
         ext-library-kjheck:
           enabled: true
