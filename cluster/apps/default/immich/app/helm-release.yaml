@@ -96,7 +96,7 @@ spec:
     server:
       enabled: true
       controller:
-        replicas: 2
+        replicas: 1
         strategy: RollingUpdate
       affinity:
         podAntiAffinity:
@@ -148,7 +148,7 @@ spec:
         limits:
           gpu.intel.com/i915: "1"
       controller:
-        replicas: 3
+        replicas: 1
         strategy: RollingUpdate
       affinity:
         podAntiAffinity:
