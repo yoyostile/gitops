@@ -167,6 +167,9 @@ spec:
         cloudflarewarp:
           moduleName: github.com/BilikoX/cloudflarewarp
           version: v1.3.4
+        crowdsec-bouncer:
+          moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+          version: "v1.4.4"
     resources:
       requests:
         memory: 100Mi
@@ -280,6 +283,11 @@ spec:
         ]
     pilot:
       enabled: false
+    experimental:
+      plugins:
+        crowdsec-bouncer:
+          moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+          version: "v1.4.4"
     resources:
       requests:
         memory: 100Mi
