@@ -88,6 +88,6 @@ spec:
   plugin:
     crowdsec-bouncer:
       enabled: true
-      crowdseclapikey: "${CROWDSEC_LAPI_KEY}"
+      crowdseclapikey: "${CROWDSEC_TRAEFIK_BOUNCER_LAPI_KEY}"
       crowdseclapischeme: http
       crowdseclapihost: crowdsec-service.monitoring:8080
