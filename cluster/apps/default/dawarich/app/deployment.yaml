@@ -53,7 +53,7 @@ spec:
             - name: TIME_ZONE
               value: "Europe/London"
             - name: APPLICATION_PROTOCOL
-              value: "https"
+              value: "http"
             - name: PROMETHEUS_EXPORTER_ENABLED
               value: "false"
             - name: SELF_HOSTED
@@ -155,7 +155,7 @@ spec:
             - name: BACKGROUND_PROCESSING_CONCURRENCY
               value: "10"
             - name: APPLICATION_PROTOCOL
-              value: "https"
+              value: "http"
             - name: PROMETHEUS_EXPORTER_ENABLED
               value: "false"
             - name: SELF_HOSTED
