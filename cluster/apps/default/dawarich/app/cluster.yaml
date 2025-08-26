@@ -5,7 +5,7 @@ metadata:
   name: dawarich-db
   namespace: default
 spec:
-  imageName: postgis/postgis:17-3.5-alpine
+  imageName: ghcr.io/cloudnative-pg/postgis:17
   instances: 1
 
   bootstrap:
@@ -14,10 +14,11 @@ spec:
       owner: postgres
       secret:
         name: dawarich-db-secret
-      postInitSQL:
-        - CREATE EXTENSION IF NOT EXISTS "postgis";
-        - CREATE EXTENSION IF NOT EXISTS "postgis_topology";
-
+      postInitTemplateSQL:
+        - CREATE EXTENSION postgis;
+        - CREATE EXTENSION postgis_topology;
+        - CREATE EXTENSION fuzzystrmatch;
+        - CREATE EXTENSION postgis_tiger_geocoder;
   storage:
     storageClass: "proxmox-data-ext4"
     pvcTemplate:
