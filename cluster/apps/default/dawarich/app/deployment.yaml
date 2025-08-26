@@ -26,7 +26,7 @@ spec:
             - containerPort: 3000
           env:
             - name: RAILS_ENV
-              value: "production"
+              value: "development"
             - name: REDIS_URL
               value: "${SECRET_DAWARICH_REDIS}"
             - name: DATABASE_HOST
@@ -42,7 +42,10 @@ spec:
                   name: dawarich-db-secret
                   key: password
             - name: DATABASE_NAME
-              value: "dawarich_development"
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: database
             - name: MIN_MINUTES_SPENT_IN_CITY
               value: "60"
             - name: APPLICATION_HOSTS
@@ -135,7 +138,7 @@ spec:
           image: freikin/dawarich:latest
           env:
             - name: RAILS_ENV
-              value: "production"
+              value: "development"
             - name: REDIS_URL
               value: "${SECRET_DAWARICH_REDIS}"
             - name: DATABASE_HOST
