@@ -90,18 +90,8 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              # Wait for database to be ready
-              until pg_isready -h dawarich-db-rw.default.svc.cluster.local -U postgres -d dawarich; do
-                echo "Waiting for database..."
-                sleep 2
-              done
-              # Run database migrations
-              bin/rails db:migrate
-              # Start the application
-              exec bin/rails server -p 3000 -b ::
+          command: ["web-entrypoint.sh"]
+          args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
       volumes:
         - name: dawarich-storage
           persistentVolumeClaim:
@@ -198,18 +188,8 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              # Wait for database to be ready
-              until pg_isready -h dawarich-db-rw.default.svc.cluster.local -U postgres -d dawarich; do
-                echo "Waiting for database..."
-                sleep 2
-              done
-              # Run database migrations
-              bin/rails db:migrate
-              # Start sidekiq
-              exec sidekiq
+          command: ["sidekiq-entrypoint.sh"]
+          args: ["sidekiq"]
       volumes:
         - name: dawarich-storage
           persistentVolumeClaim:
