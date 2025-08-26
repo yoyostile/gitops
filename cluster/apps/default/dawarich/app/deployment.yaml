@@ -94,7 +94,7 @@ spec:
           args:
             - |
               # Wait for database to be ready
-              until pg_isready -h dawarich-db-rw..svc.cluster.local -U postgres -d dawarich_development; do
+              until pg_isready -h dawarich-db-rw.default.svc.cluster.local -U postgres -d dawarich; do
                 echo "Waiting for database..."
                 sleep 2
               done
@@ -202,7 +202,7 @@ spec:
           args:
             - |
               # Wait for database to be ready
-              until pg_isready -h dawarich-db-rw.default.svc.cluster.local -U postgres -d dawarich_development; do
+              until pg_isready -h dawarich-db-rw.default.svc.cluster.local -U postgres -d dawarich; do
                 echo "Waiting for database..."
                 sleep 2
               done
