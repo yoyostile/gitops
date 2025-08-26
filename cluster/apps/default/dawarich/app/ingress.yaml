@@ -13,6 +13,9 @@ metadata:
     hajimari.ingress.kubernetes.io/icon: "map-marker"
     hajimari.ingress.kubernetes.io/description: "Location tracking and analytics"
     hajimari.ingress.kubernetes.io/color: "#4CAF50"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    external-dns/internal: "true"
 spec:
   tls:
     - hosts:
