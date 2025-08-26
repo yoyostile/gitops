@@ -11,7 +11,7 @@ spec:
   bootstrap:
     initdb:
       database: dawarich
-      owner: postgres
+      owner: dawarich
       secret:
         name: dawarich-db-secret
       postInitTemplateSQL:
