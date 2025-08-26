@@ -78,6 +78,7 @@ spec:
             httpGet:
               path: /api/v1/health
               port: 3000
+              scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -86,6 +87,7 @@ spec:
             httpGet:
               path: /api/v1/health
               port: 3000
+              scheme: HTTP
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
