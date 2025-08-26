@@ -1,0 +1,258 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dawarich-app
+  namespace: default
+  labels:
+    app: dawarich
+    component: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dawarich
+      component: app
+  template:
+    metadata:
+      labels:
+        app: dawarich
+        component: app
+    spec:
+      containers:
+        - name: dawarich
+          image: freikin/dawarich:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: RAILS_ENV
+              value: "production"
+            - name: REDIS_URL
+              value: "${SECRET_DAWARICH_REDIS}"
+            - name: DATABASE_HOST
+              value: "dawarich-db-rw.default.svc.cluster.local"
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: password
+            - name: DATABASE_NAME
+              value: "dawarich_development"
+            - name: MIN_MINUTES_SPENT_IN_CITY
+              value: "60"
+            - name: APPLICATION_HOSTS
+              value: "dawarich.${SECRET_LAB_DOMAIN}"
+            - name: TIME_ZONE
+              value: "Europe/London"
+            - name: APPLICATION_PROTOCOL
+              value: "https"
+            - name: PROMETHEUS_EXPORTER_ENABLED
+              value: "false"
+            - name: SELF_HOSTED
+              value: "true"
+            - name: STORE_GEODATA
+              value: "true"
+          volumeMounts:
+            - name: dawarich-storage
+              mountPath: /var/app/storage
+            - name: dawarich-public
+              mountPath: /var/app/public
+            - name: dawarich-watched
+              mountPath: /var/app/tmp/imports/watched
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Wait for database to be ready
+              until pg_isready -h dawarich-db-rw..svc.cluster.local -U postgres -d dawarich_development; do
+                echo "Waiting for database..."
+                sleep 2
+              done
+              # Run database migrations
+              bin/rails db:migrate
+              # Start the application
+              exec bin/rails server -p 3000 -b ::
+      volumes:
+        - name: dawarich-storage
+          persistentVolumeClaim:
+            claimName: dawarich-storage-pvc
+        - name: dawarich-public
+          persistentVolumeClaim:
+            claimName: dawarich-public-pvc
+        - name: dawarich-watched
+          persistentVolumeClaim:
+            claimName: dawarich-watched-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dawarich-sidekiq
+  namespace: default
+  labels:
+    app: dawarich
+    component: sidekiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dawarich
+      component: sidekiq
+  template:
+    metadata:
+      labels:
+        app: dawarich
+        component: sidekiq
+    spec:
+      containers:
+        - name: sidekiq
+          image: freikin/dawarich:latest
+          env:
+            - name: RAILS_ENV
+              value: "production"
+            - name: REDIS_URL
+              value: "${SECRET_DAWARICH_REDIS}"
+            - name: DATABASE_HOST
+              value: "dawarich-db-rw.default.svc.cluster.local"
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: password
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: database
+            - name: APPLICATION_HOSTS
+              value: "dawarich.${SECRET_LAB_DOMAIN}"
+            - name: BACKGROUND_PROCESSING_CONCURRENCY
+              value: "10"
+            - name: APPLICATION_PROTOCOL
+              value: "https"
+            - name: PROMETHEUS_EXPORTER_ENABLED
+              value: "false"
+            - name: SELF_HOSTED
+              value: "true"
+            - name: STORE_GEODATA
+              value: "true"
+          volumeMounts:
+            - name: dawarich-storage
+              mountPath: /var/app/storage
+            - name: dawarich-public
+              mountPath: /var/app/public
+            - name: dawarich-watched
+              mountPath: /var/app/tmp/imports/watched
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "250m"
+          livenessProbe:
+            exec:
+              command: ["pgrep", "-f", "sidekiq"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["pgrep", "-f", "sidekiq"]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Wait for database to be ready
+              until pg_isready -h dawarich-db-rw.default.svc.cluster.local -U postgres -d dawarich_development; do
+                echo "Waiting for database..."
+                sleep 2
+              done
+              # Run database migrations
+              bin/rails db:migrate
+              # Start sidekiq
+              exec sidekiq
+      volumes:
+        - name: dawarich-storage
+          persistentVolumeClaim:
+            claimName: dawarich-storage-pvc
+        - name: dawarich-public
+          persistentVolumeClaim:
+            claimName: dawarich-public-pvc
+        - name: dawarich-watched
+          persistentVolumeClaim:
+            claimName: dawarich-watched-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dawarich-storage-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dawarich-public-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dawarich-watched-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 5Gi
