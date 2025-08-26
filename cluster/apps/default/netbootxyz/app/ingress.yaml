@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: netbootxyz
+  namespace: default
+  labels:
+    app: netbootxyz
+  annotations:
+    kubernetes.io/ingress.class: traefik-internal
+    hajimari.ingress.kubernetes.io/enable: "true"
+    hajimari.ingress.kubernetes.io/group: "System"
+    hajimari.ingress.kubernetes.io/icon: "server"
+    hajimari.ingress.kubernetes.io/description: "Network boot configuration interface"
+    hajimari.ingress.kubernetes.io/color: "#2196F3"
+spec:
+  rules:
+    - host: netbootxyz.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: netbootxyz
+                port:
+                  number: 8080
