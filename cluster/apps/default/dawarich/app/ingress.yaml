@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dawarich
+  namespace: default
+  labels:
+    app: dawarich
+  annotations:
+    kubernetes.io/ingress.class: traefik-internal
+    hajimari.ingress.kubernetes.io/enable: "true"
+    hajimari.ingress.kubernetes.io/group: "Media"
+    hajimari.ingress.kubernetes.io/icon: "map-marker"
+    hajimari.ingress.kubernetes.io/description: "Location tracking and analytics"
+    hajimari.ingress.kubernetes.io/color: "#4CAF50"
+spec:
+  tls:
+    - hosts:
+        - dawarich.${SECRET_LAB_DOMAIN}
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: dawarich.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dawarich-app
+                port:
+                  number: 3000
