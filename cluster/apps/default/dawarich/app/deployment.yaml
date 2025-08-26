@@ -226,7 +226,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: proxmox-csi
+  storageClassName: proxmox-data-ext4
   resources:
     requests:
       storage: 10Gi
@@ -239,7 +239,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: proxmox-csi
+  storageClassName: proxmox-data-ext4
   resources:
     requests:
       storage: 5Gi
@@ -252,7 +252,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: proxmox-csi
+  storageClassName: proxmox-data-ext4
   resources:
     requests:
       storage: 5Gi

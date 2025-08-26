@@ -19,7 +19,7 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS "postgis_topology";
 
   storage:
-    storageClass: "proxmox-csi"
+    storageClass: "proxmox-data-ext4"
     pvcTemplate:
       accessModes:
         - ReadWriteOnce
