@@ -37,7 +37,7 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: navidrome-config
+            claimName: navidrome
         - name: music
           nfs:
             server: "glacier.lab.${SECRET_LAB_DOMAIN}"
