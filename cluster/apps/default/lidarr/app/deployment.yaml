@@ -18,8 +18,8 @@ spec:
         location: cgn
       containers:
         - name: lidarr
-          # image: lscr.io/linuxserver/lidarr:latest
-          image: blampe/lidarr:latest
+          image: lscr.io/linuxserver/lidarr:latest
+          # image: blampe/lidarr:latest
           env:
             - name: PUID
               value: "3000"
