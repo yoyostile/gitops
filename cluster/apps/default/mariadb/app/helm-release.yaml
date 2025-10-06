@@ -30,8 +30,8 @@ spec:
       location: cgn
     image:
       registry: docker.io
-      repository: bitnami/mariadb
-      tag: 10.6.7-debian-10-r70
+      repository: mariadb
+      tag: 10.6
     global:
       storageClass: "nfs-client"
     primary:
