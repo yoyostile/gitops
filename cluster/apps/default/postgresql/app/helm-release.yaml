@@ -28,7 +28,7 @@ spec:
       location: cgn
     image:
       registry: docker.io
-      repository: bitnami/postgresql
+      repository: bitnamilegacy/postgresql
       tag: 17.5.0-debian-12-r10
     global:
       storageClass: "proxmox-data-ext4"

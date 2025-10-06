@@ -25,7 +25,7 @@ spec:
   values:
     image:
       registry: docker.io
-      repository: bitnami/memcached
+      repository: bitnamilegacy/memcached
       tag: 1.6.38
     global:
       storageClass: "nfs-client"
