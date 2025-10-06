@@ -32,8 +32,8 @@ spec:
       tag: 4.5.3
     enivronment:
       TZ: ${TZ}
-      PGID: 1000
-      PUID: 1000
+      PGID: 65534
+      PUID: 65534
     persistence:
       config:
         accessMode: ReadWriteOnce
