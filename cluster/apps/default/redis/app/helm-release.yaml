@@ -32,6 +32,8 @@ spec:
       tag: 6.2.6
     global:
       storageClass: "nfs-client"
+      security:
+        allowInsecureImages: true
     architecture: standalone
     auth:
       existingSecret: redis
