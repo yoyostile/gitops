@@ -30,7 +30,7 @@ spec:
     image:
       repository: linuxserver/sabnzbd
       tag: 4.5.3
-    enivronment:
+    env:
       TZ: ${TZ}
       PGID: 65534
       PUID: 65534
