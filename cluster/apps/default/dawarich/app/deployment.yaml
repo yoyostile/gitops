@@ -127,7 +127,7 @@ spec:
     spec:
       containers:
         - name: sidekiq
-          image: freikin/dawarich:latest
+          image: freikin/dawarich:0.33.0
           env:
             - name: RAILS_ENV
               value: "development"
