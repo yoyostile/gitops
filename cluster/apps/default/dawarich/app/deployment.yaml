@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: dawarich
-          image: freikin/dawarich:latest
+          image: freikin/dawarich:0.33.0
           ports:
             - containerPort: 3000
           env:
