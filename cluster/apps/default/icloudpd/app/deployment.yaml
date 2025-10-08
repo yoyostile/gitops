@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: icloudpd
-          image: icloudpd/icloudpd:1.29.2
+          image: icloudpd/icloudpd:1.32.2
           ports:
             - containerPort: 8080
           args:
