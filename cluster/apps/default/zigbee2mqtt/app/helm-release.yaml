@@ -40,8 +40,10 @@ spec:
         value: "arm64"
         effect: "NoSchedule"
     image:
-      repository: koenkk/zigbee2mqtt
-      tag: 2.6.2
+      # repository: koenkk/zigbee2mqtt
+      # tag: 2.6.2
+      repository: yoyostile/zigbee2mqtt
+      tag: 2.6.2.custom-958a4220
     resources:
       requests:
         cpu: 50m
