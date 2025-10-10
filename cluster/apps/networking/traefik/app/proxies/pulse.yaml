@@ -33,7 +33,7 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "server"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-crowdsec-root@kubernetescrd,networking-pulse-websocket@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-crowdsec-root@kubernetescrd"
     external-dns/internal: "true"
 spec:
   ingressClassName: traefik-internal
