@@ -36,7 +36,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: "networking-crowdsec-root@kubernetescrd"
     external-dns/internal: "true"
 spec:
-  ingressClassName: traefik
+  ingressClassName: traefik-internal
   tls:
     - hosts:
         - "pulse.${SECRET_LAB_DOMAIN}"
