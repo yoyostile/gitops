@@ -93,3 +93,24 @@ spec:
       crowdseclapikey: "${CROWDSEC_TRAEFIK_BOUNCER_LAPI_KEY}"
       crowdseclapischeme: http
       crowdseclapihost: crowdsec-service.monitoring:8080
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: pulse-websocket
+  namespace: networking
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+      X-Forwarded-For: ""
+      X-Real-IP: ""
+    customResponseHeaders:
+      X-Frame-Options: "SAMEORIGIN"
+  buffering:
+    maxRequestBodyBytes: 65536
+    memRequestBodyBytes: 65536
+    maxResponseBodyBytes: 65536
+    memResponseBodyBytes: 65536
+  forwardAuth:
+    address: ""
