@@ -1,0 +1,54 @@
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: pulse-proxy
+  namespace: networking
+subsets:
+  - addresses:
+      - ip: 10.0.0.12
+    ports:
+      - name: http
+        port: 7655
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pulse-proxy
+  namespace: networking
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 7655
+      targetPort: 7655
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pulse-proxy
+  namespace: networking
+  annotations:
+    hajimari.io/appName: "Pulse"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "server"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-crowdsec-root@kubernetescrd"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - "pulse.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "pulse.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pulse-proxy
+                port:
+                  number: 7655
