@@ -9,4 +9,4 @@ spec:
   url: oci://ghcr.io/woodpecker-ci/helm/woodpecker
   # renovate: registryUrl=oci://ghcr.io/woodpecker-ci/helm/woodpecker
   ref:
-    tag: "3.4.0"
+    tag: "3.4.1"
