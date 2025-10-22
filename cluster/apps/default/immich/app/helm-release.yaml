@@ -164,7 +164,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
       image:
         repository: ghcr.io/immich-app/immich-machine-learning
-        tag: v1.143.1-openvino
+        tag: v2.1.0-openvino
         pullPolicy: IfNotPresent
       env:
         TRANSFORMERS_CACHE: /cache
