@@ -85,7 +85,7 @@ spec:
 
     # Dependencies
 
-    redis:
+    valkey:
       enabled: false
       architecture: standalone
       auth:
@@ -185,7 +185,7 @@ spec:
         cache:
           enabled: true
           size: 10Gi
-          # Optional: Set this to pvc to avoid downloading the ML models every start.
-          type: 'pvc'
+          # Optional: Set this to persistentVolumeClaim to avoid downloading the ML models every start.
+          type: 'persistentVolumeClaim'
           accessMode: ReadWriteMany
           storageClass: 'nfs-client'
