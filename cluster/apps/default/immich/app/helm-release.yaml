@@ -31,7 +31,7 @@ spec:
       location: cgn
     image:
       # renovate: datasource=docker depName=ghcr.io/immich-app/immich-server
-      tag: v1.143.1
+      tag: v2.1.0
 
     ## This chart relies on the common library chart from bjw-s
     ## You can find it at https://github.com/bjw-s/helm-charts/tree/main/charts/library/common
@@ -164,7 +164,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
       image:
         repository: ghcr.io/immich-app/immich-machine-learning
-        tag: v1.143.1-openvino
+        tag: v2.1.0-openvino
         pullPolicy: IfNotPresent
       env:
         TRANSFORMERS_CACHE: /cache
