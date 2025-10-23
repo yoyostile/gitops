@@ -55,19 +55,32 @@ spec:
             image:
               tag: v2.1.0
             env:
-              REDIS_HOSTNAME: redis-headless
-              REDIS_PASSWORD: ${IMMICH_REDIS_PASSWORD}
-              REDIS_DBINDEX: 4
-              # DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
-              DB_HOSTNAME: "immich-postgres-rw"
-              DB_USERNAME: "immich"
-              DB_DATABASE_NAME: "immich"
-              DB_PASSWORD: ${IMMICH_DB_PASSWORD}
-              IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
-              TZ: "Europe/Berlin"
-              TRANSFORMERS_CACHE: /cache
-              MACHINE_LEARNING_PRELOAD__CLIP: ViT-B-32__openai
-              MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION: buffalo_l
+              - name: REDIS_HOSTNAME
+                value: redis-headless
+              - name: REDIS_PASSWORD
+                value: ${IMMICH_REDIS_PASSWORD}
+              - name: REDIS_DBINDEX
+                value: "4"
+              # - name: DB_HOSTNAME
+              #   value: "{{ .Release.Name }}-postgresql"
+              - name: DB_HOSTNAME
+                value: "immich-postgres-rw"
+              - name: DB_USERNAME
+                value: "immich"
+              - name: DB_DATABASE_NAME
+                value: "immich"
+              - name: DB_PASSWORD
+                value: ${IMMICH_DB_PASSWORD}
+              - name: IMMICH_MACHINE_LEARNING_URL
+                value: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+              - name: TZ
+                value: "Europe/Berlin"
+              - name: TRANSFORMERS_CACHE
+                value: /cache
+              - name: MACHINE_LEARNING_PRELOAD__CLIP
+                value: ViT-B-32__openai
+              - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION
+                value: buffalo_l
 
     immich:
       metrics:
@@ -165,11 +178,16 @@ spec:
                 tag: v2.1.0-openvino
                 pullPolicy: IfNotPresent
               env:
-                TRANSFORMERS_CACHE: /cache
-                HF_XET_CACHE: /cache/huggingface-xet
-                MPLCONFIGDIR: /cache/matplotlib-config
-                MACHINE_LEARNING_PRELOAD__CLIP: ViT-B-32__openai
-                MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION: buffalo_l
+                - name: TRANSFORMERS_CACHE
+                  value: /cache
+                - name: HF_XET_CACHE
+                  value: /cache/huggingface-xet
+                - name: MPLCONFIGDIR
+                  value: /cache/matplotlib-config
+                - name: MACHINE_LEARNING_PRELOAD__CLIP
+                  value: ViT-B-32__openai
+                - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION
+                  value: buffalo_l
       controller:
         replicas: 1
         strategy: RollingUpdate
