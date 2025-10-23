@@ -29,9 +29,6 @@ spec:
   values:
     nodeSelector:
       location: cgn
-    image:
-      # renovate: datasource=docker depName=ghcr.io/immich-app/immich-server
-      tag: v2.1.0
 
     ## This chart relies on the common library chart from bjw-s
     ## You can find it at https://github.com/bjw-s/helm-charts/tree/main/charts/library/common
@@ -55,6 +52,8 @@ spec:
       main:
         containers:
           main:
+            image:
+              tag: v2.1.0
             env:
               REDIS_HOSTNAME: redis-headless
               REDIS_PASSWORD: ${IMMICH_REDIS_PASSWORD}
@@ -102,6 +101,13 @@ spec:
 
     server:
       enabled: true
+      controllers:
+        main:
+          containers:
+            main:
+              image:
+                repository: ghcr.io/immich-app/immich-server
+                pullPolicy: IfNotPresent
       controller:
         replicas: 1
         strategy: RollingUpdate
@@ -122,10 +128,6 @@ spec:
           enabled: true
           existingClaim: immich-ext-kj
           readOnly: true
-
-      image:
-        repository: ghcr.io/immich-app/immich-server
-        pullPolicy: IfNotPresent
       ingress:
         main:
           enabled: true
@@ -154,6 +156,20 @@ spec:
           gpu.intel.com/i915: "1"
         limits:
           gpu.intel.com/i915: "1"
+      controllers:
+        main:
+          containers:
+            main:
+              image:
+                repository: ghcr.io/immich-app/immich-machine-learning
+                tag: v2.1.0-openvino
+                pullPolicy: IfNotPresent
+              env:
+                TRANSFORMERS_CACHE: /cache
+                HF_XET_CACHE: /cache/huggingface-xet
+                MPLCONFIGDIR: /cache/matplotlib-config
+                MACHINE_LEARNING_PRELOAD__CLIP: ViT-B-32__openai
+                MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION: buffalo_l
       controller:
         replicas: 1
         strategy: RollingUpdate
@@ -169,10 +185,6 @@ spec:
                       values:
                         - machine-learning
                 topologyKey: kubernetes.io/hostname
-      image:
-        repository: ghcr.io/immich-app/immich-machine-learning
-        tag: v2.1.0-openvino
-        pullPolicy: IfNotPresent
       probes:
         liveness:
           spec:
