@@ -189,3 +189,4 @@ spec:
           type: 'persistentVolumeClaim'
           accessMode: ReadWriteMany
           storageClass: 'nfs-client'
+          existingClaim: immich-machine-learning-cache
