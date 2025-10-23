@@ -51,17 +51,24 @@ spec:
         cpu: 2000m
         gpu.intel.com/i915: "1"
 
-    env:
-      REDIS_HOSTNAME: redis-headless
-      REDIS_PASSWORD: ${IMMICH_REDIS_PASSWORD}
-      REDIS_DBINDEX: 4
-      # DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
-      DB_HOSTNAME: "immich-postgres-rw"
-      DB_USERNAME: "immich"
-      DB_DATABASE_NAME: "immich"
-      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
-      IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
-      TZ: "Europe/Berlin"
+    controllers:
+      main:
+        containers:
+          main:
+            env:
+              REDIS_HOSTNAME: redis-headless
+              REDIS_PASSWORD: ${IMMICH_REDIS_PASSWORD}
+              REDIS_DBINDEX: 4
+              # DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
+              DB_HOSTNAME: "immich-postgres-rw"
+              DB_USERNAME: "immich"
+              DB_DATABASE_NAME: "immich"
+              DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+              IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+              TZ: "Europe/Berlin"
+              TRANSFORMERS_CACHE: /cache
+              MACHINE_LEARNING_PRELOAD__CLIP: ViT-B-32__openai
+              MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION: buffalo_l
 
     immich:
       metrics:
@@ -166,10 +173,6 @@ spec:
         repository: ghcr.io/immich-app/immich-machine-learning
         tag: v2.1.0-openvino
         pullPolicy: IfNotPresent
-      env:
-        TRANSFORMERS_CACHE: /cache
-        MACHINE_LEARNING_PRELOAD__CLIP: ViT-B-32__openai
-        MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION: buffalo_l
       probes:
         liveness:
           spec:
