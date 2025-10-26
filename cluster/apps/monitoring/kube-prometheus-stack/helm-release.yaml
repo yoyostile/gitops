@@ -171,6 +171,7 @@ spec:
           url: postgresql.default:5432
           database: teslamate
           user: teslamate
+          isDefault: true
           secureJsonData:
             password: ${SECRET_TESLAMATE_POSTGRES_PASSWORD}
           jsonData:
