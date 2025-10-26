@@ -169,11 +169,11 @@ spec:
           orgId: 1
           type: postgres
           url: postgresql.default:5432
-          database: teslamate
           user: teslamate
           secureJsonData:
             password: ${SECRET_TESLAMATE_POSTGRES_PASSWORD}
           jsonData:
+            database: teslamate
             postgresVersion: 1000
             sslmode: disable
         - name: strava
