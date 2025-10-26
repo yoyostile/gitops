@@ -167,11 +167,10 @@ spec:
           uid: TeslaMate
           access: proxy
           orgId: 1
-          type: postgres
+          type: grafana-postgres-datasource
           url: postgresql.default:5432
           database: teslamate
           user: teslamate
-          isDefault: true
           secureJsonData:
             password: ${SECRET_TESLAMATE_POSTGRES_PASSWORD}
           jsonData:
