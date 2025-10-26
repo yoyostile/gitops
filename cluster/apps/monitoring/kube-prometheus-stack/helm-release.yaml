@@ -167,7 +167,7 @@ spec:
           uid: TeslaMate
           access: proxy
           orgId: 1
-          type: grafana-postgres-datasource
+          type: postgres
           url: postgresql.default:5432
           database: teslamate
           user: teslamate
