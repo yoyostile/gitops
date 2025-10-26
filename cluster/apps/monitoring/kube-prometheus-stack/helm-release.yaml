@@ -164,6 +164,7 @@ spec:
         - grafana-strava-datasource
       additionalDataSources:
         - name: TeslaMate
+          uid: TeslaMate
           access: proxy
           orgId: 1
           type: postgres
