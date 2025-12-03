@@ -28,6 +28,17 @@ spec:
   peerAddress: 10.0.0.1
   bfdProfile: bfd-profile
 ---
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: bgp-k3s
+  namespace: metallb-system
+spec:
+  myASN: 65123
+  peerASN: 65123
+  peerAddress: 10.10.0.1
+  bfdProfile: bfd-profile
+---
 apiVersion: metallb.io/v1beta1
 kind: BGPAdvertisement
 metadata:
