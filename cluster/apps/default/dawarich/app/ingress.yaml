@@ -17,6 +17,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
     external-dns/internal: "true"
 spec:
+  ingressClassName: traefik-internal
   tls:
     - hosts:
         - dawarich.${SECRET_LAB_DOMAIN}
