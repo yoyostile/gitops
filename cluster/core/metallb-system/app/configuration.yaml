@@ -20,7 +20,7 @@ spec:
 apiVersion: metallb.io/v1beta2
 kind: BGPPeer
 metadata:
-  name: bgp-k3s-cgn
+  name: bgp-k3s
   namespace: metallb-system
 spec:
   myASN: 65123
