@@ -106,6 +106,7 @@ spec:
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
           external-dns/external: "true"
+        ingressClassName: traefik-internal
         hosts:
           - host: glitchtip.${SECRET_LAB_DOMAIN}
             paths:
