@@ -29,6 +29,8 @@ spec:
           - "${SECRET_CEPH_MON_1}"
           - "${SECRET_CEPH_MON_2}"
           - "${SECRET_CEPH_MON_3}"
+        rbd:
+          mirrorDaemonCount: 1
 
     # StorageClass configuration
     storageClass:
