@@ -37,7 +37,7 @@ spec:
     primary:
       resourcesPreset: "large"
       persistence:
-        existingClaim: "postgresql-data"
+        existingClaim: "postgresql-data-ceph"
       service:
         type: "LoadBalancer"
         loadBalancerIP: "172.16.38.201"
