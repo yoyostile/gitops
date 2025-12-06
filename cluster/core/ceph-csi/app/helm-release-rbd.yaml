@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ceph-csi-rbd
+  namespace: kube-system
+spec:
+  interval: 5m
+  chartRef:
+    kind: HelmRepository
+    name: ceph-csi-charts
+    namespace: flux-system
+  chart:
+    chart: ceph-csi-rbd
+    version: "3.15.1"
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    clusterID: "${SECRET_CEPH_CLUSTER_ID}"
+
+    monitors:
+      - "${SECRET_CEPH_MON_1}"
+      - "${SECRET_CEPH_MON_2}"
+      - "${SECRET_CEPH_MON_3}"
+
+    storageClass:
+      create: true
+      name: ceph-rbd
+      defaultClass: false
+      reclaimPolicy: Delete
+      allowVolumeExpansion: true
+      volumeBindingMode: Immediate
+      parameters:
+        clusterID: "${SECRET_CEPH_CLUSTER_ID}"
+        pool: "k3s"
+        imageFormat: "2"
+        imageFeatures: "layering"
+
+    secret:
+      name: ceph-csi-rbd-secret
+      userID: admin
+      userKey: "" # Set via secret file
+
+    node:
+      enabled: true
+
+    controller:
+      enabled: true
