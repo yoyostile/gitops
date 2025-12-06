@@ -19,6 +19,7 @@ spec:
     server:
       ingress:
         enabled: true
+        ingressClassName: traefik
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "cogs"
