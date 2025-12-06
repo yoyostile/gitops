@@ -22,33 +22,45 @@ spec:
     remediation:
       retries: 3
   values:
-    clusterID: "${SECRET_CEPH_CLUSTER_ID}"
+    # CSI Configuration for connecting to Ceph cluster
+    csiConfig:
+      - clusterID: "${SECRET_CEPH_CLUSTER_ID}"
+        monitors:
+          - "${SECRET_CEPH_MON_1}"
+          - "${SECRET_CEPH_MON_2}"
+          - "${SECRET_CEPH_MON_3}"
 
-    monitors:
-      - "${SECRET_CEPH_MON_1}"
-      - "${SECRET_CEPH_MON_2}"
-      - "${SECRET_CEPH_MON_3}"
-
+    # StorageClass configuration
     storageClass:
       create: true
       name: ceph-rbd
-      defaultClass: false
+      annotations:
+        storageclass.kubernetes.io/is-default-class: "false"
+      clusterID: "${SECRET_CEPH_CLUSTER_ID}"
+      pool: "k3s"
+      imageFeatures: "layering"
+      fstype: ext4
       reclaimPolicy: Delete
       allowVolumeExpansion: true
-      volumeBindingMode: Immediate
-      parameters:
-        clusterID: "${SECRET_CEPH_CLUSTER_ID}"
-        pool: "k3s"
-        imageFormat: "2"
-        imageFeatures: "layering"
+      mountOptions: []
+      # Secret references
+      provisionerSecret: ceph-rbd-secret
+      provisionerSecretNamespace: kube-system
+      controllerExpandSecret: ceph-rbd-secret
+      controllerExpandSecretNamespace: kube-system
+      controllerPublishSecret: ceph-rbd-secret
+      controllerPublishSecretNamespace: kube-system
+      nodeStageSecret: ceph-rbd-secret
+      nodeStageSecretNamespace: kube-system
 
+    # Secret configuration
     secret:
-      name: ceph-csi-rbd-secret
+      create: false
+      name: ceph-rbd-secret
       userID: admin
-      userKey: "" # Set via secret file
+      userKey: ""
 
-    node:
-      enabled: true
-
-    controller:
-      enabled: true
+    # CSIDriver configuration
+    CSIDriver:
+      fsGroupPolicy: "File"
+      seLinuxMount: true
