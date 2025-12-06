@@ -1,4 +1,26 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
-resources:
-  - ./app/ks.yaml
+metadata:
+  name: core-kube-system-ceph-csi
+  namespace: flux-system
+spec:
+  interval: 5m
+  path: ./cluster/core/ceph-csi/app
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substitute: {}
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-settings
+      - kind: Secret
+        name: cluster-secrets
