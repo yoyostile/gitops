@@ -6,6 +6,7 @@ resources:
   - authentik-charts.yaml
   - bitnami-charts.yaml
   - bootc-charts.yaml
+  - ceph-csi-charts.yaml
   - cnpg-charts.yaml
   - crowdsecurity-charts.yaml
   - deliveryhero-charts.yaml
