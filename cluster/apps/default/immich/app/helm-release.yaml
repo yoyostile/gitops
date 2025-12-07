@@ -53,7 +53,7 @@ spec:
         containers:
           main:
             image:
-              tag: v2.2.3
+              tag: v2.3.1
             env:
               - name: REDIS_HOSTNAME
                 value: redis-headless
