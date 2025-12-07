@@ -39,10 +39,12 @@ spec:
       existingSecret: redis
       existingSecretPasswordKey: redis-password
     master:
+      persistence:
+        existingClaim: "redis-data-redis-master-0"
       disableCommands:
         - FLUSHALL
       resources:
         requests:
-          cpu: 1
+          cpu: 200m
           memory: 256Mi
         limits: {}
