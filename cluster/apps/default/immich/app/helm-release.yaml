@@ -175,7 +175,7 @@ spec:
             main:
               image:
                 repository: ghcr.io/immich-app/immich-machine-learning
-                tag: v2.2.3-openvino
+                tag: v2.3.1-openvino
                 pullPolicy: IfNotPresent
               env:
                 - name: TRANSFORMERS_CACHE
