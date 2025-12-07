@@ -38,7 +38,7 @@ spec:
         allowInsecureImages: true
     primary:
       persistence:
-        existingClaim: "data-mariadb-0"
+        existingClaim: "data-mariadb-0-ceph"
       service:
         type: "LoadBalancer"
         loadBalancerIP: "172.16.38.204"
