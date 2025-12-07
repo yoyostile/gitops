@@ -40,7 +40,7 @@ spec:
       existingSecretPasswordKey: redis-password
     master:
       persistence:
-        existingClaim: "redis-data-redis-master-0"
+        existingClaim: "redis-data-redis-master-0-ceph"
       disableCommands:
         - FLUSHALL
       resources:
