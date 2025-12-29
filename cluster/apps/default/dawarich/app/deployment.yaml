@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: dawarich
-          image: freikin/dawarich:0.36.2
+          image: freikin/dawarich:0.36.4
           ports:
             - containerPort: 3000
           env:
@@ -127,7 +127,7 @@ spec:
     spec:
       containers:
         - name: sidekiq
-          image: freikin/dawarich:0.36.2
+          image: freikin/dawarich:0.36.4
           env:
             - name: RAILS_ENV
               value: "development"
