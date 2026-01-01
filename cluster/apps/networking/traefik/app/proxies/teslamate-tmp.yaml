@@ -47,6 +47,7 @@ spec:
   tls:
     - hosts:
         - "teslamate.${SECRET_LAB_DOMAIN}"
+        - "teslamate-grafana.${SECRET_LAB_DOMAIN}"
       secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
     - host: "teslamate.${SECRET_LAB_DOMAIN}"
@@ -59,7 +60,10 @@ spec:
                 name: teslamate-tmp-proxy
                 port:
                   name: http
-          - path: /grafana
+    - host: "g-teslamate.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
             pathType: Prefix
             backend:
               service:
