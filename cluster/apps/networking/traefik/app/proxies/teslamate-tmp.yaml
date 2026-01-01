@@ -39,7 +39,7 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "car"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd,networking-authentik@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
     traefik.ingress.kubernetes.io/service.serversscheme: "http"
     external-dns/internal: "true"
 spec:
