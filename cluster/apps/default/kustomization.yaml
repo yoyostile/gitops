@@ -16,7 +16,6 @@ resources:
   - ./kubernetes/ks.yaml
   - ./lidarr/ks.yaml
   - ./mariadb/ks.yaml
-  - ./memcached/ks.yaml
   - ./metabase/ks.yaml
   - ./mikrotik-backup/ks.yaml
   - ./mosquitto/ks.yaml
