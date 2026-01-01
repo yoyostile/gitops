@@ -9,7 +9,6 @@ resources:
   - ./devolo-powerbridge-monitor/ks.yaml
   - ./echo/ks.yaml
   - ./echoip/ks.yaml
-  - ./gaseous/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml
   - ./icloudpd/ks.yaml
