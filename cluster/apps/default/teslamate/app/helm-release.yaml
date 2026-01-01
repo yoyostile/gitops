@@ -42,7 +42,7 @@ spec:
 
     ingress:
       main:
-        enabled: true
+        enabled: false
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "car"
