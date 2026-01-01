@@ -12,6 +12,7 @@ spec:
     namespace: flux-system
   values:
     agent:
+      replicaCount: 1
       env:
         WOODPECKER_BACKEND_K8S_STORAGE_CLASS: "nfs-client"
       persistence:
