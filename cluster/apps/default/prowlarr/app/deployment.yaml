@@ -18,7 +18,7 @@ spec:
         location: cgn
       containers:
         - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:2.1.5
+          image: lscr.io/linuxserver/prowlarr:2.3.0
           env:
             - name: PUID
               value: "3000"
