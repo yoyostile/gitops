@@ -8,7 +8,6 @@ resources:
   - bootc-charts.yaml
   - ceph-csi-charts.yaml
   - cnpg-charts.yaml
-  - coredns-charts.yaml
   - crowdsecurity-charts.yaml
   - deliveryhero-charts.yaml
   - descheduler-charts.yaml
