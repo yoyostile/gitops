@@ -1,0 +1,51 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: trivy-operator-dashboard
+  namespace: trivy-system
+spec:
+  interval: 10m
+  chartRef:
+    kind: OCIRepository
+    name: trivy-operator-dashboard
+    namespace: trivy-system
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    ingress:
+      enabled: true
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+        external-dns/internal: "true"
+      className: traefik-internal
+      hosts:
+        - host: trivy-dashboard.${SECRET_LAB_DOMAIN}
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+          hosts:
+            - trivy-dashboard.${SECRET_LAB_DOMAIN}
+    kubernetes:
+      trivyUseClusterRbacAssessmentReport: true
+      trivyUseConfigAuditReport: true
+      trivyUseExposedSecretReport: true
+      trivyUseVulnerabilityReport: true
+      trivyUseClusterComplianceReport: true
+      trivyUseClusterVulnerabilityReport: false
+      trivyUseRbacAssessmentReport: true
+      trivyUseSbomReport: false
+      trivyUseClusterSbomReport: false
+    gitHub:
+      serverCheckForUpdates: false
+      checkForUpdatesIntervalInMinutes: 60
+    openTelemetry:
+      enabled: false
