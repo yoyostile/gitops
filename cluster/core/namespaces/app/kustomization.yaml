@@ -7,4 +7,5 @@ resources:
   - metallb-system.yaml
   - monitoring.yaml
   - networking.yaml
+  - trivy-system.yaml
   - woodpecker.yaml
