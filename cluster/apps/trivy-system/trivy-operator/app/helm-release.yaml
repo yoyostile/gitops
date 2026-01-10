@@ -18,6 +18,9 @@ spec:
     remediation:
       retries: 3
   values:
+    extraEnv:
+      - name: TRIVY_DISABLE_TELEMETRY
+        value: "true"
     serviceMonitor:
       enabled: true
     trivy:
