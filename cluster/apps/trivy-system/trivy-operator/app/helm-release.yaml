@@ -24,5 +24,9 @@ spec:
       enabled: true
     trivy:
       ignoreUnfixed: true
+      resources:
+        limits:
+          cpu: 250m
+          memory: 500M
     service:
       headless: false
