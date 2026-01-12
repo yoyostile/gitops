@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - cert-manager.yaml
   - cnpg.yaml
+  - mariadb-operator.yaml
   - metallb-system.yaml
   - monitoring.yaml
   - networking.yaml
