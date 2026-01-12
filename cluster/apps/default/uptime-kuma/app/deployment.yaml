@@ -7,7 +7,7 @@ metadata:
   name: uptime-kuma
   namespace: default
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: uptime-kuma
@@ -18,7 +18,6 @@ spec:
       labels:
         app: uptime-kuma
     spec:
-      replicas: 0
       nodeSelector:
         location: cgn
       containers:
