@@ -12,3 +12,4 @@ resources:
   - homeassistant.yaml
   - librenms.yaml
   - uptime-kuma.yaml
+  - backup.yaml
