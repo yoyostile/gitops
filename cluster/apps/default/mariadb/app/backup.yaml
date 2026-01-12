@@ -1,0 +1,24 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Backup
+metadata:
+  name: mariadb-galera
+spec:
+  mariaDbRef:
+    name: mariadb-galera
+  schedule:
+    cron: "0 2 * * *"
+    suspend: false
+  maxRetention: 720h
+  compression: gzip
+  storage:
+    s3:
+      bucket: k3s-lan-${SECRET_LAB_DOMAIN/./-}
+      prefix: backups/mariadb
+      endpoint: s3.eu-central-003.backblazeb2.com
+      region: eu-central-003
+      accessKeyIdSecretKeyRef:
+        name: cluster-secrets
+        key: BACKBLAZE_B2_KEY_ID
+      secretAccessKeySecretKeyRef:
+        name: cluster-secrets
+        key: BACKBLAZE_B2_APPLICATION_KEY
