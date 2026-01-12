@@ -18,6 +18,7 @@ spec:
       labels:
         app: uptime-kuma
     spec:
+      replicas: 0
       nodeSelector:
         location: cgn
       containers:
