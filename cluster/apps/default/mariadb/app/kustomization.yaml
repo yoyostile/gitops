@@ -9,4 +9,3 @@ resources:
   - mariadb-galera-secret.sops.yaml
   - mariadb-galera.yaml
   - mariadb-galera-servicemonitor.yaml
-  - mariadb-galera-backup.yaml
