@@ -27,6 +27,19 @@ spec:
           env:
             - name: UPTIME_KUMA_PORT
               value: "3001"
+            - name: UPTIME_KUMA_DB_TYPE
+              value: "mariadb"
+            - name: UPTIME_KUMA_DB_HOSTNAME
+              value: "mariadb-galera.default"
+            - name: UPTIME_KUMA_DB_NAME
+              value: "uptime-kuma"
+            - name: UPTIME_KUMA_DB_USERNAME
+              value: "uptime-kuma"
+            - name: UPTIME_KUMA_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-galera
+                  key: uptime-kuma-password
           volumeMounts:
             - mountPath: /app/data
               name: uptime-kuma
