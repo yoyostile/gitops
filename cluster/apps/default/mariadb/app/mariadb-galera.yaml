@@ -23,41 +23,34 @@ spec:
     metadata:
       annotations:
         metallb.universe.tf/loadBalancerIPs: 172.16.38.208
+        external-dns/internal: "true"
 
   primaryService:
     type: LoadBalancer
     metadata:
       annotations:
         metallb.universe.tf/loadBalancerIPs: 172.16.38.206
+        external-dns/internal: "true"
 
   secondaryService:
     type: LoadBalancer
     metadata:
       annotations:
         metallb.universe.tf/loadBalancerIPs: 172.16.38.207
+        external-dns/internal: "true"
 
   metrics:
     enabled: true
 
   tls:
-    enabled: true
-    # Enforce TLS in all connections
+    enabled: false
     required: false
-    # Issue certificates with cert-manager
-    serverCertIssuerRef:
-      name: letsencrypt-production
-      kind: ClusterIssuer
-    clientCertIssuerRef:
-      name: letsencrypt-production
-      kind: ClusterIssuer
 
-  # Configure Pod anti-affinity to spread replicas across nodes
   affinity:
     antiAffinityEnabled: true
-    # Schedule Pods on worker nodes (not control-plane)
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
-        - matchExpressions:
-          - key: node-role.kubernetes.io/control-plane
-            operator: DoesNotExist
+          - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: DoesNotExist
