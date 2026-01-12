@@ -2,6 +2,7 @@ apiVersion: k8s.mariadb.com/v1alpha1
 kind: Backup
 metadata:
   name: mariadb-galera
+  namespace: default
 spec:
   mariaDbRef:
     name: mariadb-galera
