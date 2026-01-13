@@ -35,7 +35,7 @@ spec:
         dbname: postgres
         sslmode: require
       password:
-        name: postgresql-secret
+        name: postgresql
         key: postgres-password
   storage:
     storageClass: "proxmox-data-ext4"
