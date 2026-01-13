@@ -6,3 +6,4 @@ resources:
   - cluster.yaml
   - secret.sops.yaml
   - cronjob.yaml
+  - backup.yaml
