@@ -106,10 +106,6 @@ spec:
             gnetId: 13106
             revision: 3
             datasource: Prometheus
-          mysql-replication:
-            gnetId: 7371
-            revision: 1
-            datasource: Prometheus
           mysql-overview:
             gnetId: 7362
             revision: 1
