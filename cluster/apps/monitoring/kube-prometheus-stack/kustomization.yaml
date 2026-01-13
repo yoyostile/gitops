@@ -6,4 +6,4 @@ commonAnnotations:
 resources:
   - pvc.yaml
   - helm-release.yaml
-  - dashboards.yaml
+  - dashboards
