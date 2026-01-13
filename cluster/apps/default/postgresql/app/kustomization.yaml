@@ -9,3 +9,4 @@ resources:
   - object-store.yaml
   - cluster.yaml
   - backup.yaml
+  - podmonitor.yaml

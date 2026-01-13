@@ -7,3 +7,4 @@ resources:
   - secret.sops.yaml
   - cronjob.yaml
   - backup.yaml
+  - podmonitor.yaml
