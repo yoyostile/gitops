@@ -8,3 +8,4 @@ resources:
   - cronjob.yaml
   - object-store.yaml
   - cluster.yaml
+  - backup.yaml
