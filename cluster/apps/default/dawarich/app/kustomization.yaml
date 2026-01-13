@@ -9,3 +9,4 @@ resources:
   - ingress.yaml
   - secrets.sops.yaml
   - redis-deployment.yaml
+  - backup.yaml

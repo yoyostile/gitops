@@ -2,12 +2,12 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: psql-cluster-backup
+  name: dawarich-db-backup
   namespace: default
 spec:
   cluster:
-    name: psql-cluster
-  schedule: '0 0 * * *'
+    name: dawarich-db
+  schedule: '0 2 * * *'
   backupOwnerReference: self
   method: plugin
   pluginConfiguration:
@@ -16,11 +16,11 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: Backup
 metadata:
-  name: psql-cluster-backup
+  name: dawarich-db-backup
   namespace: default
 spec:
   cluster:
-    name: psql-cluster
+    name: dawarich-db
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io

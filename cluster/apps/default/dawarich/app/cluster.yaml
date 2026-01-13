@@ -28,6 +28,12 @@ spec:
         requests:
           storage: 10Gi
 
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: cnpg-store
+
   resources:
     requests:
       memory: "256Mi"
