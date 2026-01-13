@@ -227,6 +227,7 @@ spec:
         retentionSize: 200GB
         walCompression: true
         serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
         storageSpec:
           volumeClaimTemplate:
             spec:
