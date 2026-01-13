@@ -3,7 +3,7 @@ apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
   name: cnpg-store
-  namespace: cnpg
+  namespace: default
 spec:
   retentionPolicy: 30d
   configuration:
