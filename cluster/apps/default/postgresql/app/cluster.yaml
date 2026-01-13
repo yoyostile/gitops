@@ -1,0 +1,47 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: psql-cluster
+  namespace: default
+spec:
+  instances: 3
+  bootstrap:
+    initdb:
+      import:
+        type: monolith
+        databases:
+          - authentik
+          - glitchtip
+          - metabase
+          - paperless
+          - shhh
+          - teslamate
+        roles:
+          - authentik
+          - freshrss
+          - glitchtip
+          - metabase
+          - paperless
+          - shhh
+          - teslamate
+        source:
+          externalCluster: postgresql
+  externalClusters:
+    - name: postgresql
+      connectionParameters:
+        host: postgresql.default
+        user: postgres
+        dbname: postgres
+        sslmode: require
+      password:
+        name: postgresql-secret
+        key: postgres-password
+  storage:
+    storageClass: "proxmox-data-ext4"
+    pvcTemplate:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
