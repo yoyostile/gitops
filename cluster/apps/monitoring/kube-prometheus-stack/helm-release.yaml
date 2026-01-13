@@ -92,7 +92,28 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/misc
+            - name: 'mariadb'
+              orgId: 1
+              folder: MariaDB
+              type: file
+              disableDeletion: false
+              allowUiUpdates: true
+              options:
+                path: /var/lib/grafana/dashboards/mariadb
       dashboards:
+        mariadb:
+          galera-mariadb-overview:
+            gnetId: 13106
+            revision: 3
+            datasource: Prometheus
+          mysql-replication:
+            gnetId: 7371
+            revision: 1
+            datasource: Prometheus
+          mysql-overview:
+            gnetId: 7362
+            revision: 1
+            datasource: Prometheus
         misc:
           nodeExporterFull:
             gnetId: 1860
