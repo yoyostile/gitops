@@ -16,6 +16,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Backup
 metadata:
   name: psql-cluster-backup
+  namespace: default
 spec:
   cluster:
     name: psql-cluster
