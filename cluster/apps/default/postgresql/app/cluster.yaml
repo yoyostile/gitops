@@ -10,7 +10,7 @@ spec:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
-        barmanObjectName: cnpg-store
+        barmanObjectName: cnpg/cnpg-store
   storage:
     storageClass: "proxmox-data-ext4"
     pvcTemplate:

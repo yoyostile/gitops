@@ -5,6 +5,7 @@ metadata:
   name: cnpg-store
   namespace: cnpg
 spec:
+  retentionPolicy: 30d
   configuration:
     destinationPath: s3://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/cnpg
     endpointURL: https://s3.eu-central-003.backblazeb2.com
@@ -15,6 +16,8 @@ spec:
       secretAccessKey:
         name: cluster-secrets
         key: BACKBLAZE_B2_APPLICATION_KEY
+    wal:
+      compression: gzip
   instanceSidecarConfiguration:
     retentionPolicyIntervalSeconds: 1800
     resources:
