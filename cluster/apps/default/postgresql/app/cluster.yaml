@@ -33,7 +33,6 @@ spec:
         host: postgresql.default
         user: postgres
         dbname: postgres
-        sslmode: require
       password:
         name: postgresql
         key: postgres-password
