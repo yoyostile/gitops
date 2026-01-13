@@ -6,4 +6,5 @@ resources:
   - secret.sops.yaml
   - helm-release.yaml
   - cronjob.yaml
+  - object-store.yaml
   - cluster.yaml
