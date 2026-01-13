@@ -1,0 +1,23 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: cnpg-store
+  namespace: cnpg
+spec:
+  configuration:
+    destinationPath: s3://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/cnpg
+    endpointURL: https://s3.eu-central-003.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        name: cluster-secrets
+        key: BACKBLAZE_B2_KEY_ID
+      secretAccessKey:
+        name: cluster-secrets
+        key: BACKBLAZE_B2_APPLICATION_KEY
+  instanceSidecarConfiguration:
+    retentionPolicyIntervalSeconds: 1800
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "25m"

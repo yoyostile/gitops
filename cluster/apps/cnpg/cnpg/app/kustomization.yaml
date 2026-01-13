@@ -5,3 +5,4 @@ namespace: cnpg
 resources:
   - helm-release.yaml
   - https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/v0.10.0/manifest.yaml
+  - object-store.yaml
