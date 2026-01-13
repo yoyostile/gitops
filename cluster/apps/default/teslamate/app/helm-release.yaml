@@ -33,7 +33,7 @@ spec:
 
     env:
       TZ: ${TZ}
-      DATABASE_HOST: "postgresql.default"
+      DATABASE_HOST: "psql-cluster-rw.default"
       DATABASE_USER: "teslamate"
       DATABASE_PASS: "${SECRET_TESLAMATE_POSTGRES_PASSWORD}"
       DATABASE_NAME: "teslamate"
