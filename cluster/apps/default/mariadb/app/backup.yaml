@@ -9,7 +9,7 @@ spec:
   schedule:
     cron: "0 0 2 * * *"
     suspend: false
-  maxRetention: 720h
+  maxRetention: 168h
   compression: gzip
   storage:
     s3:
