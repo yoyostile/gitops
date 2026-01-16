@@ -7,7 +7,7 @@ metadata:
 spec:
   cluster:
     name: immich-postgres
-  schedule: '0 1 * * *'
+  schedule: '0 0 1 * * *'
   backupOwnerReference: self
   method: plugin
   pluginConfiguration:
