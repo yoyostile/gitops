@@ -5,7 +5,7 @@ metadata:
   name: cnpg-store
   namespace: default
 spec:
-  retentionPolicy: 30d
+  retentionPolicy: 2d
   configuration:
     destinationPath: s3://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/cnpg
     endpointURL: https://s3.eu-central-003.backblazeb2.com
