@@ -185,7 +185,7 @@ spec:
           access: proxy
           orgId: 1
           type: postgres
-          url: postgresql.default:5432
+          url: psql-cluster-rw.default:5432
           user: teslamate
           secureJsonData:
             password: ${SECRET_TESLAMATE_POSTGRES_PASSWORD}
