@@ -43,5 +43,4 @@ spec:
       resources:
         requests:
           storage: 10Gi
-      volumeName: pvc-0669b89f-d635-4168-bf58-7e2ff358b51a
       storageClassName: "proxmox-data-ext4"
