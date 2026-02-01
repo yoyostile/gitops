@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-postgres-1-proxmox
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-data-ext4
+  resources:
+    requests:
+      storage: 32Gi
