@@ -24,7 +24,12 @@ spec:
           insecure: false
           token_id: "kubernetes-csi@pve!csi"
           token_secret: "${SECRET_PROXMOX_CSI_TOKEN}"
-          region: lab
+          region: cgn
+        - url: https://fsn1-pve1.hzn.${SECRET_LAB_DOMAIN}:8006/api2/json
+          insecure: false
+          token_id: "kubernetes-csi@pve!csi"
+          token_secret: "${SECRET_PROXMOX_CSI_TOKEN_FSN1}"
+          region: fsn1
 
     storageClass:
       - name: proxmox-data-ext4
@@ -33,7 +38,19 @@ spec:
         fstype: ext4
         annotations:
           storageclass.kubernetes.io/is-default-class: "false"
-
-    node:
-      nodeSelector:
-        topology.kubernetes.io/region: lab
+        allowedTopologies:
+          - matchLabelExpressions:
+              - key: topology.kubernetes.io/region
+                values:
+                  - cgn
+      - name: proxmox-data-zfs
+        storage: local-zfs
+        reclaimPolicy: Retain
+        fstype: ext4
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "false"
+        allowedTopologies:
+          - matchLabelExpressions:
+              - key: topology.kubernetes.io/region
+                values:
+                  - fsn1
