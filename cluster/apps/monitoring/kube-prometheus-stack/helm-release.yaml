@@ -24,7 +24,7 @@ spec:
       retries: 3
   values:
     nodeSelector:
-      location: cgn
+      topology.kubernetes.io/region: cgn
     alertmanager:
       enabled: false
     defaultRules:

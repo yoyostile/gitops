@@ -22,6 +22,8 @@ spec:
         app: st0rage
       name: st0rage
     spec:
+      nodeSelector:
+        topology.kubernetes.io/region: cgn
       containers:
         - name: st0rage
           image: nginx:alpine

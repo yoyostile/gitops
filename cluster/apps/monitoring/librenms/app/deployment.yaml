@@ -15,7 +15,7 @@ spec:
         app: librenms
     spec:
       nodeSelector:
-        location: cgn
+        topology.kubernetes.io/region: cgn
       containers:
         - name: librenms
           image: librenms/librenms:26.1.1
