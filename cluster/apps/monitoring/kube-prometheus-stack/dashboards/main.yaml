@@ -113,7 +113,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}",
+              "expr": "hass_sensor_power_w{entity=\"sensor.innr_outlet_1_power\"}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -198,7 +198,7 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg_over_time(hass_sensor_power_w{instance=\"hass.lab.${SECRET_LAB_DOMAIN}:8123\",entity=\"sensor.0xa4c138bcd445ed4d_power\"}[1d]) * 24 / 1000 * 30 * 0.30",
+              "expr": "avg_over_time(hass_sensor_power_w{instance=\"hass.lab.${SECRET_LAB_DOMAIN}:8123\",entity=\"sensor.innr_outlet_1_power\"}[1d]) * 24 / 1000 * 30 * 0.30",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -1042,7 +1042,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "avg_over_time(hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}[5m])\n\n",
+              "expr": "avg_over_time(hass_sensor_power_w{entity=\"sensor.innr_outlet_1_power\"}[5m])\n\n",
               "hide": false,
               "legendFormat": "Leistung Steckdose",
               "range": true,
@@ -1054,7 +1054,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "min_over_time(hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}[5m])\n\n",
+              "expr": "min_over_time(hass_sensor_power_w{entity=\"sensor.innr_outlet_1_power\"}[5m])\n\n",
               "hide": false,
               "instant": false,
               "legendFormat": "Min. Leistung Steckdose",
@@ -1067,7 +1067,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "max_over_time(hass_sensor_power_w{entity=\"sensor.0xa4c138bcd445ed4d_power\"}[5m])\n\n",
+              "expr": "max_over_time(hass_sensor_power_w{entity=\"sensor.innr_outlet_1_power\"}[5m])\n\n",
               "hide": false,
               "instant": false,
               "legendFormat": "Max Leistung Steckdose",
