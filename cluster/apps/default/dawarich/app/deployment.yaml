@@ -19,6 +19,8 @@ spec:
         app: dawarich
         component: app
     spec:
+      nodeSelector:
+        topology.kubernetes.io/region: cgn
       containers:
         - name: dawarich
           image: freikin/dawarich:1.0.4

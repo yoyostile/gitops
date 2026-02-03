@@ -15,6 +15,8 @@ spec:
       labels:
         app: icloudpd
     spec:
+      nodeSelector:
+        topology.kubernetes.io/region: cgn
       containers:
         - name: icloudpd
           image: icloudpd/icloudpd:1.32.2

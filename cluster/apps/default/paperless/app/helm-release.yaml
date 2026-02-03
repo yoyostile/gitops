@@ -24,7 +24,7 @@ spec:
   # See https://github.com/k8s-at-home/charts/blob/master/charts/paperless/values.yaml
   values:
     nodeSelector:
-      location: cgn
+      topology.kubernetes.io/region: cgn
     image:
       repository: ghcr.io/paperless-ngx/paperless-ngx
       tag: 2.20.6

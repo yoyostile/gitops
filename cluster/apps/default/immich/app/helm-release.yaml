@@ -28,7 +28,7 @@ spec:
     timeout: 10m
   values:
     nodeSelector:
-      location: cgn
+      topology.kubernetes.io/region: cgn
 
     ## This chart relies on the common library chart from bjw-s
     ## You can find it at https://github.com/bjw-s/helm-charts/tree/main/charts/library/common

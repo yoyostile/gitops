@@ -21,7 +21,7 @@ spec:
           - name: ndots
             value: "1"
       nodeSelector:
-        location: "cgn"
+        topology.kubernetes.io/region: cgn
       containers:
         - name: devolo-monitor
           image: ghcr.io/yoyostile/devolo-powerbridge-monitor:main

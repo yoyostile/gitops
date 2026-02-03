@@ -25,7 +25,7 @@ spec:
   values:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
-      location: cgn
+      topology.kubernetes.io/region: cgn
     image:
       registry: docker.io
       repository: bitnamilegacy/redis
