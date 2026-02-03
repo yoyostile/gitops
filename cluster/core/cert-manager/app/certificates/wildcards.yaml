@@ -20,3 +20,4 @@ spec:
     - "*.${SECRET_LAB_DOMAIN}"
     - "*.lan.${SECRET_LAB_DOMAIN}"
     - "*.lab.${SECRET_LAB_DOMAIN}"
+    - "*.hzn.${SECRET_LAB_DOMAIN}"
