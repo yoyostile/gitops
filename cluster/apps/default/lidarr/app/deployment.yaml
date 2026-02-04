@@ -15,7 +15,7 @@ spec:
         app.kubernetes.io/name: lidarr
     spec:
       nodeSelector:
-        topology.kubernetes.io/region: cgn
+        topology.kubernetes.io/region: lab
       containers:
         - name: lidarr
           image: lscr.io/linuxserver/lidarr:latest

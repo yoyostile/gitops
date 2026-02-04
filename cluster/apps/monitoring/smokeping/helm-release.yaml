@@ -27,7 +27,7 @@ spec:
       retries: 3
   values:
     nodeSelector:
-      topology.kubernetes.io/region: cgn
+      topology.kubernetes.io/region: lab
     env:
       TZ: ${TZ}
       PUID: "3000"

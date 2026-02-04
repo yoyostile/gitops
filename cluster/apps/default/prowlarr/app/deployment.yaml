@@ -15,7 +15,7 @@ spec:
         app.kubernetes.io/name: prowlarr
     spec:
       nodeSelector:
-        topology.kubernetes.io/region: cgn
+        topology.kubernetes.io/region: lab
       containers:
         - name: prowlarr
           image: lscr.io/linuxserver/prowlarr:2.3.0

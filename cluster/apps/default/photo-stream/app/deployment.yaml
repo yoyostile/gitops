@@ -19,7 +19,7 @@ spec:
         app: photo-stream
     spec:
       nodeSelector:
-        topology.kubernetes.io/region: cgn
+        topology.kubernetes.io/region: lab
       containers:
         - image: waschinski/photo-stream:latest
           imagePullPolicy: Always

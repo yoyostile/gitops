@@ -23,7 +23,7 @@ spec:
 
   values:
     nodeSelector:
-      topology.kubernetes.io/region: cgn
+      topology.kubernetes.io/region: lab
     replicas: 1
     dnsConfig:
       options:
