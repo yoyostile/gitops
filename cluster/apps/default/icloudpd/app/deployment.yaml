@@ -16,7 +16,7 @@ spec:
         app: icloudpd
     spec:
       nodeSelector:
-        topology.kubernetes.io/region: cgn
+        topology.kubernetes.io/region: lab
       containers:
         - name: icloudpd
           image: icloudpd/icloudpd:1.32.2
