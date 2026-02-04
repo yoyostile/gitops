@@ -27,8 +27,9 @@ spec:
       retries: 3
     timeout: 10m
   values:
-    nodeSelector:
-      topology.kubernetes.io/region: lab
+    defaultPodOptions:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
 
     ## This chart relies on the common library chart from bjw-s
     ## You can find it at https://github.com/bjw-s/helm-charts/tree/main/charts/library/common
