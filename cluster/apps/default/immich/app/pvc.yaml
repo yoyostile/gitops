@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: immich
   namespace: default
+  labels:
+    velero.io/exclude-from-backup: "true"
 spec:
   accessModes:
     - ReadWriteOnce
@@ -32,6 +34,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: immich-ext-kj
   namespace: default
+  labels:
+    velero.io/exclude-from-backup: "true"
 spec:
   accessModes:
     - ReadWriteMany
@@ -61,6 +65,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: immich-nfs
   namespace: default
+  labels:
+    velero.io/exclude-from-backup: "true"
 spec:
   accessModes:
     - ReadWriteMany

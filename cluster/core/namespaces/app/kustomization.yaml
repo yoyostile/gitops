@@ -9,4 +9,5 @@ resources:
   - monitoring.yaml
   - networking.yaml
   - trivy-system.yaml
+  - velero.yaml
   - woodpecker.yaml

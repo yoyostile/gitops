@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: photo-stream
   namespace: default
+  labels:
+    velero.io/exclude-from-backup: "true"
 spec:
   accessModes:
     - ReadWriteOnce

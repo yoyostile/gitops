@@ -48,11 +48,15 @@ spec:
         storageClass: "nfs-client"
         accessMode: ReadWriteOnce
         size: 5Gi
+        labels:
+          velero.io/exclude-from-backup: "true"
       media:
         enabled: true
         storageClass: "nfs-client"
         accessMode: ReadWriteOnce
         size: 5Gi
+        labels:
+          velero.io/exclude-from-backup: "true"
       consume:
         enabled: false
         type: custom
