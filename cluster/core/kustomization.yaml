@@ -11,3 +11,4 @@ resources:
   - ./nfs-subdir-external-provisioner/ks.yaml
   - ./proxmox-csi/ks.yaml
   - ./ceph-csi/ks.yaml
+  - ./velero/ks.yaml

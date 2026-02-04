@@ -1,0 +1,90 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: velero
+  namespace: velero
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: velero
+      version: 8.2.0
+      sourceRef:
+        kind: HelmRepository
+        name: vmware-tanzu-charts
+        namespace: flux-system
+      interval: 5m
+  install:
+    crds: Create
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+
+  values:
+    # Node agent for file-level backups (Kopia)
+    deployNodeAgent: true
+    nodeAgent:
+      podVolumePath: /var/lib/kubelet/pods
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          memory: 1Gi
+
+    # Velero server resources
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+
+    # Plugins
+    initContainers:
+      - name: velero-plugin-for-aws
+        image: velero/velero-plugin-for-aws:v1.11.0
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - name: plugins
+            mountPath: /target
+
+    configuration:
+      uploaderType: kopia
+
+      defaultBackupStorageLocation: backblaze-b2
+
+      defaultVolumesToFsBackup: true
+
+      backupStorageLocation:
+        - name: backblaze-b2
+          provider: aws
+          bucket: k3s-lan-${SECRET_LAB_DOMAIN/./-}
+          prefix: backups/velero
+          default: true
+          config:
+            region: eu-central-003
+            s3ForcePathStyle: true
+            s3Url: https://s3.eu-central-003.backblazeb2.com
+
+      volumeSnapshotLocation: []
+
+    credentials:
+      useSecret: true
+      name: velero-b2-credentials
+      secretContents:
+        cloud: |
+          [default]
+          aws_access_key_id=${BACKBLAZE_B2_KEY_ID}
+          aws_secret_access_key=${BACKBLAZE_B2_APPLICATION_KEY}
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+    schedules: {}

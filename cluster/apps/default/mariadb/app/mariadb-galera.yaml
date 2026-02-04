@@ -12,6 +12,10 @@ spec:
   storage:
     size: 10Gi
     storageClassName: proxmox-data-ext4
+    volumeClaimTemplate:
+      metadata:
+        labels:
+          velero.io/exclude-from-backup: "true"
 
   replicas: 3
 

@@ -230,6 +230,9 @@ spec:
         podMonitorSelectorNilUsesHelmValues: false
         storageSpec:
           volumeClaimTemplate:
+            metadata:
+              labels:
+                velero.io/exclude-from-backup: "true"
             spec:
               storageClassName: "nfs-client"
               accessModes: ["ReadWriteOnce"]

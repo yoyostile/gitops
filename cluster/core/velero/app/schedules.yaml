@@ -1,0 +1,70 @@
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-backup
+  namespace: velero
+spec:
+  schedule: "0 3 * * *"
+  useOwnerReferencesInBackup: false
+  template:
+    includedNamespaces:
+      - "*"
+    excludedNamespaces:
+      - kube-system
+      - kube-public
+      - kube-node-lease
+      - velero
+      - flux-system
+
+    defaultVolumesToFsBackup: true
+
+    excludedResources:
+      - events
+      - events.events.k8s.io
+
+    labelSelector:
+      matchExpressions:
+        - key: velero.io/exclude-from-backup
+          operator: NotIn
+          values:
+            - "true"
+
+    ttl: 168h
+
+    snapshotVolumes: false
+
+    orderedResources:
+      persistentvolumeclaims: "default/plex-data"
+
+    hooks: {}
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: weekly-full-backup
+  namespace: velero
+spec:
+  schedule: "0 2 * * 0"
+  useOwnerReferencesInBackup: false
+  template:
+    includedNamespaces:
+      - "*"
+    excludedNamespaces:
+      - kube-system
+      - kube-public
+      - kube-node-lease
+      - velero
+      - flux-system
+    defaultVolumesToFsBackup: true
+    excludedResources:
+      - events
+      - events.events.k8s.io
+    labelSelector:
+      matchExpressions:
+        - key: velero.io/exclude-from-backup
+          operator: NotIn
+          values:
+            - "true"
+    ttl: 336h
+    snapshotVolumes: false

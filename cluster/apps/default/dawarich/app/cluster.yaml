@@ -27,6 +27,8 @@ spec:
       resources:
         requests:
           storage: 10Gi
+      labels:
+        velero.io/exclude-from-backup: "true"
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
