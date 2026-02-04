@@ -24,7 +24,7 @@ spec:
   # See https://github.com/k8s-at-home/charts/blob/master/charts/teslamate/values.yaml
   values:
     controller:
-      replicas: 0
+      replicas: 1
 
     image:
       repository: teslamate/teslamate
@@ -42,7 +42,7 @@ spec:
 
     ingress:
       main:
-        enabled: false
+        enabled: true
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "car"

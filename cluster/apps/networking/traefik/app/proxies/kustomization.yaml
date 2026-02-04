@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - home-assistant.yaml
   - pulse.yaml
-  - teslamate-tmp.yaml
+  # - teslamate-tmp.yaml
