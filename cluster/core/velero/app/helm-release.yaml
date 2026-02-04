@@ -54,7 +54,7 @@ spec:
             mountPath: /target
 
     configuration:
-      features: EnableCSI
+      # features: EnableCSI
       uploaderType: kopia
 
       defaultBackupStorageLocation: backblaze-b2
