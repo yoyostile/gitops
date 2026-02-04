@@ -44,5 +44,3 @@ spec:
         requests:
           storage: 10Gi
       storageClassName: "proxmox-data-ext4"
-      labels:
-        velero.io/exclude-from-backup: "true"
