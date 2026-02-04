@@ -23,6 +23,8 @@ spec:
     remediation:
       retries: 3
   values:
+    nodeSelector:
+      topology.kubernetes.io/region: lab
     dnsConfig:
       options:
         - name: ndots
