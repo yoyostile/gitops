@@ -19,5 +19,3 @@ spec:
       resources:
         requests:
           storage: 50Gi
-      labels:
-        velero.io/exclude-from-backup: "true"
