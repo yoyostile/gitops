@@ -34,7 +34,10 @@ spec:
           memory: 128Mi
         limits:
           memory: 1Gi
-
+    kubectl:
+      image:
+        repository: docker.io/bitnamilegacy/kubectl
+        tag: 1.33.4
     resources:
       requests:
         cpu: 100m
