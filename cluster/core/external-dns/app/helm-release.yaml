@@ -69,6 +69,8 @@ spec:
     remediation:
       retries: 3
   values:
+    nodeSelector:
+      topology.kubernetes.io/region: lab
     replicaCount: 1
     rbac:
       create: true
