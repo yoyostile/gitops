@@ -9,6 +9,10 @@ spec:
     name: mariadb-galera
     key: root-password
 
+  bootstrapFrom:
+    backupRef:
+      name: backup
+
   storage:
     size: 10Gi
     storageClassName: proxmox-data-ext4
