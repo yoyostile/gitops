@@ -17,7 +17,7 @@ spec:
         labels:
           velero.io/exclude-from-backup: "true"
 
-  replicas: 3
+  replicas: 2
 
   galera:
     enabled: true
