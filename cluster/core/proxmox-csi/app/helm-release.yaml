@@ -24,7 +24,7 @@ spec:
           insecure: false
           token_id: "kubernetes-csi@pve!csi"
           token_secret: "${SECRET_PROXMOX_CSI_TOKEN}"
-          region: cgn
+          region: lab
         - url: https://fsn1-pve1.hzn.${SECRET_LAB_DOMAIN}:8006/api2/json
           insecure: false
           token_id: "kubernetes-csi@pve!csi"
@@ -42,7 +42,7 @@ spec:
           - matchLabelExpressions:
               - key: topology.kubernetes.io/region
                 values:
-                  - cgn
+                  - lab
       - name: proxmox-data-zfs
         storage: local-zfs
         reclaimPolicy: Retain
