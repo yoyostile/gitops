@@ -2,71 +2,65 @@
 kind: Endpoints
 apiVersion: v1
 metadata:
-  name: teslamate-tmp-proxy
+  name: garage-proxy
   namespace: networking
 subsets:
   - addresses:
-      - ip: 172.16.0.3
+      - ip: 10.0.0.25
     ports:
       - name: http
-        port: 4000
-      - name: grafana
-        port: 3000
+        port: 30188
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: teslamate-tmp-proxy
+  name: garage-proxy
   namespace: networking
 spec:
   ports:
     - name: http
       protocol: TCP
-      port: 4000
-      targetPort: 4000
-    - name: grafana
-      protocol: TCP
-      port: 3000
-      targetPort: 3000
+      port: 30188
+      targetPort: 30188
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: teslamate-tmp-proxy
+  name: garage-proxy
   namespace: networking
   annotations:
-    hajimari.io/appName: "Teslamate"
+    hajimari.io/appName: "Garage"
     hajimari.io/enable: "true"
-    hajimari.io/icon: "car"
+    hajimari.io/icon: "server"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-crowdsec-root@kubernetescrd"
     traefik.ingress.kubernetes.io/service.serversscheme: "http"
     external-dns/internal: "true"
 spec:
   ingressClassName: traefik-internal
   tls:
     - hosts:
-        - "teslamate.${SECRET_LAB_DOMAIN}"
-        - "teslamate-grafana.${SECRET_LAB_DOMAIN}"
+        - "*.garage.${SECRET_LAB_DOMAIN}"
+        - "garage.${SECRET_LAB_DOMAIN}"
       secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
-    - host: "teslamate.${SECRET_LAB_DOMAIN}"
+    - host: "garage.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: teslamate-tmp-proxy
+                name: garage-proxy
                 port:
-                  name: http
-    - host: "g-teslamate.${SECRET_LAB_DOMAIN}"
+                  number: 30188
+    - host: "*.garage.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: teslamate-tmp-proxy
+                name: garage-proxy
                 port:
-                  name: grafana
+                  number: 30188
