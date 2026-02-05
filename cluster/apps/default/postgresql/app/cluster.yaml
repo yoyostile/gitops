@@ -6,27 +6,11 @@ metadata:
   namespace: default
 spec:
   instances: 3
-  bootstrap:
-    recovery:
-      source: origin
-      recoveryTarget:
-        backupID: "20260204T120009"
-        targetImmediate: true
-
-  externalClusters:
-    - name: origin
-      plugin:
-        name: barman-cloud.cloudnative-pg.io
-        parameters:
-          barmanObjectName: cnpg-store
-          serverName: psql-cluster
-
-  # Temporarily disabled during recovery - re-enable after recovery completes
-  # plugins:
-  #   - name: barman-cloud.cloudnative-pg.io
-  #     isWALArchiver: true
-  #     parameters:
-  #       barmanObjectName: cnpg-store
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: cnpg-store
 
   storage:
     storageClass: "proxmox-data-ext4"
