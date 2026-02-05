@@ -6,7 +6,7 @@ metadata:
   namespace: networking
 subsets:
   - addresses:
-      - ip: 10.0.0.16
+      - ip: 10.0.10.47
     ports:
       - name: http
         port: 8123
