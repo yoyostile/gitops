@@ -6,6 +6,16 @@ metadata:
   namespace: default
 spec:
   instances: 3
+  bootstrap:
+    recovery:
+      source: origin
+  externalClusters:
+    - name: origin
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: cnpg-store
+          serverName: psql-cluster
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
