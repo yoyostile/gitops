@@ -5,22 +5,11 @@ metadata:
   name: immich-postgres-backup
   namespace: default
 spec:
+  immediate: true
   cluster:
     name: immich-postgres
   schedule: '0 0 1 * * *'
   backupOwnerReference: self
-  method: plugin
-  pluginConfiguration:
-    name: barman-cloud.cloudnative-pg.io
----
-apiVersion: postgresql.cnpg.io/v1
-kind: Backup
-metadata:
-  name: immich-postgres-backup
-  namespace: default
-spec:
-  cluster:
-    name: immich-postgres
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
