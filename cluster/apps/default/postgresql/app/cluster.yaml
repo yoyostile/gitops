@@ -10,6 +10,7 @@ spec:
     recovery:
       source: origin
       recoveryTarget:
+        backupID: "20260204T120009"
         targetImmediate: true
 
   externalClusters:
