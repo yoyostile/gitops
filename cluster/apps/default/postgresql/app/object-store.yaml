@@ -8,13 +8,13 @@ spec:
   retentionPolicy: 7d
   configuration:
     destinationPath: s3://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/cnpg
-    endpointURL: https://s3.eu-central-003.backblazeb2.com
+    endpointURL: https://garage.r4r3.me
     s3Credentials:
       accessKeyId:
         name: cluster-secrets
-        key: BACKBLAZE_B2_KEY_ID
+        key: GARAGE_KEY_ID
       secretAccessKey:
         name: cluster-secrets
-        key: BACKBLAZE_B2_APPLICATION_KEY
+        key: GARAGE_KEY_SECRET
     wal:
       compression: gzip

@@ -55,31 +55,31 @@ spec:
       # features: EnableCSI
       uploaderType: kopia
 
-      defaultBackupStorageLocation: backblaze-b2
+      defaultBackupStorageLocation: garage-s3
 
       defaultVolumesToFsBackup: true
 
       backupStorageLocation:
-        - name: backblaze-b2
+        - name: garage-s3
           provider: aws
           bucket: k3s-lan-${SECRET_LAB_DOMAIN/./-}
           prefix: backups/velero
           default: true
           config:
-            region: eu-central-003
+            region: cgn
             s3ForcePathStyle: true
-            s3Url: https://s3.eu-central-003.backblazeb2.com
+            s3Url: https://garage.r4r3.me
 
       volumeSnapshotLocation: []
 
     credentials:
       useSecret: true
-      name: velero-b2-credentials
+      name: velero-garage-credentials
       secretContents:
         cloud: |
           [default]
-          aws_access_key_id=${BACKBLAZE_B2_KEY_ID}
-          aws_secret_access_key=${BACKBLAZE_B2_APPLICATION_KEY}
+          aws_access_key_id=${GARAGE_KEY_ID}
+          aws_secret_access_key=${GARAGE_KEY_SECRET}
 
     metrics:
       enabled: true
