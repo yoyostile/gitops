@@ -9,6 +9,9 @@ spec:
   bootstrap:
     recovery:
       source: origin
+      recoveryTarget:
+        backupID: "20260204T120009"
+
   externalClusters:
     - name: origin
       plugin:
@@ -16,11 +19,14 @@ spec:
         parameters:
           barmanObjectName: cnpg-store
           serverName: psql-cluster
-  plugins:
-    - name: barman-cloud.cloudnative-pg.io
-      isWALArchiver: true
-      parameters:
-        barmanObjectName: cnpg-store
+
+  # Temporarily disabled during recovery - re-enable after recovery completes
+  # plugins:
+  #   - name: barman-cloud.cloudnative-pg.io
+  #     isWALArchiver: true
+  #     parameters:
+  #       barmanObjectName: cnpg-store
+
   storage:
     storageClass: "proxmox-data-ext4"
     pvcTemplate:

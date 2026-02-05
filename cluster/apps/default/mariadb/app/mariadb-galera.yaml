@@ -11,7 +11,7 @@ spec:
 
   bootstrapFrom:
     backupRef:
-      name: backup
+      name: mariadb-galera
 
   storage:
     size: 10Gi
