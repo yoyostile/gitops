@@ -10,8 +10,18 @@ spec:
     key: root-password
 
   bootstrapFrom:
-    backupRef:
-      name: mariadb-galera
+    s3:
+      bucket: k3s-lan-${SECRET_LAB_DOMAIN/./-}
+      prefix: backups/mariadb
+      endpoint: s3.eu-central-003.backblazeb2.com
+      accessKeyIdSecretKeyRef:
+        name: cluster-secrets
+        key: BACKBLAZE_B2_KEY_ID
+      secretAccessKeySecretKeyRef:
+        name: cluster-secrets
+        key: BACKBLAZE_B2_APPLICATION_KEY
+      tls:
+        enabled: true
 
   storage:
     size: 10Gi
