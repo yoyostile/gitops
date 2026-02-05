@@ -29,11 +29,11 @@ metadata:
   name: garage-proxy
   namespace: networking
   annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
     hajimari.io/appName: "Garage"
     hajimari.io/enable: "true"
     hajimari.io/icon: "server"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-crowdsec-root@kubernetescrd"
     traefik.ingress.kubernetes.io/service.serversscheme: "http"
     external-dns/internal: "true"
 spec:
@@ -42,7 +42,7 @@ spec:
     - hosts:
         - "*.garage.${SECRET_LAB_DOMAIN}"
         - "garage.${SECRET_LAB_DOMAIN}"
-      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      secretName: "garage-${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
     - host: "garage.${SECRET_LAB_DOMAIN}"
       http:
