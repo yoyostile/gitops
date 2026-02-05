@@ -9,7 +9,7 @@ spec:
   configuration:
     destinationPath: s3://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/cnpg
     # endpointURL: https://garage.r4r3.me
-    endpoint: s3.eu-central-003.backblazeb2.com
+    endpointURL: https://s3.eu-central-003.backblazeb2.com
     s3Credentials:
       accessKeyId:
         name: cluster-secrets
