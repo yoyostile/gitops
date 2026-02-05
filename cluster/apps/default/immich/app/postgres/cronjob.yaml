@@ -32,16 +32,18 @@ spec:
                     secretKeyRef:
                       name: immich-postgres-user
                       key: password
-                - name: BACKBLAZE_B2_KEY_ID
+                - name: AWS_ACCESS_KEY_ID
                   valueFrom:
                     secretKeyRef:
                       name: cluster-secrets
-                      key: BACKBLAZE_B2_KEY_ID
-                - name: BACKBLAZE_B2_APPLICATION_KEY
+                      key: GARAGE_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
                       name: cluster-secrets
-                      key: BACKBLAZE_B2_APPLICATION_KEY
+                      key: GARAGE_KEY_SECRET
+                - name: AWS_ENDPOINT_URL
+                  value: "https://garage.r4r3.me"
               command: ["/bin/sh"]
               args:
                 - -c
@@ -50,15 +52,13 @@ spec:
 
                   DATE=$(date +%Y-%m-%d)
                   BACKUP_DIR="backups/$DATE"
+                  S3_BUCKET="k3s-lan-${SECRET_LAB_DOMAIN/./-}"
 
                   apk update
-                  apk add postgresql py-pip curl
-                  pip install --break-system-packages --upgrade "docutils==0.21.2" b2
+                  apk add postgresql aws-cli curl
 
                   mkdir -p "$BACKUP_DIR"
                   cd "$BACKUP_DIR"
-
-                  b2 account authorize "$BACKBLAZE_B2_KEY_ID" "$BACKBLAZE_B2_APPLICATION_KEY"
 
                   for DATABASE in $${DATABASES}; do
                     echo "Backing up $DATABASE..."
@@ -80,9 +80,9 @@ spec:
                     fi
                   done
 
-                  echo "Uploading backups to B2..."
-                  if ! b2 sync . "b2://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/postgresql/$DATE"; then
-                    echo "Error uploading to B2" >&2
+                  echo "Uploading backups to S3..."
+                  if ! aws s3 sync . "s3://$S3_BUCKET/backups/postgresql/$DATE"; then
+                    echo "Error uploading to S3" >&2
                     exit 1
                   fi
 
