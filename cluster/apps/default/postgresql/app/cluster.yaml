@@ -6,20 +6,21 @@ metadata:
   namespace: default
 spec:
   instances: 1
-  # bootstrap:
-  #   recovery:
-  #     source: origin
-  #     recoveryTarget:
-  #       backupID: "20260204T120009"
-  #       targetImmediate: true
+  bootstrap:
+    recovery:
+      source: origin
+      recoveryTarget:
+        targetTime: "2026-02-04T12:00:00Z"
+        # backupID: "20260204T120009"
+        # targetImmediate: true
 
-  # externalClusters:
-  #   - name: origin
-  #     plugin:
-  #       name: barman-cloud.cloudnative-pg.io
-  #       parameters:
-  #         barmanObjectName: cnpg-store
-  #         serverName: psql-cluster
+  externalClusters:
+    - name: origin
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: cnpg-store
+          serverName: psql-cluster
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
