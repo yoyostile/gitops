@@ -15,6 +15,7 @@ resources:
   - emberstack-charts.yaml
   - external-dns-charts.yaml
   - fairwinds-charts.yaml
+  - fossorial-charts.yaml
   - gatus-charts.yaml
   - glitchtip-charts.yaml
   - grafana-charts.yaml
