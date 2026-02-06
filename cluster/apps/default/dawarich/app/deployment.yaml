@@ -46,6 +46,11 @@ spec:
                 secretKeyRef:
                   name: dawarich-db-secret
                   key: database
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: secret_key_base
             - name: MIN_MINUTES_SPENT_IN_CITY
               value: "60"
             - name: APPLICATION_HOSTS
@@ -59,6 +64,8 @@ spec:
             - name: SELF_HOSTED
               value: "true"
             - name: STORE_GEODATA
+              value: "true"
+            - name: RAILS_LOG_TO_STDOUT
               value: "true"
           volumeMounts:
             - name: dawarich-storage
@@ -94,38 +101,6 @@ spec:
             failureThreshold: 3
           command: ["web-entrypoint.sh"]
           args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
-      volumes:
-        - name: dawarich-storage
-          persistentVolumeClaim:
-            claimName: dawarich-storage-pvc
-        - name: dawarich-public
-          persistentVolumeClaim:
-            claimName: dawarich-public-pvc
-        - name: dawarich-watched
-          persistentVolumeClaim:
-            claimName: dawarich-watched-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: dawarich-sidekiq
-  namespace: default
-  labels:
-    app: dawarich
-    component: sidekiq
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: dawarich
-      component: sidekiq
-  template:
-    metadata:
-      labels:
-        app: dawarich
-        component: sidekiq
-    spec:
-      containers:
         - name: sidekiq
           image: freikin/dawarich:1.0.4
           env:
@@ -150,6 +125,11 @@ spec:
                 secretKeyRef:
                   name: dawarich-db-secret
                   key: database
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db-secret
+                  key: secret_key_base
             - name: APPLICATION_HOSTS
               value: "dawarich.${SECRET_LAB_DOMAIN}"
             - name: BACKGROUND_PROCESSING_CONCURRENCY
@@ -161,6 +141,8 @@ spec:
             - name: SELF_HOSTED
               value: "true"
             - name: STORE_GEODATA
+              value: "true"
+            - name: RAILS_LOG_TO_STDOUT
               value: "true"
           volumeMounts:
             - name: dawarich-storage
