@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: newt
+  namespace: networking
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.fossorial.io
+      chart: newt
+      version: 1.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: fossorial-charts
+        namespace: flux-system
+      interval: 5m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    newtInstances:
+      - name: main-tunnel
+        enabled: true
+        auth:
+          existingSecretName: newt-credentials
+          keys:
+            endpointKey: PANGOLIN_ENDPOINT
+            idKey: NEWT_ID
+            secretKey: NEWT_SECRET
