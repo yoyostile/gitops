@@ -24,6 +24,11 @@ spec:
     remediation:
       retries: 3
   values:
+    global:
+      image:
+        registry: "docker.io"
+        repository: "fosrl/newt"
+        tag: "1.9.0"
     newtInstances:
       - name: main-tunnel
         enabled: true
