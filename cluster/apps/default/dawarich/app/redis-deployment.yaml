@@ -81,7 +81,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: nfs-client
+  storageClassName: proxmox-data-zfs
   resources:
     requests:
       storage: 2Gi
