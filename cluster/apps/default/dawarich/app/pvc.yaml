@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: nfs-client
   resources:
     requests:
@@ -19,7 +19,7 @@ metadata:
   namespace: default
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: nfs-client
   resources:
     requests:
@@ -32,7 +32,7 @@ metadata:
   namespace: default
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: nfs-client
   resources:
     requests:

@@ -17,22 +17,3 @@ spec:
   selector:
     app: dawarich
     component: app
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: dawarich-sidekiq
-  namespace: default
-  labels:
-    app: dawarich
-    component: sidekiq
-spec:
-  type: ClusterIP
-  ports:
-    - port: 8080
-      targetPort: 8080
-      protocol: TCP
-      name: http
-  selector:
-    app: dawarich
-    component: sidekiq
