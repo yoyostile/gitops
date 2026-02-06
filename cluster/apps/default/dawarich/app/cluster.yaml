@@ -4,6 +4,8 @@ kind: Cluster
 metadata:
   name: dawarich-db
   namespace: default
+  annotations:
+    cnpg.io/reconciliationLoop: "disabled"
 spec:
   imageName: ghcr.io/cloudnative-pg/postgis:17
   instances: 1
