@@ -8,6 +8,5 @@ resources:
   - service.yaml
   - ingress.yaml
   - secrets.sops.yaml
-  - redis-deployment.yaml
   - backup.yaml
   - podmonitor.yaml

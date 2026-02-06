@@ -28,7 +28,10 @@ spec:
             - name: RAILS_ENV
               value: "development"
             - name: REDIS_URL
-              value: "redis://dawarich-redis.default.svc.cluster.local:6379"
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: SECRET_DAWARICH_REDIS_URL
             - name: DATABASE_HOST
               value: "dawarich-db-rw.default.svc.cluster.local"
             - name: DATABASE_USERNAME
@@ -107,7 +110,10 @@ spec:
             - name: RAILS_ENV
               value: "development"
             - name: REDIS_URL
-              value: "redis://dawarich-redis.default.svc.cluster.local:6379"
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: SECRET_DAWARICH_REDIS_URL
             - name: DATABASE_HOST
               value: "dawarich-db-rw.default.svc.cluster.local"
             - name: DATABASE_USERNAME
