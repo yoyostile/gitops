@@ -18,6 +18,10 @@ spec:
     remediation:
       retries: 3
   values:
+    trivyOperator:
+      scanJobTolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
     operator:
       builtInTrivyServer: true
     serviceMonitor:
