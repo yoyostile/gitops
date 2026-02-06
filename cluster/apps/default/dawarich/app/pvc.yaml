@@ -7,7 +7,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: nfs-client
+  storageClassName: proxmox-data-zfs
   resources:
     requests:
       storage: 10Gi
@@ -20,7 +20,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: nfs-client
+  storageClassName: proxmox-data-zfs
   resources:
     requests:
       storage: 5Gi
@@ -33,7 +33,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: nfs-client
+  storageClassName: proxmox-data-zfs
   resources:
     requests:
       storage: 5Gi
