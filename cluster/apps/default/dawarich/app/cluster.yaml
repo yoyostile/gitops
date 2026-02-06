@@ -8,7 +8,7 @@ metadata:
     cnpg.io/reconciliationLoop: "disabled"
 spec:
   imageName: ghcr.io/cloudnative-pg/postgis:17
-  instances: 1
+  instances: 3
 
   bootstrap:
     initdb:
@@ -22,7 +22,7 @@ spec:
         - CREATE EXTENSION fuzzystrmatch;
         - CREATE EXTENSION postgis_tiger_geocoder;
   storage:
-    storageClass: "proxmox-data-ext4"
+    storageClass: "proxmox-data-zfs"
     pvcTemplate:
       accessModes:
         - ReadWriteOnce
