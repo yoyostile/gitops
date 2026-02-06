@@ -9,3 +9,4 @@ metadata:
     velero.io/change-storage-class: RestoreItemAction
 data:
   nfs-client: proxmox-data-zfs
+  ceph-rbd: proxmox-data-zfs
