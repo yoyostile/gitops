@@ -15,7 +15,7 @@ spec:
     s3:
       bucket: k3s-lan-${SECRET_LAB_DOMAIN/./-}
       prefix: backups/mariadb
-      endpoint: s3.${SECRET_LAB_DOMAIN}
+      endpoint: garage.${SECRET_LAB_DOMAIN}
       region: cgn
       accessKeyIdSecretKeyRef:
         name: cluster-secrets

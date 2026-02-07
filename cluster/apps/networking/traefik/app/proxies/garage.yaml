@@ -35,18 +35,16 @@ metadata:
     hajimari.io/icon: "server"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     traefik.ingress.kubernetes.io/service.serversscheme: "http"
-    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-    external-dns/external: "true"
+    external-dns/internal: "true"
 spec:
   ingressClassName: traefik-internal
   tls:
     - hosts:
-        - "*.s3.${SECRET_LAB_DOMAIN}"
-        - "s3.${SECRET_LAB_DOMAIN}"
-      secretName: "s3-${SECRET_LAB_DOMAIN/./-}-tls"
+        - "*.garage.${SECRET_LAB_DOMAIN}"
+        - "garage.${SECRET_LAB_DOMAIN}"
+      secretName: "garage-${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
-    - host: "s3.${SECRET_LAB_DOMAIN}"
+    - host: "garage.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /
@@ -56,7 +54,7 @@ spec:
                 name: garage-proxy
                 port:
                   number: 30188
-    - host: "*.s3.${SECRET_LAB_DOMAIN}"
+    - host: "*.garage.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /

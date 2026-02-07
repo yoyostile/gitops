@@ -43,7 +43,7 @@ spec:
                       name: cluster-secrets
                       key: GARAGE_KEY_SECRET
                 - name: AWS_ENDPOINT_URL
-                  value: "https://s3.${SECRET_LAB_DOMAIN}"
+                  value: "https://garage.${SECRET_LAB_DOMAIN}"
               command: ["/bin/sh"]
               args:
                 - -c

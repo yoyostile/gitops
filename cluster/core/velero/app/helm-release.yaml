@@ -68,7 +68,7 @@ spec:
           config:
             region: cgn
             s3ForcePathStyle: true
-            s3Url: https://s3.${SECRET_LAB_DOMAIN}
+            s3Url: https://garage.${SECRET_LAB_DOMAIN}
 
       volumeSnapshotLocation: []
 
