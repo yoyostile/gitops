@@ -8,7 +8,7 @@ spec:
   retentionPolicy: 7d
   configuration:
     destinationPath: s3://k3s-lan-${SECRET_LAB_DOMAIN/./-}/backups/cnpg
-    endpointURL: https://garage.r4r3.me
+    endpointURL: https://s3.${SECRET_LAB_DOMAIN}
     # endpointURL: https://s3.eu-central-003.backblazeb2.com
     s3Credentials:
       region:
