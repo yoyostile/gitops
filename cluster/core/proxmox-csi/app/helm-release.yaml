@@ -38,6 +38,8 @@ spec:
         fstype: ext4
         annotations:
           storageclass.kubernetes.io/is-default-class: "false"
+        mountOptions:
+          - noatime
         allowedTopologies:
           - matchLabelExpressions:
               - key: topology.kubernetes.io/region
@@ -49,6 +51,8 @@ spec:
         fstype: ext4
         annotations:
           storageclass.kubernetes.io/is-default-class: "false"
+        mountOptions:
+          - noatime
         allowedTopologies:
           - matchLabelExpressions:
               - key: topology.kubernetes.io/region
