@@ -40,11 +40,11 @@ spec:
   ingressClassName: traefik-internal
   tls:
     - hosts:
-        - "*.garage.${SECRET_LAB_DOMAIN}"
-        - "garage.${SECRET_LAB_DOMAIN}"
-      secretName: "garage-${SECRET_LAB_DOMAIN/./-}-tls"
+        - "*.s3.${SECRET_LAB_DOMAIN}"
+        - "s3.${SECRET_LAB_DOMAIN}"
+      secretName: "s3-${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
-    - host: "garage.${SECRET_LAB_DOMAIN}"
+    - host: "s3.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /
@@ -54,7 +54,7 @@ spec:
                 name: garage-proxy
                 port:
                   number: 30188
-    - host: "*.garage.${SECRET_LAB_DOMAIN}"
+    - host: "*.s3.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /
