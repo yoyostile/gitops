@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: globalping-probe
+  namespace: networking
+  labels:
+    app: globalping-probe
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: globalping-probe
+  template:
+    metadata:
+      labels:
+        app: globalping-probe
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/region
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: globalping-probe
+      containers:
+        - name: globalping-probe
+          image: globalping/globalping-probe:latest
+          imagePullPolicy: Always
+          env:
+            - name: GP_ADOPTION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: globalping-probe
+                  key: GP_ADOPTION_TOKEN
