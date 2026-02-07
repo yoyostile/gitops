@@ -38,6 +38,7 @@ spec:
         fstype: ext4
         annotations:
           storageclass.kubernetes.io/is-default-class: "false"
+        ssd: true
         mountOptions:
           - noatime
         allowedTopologies:
@@ -51,6 +52,7 @@ spec:
         fstype: ext4
         annotations:
           storageclass.kubernetes.io/is-default-class: "false"
+        ssd: true
         mountOptions:
           - noatime
         allowedTopologies:
