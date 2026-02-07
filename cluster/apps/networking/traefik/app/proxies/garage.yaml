@@ -35,8 +35,8 @@ metadata:
     hajimari.io/icon: "server"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     traefik.ingress.kubernetes.io/service.serversscheme: "http"
-    external-dns.alpha.kubernetes.io/target: "${SECRET_INGRESS_ENDPOINT}"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     external-dns/external: "true"
 spec:
   ingressClassName: traefik-internal
