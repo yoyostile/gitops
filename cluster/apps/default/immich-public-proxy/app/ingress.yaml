@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: immich-public-proxy
+  namespace: default
+  annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "image-multiple"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-crowdsec-root@kubernetescrd"
+    external-dns/external: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - photos.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: photos.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: immich-public-proxy
+                port:
+                  name: http
