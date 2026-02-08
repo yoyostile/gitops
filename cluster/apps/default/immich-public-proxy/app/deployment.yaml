@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-public-proxy
+  namespace: default
+  labels:
+    app: immich-public-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich-public-proxy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: immich-public-proxy
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
+      containers:
+        - name: immich-public-proxy
+          image: alangrainger/immich-public-proxy:1.5.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: IMMICH_URL
+              value: "http://immich-server:2283"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5

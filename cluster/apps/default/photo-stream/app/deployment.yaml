@@ -7,7 +7,7 @@ metadata:
   name: photo-stream
   namespace: default
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: photo-stream

@@ -12,6 +12,7 @@ resources:
   - ./hajimari/ks.yaml
   - ./icloudpd/ks.yaml
   - ./immich/ks.yaml
+  - ./immich-public-proxy/ks.yaml
   - ./kubernetes/ks.yaml
   - ./lidarr/ks.yaml
   - ./mariadb/ks.yaml
