@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smtp-relay
+  namespace: networking
+  labels:
+    app: smtp-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smtp-relay
+  template:
+    metadata:
+      labels:
+        app: smtp-relay
+    spec:
+      containers:
+        - name: smtp-relay
+          image: djjudas21/smtp-relay:latest
+          ports:
+            - name: smtp
+              containerPort: 25
+              protocol: TCP
+          env:
+            - name: SMTP_RELAY_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay
+                  key: SMTP_RELAY_HOST
+            - name: SMTP_RELAY_MYHOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay
+                  key: SMTP_RELAY_MYHOSTNAME
+            - name: SMTP_RELAY_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay
+                  key: SMTP_RELAY_USERNAME
+            - name: SMTP_RELAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay
+                  key: SMTP_RELAY_PASSWORD
+            - name: SMTP_RELAY_MYNETWORKS
+              value: "127.0.0.0/8,10.0.0.0/8"
+            - name: SMTP_RELAY_WRAPPERMODE
+              value: "no"
+            - name: SMTP_TLS_SECURITY_LEVEL
+              value: ""
+            - name: SMTP_MESSAGE_SIZE_LIMIT
+              value: "10240000"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
