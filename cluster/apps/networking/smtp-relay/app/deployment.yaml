@@ -47,9 +47,9 @@ spec:
             - name: SMTP_RELAY_MYNETWORKS
               value: "127.0.0.0/8,10.0.0.0/8"
             - name: SMTP_RELAY_WRAPPERMODE
-              value: "no"
+              value: "yes"
             - name: SMTP_TLS_SECURITY_LEVEL
-              value: ""
+              value: "encrypt"
             - name: SMTP_MESSAGE_SIZE_LIMIT
               value: "10240000"
           resources:
