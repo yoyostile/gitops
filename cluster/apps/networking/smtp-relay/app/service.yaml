@@ -14,5 +14,5 @@ spec:
   ports:
     - name: smtp
       port: 25
-      targetPort: smtp
+      targetPort: 2525
       protocol: TCP
