@@ -18,6 +18,8 @@ spec:
       labels:
         app: heck-sh
     spec:
+      imagePullSecrets:
+        - name: global-docker-config
       containers:
         - image: ghcr.io/yoyostile/heck.sh:latest
           imagePullPolicy: Always
