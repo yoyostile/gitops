@@ -5,3 +5,4 @@ resources:
   - garage.yaml
   - home-assistant.yaml
   - pulse.yaml
+  - searxng.yaml
