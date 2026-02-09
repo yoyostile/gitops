@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: heck-sh
+  name: heck-sh
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: heck-sh
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: heck-sh
+    spec:
+      containers:
+        - image: ghcr.io/yoyostile/heck.sh:latest
+          imagePullPolicy: Always
+          name: heck-sh
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      restartPolicy: Always

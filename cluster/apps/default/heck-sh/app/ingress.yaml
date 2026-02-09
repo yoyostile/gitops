@@ -1,0 +1,41 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: heck-sh
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-crowdsec-root@kubernetescrd"
+    external-dns/external: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: heck-sh-tls
+      hosts:
+        - heck.sh
+        - www.heck.sh
+  rules:
+    - host: heck.sh
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: heck-sh
+                port:
+                  number: 8080
+    - host: www.heck.sh
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: heck-sh
+                port:
+                  number: 8080
