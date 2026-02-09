@@ -115,6 +115,10 @@ spec:
             gnetId: 1860
             revision: 41
             datasource: Prometheus
+          traefikDashboard:
+            gnetId: 17347
+            revision: 9
+            datasource: Prometheus
         unifi:
           # unifiPollerClientDPI:
           #   gnetId: 11310
