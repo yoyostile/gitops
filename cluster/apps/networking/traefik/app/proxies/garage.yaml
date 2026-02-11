@@ -10,6 +10,8 @@ subsets:
     ports:
       - name: http
         port: 30188
+      - name: console
+        port: 30186
 ---
 kind: Service
 apiVersion: v1
@@ -22,6 +24,10 @@ spec:
       protocol: TCP
       port: 30188
       targetPort: 30188
+    - name: console
+      protocol: TCP
+      port: 30186
+      targetPort: 30186
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -53,7 +59,17 @@ spec:
               service:
                 name: garage-proxy
                 port:
-                  number: 30188
+                  name: http
+    - host: "console.garage.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: garage-proxy
+                port:
+                  name: console
     - host: "*.garage.${SECRET_LAB_DOMAIN}"
       http:
         paths:
@@ -63,4 +79,4 @@ spec:
               service:
                 name: garage-proxy
                 port:
-                  number: 30188
+                  name: http
