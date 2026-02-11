@@ -60,16 +60,6 @@ spec:
                 name: garage-proxy
                 port:
                   name: http
-    - host: "console.garage.${SECRET_LAB_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: garage-proxy
-                port:
-                  name: console
     - host: "*.garage.${SECRET_LAB_DOMAIN}"
       http:
         paths:
@@ -80,3 +70,32 @@ spec:
                 name: garage-proxy
                 port:
                   name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: garage-console
+  namespace: networking
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/service.serversscheme: "http"
+    traefik.ingress.kubernetes.io/router.priority: "100"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: traefik-internal
+  tls:
+    - hosts:
+        - "console.garage.${SECRET_LAB_DOMAIN}"
+      secretName: "garage-${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "console.garage.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: garage-proxy
+                port:
+                  name: console
