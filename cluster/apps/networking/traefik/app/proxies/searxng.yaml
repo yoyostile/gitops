@@ -35,7 +35,7 @@ metadata:
     external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-crowdsec-root@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
     traefik.ingress.kubernetes.io/service.serversscheme: "http"
     external-dns/external: "true"
 spec:

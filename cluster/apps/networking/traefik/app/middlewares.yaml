@@ -78,18 +78,3 @@ spec:
   stripPrefix:
     prefixes:
       - "/console"
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: crowdsec-root
-  namespace: networking
-spec:
-  plugin:
-    crowdsec-bouncer:
-      enabled: true
-      crowdsecMode: stream
-      updateMaxFailure: -1
-      crowdseclapikey: "${CROWDSEC_TRAEFIK_BOUNCER_LAPI_KEY}"
-      crowdseclapischeme: http
-      crowdseclapihost: crowdsec-service.monitoring:8080

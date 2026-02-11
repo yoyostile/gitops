@@ -38,7 +38,7 @@ spec:
         hajimari.io/enable: "true"
         hajimari.io/icon: "table-tennis"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-        traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-smokeping-redirect@kubernetescrd,networking-crowdsec-root@kubernetescrd"
+        traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-smokeping-redirect@kubernetescrd"
         external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
         external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
         external-dns/external: "true"
