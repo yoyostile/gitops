@@ -18,10 +18,65 @@ spec:
       labels:
         app: echoip
     spec:
+      initContainers:
+        - name: geoip-download
+          image: amazon/aws-cli:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              aws configure set default.s3.addressing_style path
+              ENDPOINT="http://garage-proxy.networking:30188"
+              BUCKET="random"
+              aws s3 cp "s3://${BUCKET}/random/GeoLite2-ASN_20260211.tar.gz" /geoip/ --endpoint-url "${ENDPOINT}"
+              aws s3 cp "s3://${BUCKET}/random/GeoLite2-City_20260210.tar.gz" /geoip/ --endpoint-url "${ENDPOINT}"
+              aws s3 cp "s3://${BUCKET}/random/GeoLite2-Country_20260210.tar.gz" /geoip/ --endpoint-url "${ENDPOINT}"
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: GARAGE_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: GARAGE_KEY_SECRET
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: GARAGE_REGION
+          volumeMounts:
+            - name: geoip
+              mountPath: /geoip
+        - name: geoip-extract
+          image: alpine:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              cd /geoip
+              for f in *.tar.gz; do tar xzf "$f"; done
+              find /geoip -name "*.mmdb" -exec cp {} /geoip/ \;
+              rm -rf /geoip/GeoLite2-*_*/ /geoip/*.tar.gz
+              echo "GeoIP databases ready:"
+              ls -la /geoip/
+          volumeMounts:
+            - name: geoip
+              mountPath: /geoip
       containers:
         - args:
             - -H
             - X-Real-IP
+            - -a
+            - /geoip/GeoLite2-ASN.mmdb
+            - -c
+            - /geoip/GeoLite2-City.mmdb
+            - -f
+            - /geoip/GeoLite2-Country.mmdb
           image: mpolden/echoip
           imagePullPolicy: Always
           name: echoip
@@ -31,6 +86,13 @@ spec:
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
+          volumeMounts:
+            - name: geoip
+              mountPath: /geoip
+              readOnly: true
+      volumes:
+        - name: geoip
+          emptyDir: {}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
