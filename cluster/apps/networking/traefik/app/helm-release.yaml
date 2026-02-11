@@ -167,9 +167,6 @@ spec:
         cloudflarewarp:
           moduleName: github.com/BilikoX/cloudflarewarp
           version: v1.3.4
-        crowdsec-bouncer:
-          moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
-          version: "v1.4.4"
     resources:
       requests:
         memory: 100Mi
@@ -215,14 +212,9 @@ spec:
                       - traefik-internal
               topologyKey: kubernetes.io/hostname
             weight: 90
-    additionalVolumeMounts:
-      - name: plugins
-        mountPath: /plugins-storage
     deployment:
       kind: Deployment
       replicas: 2
-      additionalVolumes:
-        - name: plugins
     service:
       enabled: true
       type: LoadBalancer
@@ -283,11 +275,6 @@ spec:
         ]
     pilot:
       enabled: false
-    experimental:
-      plugins:
-        crowdsec-bouncer:
-          moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
-          version: "v1.4.4"
     resources:
       requests:
         memory: 100Mi
