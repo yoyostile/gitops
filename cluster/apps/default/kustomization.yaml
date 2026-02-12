@@ -28,6 +28,7 @@ resources:
   - ./redis/ks.yaml
   - ./requestbin/ks.yaml
   - ./sabnzbd/ks.yaml
+  - ./searxng/ks.yaml
   - ./shhh/ks.yaml
   - ./st0rage/ks.yaml
   - ./teslamate/ks.yaml

@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: searxng
+  name: searxng
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: searxng
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: searxng
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: fsn1
+      containers:
+        - image: ghcr.io/privau/searxng:latest
+          name: searxng
+          env:
+            - name: BASE_URL
+              value: "https://search.${SECRET_LAB_DOMAIN}"
+            - name: NAME
+              value: "SearXNG"
+            - name: IMAGE_PROXY
+              value: "true"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/searxng
+            - name: data
+              mountPath: /var/cache/searxng
+      volumes:
+        - name: config
+          emptyDir: {}
+        - name: data
+          emptyDir: {}
+      restartPolicy: Always
