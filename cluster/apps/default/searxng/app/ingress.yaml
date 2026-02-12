@@ -1,33 +1,9 @@
 ---
-kind: Endpoints
-apiVersion: v1
-metadata:
-  name: searxng-proxy
-  namespace: networking
-subsets:
-  - addresses:
-      - ip: 10.0.50.232
-    ports:
-      - name: http
-        port: 8888
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: searxng-proxy
-  namespace: networking
-spec:
-  ports:
-    - name: http
-      protocol: TCP
-      port: 8888
-      targetPort: 8888
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: searxng-proxy
-  namespace: networking
+  name: searxng
+  namespace: default
   annotations:
     hajimari.io/appName: "SearxNG"
     hajimari.io/enable: "true"
@@ -53,7 +29,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: searxng-proxy
+                name: searxng
                 port:
                   name: http
     - host: "search.${SECRET_LAB_DOMAIN}"
@@ -63,6 +39,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: searxng-proxy
+                name: searxng
                 port:
                   name: http
