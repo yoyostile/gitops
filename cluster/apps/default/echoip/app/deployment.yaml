@@ -29,9 +29,9 @@ spec:
               aws configure set default.s3.addressing_style path
               ENDPOINT="http://garage-proxy.networking:30188"
               BUCKET="random"
-              aws s3 cp "s3://${BUCKET}/random/GeoLite2-ASN_20260211.tar.gz" /geoip/ --endpoint-url "${ENDPOINT}"
-              aws s3 cp "s3://${BUCKET}/random/GeoLite2-City_20260210.tar.gz" /geoip/ --endpoint-url "${ENDPOINT}"
-              aws s3 cp "s3://${BUCKET}/random/GeoLite2-Country_20260210.tar.gz" /geoip/ --endpoint-url "${ENDPOINT}"
+              aws s3 cp "s3://$${BUCKET}/random/GeoLite2-ASN_20260211.tar.gz" /geoip/ --endpoint-url "$${ENDPOINT}"
+              aws s3 cp "s3://$${BUCKET}/random/GeoLite2-City_20260210.tar.gz" /geoip/ --endpoint-url "$${ENDPOINT}"
+              aws s3 cp "s3://$${BUCKET}/random/GeoLite2-Country_20260210.tar.gz" /geoip/ --endpoint-url "$${ENDPOINT}"
           env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
