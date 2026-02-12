@@ -30,6 +30,8 @@ spec:
               value: "SearXNG"
             - name: IMAGE_PROXY
               value: "true"
+            - name: DUCKDUCKGO_DEFAULT
+              value: "true"
           ports:
             - containerPort: 8080
               protocol: TCP
