@@ -8,7 +8,7 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "cloud-download-outline"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd,networking-authentik@kubernetescrd"
     external-dns/internal: "true"
 spec:
   ingressClassName: traefik-internal
@@ -21,9 +21,9 @@ spec:
       http:
         paths:
           - path: /
-            pathType: ImplementationSpecific
+            pathType: Prefix
             backend:
               service:
-                name: authentik-server
+                name: sabnzbd
                 port:
-                  name: http
+                  number: 8080
