@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-client
+  volumeName: pvc-54ecf717-c64d-4115-8193-3247a614993a
+  resources:
+    requests:
+      storage: 500Mi

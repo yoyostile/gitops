@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lidarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-client
+  volumeName: pvc-79347fec-5f59-448c-b0fa-3e8314c6d915
+  resources:
+    requests:
+      storage: 1Gi

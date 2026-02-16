@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seerr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-client
+  volumeName: pvc-e89e9544-1fcc-42cd-84d6-85ad664850df
+  resources:
+    requests:
+      storage: 1Gi

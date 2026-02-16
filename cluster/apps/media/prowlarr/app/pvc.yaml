@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prowlarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-client
+  volumeName: pvc-f16b31e7-c5d2-4a4b-9058-9a9d0fc44c17
+  resources:
+    requests:
+      storage: 1Gi
