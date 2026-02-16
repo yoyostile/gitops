@@ -33,7 +33,9 @@ spec:
             - name: config
               mountPath: /config
             - name: media
-              mountPath: /media
+              mountPath: /mnt/tank/media
+            - name: usenet
+              mountPath: /mnt/fast/usenet
           resources:
             requests:
               cpu: 100m
@@ -46,3 +48,7 @@ spec:
           nfs:
             server: "glacier.lab.${SECRET_LAB_DOMAIN}"
             path: /mnt/tank/media
+        - name: usenet
+          nfs:
+            server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+            path: /mnt/fast/usenet
