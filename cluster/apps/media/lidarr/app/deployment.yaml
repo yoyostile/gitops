@@ -16,6 +16,10 @@ spec:
     spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       containers:
         - name: lidarr
           image: lscr.io/linuxserver/lidarr:latest
