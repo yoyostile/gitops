@@ -33,8 +33,10 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: music
-              mountPath: /music
+            - name: media
+              mountPath: /mnt/tank/media
+            - name: usenet
+              mountPath: /mnt/fast/usenet
           resources:
             requests:
               cpu: 100m
@@ -43,7 +45,11 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: lidarr-config
-        - name: music
+        - name: media
           nfs:
             server: "glacier.lab.${SECRET_LAB_DOMAIN}"
-            path: /mnt/tank/media/music
+            path: /mnt/tank/media
+        - name: usenet
+          nfs:
+            server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+            path: /mnt/fast/usenet

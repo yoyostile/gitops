@@ -48,6 +48,12 @@ spec:
         server: "glacier.lab.${SECRET_LAB_DOMAIN}"
         path: /mnt/tank/media
         mountPath: /mnt/tank/media
+      usenet:
+        enabled: true
+        type: nfs
+        server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+        path: /mnt/fast/usenet
+        mountPath: /mnt/fast/usenet
     ingress:
       main:
         enabled: false
