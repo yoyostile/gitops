@@ -21,7 +21,6 @@ resources:
   - ./mosquitto/ks.yaml
   - ./paperless/ks.yaml
   - ./photo-stream/ks.yaml
-  - ./plex/ks.yaml
   - ./postgresql/ks.yaml
   - ./prowlarr/ks.yaml
   - ./radarr/ks.yaml
