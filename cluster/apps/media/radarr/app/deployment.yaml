@@ -16,10 +16,6 @@ spec:
     spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
-      dnsConfig:
-        options:
-          - name: ndots
-            value: "1"
       containers:
         - name: radarr
           image: lscr.io/linuxserver/radarr:latest
