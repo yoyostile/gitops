@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sonarr
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sonarr
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
+      containers:
+        - name: sonarr
+          image: lscr.io/linuxserver/sonarr:latest
+          env:
+            - name: PUID
+              value: "3000"
+            - name: PGID
+              value: "3000"
+            - name: TZ
+              value: "Europe/Berlin"
+          ports:
+            - name: http
+              containerPort: 8989
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: media
+              mountPath: /mnt/tank/media
+            - name: usenet
+              mountPath: /mnt/fast/usenet
+          resources:
+            requests:
+              cpu: 100m
+              memory: 250Mi
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: sonarr-config
+        - name: media
+          nfs:
+            server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+            path: /mnt/tank/media
+        - name: usenet
+          nfs:
+            server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+            path: /mnt/fast/usenet
