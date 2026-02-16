@@ -4,6 +4,7 @@ resources:
   - cnpg
   - default
   - kube-system
+  - media
   - monitoring
   - networking
   - system-upgrade

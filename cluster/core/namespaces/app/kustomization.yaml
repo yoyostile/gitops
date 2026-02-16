@@ -5,6 +5,7 @@ resources:
   - cert-manager.yaml
   - cnpg.yaml
   - mariadb-operator.yaml
+  - media.yaml
   - metallb-system.yaml
   - monitoring.yaml
   - networking.yaml
