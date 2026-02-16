@@ -26,13 +26,14 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: plex-data
-  namespace: default
+  namespace: media
   labels:
     velero.io/exclude-from-backup: "true"
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: proxmox-data-ext4
+  volumeName: pvc-4dc2403a-fb4b-455a-8d41-fc9b649fac92
   resources:
     requests:
       storage: 20Gi
