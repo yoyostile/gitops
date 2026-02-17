@@ -27,7 +27,7 @@ spec:
       topology.kubernetes.io/region: lab
     image:
       repository: ghcr.io/paperless-ngx/paperless-ngx
-      tag: 2.20.6
+      tag: 2.20.7
 
     env:
       PAPERLESS_OCR_LANGUAGE: deu
