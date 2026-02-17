@@ -5,7 +5,7 @@ metadata:
   name: psql-cluster
   namespace: default
 spec:
-  instances: 1
+  instances: 3
   # bootstrap:
   #   recovery:
   #     source: origin
@@ -28,7 +28,7 @@ spec:
         barmanObjectName: cnpg-store
 
   storage:
-    storageClass: "proxmox-data-ext4"
+    storageClass: "proxmox-data-zfs"
     pvcTemplate:
       accessModes:
         - ReadWriteOnce
