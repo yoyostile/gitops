@@ -21,7 +21,7 @@ spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
       containers:
-        - image: ghcr.io/louislam/uptime-kuma:2.0.2
+        - image: ghcr.io/louislam/uptime-kuma:2.1.1
           imagePullPolicy: Always
           name: uptime-kuma
           env:
