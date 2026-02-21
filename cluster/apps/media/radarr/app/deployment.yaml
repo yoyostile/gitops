@@ -19,6 +19,9 @@ spec:
       containers:
         - name: radarr
           image: lscr.io/linuxserver/radarr:latest
+          envFrom:
+            - secretRef:
+                name: radarr-postgres
           env:
             - name: PUID
               value: "3000"
