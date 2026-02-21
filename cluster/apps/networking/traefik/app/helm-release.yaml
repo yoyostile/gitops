@@ -77,15 +77,12 @@ spec:
         expose:
           default: true
       web:
-        redirections:
-          entryPoint:
-            to: websecure
-            scheme: https
-            permanent: true
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
       websecure:
-        tls:
-          enabled: true
-          options: "default"
         forwardedHeaders:
           trustedIPs:
             - 10.0.0.0/8
@@ -160,8 +157,6 @@ spec:
           "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
           "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
         ]
-    pilot:
-      enabled: false
     experimental:
       plugins:
         cloudflarewarp:
@@ -246,15 +241,11 @@ spec:
         expose:
           default: true
       web:
-        redirections:
-          entryPoint:
-            to: websecure
-            scheme: https
-            permanent: true
-      websecure:
-        tls:
-          enabled: true
-          options: "default"
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
       metrics:
         port: 8082
         expose:
@@ -273,8 +264,6 @@ spec:
           "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
           "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
         ]
-    pilot:
-      enabled: false
     resources:
       requests:
         memory: 100Mi
