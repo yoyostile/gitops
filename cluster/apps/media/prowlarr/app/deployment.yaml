@@ -19,6 +19,9 @@ spec:
       containers:
         - name: prowlarr
           image: lscr.io/linuxserver/prowlarr:2.3.0
+          envFrom:
+            - secretRef:
+                name: prowlarr-postgres
           env:
             - name: PUID
               value: "3000"
