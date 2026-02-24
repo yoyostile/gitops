@@ -19,7 +19,6 @@ resources:
   - ./mikrotik-backup/ks.yaml
   - ./mosquitto/ks.yaml
   - ./paperless/ks.yaml
-  - ./photo-stream/ks.yaml
   - ./postgresql/ks.yaml
   - ./random-gif/ks.yaml
   - ./redis/ks.yaml
