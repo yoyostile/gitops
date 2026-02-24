@@ -47,7 +47,7 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: lidarr-config
+            claimName: lidarr-config-ceph
         - name: media
           nfs:
             server: "glacier.lab.${SECRET_LAB_DOMAIN}"

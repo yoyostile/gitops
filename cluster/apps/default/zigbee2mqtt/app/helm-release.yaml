@@ -50,10 +50,8 @@ spec:
         memory: 64M
     persistence:
       data:
-        accessMode: ReadWriteOnce
         enabled: true
-        size: 500Mi
-        storageClass: "nfs-client"
+        existingClaim: zigbee2mqtt-data-ceph
         mountPath: "/data"
       usb:
         enabled: true

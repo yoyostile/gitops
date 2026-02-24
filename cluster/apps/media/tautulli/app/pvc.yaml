@@ -2,20 +2,6 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: tautulli-config
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: nfs-client
-  volumeName: pvc-d9e68bf7-c2f8-4529-8bb4-cba11cc760a3
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: tautulli-config-ceph
   namespace: media
 spec:

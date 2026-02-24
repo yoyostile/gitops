@@ -46,7 +46,7 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: sonarr-config
+            claimName: sonarr-config-ceph
         - name: media
           nfs:
             server: "glacier.lab.${SECRET_LAB_DOMAIN}"
