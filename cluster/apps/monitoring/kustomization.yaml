@@ -4,5 +4,5 @@ resources:
     - flux-alerts
     - kube-prometheus-stack
     - ./librenms/ks.yaml
-    - smokeping
+    - ./smokeping/ks.yaml
     - unifi-poller
