@@ -238,7 +238,7 @@ spec:
               labels:
                 velero.io/exclude-from-backup: "true"
             spec:
-              storageClassName: "ceph-rbd"
+              storageClassName: "nfs-client"
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
