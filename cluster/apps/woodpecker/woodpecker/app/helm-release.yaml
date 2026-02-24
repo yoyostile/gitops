@@ -16,7 +16,7 @@ spec:
       env:
         WOODPECKER_BACKEND_K8S_STORAGE_CLASS: "nfs-client"
       persistence:
-        storageClass: "nfs-client"
+        storageClass: "ceph-rbd"
     server:
       ingress:
         enabled: true
@@ -38,7 +38,7 @@ spec:
             hosts:
               - "woodpecker.${SECRET_LAB_DOMAIN}"
       persistence:
-        storageClass: "nfs-client"
+        storageClass: "ceph-rbd"
       env:
         WOODPECKER_HOST: "https://woodpecker.${SECRET_LAB_DOMAIN}"
         WOODPECKER_ADMIN: "yoyostile"

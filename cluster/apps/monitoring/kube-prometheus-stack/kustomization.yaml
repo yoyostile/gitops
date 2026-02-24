@@ -4,6 +4,5 @@ kind: Kustomization
 commonAnnotations:
   kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
-  - pvc.yaml
   - helm-release.yaml
   - dashboards
