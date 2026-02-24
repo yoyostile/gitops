@@ -35,4 +35,4 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: seerr-config
+            claimName: seerr-config-ceph
