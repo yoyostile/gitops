@@ -10,7 +10,7 @@ spec:
   storageClassName: ceph-rbd
   resources:
     requests:
-      storage: 100Gi
+      storage: 50Mi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -23,4 +23,4 @@ spec:
   storageClassName: ceph-rbd
   resources:
     requests:
-      storage: 500Mi
+      storage: 50Mi

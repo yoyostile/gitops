@@ -41,6 +41,5 @@ resources:
   - rook-ceph-charts.yaml
   - stakater-charts.yaml
   - traefik-charts.yaml
-  - truecharts-charts.yaml
   - vmware-tanzu-charts.yaml
   - woodpecker-charts.yaml

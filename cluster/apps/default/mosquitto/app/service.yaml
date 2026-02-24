@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto
+  namespace: default
+  annotations:
+    external-dns/internal: "true"
+spec:
+  type: LoadBalancer
+  loadBalancerIP: "172.16.38.202"
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/name: mosquitto
+  ports:
+    - name: mqtt
+      port: 1883
+      targetPort: 1883
+      protocol: TCP
