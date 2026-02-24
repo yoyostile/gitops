@@ -58,13 +58,9 @@ spec:
       config:
         enabled: true
         mountPath: /config
-        accessModes: ReadWriteOnce
-        storageClass: 'nfs-client'
-        size: 128Mi
+        existingClaim: smokeping-config-ceph
 
       data:
         enabled: true
         mountPath: /data
-        accessMode: ReadWriteOnce
-        storageClass: 'nfs-client'
-        size: 1Gi
+        existingClaim: smokeping-data-ceph
