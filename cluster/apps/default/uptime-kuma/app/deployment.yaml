@@ -48,7 +48,7 @@ spec:
       volumes:
         - name: uptime-kuma
           persistentVolumeClaim:
-            claimName: uptime-kuma
+            claimName: uptime-kuma-ceph
       dnsConfig:
         options:
           - name: ndots
