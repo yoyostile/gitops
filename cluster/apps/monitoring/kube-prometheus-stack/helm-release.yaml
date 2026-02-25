@@ -111,8 +111,8 @@ spec:
       dashboards:
         ceph:
           ceph-cluster:
-            gnetId: 2842
-            revision: 18
+            gnetId: 7056
+            revision: 2
             datasource: Prometheus
         mariadb:
           galera-mariadb-overview:
