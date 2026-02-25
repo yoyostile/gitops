@@ -100,20 +100,7 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/mariadb
-            - name: 'ceph'
-              orgId: 1
-              folder: Ceph
-              type: file
-              disableDeletion: false
-              allowUiUpdates: true
-              options:
-                path: /var/lib/grafana/dashboards/ceph
       dashboards:
-        ceph:
-          ceph-cluster:
-            gnetId: 7056
-            revision: 2
-            datasource: Prometheus
         mariadb:
           galera-mariadb-overview:
             gnetId: 13106
