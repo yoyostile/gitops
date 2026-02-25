@@ -1,0 +1,42 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+configMapGenerator:
+  - name: ceph-cluster-dashboard
+    files:
+      - ceph-cluster.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/ceph-cluster.json
+  - name: ceph-cluster-advanced-dashboard
+    files:
+      - ceph-cluster-advanced.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/ceph-cluster-advanced.json
+  - name: ceph-hosts-overview-dashboard
+    files:
+      - hosts-overview.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/hosts-overview.json
+  - name: ceph-host-details-dashboard
+    files:
+      - host-details.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/host-details.json
+  - name: ceph-osds-overview-dashboard
+    files:
+      - osds-overview.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/osds-overview.json
+  - name: ceph-osd-device-details-dashboard
+    files:
+      - osd-device-details.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/osd-device-details.json
+  - name: ceph-pool-overview-dashboard
+    files:
+      - pool-overview.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/pool-overview.json
+  - name: ceph-pool-detail-dashboard
+    files:
+      - pool-detail.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/pool-detail.json
+  - name: ceph-rbd-overview-dashboard
+    files:
+      - rbd-overview.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/rbd-overview.json
+  - name: ceph-rbd-details-dashboard
+    files:
+      - rbd-details.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/rbd-details.json
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+    grafana_folder: "Ceph"
+  labels:
+    grafana_dashboard: "1"

@@ -9,9 +9,6 @@ configMapGenerator:
   - name: cnpg-dashboard
     files:
       - cnpg-dashboard.json=https://raw.githubusercontent.com/cloudnative-pg/grafana-dashboards/refs/heads/main/charts/cluster/grafana-dashboard.json
-  - name: ceph-cluster-dashboard
-    files:
-      - ceph-cluster.json=https://raw.githubusercontent.com/ceph/ceph/refs/heads/squid/monitoring/ceph-mixin/dashboards_out/ceph-cluster.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:

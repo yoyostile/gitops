@@ -6,3 +6,4 @@ commonAnnotations:
 resources:
   - helm-release.yaml
   - dashboards
+  - ceph-dashboards
