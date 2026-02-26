@@ -25,25 +25,14 @@ spec:
   values:
     nodeSelector:
       topology.kubernetes.io/region: lab
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: feature.node.kubernetes.io/usb-ff_10c4_ea60.present
-                  operator: In
-                  values:
-                    - "true"
     tolerations:
       - key: "arch"
         operator: "Equal"
         value: "arm64"
         effect: "NoSchedule"
     image:
-      # repository: koenkk/zigbee2mqtt
-      # tag: 2.6.2
-      repository: ghcr.io/yoyostile/zigbee2mqtt
-      tag: 2.6.2.custom-958a4220
+      repository: koenkk/zigbee2mqtt
+      tag: 2.8.0
     resources:
       requests:
         cpu: 50m
@@ -53,16 +42,11 @@ spec:
         enabled: true
         existingClaim: zigbee2mqtt-data-ceph
         mountPath: "/data"
-      # usb:
-      #   enabled: false
-      #   type: hostPath
-      #   hostPath: /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_a4f05232d393eb11a13c1b4f3d98b6d1-if00-port0
     securityContext:
       privileged: true
     config:
       serial:
         adapter: zstack
-        # port: /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_a4f05232d393eb11a13c1b4f3d98b6d1-if00-port0
         port: tcp://SLZB-06P7.lab.${SECRET_LAB_DOMAIN}:6638
         baudrate: 115200
       advanced:
