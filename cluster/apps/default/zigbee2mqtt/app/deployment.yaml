@@ -61,13 +61,7 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-            - name: settings
-              mountPath: /app/configuration.yaml
-              subPath: configuration.yaml
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data-ceph
-        - name: settings
-          configMap:
-            name: zigbee2mqtt-settings
