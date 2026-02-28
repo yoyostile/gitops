@@ -12,7 +12,7 @@ spec:
     matchLabels:
       app: heck-sh
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
