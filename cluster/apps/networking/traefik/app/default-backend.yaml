@@ -9,8 +9,7 @@ spec:
   externalName: echoip.default.svc.cluster.local
   ports:
     - protocol: TCP
-      port: 443
-      targetPort: 80
+      port: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -30,4 +29,4 @@ spec:
     service:
       name: default-backend
       port:
-        number: 443
+        number: 8080
