@@ -7,6 +7,7 @@ resources:
   - ./dawarich/ks.yaml
   - ./devolo-powerbridge-monitor/ks.yaml
   - ./echo/ks.yaml
+  - ./evcc/ks.yaml
   - ./echoip/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml

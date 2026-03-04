@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evcc
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: evcc
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: evcc
+    spec:
+      containers:
+        - name: evcc
+          image: evcc/evcc:latest
+          ports:
+            - name: http
+              containerPort: 7070
+          volumeMounts:
+            - name: config
+              mountPath: /etc/evcc.yaml
+              subPath: evcc.yaml
+              readOnly: true
+            - name: data
+              mountPath: /root/.evcc
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      volumes:
+        - name: config
+          configMap:
+            name: evcc-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: evcc-data
