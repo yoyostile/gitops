@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: evcc-config
+    namespace: default
+data:
+    evcc.yaml: ENC[AES256_GCM,data:P9VT+lQVrUm/CyR2feHgT8neOUlPONN4I9+SlZ7TItNIbwAfLgXe41M+c/UdnCd3VHt4/3bnvivpenWOAXL6BVTNbD1HdA+QvyxIN49XOgpsA77Y0AeyncFGs8vSe4rmG/8TcODJUjQusFwHT0CPqQ/vkU7IVxp26YpZFrgLa3qXhD7jKm0DcI6A0/cDSvJfwXhGB9ujSQnZbnrEj5JlphfRPKJGJYhPjBLa9eKJkmStBS12+HrFQKJmJSIViaEFZOjXdt0WAfvcY+O0pTHzxRX1dvhNipldKHkHnrbqZvejhwXK/CjZbH18UB2hsfoit1nurtvcDJenMGPgSohjabTQbC3Bq/+aPybW061XenJ03u7/YwYL/0WIGabIVks9NjTWjw6HRXyjHUBbETNEQF9QKOSNRw4lEh2Nonb9HgSCgVXd9b8jrnIm9+xBgBpqysFkVW1ux5YHZZ3qAaRG88gb8AQcUJ08Pwv8tbaD64B7an/CJB9tfftQlK+toaTEBcCz0WLwFfUNDIvoLb7DkAGrIdPVL13S/WRntceuBpTZy56aOAIenyohOYegwon5768olI8TqI/kWSwDVg8Ng6nuNLT2zaOu1s/Sd84yGYWwDi/nsho2G7ZnmCkyQxn+ZJ6BC/ZDBWP7J4Y8PNaBaq7Qf0CBmmTDl2S8NO578Dwsll9rW6q+okPnldHQcGPjp0LGQVRBK80NpHbOzrU1WYk0dLcEpOku,iv:YGTmWlk3OrTGz5xgRPcFGlAwlk0sAbWb8fLBrXBcxOk=,tag:OUtRhviC7EZIFvFMjfd1hA==,type:str]
+sops:
+    age:
+        - recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwaDZSQ293MVFGc2puRm1B
+            UnBLWlptS1pIc0tTZFU5K1AzWnMwMG1iMUZJClI0Z3VFMUFvVGM1YWFPNVFlRTF4
+            cmZkY2pUbEVNS011UFVaMkFpOHB2c28KLS0tIHV4TE5OUHNEWkF0Z2pNalpOWnhE
+            QXJzaDgxNDhnTnlJKy9iTGRlbmNJRkEK7XY9Drzq2e6lFzH9R4SEX9Rs4Tnl63W1
+            tKoLRAgeoOYv1r0PRQvZjtOVJGY7Bti9toCNKqUzEWZGow1/nigQXQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-04T18:57:03Z"
+    mac: ENC[AES256_GCM,data:eW1dtCagJTs/I5e/X75uk28CM1ZlhTXXopJ+qc49tLNDHx4baTDT3hKXH57vIrK/msQmT13xVQEANwOH4DEj3WvDyS8F/b/HigmZBGB9KKJyJYx1f+tlXqunjpTcfX5285T3dV4zFWLcX3CS+9LnOo2q/Ep/9SVJRKNhPARgUIs=,iv:x6w+9wECmbiECOb9Pd5t3Ja5l75pe+x7A9r4So/BYWk=,tag:XQJZ/JwYOhdvVYVURD6CMw==,type:str]
+    encrypted_regex: ^(data|stringData)$
+    version: 3.11.0
