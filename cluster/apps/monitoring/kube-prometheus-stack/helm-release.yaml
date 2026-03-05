@@ -100,58 +100,7 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/mariadb
-            - name: 'evcc'
-              orgId: 1
-              folder: EVCC
-              type: file
-              disableDeletion: false
-              allowUiUpdates: true
-              options:
-                path: /var/lib/grafana/dashboards/evcc
       dashboards:
-        evcc:
-          pvAllTime:
-            gnetId: 22024
-            revision: 15
-            datasource:
-              - name: DS_EVCC_INFLUXDB
-                value: EVCC Influx DB
-              - name: DS_EVCC_AGGREGRATIONS
-                value: EVCC Aggregations
-          pvJahr:
-            gnetId: 22025
-            revision: 18
-            datasource:
-              - name: DS_EVCC_INFLUXDB
-                value: EVCC Influx DB
-              - name: DS_EVCC_AGGREGRATIONS
-                value: EVCC Aggregations
-          pvMonat:
-            gnetId: 22026
-            revision: 15
-            datasource:
-              - name: DS_EVCC_INFLUXDB
-                value: EVCC Influx DB
-              - name: DS_EVCC_AGGREGRATIONS
-                value: EVCC Aggregations
-          pvTodayMobile:
-            gnetId: 22027
-            revision: 17
-            datasource:
-              - name: DS_EVCC_INFLUXDB
-                value: EVCC Influx DB
-          pvToday:
-            gnetId: 22028
-            revision: 19
-            datasource:
-              - name: DS_EVCC_INFLUXDB
-                value: EVCC Influx DB
-          pvTodayDetails:
-            gnetId: 22956
-            revision: 10
-            datasource:
-              - name: DS_EVCC_INFLUXDB
-                value: EVCC Influx DB
         mariadb:
           galera-mariadb-overview:
             gnetId: 13106
