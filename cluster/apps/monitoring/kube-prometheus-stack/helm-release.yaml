@@ -100,7 +100,40 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/mariadb
+            - name: 'evcc'
+              orgId: 1
+              folder: EVCC
+              type: file
+              disableDeletion: false
+              allowUiUpdates: true
+              options:
+                path: /var/lib/grafana/dashboards/evcc
       dashboards:
+        evcc:
+          pvAllTime:
+            gnetId: 22024
+            revision: 15
+            datasource: InfluxDB
+          pvJahr:
+            gnetId: 22025
+            revision: 18
+            datasource: InfluxDB
+          pvMonat:
+            gnetId: 22026
+            revision: 15
+            datasource: InfluxDB
+          pvTodayMobile:
+            gnetId: 22027
+            revision: 17
+            datasource: InfluxDB
+          pvToday:
+            gnetId: 22028
+            revision: 19
+            datasource: InfluxDB
+          pvTodayDetails:
+            gnetId: 22956
+            revision: 10
+            datasource: InfluxDB
         mariadb:
           galera-mariadb-overview:
             gnetId: 13106
@@ -215,6 +248,14 @@ spec:
           url: http://influx-influxdb.monitoring:8086
           jsonData:
             dbName: evcc
+        - name: InfluxDB-Aggr
+          uid: influxdb-aggr
+          access: proxy
+          orgId: 1
+          type: influxdb
+          url: http://influx-influxdb.monitoring:8086
+          jsonData:
+            dbName: evcc_aggr
     prometheus:
       prometheusSpec:
         additionalScrapeConfigs:
