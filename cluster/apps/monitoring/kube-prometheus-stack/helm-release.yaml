@@ -207,6 +207,14 @@ spec:
           secureJsonData:
             clientSecret: "${GRAFANA_STRAVA_DATASOURCE_SECRET}"
             refreshToken: "${GRAFANA_STRAVA_REFRESH_TOKEN}"
+        - name: InfluxDB
+          uid: influxdb
+          access: proxy
+          orgId: 1
+          type: influxdb
+          url: http://influx-influxdb.monitoring:8086
+          jsonData:
+            dbName: evcc
     prometheus:
       prometheusSpec:
         additionalScrapeConfigs:
