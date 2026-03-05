@@ -1,0 +1,90 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: evcc-aggregate-hourly
+  namespace: default
+spec:
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          initContainers:
+            - name: fetch-script
+              image: busybox:1.36
+              command:
+                - sh
+                - -c
+                - wget -O /scripts/evcc-influx-aggregate.sh "https://raw.githubusercontent.com/ha-puzzles/evcc-grafana-dashboards/main/scripts/evcc-influx-aggregate.sh" && chmod +x /scripts/evcc-influx-aggregate.sh
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+          containers:
+            - name: aggregate
+              image: influxdb:1.8
+              command:
+                - bash
+                - -c
+                - cp /config/evcc-influx-aggregate.conf /scripts/ && /scripts/evcc-influx-aggregate.sh --today
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                - name: config
+                  mountPath: /config
+                  readOnly: true
+          volumes:
+            - name: scripts
+              emptyDir: {}
+            - name: config
+              configMap:
+                name: evcc-aggregation-config
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: evcc-aggregate-daily
+  namespace: default
+spec:
+  schedule: "5 0 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          initContainers:
+            - name: fetch-script
+              image: busybox:1.36
+              command:
+                - sh
+                - -c
+                - wget -O /scripts/evcc-influx-aggregate.sh "https://raw.githubusercontent.com/ha-puzzles/evcc-grafana-dashboards/main/scripts/evcc-influx-aggregate.sh" && chmod +x /scripts/evcc-influx-aggregate.sh
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+          containers:
+            - name: aggregate
+              image: influxdb:1.8
+              command:
+                - bash
+                - -c
+                - cp /config/evcc-influx-aggregate.conf /scripts/ && /scripts/evcc-influx-aggregate.sh --yesterday
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                - name: config
+                  mountPath: /config
+                  readOnly: true
+          volumes:
+            - name: scripts
+              emptyDir: {}
+            - name: config
+              configMap:
+                name: evcc-aggregation-config
