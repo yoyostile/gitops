@@ -68,15 +68,15 @@ spec:
         dashboardproviders.yaml:
           apiVersion: 1
           providers:
-            - name: 'unifi'
+            - name: "unifi"
               orgId: 1
-              folder: 'UniFi'
+              folder: "UniFi"
               type: file
               disableDeletion: false
               editable: true
               options:
                 path: /var/lib/grafana/dashboards/unifi
-            - name: 'teslamate'
+            - name: "teslamate"
               orgId: 1
               folder: Teslamate
               type: file
@@ -84,7 +84,7 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/teslamate
-            - name: 'misc'
+            - name: "misc"
               orgId: 1
               folder: Misc
               type: file
@@ -92,7 +92,7 @@ spec:
               allowUiUpdates: true
               options:
                 path: /var/lib/grafana/dashboards/misc
-            - name: 'mariadb'
+            - name: "mariadb"
               orgId: 1
               folder: MariaDB
               type: file
@@ -207,38 +207,22 @@ spec:
           secureJsonData:
             clientSecret: "${GRAFANA_STRAVA_DATASOURCE_SECRET}"
             refreshToken: "${GRAFANA_STRAVA_REFRESH_TOKEN}"
-        - name: EVCC Influx DB
-          uid: evcc-influxdb
-          access: proxy
-          orgId: 1
-          type: influxdb
-          url: http://influx-influxdb.monitoring:8086
-          jsonData:
-            dbName: evcc
-        - name: EVCC Aggregations
-          uid: evcc-aggregations
-          access: proxy
-          orgId: 1
-          type: influxdb
-          url: http://influx-influxdb.monitoring:8086
-          jsonData:
-            dbName: evcc_aggr
     prometheus:
       prometheusSpec:
         additionalScrapeConfigs:
           - job_name: "node-exporter"
             static_configs:
               - targets:
-                  - 'pve01.lab.${SECRET_LAB_DOMAIN}:9100'
-                  - 'pve02.lab.${SECRET_LAB_DOMAIN}:9100'
-                  - 'pve03.lab.${SECRET_LAB_DOMAIN}:9100'
-                  - 'glacier.lab.${SECRET_LAB_DOMAIN}:9100'
+                  - "pve01.lab.${SECRET_LAB_DOMAIN}:9100"
+                  - "pve02.lab.${SECRET_LAB_DOMAIN}:9100"
+                  - "pve03.lab.${SECRET_LAB_DOMAIN}:9100"
+                  - "glacier.lab.${SECRET_LAB_DOMAIN}:9100"
           - job_name: "ceph"
             static_configs:
               - targets:
-                  - 'pve01.lab.${SECRET_LAB_DOMAIN}:9283'
-                  - 'pve02.lab.${SECRET_LAB_DOMAIN}:9283'
-                  - 'pve03.lab.${SECRET_LAB_DOMAIN}:9283'
+                  - "pve01.lab.${SECRET_LAB_DOMAIN}:9283"
+                  - "pve02.lab.${SECRET_LAB_DOMAIN}:9283"
+                  - "pve03.lab.${SECRET_LAB_DOMAIN}:9283"
           - job_name: "hass"
             scrape_interval: 60s
             metrics_path: /api/prometheus
@@ -248,7 +232,7 @@ spec:
 
             scheme: http
             static_configs:
-              - targets: ['hass.lab.${SECRET_LAB_DOMAIN}:8123']
+              - targets: ["hass.lab.${SECRET_LAB_DOMAIN}:8123"]
         retention: 730d
         retentionSize: 200GB
         walCompression: true

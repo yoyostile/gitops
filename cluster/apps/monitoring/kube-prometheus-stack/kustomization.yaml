@@ -7,4 +7,3 @@ resources:
   - helm-release.yaml
   - dashboards
   - ceph-dashboards
-  - evcc-dashboards
