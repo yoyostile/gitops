@@ -30,7 +30,7 @@ spec:
               command:
                 - bash
                 - -c
-                - cp /config/evcc-influx-aggregate.conf /scripts/ && /scripts/evcc-influx-aggregate.sh --today
+                - apt-get update -qq && apt-get install -y -qq bc > /dev/null && cp /config/evcc-influx-aggregate.conf /scripts/ && /scripts/evcc-influx-aggregate.sh --today
               volumeMounts:
                 - name: scripts
                   mountPath: /scripts
@@ -75,7 +75,7 @@ spec:
               command:
                 - bash
                 - -c
-                - cp /config/evcc-influx-aggregate.conf /scripts/ && /scripts/evcc-influx-aggregate.sh --yesterday
+                - apt-get update -qq && apt-get install -y -qq bc > /dev/null && cp /config/evcc-influx-aggregate.conf /scripts/ && /scripts/evcc-influx-aggregate.sh --yesterday
               volumeMounts:
                 - name: scripts
                   mountPath: /scripts
