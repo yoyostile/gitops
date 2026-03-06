@@ -9,3 +9,4 @@ resources:
   - pvc.yaml
   - aggregation-configmap.yaml
   - cronjob.yaml
+  - grafana-helm-release.yaml

@@ -1,0 +1,77 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: evcc-grafana
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: grafana
+      version: 8.14.3
+      sourceRef:
+        kind: HelmRepository
+        name: grafana-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    nodeSelector:
+      topology.kubernetes.io/region: lab
+    persistence:
+      enabled: true
+      storageClassName: ceph-rbd
+      size: 1Gi
+    env:
+      GF_SERVER_ROOT_URL: "https://gevcc.${SECRET_LAB_DOMAIN}"
+      GF_AUTH_GENERIC_OAUTH_ENABLED: "true"
+      GF_AUTH_GENERIC_OAUTH_NAME: "authentik"
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: ${GRAFANA_OAUTH_CLIENT_ID}
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ${GRAFANA_OAUTH_CLIENT_SECRET}
+      GF_AUTH_GENERIC_OAUTH_SCOPES: "openid profile email"
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: "https://auth.${SECRET_LAB_DOMAIN}/application/o/authorize/"
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "https://auth.${SECRET_LAB_DOMAIN}/application/o/token/"
+      GF_AUTH_GENERIC_OAUTH_API_URL: "https://auth.${SECRET_LAB_DOMAIN}/application/o/userinfo/"
+      GF_AUTH_SIGNOUT_REDIRECT_URL: "https://auth.${SECRET_LAB_DOMAIN}/application/o/grafana/end-session/"
+      GF_AUTH_OAUTH_AUTO_LOGIN: "true"
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
+    adminPassword: ${SECRET_GRAFANA_PASSWORD}
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: EVCC Influx DB
+            uid: evcc-influxdb
+            access: proxy
+            type: influxdb
+            url: http://influx-influxdb.monitoring:8086
+            jsonData:
+              dbName: evcc
+          - name: EVCC Aggregations
+            uid: evcc-aggregations
+            access: proxy
+            type: influxdb
+            url: http://influx-influxdb.monitoring:8086
+            jsonData:
+              dbName: evcc_aggr
+    ingress:
+      enabled: true
+      ingressClassName: traefik-internal
+      annotations:
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "chart-line"
+        hajimari.io/appName: "EVCC Grafana"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+        external-dns/internal: "true"
+      hosts:
+        - gevcc.${SECRET_LAB_DOMAIN}
+      tls:
+        - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+          hosts:
+            - gevcc.${SECRET_LAB_DOMAIN}
