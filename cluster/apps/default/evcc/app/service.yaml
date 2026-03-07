@@ -10,5 +10,9 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - port: 5021
+      targetPort: modbus
+      protocol: TCP
+      name: modbus
   selector:
     app.kubernetes.io/name: evcc
