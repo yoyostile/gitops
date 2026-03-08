@@ -29,6 +29,8 @@ spec:
       options:
         - name: ndots
           value: "1"
+    controller:
+      replicas: 0
     image:
       repository: linuxserver/sabnzbd
       tag: 4.5.5
