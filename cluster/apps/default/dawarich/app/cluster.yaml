@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   imageName: ghcr.io/cloudnative-pg/postgis:17
-  instances: 3
+  instances: 1
 
   bootstrap:
     initdb:
