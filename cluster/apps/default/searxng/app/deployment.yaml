@@ -18,8 +18,6 @@ spec:
       labels:
         app: searxng
     spec:
-      nodeSelector:
-        topology.kubernetes.io/region: fsn1
       containers:
         - image: ghcr.io/privau/searxng:latest
           name: searxng
