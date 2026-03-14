@@ -183,10 +183,10 @@ spec:
       volumes:
         - name: dawarich-storage
           persistentVolumeClaim:
-            claimName: dawarich-storage-pvc
+            claimName: dawarich-storage-pvc-ext4
         - name: dawarich-public
           persistentVolumeClaim:
-            claimName: dawarich-public-pvc
+            claimName: dawarich-public-pvc-ext4
         - name: dawarich-watched
           persistentVolumeClaim:
-            claimName: dawarich-watched-pvc
+            claimName: dawarich-watched-pvc-ext4
