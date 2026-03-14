@@ -7,7 +7,7 @@ metadata:
   labels:
     app: globalping-probe
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -20,16 +20,6 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - globalping-probe
-              topologyKey: topology.kubernetes.io/region
       containers:
         - name: globalping-probe
           image: globalping/globalping-probe:latest
