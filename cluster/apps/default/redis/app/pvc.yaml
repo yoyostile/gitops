@@ -2,19 +2,6 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: redis-data-redis-master-0-ceph
-  namespace: default
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: proxmox-data-zfs
-  resources:
-    requests:
-      storage: 12Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: redis-data-redis-master-0-ext4
   namespace: default
 spec:
