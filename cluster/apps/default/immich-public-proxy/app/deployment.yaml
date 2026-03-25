@@ -22,7 +22,7 @@ spec:
         topology.kubernetes.io/region: lab
       containers:
         - name: immich-public-proxy
-          image: alangrainger/immich-public-proxy:1.15.3
+          image: alangrainger/immich-public-proxy:1.15.5
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
