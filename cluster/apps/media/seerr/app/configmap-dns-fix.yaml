@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seerr-dns-fix
+  namespace: media
+data:
+  dns-ipv4.cjs: |
+    // Force IPv4-only DNS lookups to work around musl getaddrinfo failing
+    // when AAAA returns NXDOMAIN while A succeeds.
+    const dns = require("dns");
+    const origLookup = dns.lookup;
+    dns.lookup = function (hostname, options, callback) {
+      if (typeof options === "function") {
+        callback = options;
+        options = { family: 4 };
+      } else if (typeof options === "number") {
+        options = { family: 4 };
+      } else {
+        options = Object.assign({}, options, { family: 4 });
+      }
+      return origLookup.call(dns, hostname, options, callback);
+    };

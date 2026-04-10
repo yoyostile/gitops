@@ -16,10 +16,6 @@ spec:
     spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
-      dnsConfig:
-        options:
-          - name: ndots
-            value: "1"
       containers:
         - name: seerr
           image: ghcr.io/seerr-team/seerr:latest
@@ -27,13 +23,17 @@ spec:
             - name: TZ
               value: "Europe/Berlin"
             - name: NODE_OPTIONS
-              value: "--dns-result-order=ipv4first"
+              value: "--require /app/dns-ipv4.cjs"
           ports:
             - name: http
               containerPort: 5055
           volumeMounts:
             - name: config
               mountPath: /app/config
+            - name: dns-fix
+              mountPath: /app/dns-ipv4.cjs
+              subPath: dns-ipv4.cjs
+              readOnly: true
           resources:
             requests:
               cpu: 100m
@@ -42,3 +42,6 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: seerr-config-ceph
+        - name: dns-fix
+          configMap:
+            name: seerr-dns-fix
