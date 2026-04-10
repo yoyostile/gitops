@@ -26,6 +26,8 @@ spec:
           env:
             - name: TZ
               value: "Europe/Berlin"
+            - name: NODE_OPTIONS
+              value: "--dns-result-order=ipv4first"
           ports:
             - name: http
               containerPort: 5055
