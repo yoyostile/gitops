@@ -47,6 +47,5 @@ spec:
         WOODPECKER_OPEN: "false"
         WOODPECKER_PLUGINS_PRIVILEGED: woodpeckerci/plugin-docker-buildx
         WOODPECKER_GITHUB: "true"
-        WOODPECKER_AGENT_IMAGE: "woodpeckerci/woodpecker-agent:v3.13.0"
       extraSecretNamesForEnvFrom:
         - woodpecker-env
