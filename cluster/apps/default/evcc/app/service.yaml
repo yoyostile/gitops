@@ -10,9 +10,28 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-    - port: 5021
-      targetPort: modbus
-      protocol: TCP
-      name: modbus
   selector:
     app.kubernetes.io/name: evcc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: evcc-modbus
+  namespace: default
+  annotations:
+    external-dns/internal: "true"
+spec:
+  type: LoadBalancer
+  loadBalancerIP: "172.16.38.210"
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/name: evcc
+  ports:
+    - name: huawei
+      port: 5021
+      targetPort: huawei
+      protocol: TCP
+    - name: marstek
+      port: 5022
+      targetPort: marstek
+      protocol: TCP

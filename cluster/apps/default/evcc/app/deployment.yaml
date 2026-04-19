@@ -22,8 +22,10 @@ spec:
           ports:
             - name: http
               containerPort: 7070
-            - name: modbus
+            - name: huawei
               containerPort: 5021
+            - name: marstek
+              containerPort: 5022
           volumeMounts:
             - name: config
               mountPath: /etc/evcc.yaml
