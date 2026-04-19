@@ -23,7 +23,7 @@ metadata:
 spec:
   type: LoadBalancer
   loadBalancerIP: "172.16.38.210"
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   selector:
     app.kubernetes.io/name: evcc
   ports:
