@@ -16,6 +16,8 @@ spec:
     spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: seerr
           image: ghcr.io/seerr-team/seerr:latest
