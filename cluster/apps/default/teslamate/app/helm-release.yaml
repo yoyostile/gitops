@@ -27,8 +27,8 @@ spec:
       replicas: 1
 
     image:
-      repository: teslamate/teslamate
-      tag: 4.0.0
+      repository: ghcr.io/teslamate-org/teslamate
+      tag: pr-5406
       pullPolicy: IfNotPresent
 
     env:
