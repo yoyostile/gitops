@@ -28,7 +28,7 @@ spec:
             - secretRef:
                 name: librenms
           env:
-            - name: APP_URL
+            - name: LIBRENMS_BASE_URL
               value: "https://librenms.${SECRET_LAB_DOMAIN}"
           volumeMounts:
             - name: librenms
