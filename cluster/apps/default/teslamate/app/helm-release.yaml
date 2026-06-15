@@ -28,7 +28,7 @@ spec:
 
     image:
       repository: ghcr.io/teslamate-org/teslamate
-      tag: pr-5406
+      tag: v4.0.1
       pullPolicy: IfNotPresent
 
     env:
