@@ -30,6 +30,25 @@ spec:
           env:
             - name: LIBRENMS_BASE_URL
               value: "https://librenms.${SECRET_LAB_DOMAIN}"
+          startupProbe:
+            # boot runs config:cache + DB validation; allow up to ~5min
+            httpGet:
+              path: /
+              port: 8000
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            periodSeconds: 20
+            failureThreshold: 5
           volumeMounts:
             - name: librenms
               mountPath: /data
