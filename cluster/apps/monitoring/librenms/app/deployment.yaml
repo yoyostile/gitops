@@ -27,6 +27,9 @@ spec:
           envFrom:
             - secretRef:
                 name: librenms
+          env:
+            - name: APP_URL
+              value: "https://librenms.${SECRET_LAB_DOMAIN}"
           volumeMounts:
             - name: librenms
               mountPath: /data
