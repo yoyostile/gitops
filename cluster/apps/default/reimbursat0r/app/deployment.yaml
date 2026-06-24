@@ -1,0 +1,90 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reimbursat0r
+  namespace: default
+  labels:
+    app: reimbursat0r
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: reimbursat0r
+  template:
+    metadata:
+      labels:
+        app: reimbursat0r
+    spec:
+      imagePullSecrets:
+        - name: global-docker-config
+      containers:
+        - name: reimbursat0r
+          image: ghcr.io/yoyostile/reimbursat0r:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            # Solid Queue runs inside Puma (web + jobs + recurring in one process)
+            - name: SOLID_QUEUE_IN_PUMA
+              value: "true"
+            - name: RAILS_LOG_TO_STDOUT
+              value: "true"
+            - name: PAPERLESS_TAG
+              value: "mama"
+            - name: ANTHROPIC_MODEL
+              value: "claude-sonnet-4-6"
+            - name: PAPERLESS_URL
+              value: "https://paperless.${SECRET_LAB_DOMAIN}"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: reimbursat0r-secrets
+                  key: DATABASE_URL
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: reimbursat0r-secrets
+                  key: SECRET_KEY_BASE
+            - name: PAPERLESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: reimbursat0r-secrets
+                  key: PAPERLESS_TOKEN
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: reimbursat0r-secrets
+                  key: ANTHROPIC_API_KEY
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "768Mi"
+              cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /up
+              port: 80
+              scheme: HTTP
+            periodSeconds: 5
+            failureThreshold: 24
+          livenessProbe:
+            httpGet:
+              path: /up
+              port: 80
+              scheme: HTTP
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /up
+              port: 80
+              scheme: HTTP
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
