@@ -15,6 +15,9 @@ spec:
       replicaCount: 1
       env:
         WOODPECKER_BACKEND_K8S_STORAGE_CLASS: "ceph-rbd"
+        # ceph-rbd is filesystem-mode RBD: RWX needs volumeMode Block, so pipeline
+        # PVCs must be RWO (provisioning fails as RWX/ReadWriteMany otherwise).
+        WOODPECKER_BACKEND_K8S_STORAGE_RWX: "false"
       persistence:
         storageClass: "ceph-rbd"
     server:
