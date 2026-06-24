@@ -27,9 +27,11 @@ spec:
           ports:
             - containerPort: 80
           env:
-            # Solid Queue runs inside Puma (web + jobs + recurring in one process)
+            # Solid Queue is OFF until its tables live in the primary DB (see
+            # README/TODO: consolidate solid_* schemas via migration). Not needed
+            # for the historical import (rake task) or while sync is disabled.
             - name: SOLID_QUEUE_IN_PUMA
-              value: "true"
+              value: "false"
             - name: RAILS_LOG_TO_STDOUT
               value: "true"
             - name: PAPERLESS_TAG
