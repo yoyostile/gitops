@@ -42,6 +42,18 @@ spec:
               value: "added"
             - name: ANTHROPIC_MODEL
               value: "claude-sonnet-4-6"
+            # Extraction runs on the local Ollama (Mac Mini) — PHI stays on the LAN.
+            # Flip EXTRACTION_BACKEND to "anthropic" to fall back to the cloud.
+            - name: EXTRACTION_BACKEND
+              value: "ollama"
+            # Bescheid line-items are harder; 7B botched 2/4 in eval, so notices
+            # use Sonnet for accuracy (invoices stay local).
+            - name: EXTRACTION_BACKEND_NOTICE
+              value: "anthropic"
+            - name: OLLAMA_HOST
+              value: "http://sn0w.lan.${SECRET_LAB_DOMAIN}:11434"
+            - name: OLLAMA_MODEL
+              value: "qwen2.5:7b"
             - name: PAPERLESS_URL
               value: "https://paperless.${SECRET_LAB_DOMAIN}"
             - name: DATABASE_URL
