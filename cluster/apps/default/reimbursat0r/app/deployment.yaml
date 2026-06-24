@@ -36,6 +36,10 @@ spec:
               value: "true"
             - name: PAPERLESS_TAG
               value: "mama"
+            # Gate the sync window on when a doc was SCANNED into paperless, not the
+            # invoice's printed date — an old-dated invoice scanned today must import.
+            - name: PAPERLESS_SYNC_DATE_FIELD
+              value: "added"
             - name: ANTHROPIC_MODEL
               value: "claude-sonnet-4-6"
             - name: PAPERLESS_URL
