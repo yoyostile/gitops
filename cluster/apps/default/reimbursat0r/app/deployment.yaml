@@ -27,10 +27,11 @@ spec:
           ports:
             - containerPort: 80
           env:
-            # Solid Queue stays OFF until its tables live in the primary DB.
-            # puma.rb gates on `if ENV["SOLID_QUEUE_IN_PUMA"]` (any string is
-            # truthy), so the var must be ABSENT, not "false". Not needed for the
-            # historical import (rake task) or while sync is disabled.
+            # Solid Queue runs inside Puma (web + jobs + recurring in one pod).
+            # Its tables now live in the primary DB (CreateSolidQueueCacheCableTables
+            # migration, applied by db:prepare before Puma starts).
+            - name: SOLID_QUEUE_IN_PUMA
+              value: "true"
             - name: RAILS_LOG_TO_STDOUT
               value: "true"
             - name: PAPERLESS_TAG
