@@ -40,6 +40,10 @@ spec:
             # invoice's printed date — an old-dated invoice scanned today must import.
             - name: PAPERLESS_SYNC_DATE_FIELD
               value: "added"
+            # A Rückforderung/Aufhebungsbescheid references "Erstattungsbescheid" but is
+            # NOT a reimbursement notice (it reclaims money) — keep it out of the notice path.
+            - name: PAPERLESS_NOTICE_QUERY
+              value: "Erstattungsbescheid NOT Rückforderung NOT Aufhebungsbescheid"
             - name: ANTHROPIC_MODEL
               value: "claude-sonnet-4-6"
             # Extraction runs on the local Ollama (Mac Mini) — PHI stays on the LAN.
