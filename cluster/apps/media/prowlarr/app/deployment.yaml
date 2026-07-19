@@ -6,6 +6,10 @@ metadata:
   namespace: media
 spec:
   replicas: 1
+  # config PVC is ReadWriteOnce (ceph-rbd); Recreate avoids Multi-Attach
+  # deadlock when a new pod surges before the old one releases the volume
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: prowlarr
