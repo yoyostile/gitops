@@ -30,7 +30,7 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: zigbee2mqtt
-          image: koenkk/zigbee2mqtt:2.11.0
+          image: koenkk/zigbee2mqtt:2.12.1
           env:
             - name: ZIGBEE2MQTT_DATA
               value: /data
