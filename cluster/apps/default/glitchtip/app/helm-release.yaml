@@ -23,81 +23,82 @@ spec:
     remediation:
       retries: 3
   values:
-    # Default values for glitchtip.
     image:
       repository: glitchtip/glitchtip
-      tag: 6.1.6
+      tag: 6.2.2
       pullPolicy: IfNotPresent
 
-    imagePullSecrets: []
-    nameOverride: ""
-    fullnameOverride: ""
+    # Chart v8 sources SECRET_KEY / DATABASE_URL / REDIS_URL from a Secret
+    # (the old env.normal/env.secret blocks were removed in v8.0.0).
+    glitchtip:
+      domain: https://glitchtip.${SECRET_LAB_DOMAIN}
+      existingSecret: glitchtip-secret
+      existingSecretKey: SECRET_KEY
+      database:
+        existingSecret: glitchtip-secret
+        existingSecretKey: DATABASE_URL
+      valkey:
+        existingSecret: glitchtip-secret
+        existingSecretKey: REDIS_URL
 
-    env:
-      normal:
-        ENABLE_SOCIAL_AUTH: false
-        GLITCHTIP_DOMAIN: https://glitchtip.${SECRET_LAB_DOMAIN}
-        CELERY_WORKER_AUTOSCALE: "1,3"
-        CELERY_WORKER_MAX_TASKS_PER_CHILD: "10000"
-        ENABLE_ORGANIZATION_CREATION: "true"
-      secret:
-        SECRET_KEY: "${GLITCHTIP_SECRET_KEY}"
-        DATABASE_URL: "${GLITCHTIP_DATABASE_URL}"
-        REDIS_URL: "${GLITCHTIP_REDIS_URL}"
-        EMAIL_URL: "${GLITCHTIP_EMAIL_URL}"
-        DEFAULT_FROM_EMAIL: "noreply@${SECRET_LAB_DOMAIN}"
-        DEFAULT_FILE_STORAGE: ${GLITCHTIP_DEFAULT_FILE_STORAGE}
-        AWS_ACCESS_KEY_ID: ${GLITCHTIP_AWS_ACCESS_KEY_ID}
-        AWS_SECRET_ACCESS_KEY: ${GLITCHTIP_AWS_SECRET_ACCESS_KEY}
-        AWS_STORAGE_BUCKET_NAME: ${GLITCHTIP_AWS_STORAGE_BUCKET_NAME}
-        AWS_S3_ENDPOINT_URL: ${GLITCHTIP_AWS_S3_ENDPOINT_URL}
+    # External Postgres (central psql-cluster) and Redis — disable bundled ones.
+    postgresql:
+      enabled: false
+    valkey:
+      enabled: false
+
+    # Remaining env, applied to all components. Secret values via secretKeyRef.
+    extraEnvVars:
+      - name: ENABLE_SOCIAL_AUTH
+        value: "false"
+      - name: ENABLE_ORGANIZATION_CREATION
+        value: "true"
+      - name: CELERY_WORKER_AUTOSCALE
+        value: "1,3"
+      - name: CELERY_WORKER_MAX_TASKS_PER_CHILD
+        value: "10000"
+      - name: DEFAULT_FROM_EMAIL
+        value: "noreply@${SECRET_LAB_DOMAIN}"
+      - name: DEFAULT_FILE_STORAGE
+        value: "${GLITCHTIP_DEFAULT_FILE_STORAGE}"
+      - name: AWS_STORAGE_BUCKET_NAME
+        value: "${GLITCHTIP_AWS_STORAGE_BUCKET_NAME}"
+      - name: AWS_S3_ENDPOINT_URL
+        value: "${GLITCHTIP_AWS_S3_ENDPOINT_URL}"
+      - name: EMAIL_URL
+        valueFrom:
+          secretKeyRef:
+            name: glitchtip-secret
+            key: EMAIL_URL
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: glitchtip-secret
+            key: AWS_ACCESS_KEY_ID
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: glitchtip-secret
+            key: AWS_SECRET_ACCESS_KEY
 
     migrationJob:
       enabled: true
       activeDeadlineSeconds: 900
 
-    valkey:
-      enabled: false
-
+    # web runs the embedded worker + beat (dedicated worker/beat removed in v8).
     web:
+      embedWorker: true
       replicaCount: 1
       autoscaling:
         enabled: false
-        minReplicas: 2
-        maxReplicas: 10
-        targetCPU: 80
-        # targetMemory: 80
       budget:
         minAvailable: 1
-      nodeSelector: {}
-      tolerations: []
-      podAnnotations: {}
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app.kubernetes.io/component
-                      operator: In
-                      values:
-                        - web # Change this as needed
-                topologyKey: kubernetes.io/hostname
-      livenessProbe:
-        failureThreshold: 5
-        initialDelaySeconds: 5
-        timeoutSeconds: 3
-      readinessProbe:
-        failureThreshold: 10
-        initialDelaySeconds: 5
-        timeoutSeconds: 2
       service:
         type: ClusterIP
         port: 80
-
       ingress:
         enabled: true
+        className: traefik
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/icon: "alert-circle"
@@ -106,7 +107,6 @@ spec:
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
           external-dns/external: "true"
-        ingressClassName: traefik
         hosts:
           - host: glitchtip.${SECRET_LAB_DOMAIN}
             paths:
@@ -117,71 +117,9 @@ spec:
               - "glitchtip.${SECRET_LAB_DOMAIN}"
             secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
 
+    # Dedicated worker not needed — embedded in web via embedWorker.
     worker:
-      enabled: true
-      replicaCount: 1
-      autoscaling:
-        enabled: false
-        minReplicas: 1
-        maxReplicas: 10
-        targetCPU: 100
-        # targetMemory: 80
-      livenessProbe:
-        initialDelaySeconds: 10
-        periodSeconds: 60
-        timeoutSeconds: 30
-        exec:
-          command:
-            - "bash"
-            - "-c"
-            - "celery -A glitchtip inspect ping -d celery@$HOSTNAME | grep -q OK"
-      nodeSelector: {}
-      tolerations: []
-      podAnnotations: {}
-      affinity: {}
-
-    beat:
-      enabled: true
-      nodeSelector: {}
-      tolerations: []
-      podAnnotations: {}
-      affinity: {}
-
-    flower:
       enabled: false
-      nodeSelector: {}
-      tolerations: []
-      podAnnotations: {}
-      affinity: {}
-      service:
-        type: ClusterIP
-        port: 80
-      ingress:
-        enabled: false
-        annotations:
-          {}
-          # kubernetes.io/ingress.class: nginx
-          # kubernetes.io/tls-acme: "true"
-        hosts:
-          - host: chart-example.local
-            paths:
-              - path: /
-                pathType: ImplementationSpecific
-        tls: []
-        #  - secretName: chart-example-tls
-        #    hosts:
-        #      - chart-example.local
 
     serviceAccount:
-      # Specifies whether a service account should be created
       create: false
-      # The name of the service account to use.
-      # If not set and create is true, a name is generated using the fullname template
-      name:
-
-    # Default to disabled, use a managed database service. But can be enabled here.
-    # For configuration options, see https://artifacthub.io/packages/helm/bitnami/postgresql
-    postgresql:
-      enabled: false
-      # auth:
-      #   postgresPassword: # Must be set
