@@ -25,6 +25,10 @@ spec:
   values:
     crds:
       enabled: false
+    # frr-k8s became the default backend in chart 0.16.1; disable it explicitly
+    # to keep the existing legacy FRR (BGP) mode. The two are mutually exclusive.
+    frrk8s:
+      enabled: false
     speaker:
       frr:
         enabled: true
