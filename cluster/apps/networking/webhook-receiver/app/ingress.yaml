@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webhook-receiver
+  namespace: flux-system
+  annotations:
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    traefik.ingress.kubernetes.io/service.serversscheme: "http"
+    external-dns/external: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - "flux-webhook.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "flux-webhook.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /hook
+            pathType: Prefix
+            backend:
+              service:
+                name: webhook-receiver
+                port:
+                  number: 80
