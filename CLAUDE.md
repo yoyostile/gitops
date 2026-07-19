@@ -86,6 +86,16 @@ Apps are grouped under `cluster/apps/` by namespace: `cnpg`, `default`, `kube-sy
 - TLS secret name pattern: `${SECRET_LAB_DOMAIN/./-}-tls`
 - Reference templates: `cluster/apps/default/lidarr/app/ingress.yaml` (internal), `cluster/apps/default/searxng/app/ingress.yaml` (external)
 
+## GitHub Webhook (push-based reconciliation)
+
+Flux reconciles the `flux-system` GitRepository on push via a `Receiver`, avoiding the 1m poll delay (the poll interval stays as a fallback).
+
+- Manifests: `cluster/apps/networking/webhook-receiver/` (Receiver + Service + Ingress + SOPS secret, all in `flux-system` namespace)
+- The `webhook-receiver` Service targets `app: notification-controller` on port `9292`; the public Ingress (`flux-webhook.${SECRET_LAB_DOMAIN}`, external Traefik + Cloudflare tunnel) forwards `/hook` to it.
+- The GitHub webhook URL is `https://flux-webhook.${SECRET_LAB_DOMAIN}` + the receiver path. The path is **only known after reconciliation** — get it with:
+  `kubectl -n flux-system get receiver github-webhook -o jsonpath='{.status.webhookPath}'`
+- Shared HMAC secret lives in `secret.sops.yaml` (key `token`) and must match the webhook "Secret" configured in GitHub (repo → Settings → Webhooks, content type `application/json`, events: `push`).
+
 ## Middlewares
 
 - `networking-internal-ips-only@kubernetescrd` - IP allowlist (10.0.0.0/8, 100.64.0.0/10, lab IPs)
