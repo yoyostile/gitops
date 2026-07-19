@@ -16,7 +16,7 @@ spec:
           restartPolicy: OnFailure
           initContainers:
             - name: fetch-script
-              image: busybox:1.36
+              image: busybox:1.38
               command:
                 - sh
                 - -c
@@ -61,7 +61,7 @@ spec:
           restartPolicy: OnFailure
           initContainers:
             - name: fetch-script
-              image: busybox:1.36
+              image: busybox:1.38
               command:
                 - sh
                 - -c
