@@ -18,7 +18,7 @@ spec:
         topology.kubernetes.io/region: lab
       containers:
         - name: librenms
-          image: librenms/librenms:26.5.1
+          image: librenms/librenms:26.6.1
           securityContext:
             capabilities:
               add:
@@ -53,7 +53,7 @@ spec:
             - name: librenms
               mountPath: /data
         - name: dispatcher
-          image: librenms/librenms:26.5.1
+          image: librenms/librenms:26.6.1
           securityContext:
             capabilities:
               add:
