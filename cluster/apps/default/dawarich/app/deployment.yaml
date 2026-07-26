@@ -9,6 +9,10 @@ metadata:
     component: app
 spec:
   replicas: 1
+  # RWO-backed PVCs: a rolling update wedges because the new pod cannot take
+  # the volumes while the old one still holds them.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: dawarich
@@ -84,12 +88,22 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "500m"
+          # web-entrypoint.sh runs schema + data migrations before exec'ing
+          # puma; boot takes ~65s on 1.7.9. Without a startupProbe the liveness
+          # probe kills the container mid-migration and it never binds :3000.
+          startupProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
           livenessProbe:
             httpGet:
               path: /api/v1/health
               port: 3000
               scheme: HTTP
-            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
