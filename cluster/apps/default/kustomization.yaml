@@ -31,4 +31,5 @@ resources:
   - ./teslamate/ks.yaml
   - ./thelounge/ks.yaml
   - ./uptime-kuma/ks.yaml
+  - ./zettelrobbe/ks.yaml
   - ./zigbee2mqtt/ks.yaml

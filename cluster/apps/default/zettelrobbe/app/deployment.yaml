@@ -1,0 +1,126 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zettelrobbe
+  namespace: default
+  labels:
+    app: zettelrobbe
+spec:
+  replicas: 1
+  # SQLite in /app/data on an RWO volume: a rolling update would deadlock on the
+  # attach, and two replicas would race on the database.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: zettelrobbe
+  template:
+    metadata:
+      labels:
+        app: zettelrobbe
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      containers:
+        - name: zettelrobbe
+          image: docker.io/admonstrator/zettelrobbe:v2026.07.04
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            # s6/PUID image: starts as root and drops to this uid/gid, so no
+            # runAsNonRoot here.
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: PAPERLESS_AI_PORT
+              value: "3000"
+            - name: LOG_LEVEL
+              value: "info"
+            # Behind traefik-internal, so trust the proxy for client IPs.
+            - name: TRUST_PROXY
+              value: "yes"
+            # In-cluster, not via the public ingress: no hairpin through traefik
+            # and no dependency on DNS/TLS. Must NOT end in /api — paperlessService
+            # appends "/api" itself, so a trailing /api yields /api/api.
+            - name: PAPERLESS_API_URL
+              value: "http://paperless.default.svc.cluster.local:8000"
+            - name: PAPERLESS_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: zettelrobbe-secrets
+                  key: PAPERLESS_API_TOKEN
+            # AI goes through Bifrost on a virtual key scoped to the lyceum
+            # provider, so document text cannot reach Anthropic or OpenAI.
+            - name: AI_PROVIDER
+              value: "custom"
+            - name: CUSTOM_BASE_URL
+              value: "http://bifrost.default.svc.cluster.local:8080/v1"
+            - name: CUSTOM_MODEL
+              value: "lyceum/z-ai/glm-5.2-instant"
+            - name: CUSTOM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: zettelrobbe-secrets
+                  key: CUSTOM_API_KEY
+            # The whole point: pick from the 18 tags that already exist rather
+            # than inventing an unbounded vocabulary across the archive.
+            - name: RESTRICT_TO_EXISTING_TAGS
+              value: "yes"
+            - name: RESTRICT_TO_EXISTING_CORRESPONDENTS
+              value: "yes"
+            - name: RESTRICT_TO_EXISTING_DOCUMENT_TYPES
+              value: "yes"
+            - name: ACTIVATE_TAGGING
+              value: "yes"
+            - name: ACTIVATE_CORRESPONDENTS
+              value: "yes"
+            - name: ACTIVATE_DOCUMENT_TYPE
+              value: "yes"
+            - name: ACTIVATE_TITLE
+              value: "yes"
+            # Starts PAUSED. It holds a write-capable paperless token against
+            # 1352 documents; nothing is written until a document is triggered by
+            # hand. Flip to "no" to let it sweep on SCAN_INTERVAL.
+            - name: DISABLE_AUTOMATIC_PROCESSING
+              value: "yes"
+            # Marks what it touched, so processed documents are identifiable (and
+            # skippable) later.
+            - name: ADD_AI_PROCESSED_TAG
+              value: "yes"
+            - name: AI_PROCESSED_TAG_NAME
+              value: "ai-processed"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: zettelrobbe-secrets
+                  key: JWT_SECRET
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "50m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+            failureThreshold: 36
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: zettelrobbe-data
