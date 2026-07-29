@@ -60,12 +60,6 @@ spec:
                 secretKeyRef:
                   name: zettelrobbe-secrets
                   key: CUSTOM_API_KEY
-            - name: RESTRICT_TO_EXISTING_TAGS
-              value: "yes"
-            - name: RESTRICT_TO_EXISTING_CORRESPONDENTS
-              value: "yes"
-            - name: RESTRICT_TO_EXISTING_DOCUMENT_TYPES
-              value: "yes"
             - name: ACTIVATE_TAGGING
               value: "yes"
             - name: ACTIVATE_CORRESPONDENTS
