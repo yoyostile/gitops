@@ -21,6 +21,12 @@ spec:
     metadata:
       labels:
         app: bifrost
+      annotations:
+        # config.json rolls itself (the ConfigMap name carries a content hash), but
+        # a Secret edit does not: secretKeyRef values are injected at pod start, so
+        # a rotated provider key would sit unused until a manual restart. Reloader
+        # watches every ConfigMap/Secret this pod references and rolls it for us.
+        reloader.stakater.com/auto: "true"
     spec:
       securityContext:
         runAsUser: 1000
