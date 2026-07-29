@@ -99,6 +99,45 @@ spec:
               value: "yes"
             - name: AI_PROCESSED_TAG_NAME
               value: "ai-processed"
+            # --- Values entered in the setup wizard, mirrored here so the repo
+            # matches reality and a fresh PVC reproduces this configuration.
+            # NOTE: CONFIG_SOURCE_MODE defaults to "runtime-first", so
+            # /app/data/runtime-overrides.json is the real authority for any key it
+            # contains — these env entries are documentation plus first-boot
+            # defaults, not control. The RESTRICT_TO_EXISTING_* above are NOT in
+            # the overrides file, so those genuinely are controlled from here.
+            - name: PAPERLESS_USERNAME
+              value: "jheck@me.com"
+            # Skip anything already carrying the processed tag.
+            - name: IGNORE_TAGS
+              value: "ai-processed"
+            - name: PROCESS_PREDEFINED_DOCUMENTS
+              value: "no"
+            # Only takes effect once DISABLE_AUTOMATIC_PROCESSING is flipped to no.
+            - name: SCAN_INTERVAL
+              value: "*/30 * * * *"
+            - name: SETUP_VALIDATION_TIMEOUT_MS
+              value: "120000"
+            - name: SETUP_OCR_VALIDATION_TIMEOUT_MS
+              value: "120000"
+            # Vision-OCR rescue queue for badly scanned documents. "MISTRAL_*" is
+            # just the feature's legacy name — with OCR_PROVIDER=custom it uses the
+            # OCR_API_URL below, i.e. Bifrost onto Lyceum, not Mistral.
+            # Verified: Qwen2.5-VL-72B reads images through the gateway.
+            - name: MISTRAL_OCR_ENABLED
+              value: "yes"
+            - name: OCR_PROVIDER
+              value: "custom"
+            - name: OCR_API_URL
+              value: "http://bifrost.default.svc.cluster.local:8080/v1"
+            - name: MISTRAL_OCR_MODEL
+              value: "lyceum/Qwen/Qwen2.5-VL-72B-Instruct"
+            # Same virtual key as the chat path — one secret entry, two names.
+            - name: OCR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: zettelrobbe-secrets
+                  key: CUSTOM_API_KEY
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
