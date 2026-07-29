@@ -8,8 +8,7 @@ metadata:
     app: zettelrobbe
 spec:
   replicas: 1
-  # SQLite in /app/data on an RWO volume: a rolling update would deadlock on the
-  # attach, and two replicas would race on the database.
+  # RWO volume + SQLite: a rolling update deadlocks on the attach.
   strategy:
     type: Recreate
   selector:
@@ -29,8 +28,6 @@ spec:
             - name: http
               containerPort: 3000
           env:
-            # s6/PUID image: starts as root and drops to this uid/gid, so no
-            # runAsNonRoot here.
             - name: PUID
               value: "1000"
             - name: PGID
@@ -39,20 +36,12 @@ spec:
               value: "3000"
             - name: LOG_LEVEL
               value: "info"
-            # Until initial setup is completed, zettelrobbe 403s every request
-            # whose source is not 127.0.0.1 — which means both the kubelet probe
-            # and your browser via the ingress. Required to reach the setup UI at
-            # all. REMOVE THIS once setup is done: it is what keeps the
-            # unauthenticated setup flow reachable from the LAN.
+            # TODO remove: pre-setup it 403s all non-localhost requests (probe + browser).
             - name: ALLOW_REMOTE_SETUP
               value: "yes"
-            # Behind traefik-internal, so trust the proxy for client IPs.
             - name: TRUST_PROXY
               value: "yes"
-            # Must be the browser-reachable URL, not the ClusterIP service: this one
-            # value is used both for API calls AND for the document/chat links in the
-            # UI, so an in-cluster address renders every link dead. Must NOT end in
-            # /api — paperlessService appends "/api" itself.
+            # Also used for the UI's document links, so not the ClusterIP. No /api suffix.
             - name: PAPERLESS_API_URL
               value: "https://paperless.${SECRET_LAB_DOMAIN}"
             - name: PAPERLESS_API_TOKEN
@@ -60,8 +49,6 @@ spec:
                 secretKeyRef:
                   name: zettelrobbe-secrets
                   key: PAPERLESS_API_TOKEN
-            # AI goes through Bifrost on a virtual key scoped to the lyceum
-            # provider, so document text cannot reach Anthropic or OpenAI.
             - name: AI_PROVIDER
               value: "custom"
             - name: CUSTOM_BASE_URL
@@ -73,8 +60,6 @@ spec:
                 secretKeyRef:
                   name: zettelrobbe-secrets
                   key: CUSTOM_API_KEY
-            # The whole point: pick from the 18 tags that already exist rather
-            # than inventing an unbounded vocabulary across the archive.
             - name: RESTRICT_TO_EXISTING_TAGS
               value: "yes"
             - name: RESTRICT_TO_EXISTING_CORRESPONDENTS
@@ -89,48 +74,28 @@ spec:
               value: "yes"
             - name: ACTIVATE_TITLE
               value: "yes"
-            # Starts PAUSED. It holds a write-capable paperless token against
-            # 1352 documents; nothing is written until a document is triggered by
-            # hand. Flip to "no" to let it sweep on SCAN_INTERVAL.
+            # Paused: nothing is written until triggered by hand.
             - name: DISABLE_AUTOMATIC_PROCESSING
               value: "yes"
-            # Marks what it touched, so processed documents are identifiable (and
-            # skippable) later.
             - name: ADD_AI_PROCESSED_TAG
               value: "yes"
             - name: AI_PROCESSED_TAG_NAME
               value: "ai-processed"
-            # --- Values entered in the setup wizard, mirrored here so the repo
-            # matches reality and a fresh PVC reproduces this configuration.
-            # NOTE: CONFIG_SOURCE_MODE defaults to "runtime-first", so
-            # /app/data/runtime-overrides.json is the real authority for any key it
-            # contains — these env entries are documentation plus first-boot
-            # defaults, not control. The RESTRICT_TO_EXISTING_* above are NOT in
-            # the overrides file, so those genuinely are controlled from here.
-            # Must be the paperless USERNAME, not the email. paperlessService does
-            # `results.find(u => u.username === process.env.PAPERLESS_USERNAME)` — a
-            # literal match against /api/users/ (whose ?username= filter paperless
-            # ignores, returning all users). The wizard accepted "jheck@me.com",
-            # which matches nothing, giving "Failed to get own user ID. Abort
-            # scanning." on every startup.
+            # Mirrors the setup wizard; see /app/data/runtime-overrides.json.
+            # Username, NOT the email — matched literally against /api/users/.
             - name: PAPERLESS_USERNAME
               value: "yoyostile"
-            # Skip anything already carrying the processed tag.
             - name: IGNORE_TAGS
               value: "ai-processed"
             - name: PROCESS_PREDEFINED_DOCUMENTS
               value: "no"
-            # Only takes effect once DISABLE_AUTOMATIC_PROCESSING is flipped to no.
             - name: SCAN_INTERVAL
               value: "*/30 * * * *"
             - name: SETUP_VALIDATION_TIMEOUT_MS
               value: "120000"
             - name: SETUP_OCR_VALIDATION_TIMEOUT_MS
               value: "120000"
-            # Vision-OCR rescue queue for badly scanned documents. "MISTRAL_*" is
-            # just the feature's legacy name — with OCR_PROVIDER=custom it uses the
-            # OCR_API_URL below, i.e. Bifrost onto Lyceum, not Mistral.
-            # Verified: Qwen2.5-VL-72B reads images through the gateway.
+            # "MISTRAL_*" is a legacy name only: OCR_PROVIDER=custom routes via OCR_API_URL.
             - name: MISTRAL_OCR_ENABLED
               value: "yes"
             - name: OCR_PROVIDER
@@ -139,7 +104,6 @@ spec:
               value: "http://bifrost.default.svc.cluster.local:8080/v1"
             - name: MISTRAL_OCR_MODEL
               value: "lyceum/Qwen/Qwen2.5-VL-72B-Instruct"
-            # Same virtual key as the chat path — one secret entry, two names.
             - name: OCR_API_KEY
               valueFrom:
                 secretKeyRef:
