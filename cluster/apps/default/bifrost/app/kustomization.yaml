@@ -24,6 +24,19 @@ resources:
 # control that keeps PHI off the cloud, so what is in Git must be what the
 # gateway loads, byte for byte.
 #
+# The governance.pricing_overrides block in config.json is GENERATED. Bifrost's
+# built-in pricing datasheet has no entry for a custom provider, so every Lyceum
+# call was logged at cost 0. Regenerate from Lyceum's own pricing API after they
+# change rates (it rewrites only the "lyceum-" prefixed ids):
+#
+#   LYCEUM_API_KEY=$(kubectl -n default get secret bifrost-secrets \
+#       -o jsonpath='{.data.LYCEUM_API_KEY}' | base64 -d) \
+#     python3 cluster/apps/default/bifrost/app/gen-lyceum-pricing.py
+#
+# framework.pricing.pricing_url would have been the other route, but it REPLACES
+# the whole datasheet — losing the maintained Anthropic/OpenAI prices — whereas
+# provider-scoped overrides are additive.
+#
 # NOTE ON PHI: client.disable_content_logging is false, so full prompts and
 # completions — including invoice OCR text — are stored in the log store on the
 # bifrost-data PVC (SQLite, unencrypted at rest, 90-day retention). That is a
