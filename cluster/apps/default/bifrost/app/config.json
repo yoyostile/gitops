@@ -45,6 +45,28 @@
             "key_ids": ["*"]
           }
         ]
+      },
+      {
+        "id": "vk-general-openai-eu",
+        "name": "general-openai-eu",
+        "description": "General-purpose key for OpenAI on the EU residency endpoint. Not wired to reimbursat0r - the invoice path stays ollama-only. Models are unrestricted here because the boundary worth enforcing is the provider, not the model list; a spend cap does the rest.",
+        "value": "env.BIFROST_VK_GENERAL",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "openai",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          }
+        ]
+      }
+    ],
+    "budgets": [
+      {
+        "id": "budget-general-openai-eu",
+        "virtual_key_id": "vk-general-openai-eu",
+        "max_limit": 25,
+        "reset_duration": "1M"
       }
     ]
   },
@@ -80,6 +102,21 @@
         }
       ],
       "network_config": {
+        "default_request_timeout_in_seconds": 300,
+        "max_retries": 2
+      }
+    },
+    "openai": {
+      "keys": [
+        {
+          "name": "openai-eu",
+          "value": "env.OPENAI_API_KEY",
+          "weight": 1,
+          "models": ["*"]
+        }
+      ],
+      "network_config": {
+        "base_url": "https://eu.api.openai.com",
         "default_request_timeout_in_seconds": 300,
         "max_retries": 2
       }

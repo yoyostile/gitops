@@ -76,11 +76,24 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_NOTICE
+            - name: BIFROST_VK_GENERAL
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_GENERAL
             - name: ANTHROPIC_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: ANTHROPIC_API_KEY
+            # OpenAI on the EU residency endpoint (base_url in config.json). Only
+            # the general-openai-eu virtual key can reach it — reimbursat0r's
+            # invoice path stays ollama-only.
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: OPENAI_API_KEY
           resources:
             requests:
               memory: "128Mi"
