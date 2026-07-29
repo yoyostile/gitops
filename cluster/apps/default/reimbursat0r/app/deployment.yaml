@@ -46,14 +46,41 @@ spec:
               value: "Erstattungsbescheid NOT Rückforderung NOT Aufhebungsbescheid"
             - name: ANTHROPIC_MODEL
               value: "claude-sonnet-4-6"
-            # Extraction runs on the local Ollama (Mac Mini) — PHI stays on the LAN.
-            # Flip EXTRACTION_BACKEND to "anthropic" to fall back to the cloud.
+            # Extraction goes through the Bifrost gateway. Same split as before —
+            # invoices local, Bescheide on Sonnet — but the split is now enforced
+            # by the gateway: BIFROST_VK_INVOICE is scoped to the ollama provider,
+            # so naming a cloud model on the invoice path is rejected instead of
+            # quietly honoured. PHI stays on the LAN by construction, not by this
+            # value being correct.
             - name: EXTRACTION_BACKEND
-              value: "ollama"
-            # Bescheid line-items are harder; 7B botched 2/4 in eval, so notices
-            # use Sonnet for accuracy (invoices stay local).
-            - name: EXTRACTION_BACKEND_NOTICE
-              value: "anthropic"
+              value: "bifrost"
+            - name: BIFROST_URL
+              value: "http://bifrost.default.svc.cluster.local:8080"
+            # "-32k" is not cosmetic: Bifrost reaches Ollama via Ollama's
+            # OpenAI-compatible endpoint, which drops the options object, so
+            # num_ctx cannot travel with the request. The context size has to be
+            # baked into the model with a Modelfile. Plain qwen2.5:7b here would
+            # silently fall back to Ollama's 4096 default and truncate long OCR.
+            - name: EXTRACTION_MODEL_INVOICE
+              value: "ollama/qwen2.5:7b-32k"
+            # Bescheid line-items are harder; 7B botched 2/4 in eval.
+            - name: EXTRACTION_MODEL_NOTICE
+              value: "anthropic/claude-sonnet-4-6"
+            - name: BIFROST_VK_INVOICE
+              valueFrom:
+                secretKeyRef:
+                  name: reimbursat0r-secrets
+                  key: BIFROST_VK_INVOICE
+            - name: BIFROST_VK_NOTICE
+              valueFrom:
+                secretKeyRef:
+                  name: reimbursat0r-secrets
+                  key: BIFROST_VK_NOTICE
+            # Kept as the rollback path while the gateway is being A/B'd: setting
+            # EXTRACTION_BACKEND back to "ollama" (plus EXTRACTION_BACKEND_NOTICE
+            # "anthropic") restores the direct adapters with no image change.
+            # Dropping these — and ANTHROPIC_API_KEY below — is what finally makes
+            # cloud egress from this pod impossible rather than merely unused.
             - name: OLLAMA_HOST
               value: "http://sn0w.lan.${SECRET_LAB_DOMAIN}:11434"
             - name: OLLAMA_MODEL

@@ -1,0 +1,124 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bifrost
+  namespace: default
+  labels:
+    app: bifrost
+spec:
+  replicas: 1
+  # Single replica on purpose: the config store and the log store are both SQLite
+  # on one RWO volume, so a second replica would race on them. RWO also means a
+  # rolling update deadlocks — the new pod cannot attach while the old one still
+  # holds the volume. Scaling out would mean moving both stores to Postgres.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: bifrost
+  template:
+    metadata:
+      labels:
+        app: bifrost
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+      containers:
+        - name: bifrost
+          image: docker.io/maximhq/bifrost:v1.6.6
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_DIR
+              value: /app/data
+            - name: APP_PORT
+              value: "8080"
+            - name: APP_HOST
+              value: 0.0.0.0
+            - name: LOG_LEVEL
+              value: info
+            - name: LOG_STYLE
+              value: json
+            # Resolved by the "env." references in config.json. sn0w is the Mac
+            # mini on the clients VLAN (10.0.10.45) — an RFC1918 address, which
+            # is why the ollama provider needs allow_private_network: true.
+            - name: OLLAMA_URL
+              value: "http://sn0w.lan.${SECRET_LAB_DOMAIN}:11434"
+            - name: BIFROST_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_ENCRYPTION_KEY
+            - name: BIFROST_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_ADMIN_USERNAME
+            - name: BIFROST_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_ADMIN_PASSWORD
+            # The two virtual keys are the actual enforcement boundary: the
+            # invoice key can only reach ollama, the notice key only anthropic.
+            - name: BIFROST_VK_INVOICE
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_INVOICE
+            - name: BIFROST_VK_NOTICE
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_NOTICE
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: ANTHROPIC_API_KEY
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 24
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: config
+              mountPath: /app/data/config.json
+              subPath: config.json
+              readOnly: true
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: bifrost-data
+        - name: config
+          configMap:
+            name: bifrost-config

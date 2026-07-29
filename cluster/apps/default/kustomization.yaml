@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./adguard-home-sync/ks.yaml
   - ./authentik/ks.yaml
+  - ./bifrost/ks.yaml
   - ./dawarich/ks.yaml
   - ./echo/ks.yaml
   - ./evcc/ks.yaml
