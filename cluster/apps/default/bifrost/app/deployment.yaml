@@ -113,6 +113,15 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: LYCEUM_API_KEY
+            # Spans all four providers, for the eval:* rake tasks only. It lives
+            # here because config.json resolves it, but is deliberately absent from
+            # reimbursat0r's env — pass it per-invocation instead, so no
+            # long-running app pod carries a key this broad.
+            - name: BIFROST_VK_EVAL
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_EVAL
           resources:
             requests:
               memory: "128Mi"

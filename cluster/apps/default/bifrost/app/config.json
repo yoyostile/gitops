@@ -6,7 +6,7 @@
     "initial_pool_size": 10,
     "drop_excess_requests": false,
     "enable_logging": true,
-    "disable_content_logging": true,
+    "disable_content_logging": false,
     "log_retention_days": 90,
     "enforce_auth_on_inference": true,
     "allow_direct_keys": false
@@ -73,9 +73,28 @@
             "key_ids": ["*"]
           }
         ]
+      },
+      {
+        "id": "vk-eval",
+        "name": "eval",
+        "description": "Benchmarking only, spans every provider so one run can compare local vs Anthropic vs EU clouds. Deliberately NOT in any Deployment env - pass it ad hoc (kubectl exec -- env EVAL_BIFROST_VK=...) so no long-running pod holds a key this broad.",
+        "value": "env.BIFROST_VK_EVAL",
+        "is_active": true,
+        "provider_configs": [
+          { "provider": "ollama", "allowed_models": ["*"], "key_ids": ["*"] },
+          { "provider": "anthropic", "allowed_models": ["*"], "key_ids": ["*"] },
+          { "provider": "openai", "allowed_models": ["*"], "key_ids": ["*"] },
+          { "provider": "lyceum", "allowed_models": ["*"], "key_ids": ["*"] }
+        ]
       }
     ],
     "budgets": [
+      {
+        "id": "budget-eval",
+        "virtual_key_id": "vk-eval",
+        "max_limit": 15,
+        "reset_duration": "1M"
+      },
       {
         "id": "budget-general-openai-eu",
         "virtual_key_id": "vk-general-openai-eu",
