@@ -94,6 +94,19 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: OPENAI_API_KEY
+            - name: BIFROST_VK_LYCEUM
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_LYCEUM
+            # Lyceum (Berlin, EU residency). A custom provider: its chat endpoint
+            # is /api/v2/external/serverless/chat/completions, not the OpenAI
+            # /v1/... path, so config.json overrides the paths per request type.
+            - name: LYCEUM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: LYCEUM_API_KEY
           resources:
             requests:
               memory: "128Mi"

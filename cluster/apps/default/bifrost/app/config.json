@@ -59,12 +59,32 @@
             "key_ids": ["*"]
           }
         ]
+      },
+      {
+        "id": "vk-general-lyceum",
+        "name": "general-lyceum",
+        "description": "General-purpose key for Lyceum serverless inference (Berlin, EU residency, open-weight models). Own key rather than sharing the OpenAI one so spend and blast radius stay separate. Not wired to reimbursat0r.",
+        "value": "env.BIFROST_VK_LYCEUM",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "lyceum",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          }
+        ]
       }
     ],
     "budgets": [
       {
         "id": "budget-general-openai-eu",
         "virtual_key_id": "vk-general-openai-eu",
+        "max_limit": 25,
+        "reset_duration": "1M"
+      },
+      {
+        "id": "budget-general-lyceum",
+        "virtual_key_id": "vk-general-lyceum",
         "max_limit": 25,
         "reset_duration": "1M"
       }
@@ -119,6 +139,36 @@
         "base_url": "https://eu.api.openai.com",
         "default_request_timeout_in_seconds": 300,
         "max_retries": 2
+      }
+    },
+    "lyceum": {
+      "keys": [
+        {
+          "name": "lyceum",
+          "value": "env.LYCEUM_API_KEY",
+          "weight": 1,
+          "models": ["*"]
+        }
+      ],
+      "network_config": {
+        "base_url": "https://api.lyceum.technology",
+        "default_request_timeout_in_seconds": 300,
+        "max_retries": 2
+      },
+      "custom_provider_config": {
+        "base_provider_type": "openai",
+        "request_path_overrides": {
+          "chat_completion": "/api/v2/external/serverless/chat/completions",
+          "chat_completion_stream": "/api/v2/external/serverless/chat/completions",
+          "list_models": "/api/v2/external/serverless/models",
+          "embedding": "/api/v2/external/serverless/embeddings"
+        },
+        "allowed_requests": {
+          "chat_completion": true,
+          "chat_completion_stream": true,
+          "list_models": true,
+          "embedding": true
+        }
       }
     }
   },
