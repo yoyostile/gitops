@@ -8,10 +8,7 @@ metadata:
     app: bifrost
 spec:
   replicas: 1
-  # Single replica on purpose: the config store and the log store are both SQLite
-  # on one RWO volume, so a second replica would race on them. RWO also means a
-  # rolling update deadlocks — the new pod cannot attach while the old one still
-  # holds the volume. Scaling out would mean moving both stores to Postgres.
+  # RWO volume + SQLite config/log stores: no rolling update, no second replica.
   strategy:
     type: Recreate
   selector:
@@ -22,10 +19,7 @@ spec:
       labels:
         app: bifrost
       annotations:
-        # config.json rolls itself (the ConfigMap name carries a content hash), but
-        # a Secret edit does not: secretKeyRef values are injected at pod start, so
-        # a rotated provider key would sit unused until a manual restart. Reloader
-        # watches every ConfigMap/Secret this pod references and rolls it for us.
+        # Secret edits alone do not roll the pod; config.json does (ConfigMap hash).
         reloader.stakater.com/auto: "true"
     spec:
       securityContext:
@@ -50,9 +44,7 @@ spec:
               value: info
             - name: LOG_STYLE
               value: json
-            # Resolved by the "env." references in config.json. sn0w is the Mac
-            # mini on the clients VLAN (10.0.10.45) — an RFC1918 address, which
-            # is why the ollama provider needs allow_private_network: true.
+            # RFC1918, hence allow_private_network on the ollama provider.
             - name: OLLAMA_URL
               value: "http://sn0w.lan.${SECRET_LAB_DOMAIN}:11434"
             - name: BIFROST_ENCRYPTION_KEY
@@ -70,8 +62,6 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_ADMIN_PASSWORD
-            # The two virtual keys are the actual enforcement boundary: the
-            # invoice key can only reach ollama, the notice key only anthropic.
             - name: BIFROST_VK_INVOICE
               valueFrom:
                 secretKeyRef:
@@ -92,9 +82,6 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: ANTHROPIC_API_KEY
-            # OpenAI on the EU residency endpoint (base_url in config.json). Only
-            # the general-openai-eu virtual key can reach it — reimbursat0r's
-            # invoice path stays ollama-only.
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -105,18 +92,11 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_LYCEUM
-            # Lyceum (Berlin, EU residency). A custom provider: its chat endpoint
-            # is /api/v2/external/serverless/chat/completions, not the OpenAI
-            # /v1/... path, so config.json overrides the paths per request type.
             - name: LYCEUM_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: LYCEUM_API_KEY
-            # Spans all four providers, for the eval:* rake tasks only. It lives
-            # here because config.json resolves it, but is deliberately absent from
-            # reimbursat0r's env — pass it per-invocation instead, so no
-            # long-running app pod carries a key this broad.
             - name: BIFROST_VK_PAPERLESS
               valueFrom:
                 secretKeyRef:
@@ -127,6 +107,7 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_ZETTELROBBE
+            # Broad key, eval:* rake tasks only — never put this in an app's env.
             - name: BIFROST_VK_EVAL
               valueFrom:
                 secretKeyRef:

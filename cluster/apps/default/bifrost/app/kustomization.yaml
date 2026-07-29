@@ -1,11 +1,8 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-# Required for the generated ConfigMap below: generator output carries no
-# namespace of its own, and Flux's server-side apply rejects a namespaced object
-# without one ("namespace not specified"). Note that `kubectl apply -f` does NOT
-# reproduce this — it silently defaults to the kubeconfig context namespace, so a
-# dry-run there passes while Flux fails.
+# Required: generator output carries no namespace, and Flux's SSA rejects that.
+# `kubectl apply -f` does NOT reproduce the failure (it defaults from kubeconfig).
 namespace: default
 resources:
   - secret.sops.yaml
@@ -13,48 +10,17 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-# config.json is hand-written rather than rendered by the upstream Helm chart on
-# purpose. That chart builds config.json from values through a hardcoded key
-# allowlist in _helpers.tpl plus a values.schema.json with
-# additionalProperties:false, and it has no existingConfigMap escape hatch — it
-# already silently dropped network_config.allow_private_network, the exact field
-# this deployment needs (maximhq/bifrost#4146, fixed in chart 2.1.22). A template
-# that can drop fields it does not recognise is the wrong place to express a
-# security control: here the model allowlist in governance.virtual_keys IS the
-# control that keeps PHI off the cloud, so what is in Git must be what the
-# gateway loads, byte for byte.
-#
-# The governance.pricing_overrides block in config.json is GENERATED. Bifrost's
-# built-in pricing datasheet has no entry for a custom provider, so every Lyceum
-# call was logged at cost 0. Regenerate from Lyceum's own pricing API after they
-# change rates (it rewrites only the "lyceum-" prefixed ids):
-#
+# governance.pricing_overrides in config.json is GENERATED — regenerate with:
 #   LYCEUM_API_KEY=$(kubectl -n default get secret bifrost-secrets \
 #       -o jsonpath='{.data.LYCEUM_API_KEY}' | base64 -d) \
 #     python3 cluster/apps/default/bifrost/app/gen-lyceum-pricing.py
 #
-# framework.pricing.pricing_url would have been the other route, but it REPLACES
-# the whole datasheet — losing the maintained Anthropic/OpenAI prices — whereas
-# provider-scoped overrides are additive.
+# config_store must stay ENABLED: governance refuses to start without it, and
+# governance is where the virtual keys live. source_of_truth keeps Git authoritative.
+# The ConfigMap name hash is load-bearing: config.json is read only at startup.
 #
-# NOTE ON PHI: client.disable_content_logging is false, so full prompts and
-# completions — including invoice OCR text — are stored in the log store on the
-# bifrost-data PVC (SQLite, unencrypted at rest, 90-day retention). That is a
-# deliberate choice: it is needed to compare model outputs when benchmarking, and
-# the data never leaves the cluster. Flip it back to true to keep metadata only.
-#
-# config_store is deliberately ENABLED even though file-only would be tidier for
-# GitOps: governance refuses to start without it — "failed to initialize
-# governance handler: config store is required" — and governance is where the
-# virtual keys live. No config store means no virtual keys, which means no
-# enforced local-only invoice path. Git stays authoritative anyway via
-# source_of_truth: "config.json", which makes the file replace matching DB rows on
-# every startup, so a UI edit cannot survive a restart.
-#
-# The generated ConfigMap name carries a content hash, so editing config.json
-# changes the name, which changes the pod template, which rolls the Deployment.
-# That is load-bearing: config.json is reconciled into the store at startup only,
-# so a config change without a restart would have no effect.
+# disable_content_logging is false, so prompts and completions (incl. invoice OCR)
+# are stored on the bifrost-data PVC. Deliberate, for model comparison.
 configMapGenerator:
   - name: bifrost-config
     files:
