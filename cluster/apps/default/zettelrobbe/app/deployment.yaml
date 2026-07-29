@@ -49,11 +49,12 @@ spec:
             # Behind traefik-internal, so trust the proxy for client IPs.
             - name: TRUST_PROXY
               value: "yes"
-            # In-cluster, not via the public ingress: no hairpin through traefik
-            # and no dependency on DNS/TLS. Must NOT end in /api — paperlessService
-            # appends "/api" itself, so a trailing /api yields /api/api.
+            # Must be the browser-reachable URL, not the ClusterIP service: this one
+            # value is used both for API calls AND for the document/chat links in the
+            # UI, so an in-cluster address renders every link dead. Must NOT end in
+            # /api — paperlessService appends "/api" itself.
             - name: PAPERLESS_API_URL
-              value: "http://paperless.default.svc.cluster.local:8000"
+              value: "https://paperless.${SECRET_LAB_DOMAIN}"
             - name: PAPERLESS_API_TOKEN
               valueFrom:
                 secretKeyRef:
