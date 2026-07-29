@@ -122,6 +122,11 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_PAPERLESS
+            - name: BIFROST_VK_ZETTELROBBE
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_ZETTELROBBE
             - name: BIFROST_VK_EVAL
               valueFrom:
                 secretKeyRef:
