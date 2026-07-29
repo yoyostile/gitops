@@ -1,0 +1,31 @@
+---
+# Internal only. The UI holds a write-capable paperless token and its setup flow
+# is unauthenticated until a user is created, so it stays behind the IP allowlist.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zettelrobbe
+  namespace: default
+  annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "robot-outline"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: traefik-internal
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - zettelrobbe.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: zettelrobbe.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: zettelrobbe
+                port:
+                  number: 3000
