@@ -106,8 +106,14 @@ spec:
             # contains — these env entries are documentation plus first-boot
             # defaults, not control. The RESTRICT_TO_EXISTING_* above are NOT in
             # the overrides file, so those genuinely are controlled from here.
+            # Must be the paperless USERNAME, not the email. paperlessService does
+            # `results.find(u => u.username === process.env.PAPERLESS_USERNAME)` — a
+            # literal match against /api/users/ (whose ?username= filter paperless
+            # ignores, returning all users). The wizard accepted "jheck@me.com",
+            # which matches nothing, giving "Failed to get own user ID. Abort
+            # scanning." on every startup.
             - name: PAPERLESS_USERNAME
-              value: "jheck@me.com"
+              value: "yoyostile"
             # Skip anything already carrying the processed tag.
             - name: IGNORE_TAGS
               value: "ai-processed"
