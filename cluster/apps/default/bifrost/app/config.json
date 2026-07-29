@@ -82,7 +82,11 @@
         "is_active": true,
         "provider_configs": [
           { "provider": "ollama", "allowed_models": ["*"], "key_ids": ["*"] },
-          { "provider": "anthropic", "allowed_models": ["*"], "key_ids": ["*"] },
+          {
+            "provider": "anthropic",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
           { "provider": "openai", "allowed_models": ["*"], "key_ids": ["*"] },
           { "provider": "lyceum", "allowed_models": ["*"], "key_ids": ["*"] }
         ]
