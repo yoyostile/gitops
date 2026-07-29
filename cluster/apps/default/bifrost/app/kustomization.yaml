@@ -24,6 +24,12 @@ resources:
 # control that keeps PHI off the cloud, so what is in Git must be what the
 # gateway loads, byte for byte.
 #
+# NOTE ON PHI: client.disable_content_logging is false, so full prompts and
+# completions — including invoice OCR text — are stored in the log store on the
+# bifrost-data PVC (SQLite, unencrypted at rest, 90-day retention). That is a
+# deliberate choice: it is needed to compare model outputs when benchmarking, and
+# the data never leaves the cluster. Flip it back to true to keep metadata only.
+#
 # config_store is deliberately ENABLED even though file-only would be tidier for
 # GitOps: governance refuses to start without it — "failed to initialize
 # governance handler: config store is required" — and governance is where the
