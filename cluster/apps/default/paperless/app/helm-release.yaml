@@ -42,6 +42,31 @@ spec:
       PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
       PAPERLESS_SOCIALACCOUNT_PROVIDERS: ${SECRET_PAPERLESS_SOCIALACCOUNT_PROVIDERS}
       PAPERLESS_OCR_USER_ARGS: "{\"invalidate_digital_signatures\": true}"
+
+      # --- Built-in AI (3.x): suggestions + RAG, routed through the Bifrost
+      # gateway onto Lyceum (EU, Berlin). The virtual key is scoped to the lyceum
+      # provider only, so document text cannot reach Anthropic or OpenAI from here
+      # even if a model name is mistyped — verified: anthropic/* returns 403.
+      PAPERLESS_AI_ENABLED: "true"
+      PAPERLESS_AI_LLM_BACKEND: "openai-like"
+      # Must include /v1 — llama_index's OpenAILike passes this as the SDK
+      # api_base and appends /chat/completions itself.
+      PAPERLESS_AI_LLM_ENDPOINT: "http://bifrost.default.svc.cluster.local:8080/v1"
+      # Sent as "Authorization: Bearer". OpenAILike cannot set x-bf-vk, but
+      # Bifrost accepts a virtual key on Authorization too (verified).
+      PAPERLESS_AI_LLM_API_KEY: "${SECRET_PAPERLESS_BIFROST_VK}"
+      # Lowercase "lyceum" — the provider name in Bifrost's config.json, which is
+      # NOT the "Lyceum/..." spelling other tooling uses.
+      PAPERLESS_AI_LLM_MODEL: "lyceum/deepseek/deepseek-v4-flash"
+      PAPERLESS_AI_LLM_EMBEDDING_BACKEND: "openai-like"
+      PAPERLESS_AI_LLM_EMBEDDING_MODEL: "lyceum/Qwen/Qwen3-Embedding-8B"
+      # Bifrost is a ClusterIP (RFC1918); the default is already true but this is
+      # load-bearing, so it is explicit.
+      PAPERLESS_AI_LLM_ALLOW_INTERNAL_ENDPOINTS: "true"
+      # Default 120 is too tight: measured 30-40 s per call on these models, with
+      # an occasional hit against Bifrost's own 300 s provider timeout.
+      PAPERLESS_AI_LLM_REQUEST_TIMEOUT: "300"
+      PAPERLESS_AI_LLM_OUTPUT_LANGUAGE: "de"
       USERMAP_UID: "3000"
       USERMAP_GID: "3000"
 
