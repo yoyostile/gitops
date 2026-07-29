@@ -132,13 +132,19 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_EVAL
+          # Sized from observation, not guesswork: the original 512Mi/500m was set
+          # before content logging was enabled and before the model catalogue grew.
+          # It ran ~25 min then OOMKilled (exit 137) while sitting at 495m of a 500m
+          # CPU ceiling. Drivers: disable_content_logging=false buffers full
+          # prompts+completions into SQLite, the catalogue holds ~9.9k model
+          # parameter records, and boot replays 48 pricing overrides.
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "50m"
+              memory: "384Mi"
+              cpu: "100m"
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "1536Mi"
+              cpu: "2"
           startupProbe:
             httpGet:
               path: /health
