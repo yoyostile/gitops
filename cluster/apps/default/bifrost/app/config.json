@@ -75,6 +75,20 @@
         ]
       },
       {
+        "id": "vk-paperless-ai",
+        "name": "paperless-ai",
+        "description": "Paperless-ngx built-in AI: suggestions (tool-calling chat) plus RAG embeddings. Lyceum only, so document text stays with the EU provider. Presented as Authorization: Bearer because llama_index's OpenAILike cannot send x-bf-vk.",
+        "value": "env.BIFROST_VK_PAPERLESS",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "lyceum",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          }
+        ]
+      },
+      {
         "id": "vk-eval",
         "name": "eval",
         "description": "Benchmarking only, spans every provider so one run can compare local vs Anthropic vs EU clouds. Deliberately NOT in any Deployment env - pass it ad hoc (kubectl exec -- env EVAL_BIFROST_VK=...) so no long-running pod holds a key this broad.",
@@ -105,6 +119,12 @@
       }
     ],
     "budgets": [
+      {
+        "id": "budget-paperless-ai",
+        "virtual_key_id": "vk-paperless-ai",
+        "max_limit": 10,
+        "reset_duration": "1M"
+      },
       {
         "id": "budget-eval",
         "virtual_key_id": "vk-eval",
