@@ -57,7 +57,10 @@ spec:
       PAPERLESS_AI_LLM_API_KEY: "${SECRET_PAPERLESS_BIFROST_VK}"
       # Lowercase "lyceum" — the provider name in Bifrost's config.json, which is
       # NOT the "Lyceum/..." spelling other tooling uses.
-      PAPERLESS_AI_LLM_MODEL: "lyceum/deepseek/deepseek-v4-flash"
+      # glm-5.2-instant over deepseek-v4-flash: suggestions are interactive, and
+      # measured over 2x10 documents deepseek averaged ~38 s and hit a 504 in both
+      # runs, vs ~7-16 s and none for glm — at equal or better field accuracy.
+      PAPERLESS_AI_LLM_MODEL: "lyceum/z-ai/glm-5.2-instant"
       PAPERLESS_AI_LLM_EMBEDDING_BACKEND: "openai-like"
       PAPERLESS_AI_LLM_EMBEDDING_MODEL: "lyceum/Qwen/Qwen3-Embedding-8B"
       # Bifrost is a ClusterIP (RFC1918); the default is already true but this is
