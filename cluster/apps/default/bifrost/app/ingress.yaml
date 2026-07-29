@@ -1,0 +1,33 @@
+---
+# Internal only. The UI is a management surface holding an Anthropic key, so it
+# stays behind the IP allowlist; it also has its own admin login
+# (governance.auth_config in config.json). Inference goes pod-to-pod over the
+# ClusterIP service, not through here.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bifrost
+  namespace: default
+  annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "router-network"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: traefik-internal
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - bifrost.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: bifrost.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bifrost
+                port:
+                  number: 8080

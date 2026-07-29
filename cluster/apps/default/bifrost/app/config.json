@@ -1,0 +1,102 @@
+{
+  "$schema": "https://www.getbifrost.ai/schema",
+  "source_of_truth": "config.json",
+  "encryption_key": "env.BIFROST_ENCRYPTION_KEY",
+  "client": {
+    "initial_pool_size": 10,
+    "drop_excess_requests": false,
+    "enable_logging": true,
+    "disable_content_logging": true,
+    "log_retention_days": 90,
+    "enforce_auth_on_inference": true,
+    "allow_direct_keys": false
+  },
+  "governance": {
+    "auth_config": {
+      "is_enabled": true,
+      "admin_username": "env.BIFROST_ADMIN_USERNAME",
+      "admin_password": "env.BIFROST_ADMIN_PASSWORD"
+    },
+    "virtual_keys": [
+      {
+        "id": "vk-reimbursat0r-invoice",
+        "name": "reimbursat0r-invoice",
+        "description": "Invoice extraction. Ollama only - PHI cannot reach a cloud provider with this key, whatever the caller asks for.",
+        "value": "env.BIFROST_VK_INVOICE",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "ollama",
+            "allowed_models": ["qwen2.5:7b-32k", "qwen2.5:14b-32k"],
+            "key_ids": ["*"]
+          }
+        ]
+      },
+      {
+        "id": "vk-reimbursat0r-notice",
+        "name": "reimbursat0r-notice",
+        "description": "Bescheid line-item extraction. Anthropic Sonnet only.",
+        "value": "env.BIFROST_VK_NOTICE",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "anthropic",
+            "allowed_models": ["claude-sonnet-4-6"],
+            "key_ids": ["*"]
+          }
+        ]
+      }
+    ]
+  },
+  "providers": {
+    "ollama": {
+      "keys": [
+        {
+          "name": "sn0w",
+          "weight": 1,
+          "models": ["*"],
+          "ollama_key_config": {
+            "url": "env.OLLAMA_URL"
+          }
+        }
+      ],
+      "network_config": {
+        "allow_private_network": true,
+        "default_request_timeout_in_seconds": 900,
+        "max_retries": 0
+      },
+      "concurrency_and_buffer_size": {
+        "concurrency": 1,
+        "buffer_size": 10
+      }
+    },
+    "anthropic": {
+      "keys": [
+        {
+          "name": "anthropic-primary",
+          "value": "env.ANTHROPIC_API_KEY",
+          "weight": 1,
+          "models": ["*"]
+        }
+      ],
+      "network_config": {
+        "default_request_timeout_in_seconds": 300,
+        "max_retries": 2
+      }
+    }
+  },
+  "config_store": {
+    "enabled": true,
+    "type": "sqlite",
+    "config": {
+      "path": "/app/data/config.db"
+    }
+  },
+  "logs_store": {
+    "enabled": true,
+    "type": "sqlite",
+    "config": {
+      "path": "/app/data/logs.db"
+    }
+  }
+}

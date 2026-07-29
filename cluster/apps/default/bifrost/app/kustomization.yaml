@@ -1,0 +1,36 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - secret.sops.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+# config.json is hand-written rather than rendered by the upstream Helm chart on
+# purpose. That chart builds config.json from values through a hardcoded key
+# allowlist in _helpers.tpl plus a values.schema.json with
+# additionalProperties:false, and it has no existingConfigMap escape hatch — it
+# already silently dropped network_config.allow_private_network, the exact field
+# this deployment needs (maximhq/bifrost#4146, fixed in chart 2.1.22). A template
+# that can drop fields it does not recognise is the wrong place to express a
+# security control: here the model allowlist in governance.virtual_keys IS the
+# control that keeps PHI off the cloud, so what is in Git must be what the
+# gateway loads, byte for byte.
+#
+# config_store is deliberately ENABLED even though file-only would be tidier for
+# GitOps: governance refuses to start without it — "failed to initialize
+# governance handler: config store is required" — and governance is where the
+# virtual keys live. No config store means no virtual keys, which means no
+# enforced local-only invoice path. Git stays authoritative anyway via
+# source_of_truth: "config.json", which makes the file replace matching DB rows on
+# every startup, so a UI edit cannot survive a restart.
+#
+# The generated ConfigMap name carries a content hash, so editing config.json
+# changes the name, which changes the pod template, which rolls the Deployment.
+# That is load-bearing: config.json is reconciled into the store at startup only,
+# so a config change without a restart would have no effect.
+configMapGenerator:
+  - name: bifrost-config
+    files:
+      - config.json
