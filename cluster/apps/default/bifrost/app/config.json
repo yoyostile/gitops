@@ -134,12 +134,6 @@
     ],
     "budgets": [
       {
-        "id": "budget-zettelrobbe",
-        "virtual_key_id": "vk-zettelrobbe",
-        "max_limit": 15,
-        "reset_duration": "1M"
-      },
-      {
         "id": "budget-paperless-ai",
         "virtual_key_id": "vk-paperless-ai",
         "max_limit": 10,
