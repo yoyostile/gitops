@@ -60,6 +60,10 @@ spec:
                 secretKeyRef:
                   name: zettelrobbe-secrets
                   key: CUSTOM_API_KEY
+            # Restrictions are off; this feeds the existing vocabulary as context
+            # so it reuses tags instead of coining near-duplicates.
+            - name: USE_EXISTING_DATA
+              value: "yes"
             - name: ACTIVATE_TAGGING
               value: "yes"
             - name: ACTIVATE_CORRESPONDENTS
