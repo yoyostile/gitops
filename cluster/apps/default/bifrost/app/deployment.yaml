@@ -117,6 +117,11 @@ spec:
             # here because config.json resolves it, but is deliberately absent from
             # reimbursat0r's env — pass it per-invocation instead, so no
             # long-running app pod carries a key this broad.
+            - name: BIFROST_VK_PAPERLESS
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_PAPERLESS
             - name: BIFROST_VK_EVAL
               valueFrom:
                 secretKeyRef:
