@@ -102,6 +102,16 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_PAPERLESS
+            - name: BIFROST_VK_TENSORX
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_TENSORX
+            - name: TENSORX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: TENSORX_API_KEY
             - name: BIFROST_VK_ZETTELROBBE
               valueFrom:
                 secretKeyRef:
