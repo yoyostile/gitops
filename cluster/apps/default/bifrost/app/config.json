@@ -35,13 +35,18 @@
       {
         "id": "vk-reimbursat0r-notice",
         "name": "reimbursat0r-notice",
-        "description": "Bescheid line-item extraction. Anthropic Sonnet only.",
+        "description": "Bescheid line-item extraction. Lyceum Qwen3-235B (EU) is the active model; Anthropic Sonnet kept briefly as rollback.",
         "value": "env.BIFROST_VK_NOTICE",
         "is_active": true,
         "provider_configs": [
           {
             "provider": "anthropic",
             "allowed_models": ["claude-sonnet-4-6"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "lyceum",
+            "allowed_models": ["Qwen/Qwen3-235B-A22B-Instruct-2507"],
             "key_ids": ["*"]
           }
         ]
@@ -91,7 +96,7 @@
       {
         "id": "vk-zettelrobbe",
         "name": "zettelrobbe",
-        "description": "Zettelrobbe (Paperless-AI fork) bulk tagging. Lyceum only. NOTE: its budget must be added in a SEPARATE commit - Bifrost syncs budgets before virtual keys, so shipping both at once fails the FK and corrupts the config store.",
+        "description": "Zettelrobbe (Paperless-AI fork) bulk tagging and vision OCR. Lyceum only. When adding a VK, its env var must also be added to deployment.yaml - an unresolved env. reference yields an empty value and the VK fails to create.",
         "value": "env.BIFROST_VK_ZETTELROBBE",
         "is_active": true,
         "provider_configs": [
