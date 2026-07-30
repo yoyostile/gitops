@@ -21,13 +21,18 @@
       {
         "id": "vk-reimbursat0r-invoice",
         "name": "reimbursat0r-invoice",
-        "description": "Invoice extraction. Ollama only - PHI cannot reach a cloud provider with this key, whatever the caller asks for.",
+        "description": "Invoice extraction. Lyceum Llama-3.3-70B (EU) active; ollama kept as rollback. NOTE: invoice OCR text now leaves the LAN - the earlier local-only guarantee no longer holds for this path.",
         "value": "env.BIFROST_VK_INVOICE",
         "is_active": true,
         "provider_configs": [
           {
             "provider": "ollama",
             "allowed_models": ["qwen2.5:7b-32k", "qwen2.5:14b-32k"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "lyceum",
+            "allowed_models": ["meta-llama/Llama-3.3-70B-Instruct"],
             "key_ids": ["*"]
           }
         ]
