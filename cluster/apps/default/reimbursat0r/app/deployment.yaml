@@ -44,8 +44,6 @@ spec:
             # NOT a reimbursement notice (it reclaims money) — keep it out of the notice path.
             - name: PAPERLESS_NOTICE_QUERY
               value: "Erstattungsbescheid NOT Rückforderung NOT Aufhebungsbescheid"
-            - name: ANTHROPIC_MODEL
-              value: "claude-sonnet-4-6"
             # Via Bifrost: BIFROST_VK_INVOICE is scoped to ollama, so the invoice
             # path cannot reach a cloud provider even if the model name says so.
             - name: EXTRACTION_BACKEND
@@ -70,12 +68,6 @@ spec:
                 secretKeyRef:
                   name: reimbursat0r-secrets
                   key: BIFROST_VK_NOTICE
-            # Rollback path: set EXTRACTION_BACKEND=ollama to use the direct
-            # adapters again. Delete these (and ANTHROPIC_API_KEY) to finish the job.
-            - name: OLLAMA_HOST
-              value: "http://sn0w.lan.${SECRET_LAB_DOMAIN}:11434"
-            - name: OLLAMA_MODEL
-              value: "qwen2.5:7b"
             - name: PAPERLESS_URL
               value: "https://paperless.${SECRET_LAB_DOMAIN}"
             - name: DATABASE_URL
@@ -93,11 +85,6 @@ spec:
                 secretKeyRef:
                   name: reimbursat0r-secrets
                   key: PAPERLESS_TOKEN
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: reimbursat0r-secrets
-                  key: ANTHROPIC_API_KEY
           resources:
             requests:
               memory: "256Mi"
