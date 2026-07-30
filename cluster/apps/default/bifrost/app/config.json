@@ -40,15 +40,10 @@
       {
         "id": "vk-reimbursat0r-notice",
         "name": "reimbursat0r-notice",
-        "description": "Bescheid line-item extraction. Lyceum Qwen3-235B (EU) is the active model; Anthropic Sonnet kept briefly as rollback.",
+        "description": "Bescheid line-item extraction. Lyceum Qwen3-235B only.",
         "value": "env.BIFROST_VK_NOTICE",
         "is_active": true,
         "provider_configs": [
-          {
-            "provider": "anthropic",
-            "allowed_models": ["claude-sonnet-4-6"],
-            "key_ids": ["*"]
-          },
           {
             "provider": "lyceum",
             "allowed_models": ["Qwen/Qwen3-235B-A22B-Instruct-2507"],
