@@ -25,7 +25,11 @@ spec:
   values:
     image:
       repository: glitchtip/glitchtip
-      tag: 6.2.2
+      # Pinned to 6.2.1: 6.2.2 made the gt_rust Postgres driver mandatory, and it
+      # mis-decodes an `oid` result during the upgrade migration over existing data
+      # (fails at logs.0001_initial). 6.2.1 keeps psycopg as the default engine, which
+      # migrates cleanly. Once on the 6.2.x schema, a later 6.2.2 bump is a no-op migrate.
+      tag: 6.2.1
       pullPolicy: IfNotPresent
 
     # Chart v8 sources SECRET_KEY / DATABASE_URL / REDIS_URL from a Secret
