@@ -90,6 +90,11 @@
             "provider": "lyceum",
             "allowed_models": ["*"],
             "key_ids": ["*"]
+          },
+          {
+            "provider": "tensorx",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
           }
         ]
       },
@@ -102,6 +107,11 @@
         "provider_configs": [
           {
             "provider": "lyceum",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "tensorx",
             "allowed_models": ["*"],
             "key_ids": ["*"]
           }
@@ -145,6 +155,11 @@
           },
           {
             "provider": "lyceum",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "tensorx",
             "allowed_models": ["*"],
             "key_ids": ["*"]
           }
