@@ -58,7 +58,7 @@ spec:
               value: "ollama/qwen2.5:7b-32k"
             # Bescheid line-items are harder; 7B botched 2/4 in eval.
             - name: EXTRACTION_MODEL_NOTICE
-              value: "anthropic/claude-sonnet-4-6"
+              value: "lyceum/Qwen/Qwen3-235B-A22B-Instruct-2507"
             - name: BIFROST_VK_INVOICE
               valueFrom:
                 secretKeyRef:
