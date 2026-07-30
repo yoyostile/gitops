@@ -102,6 +102,9 @@ spec:
               value: "http://bifrost.default.svc.cluster.local:8080/v1"
             - name: MISTRAL_OCR_MODEL
               value: "lyceum/Qwen/Qwen2.5-VL-72B-Instruct"
+            # Default 10 silently truncates longer documents to the first 10 pages.
+            - name: OCR_PDF_RENDER_MAX_PAGES
+              value: "30"
             - name: OCR_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -117,8 +120,8 @@ spec:
               memory: "256Mi"
               cpu: "50m"
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "2Gi"
+              cpu: "2"
           startupProbe:
             httpGet:
               path: /
