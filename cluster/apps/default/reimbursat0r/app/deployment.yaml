@@ -52,10 +52,11 @@ spec:
               value: "bifrost"
             - name: BIFROST_URL
               value: "http://bifrost.default.svc.cluster.local:8080"
-            # "-32k" is required: num_ctx cannot be sent through the gateway, so it
-            # is baked into the model. Plain qwen2.5:7b silently truncates at 4096.
+            # Best of the Lyceum models on the invoice eval: 93.3% fields, 0 errors,
+            # reproducible across two runs. Rollback is ollama/qwen2.5:7b-32k, where
+            # the "-32k" is required because num_ctx cannot cross the gateway.
             - name: EXTRACTION_MODEL_INVOICE
-              value: "ollama/qwen2.5:7b-32k"
+              value: "lyceum/meta-llama/Llama-3.3-70B-Instruct"
             # Bescheid line-items are harder; 7B botched 2/4 in eval.
             - name: EXTRACTION_MODEL_NOTICE
               value: "lyceum/Qwen/Qwen3-235B-A22B-Instruct-2507"
