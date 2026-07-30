@@ -36,9 +36,6 @@ spec:
               value: "3000"
             - name: LOG_LEVEL
               value: "info"
-            # TODO remove: pre-setup it 403s all non-localhost requests (probe + browser).
-            - name: ALLOW_REMOTE_SETUP
-              value: "yes"
             - name: TRUST_PROXY
               value: "yes"
             # Also used for the UI's document links, so not the ClusterIP. No /api suffix.
