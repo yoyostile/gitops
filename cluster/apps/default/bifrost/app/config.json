@@ -108,6 +108,20 @@
         ]
       },
       {
+        "id": "vk-general-tensorx",
+        "name": "general-tensorx",
+        "description": "TensorX (EU, Scaleway FR). Second EU provider alongside Lyceum; carries qwen3-vl-235b which Lyceum lacks.",
+        "value": "env.BIFROST_VK_TENSORX",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "tensorx",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          }
+        ]
+      },
+      {
         "id": "vk-eval",
         "name": "eval",
         "description": "Benchmarking only, spans every provider so one run can compare local vs Anthropic vs EU clouds. Deliberately NOT in any Deployment env - pass it ad hoc (kubectl exec -- env EVAL_BIFROST_VK=...) so no long-running pod holds a key this broad.",
@@ -138,6 +152,12 @@
       }
     ],
     "budgets": [
+      {
+        "id": "budget-general-tensorx",
+        "virtual_key_id": "vk-general-tensorx",
+        "max_limit": 5,
+        "reset_duration": "1M"
+      },
       {
         "id": "budget-zettelrobbe",
         "virtual_key_id": "vk-zettelrobbe",
@@ -649,6 +669,246 @@
         "pattern": "zai-org/GLM-5.1",
         "request_types": ["chat_completion"],
         "pricing_patch": "{\"cache_read_input_token_cost\":1.4e-06,\"output_cost_per_token\":4.4e-06,\"input_cost_per_token\":1.4e-06}"
+      },
+      {
+        "id": "tensorx-deepseek-deepseek-chat-v3.1",
+        "name": "TensorX deepseek/deepseek-chat-v3.1",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-chat-v3.1",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":2.0000000000000002e-07,\"output_cost_per_token\":8.000000000000001e-07,\"cache_read_input_token_cost\":5.0000000000000004e-08}"
+      },
+      {
+        "id": "tensorx-deepseek-deepseek-r1-0528",
+        "name": "TensorX deepseek/deepseek-r1-0528",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-r1-0528",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":6.6e-07,\"output_cost_per_token\":2.6e-06,\"cache_read_input_token_cost\":1.7000000000000001e-07}"
+      },
+      {
+        "id": "tensorx-deepseek-deepseek-v3.2",
+        "name": "TensorX deepseek/deepseek-v3.2",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-v3.2",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":3e-07,\"output_cost_per_token\":5e-07,\"cache_read_input_token_cost\":8e-08}"
+      },
+      {
+        "id": "tensorx-deepseek-deepseek-v4-flash",
+        "name": "TensorX deepseek/deepseek-v4-flash",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-v4-flash",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.5e-07,\"output_cost_per_token\":3e-07,\"cache_read_input_token_cost\":4e-08}"
+      },
+      {
+        "id": "tensorx-deepseek-deepseek-v4-pro",
+        "name": "TensorX deepseek/deepseek-v4-pro",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-v4-pro",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.75e-06,\"output_cost_per_token\":3.5e-06,\"cache_read_input_token_cost\":4.4e-07}"
+      },
+      {
+        "id": "tensorx-minimax-minimax-m2.5",
+        "name": "TensorX minimax/minimax-m2.5",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "minimax/minimax-m2.5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":3e-07,\"output_cost_per_token\":1.2e-06,\"cache_read_input_token_cost\":8e-08}"
+      },
+      {
+        "id": "tensorx-minimax-minimax-m3",
+        "name": "TensorX minimax/minimax-m3",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "minimax/minimax-m3",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":4.0000000000000003e-07,\"output_cost_per_token\":2e-06,\"cache_read_input_token_cost\":1.0000000000000001e-07}"
+      },
+      {
+        "id": "tensorx-moonshotai-kimi-k2.5",
+        "name": "TensorX moonshotai/kimi-k2.5",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k2.5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":5e-07,\"output_cost_per_token\":2.8e-06,\"cache_read_input_token_cost\":1.3e-07}"
+      },
+      {
+        "id": "tensorx-moonshotai-kimi-k2.6",
+        "name": "TensorX moonshotai/kimi-k2.6",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k2.6",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1e-06,\"output_cost_per_token\":4e-06,\"cache_read_input_token_cost\":2.5e-07}"
+      },
+      {
+        "id": "tensorx-moonshotai-kimi-k2.7-code",
+        "name": "TensorX moonshotai/kimi-k2.7-code",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k2.7-code",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.25e-06,\"output_cost_per_token\":4.5e-06,\"cache_read_input_token_cost\":3.1e-07}"
+      },
+      {
+        "id": "tensorx-moonshotai-kimi-k3",
+        "name": "TensorX moonshotai/kimi-k3",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k3",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":3e-06,\"output_cost_per_token\":1.5e-05,\"cache_read_input_token_cost\":7.5e-07}"
+      },
+      {
+        "id": "tensorx-nvidia-nemotron-3-super-120b-a12b",
+        "name": "TensorX nvidia/nemotron-3-super-120b-a12b",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "nvidia/nemotron-3-super-120b-a12b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":3e-07,\"output_cost_per_token\":9.000000000000001e-07,\"cache_read_input_token_cost\":8e-08}"
+      },
+      {
+        "id": "tensorx-openai-gpt-oss-120b",
+        "name": "TensorX openai/gpt-oss-120b",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "openai/gpt-oss-120b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":4e-08,\"output_cost_per_token\":2.0000000000000002e-07,\"cache_read_input_token_cost\":1e-08}"
+      },
+      {
+        "id": "tensorx-qwen-qwen3-235b-a22b-2507",
+        "name": "TensorX qwen/qwen3-235b-a22b-2507",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-235b-a22b-2507",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":7e-08,\"output_cost_per_token\":4.6000000000000004e-07,\"cache_read_input_token_cost\":2e-08}"
+      },
+      {
+        "id": "tensorx-qwen-qwen3-coder-30b-a3b-instruct",
+        "name": "TensorX qwen/qwen3-coder-30b-a3b-instruct",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-coder-30b-a3b-instruct",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":6e-08,\"output_cost_per_token\":2.5e-07,\"cache_read_input_token_cost\":2e-08}"
+      },
+      {
+        "id": "tensorx-qwen-qwen3-embedding-8b",
+        "name": "TensorX qwen/qwen3-embedding-8b",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-embedding-8b",
+        "request_types": ["embedding"],
+        "pricing_patch": "{\"input_cost_per_token\":2e-08}"
+      },
+      {
+        "id": "tensorx-qwen-qwen3-vl-235b-a22b-instruct",
+        "name": "TensorX qwen/qwen3-vl-235b-a22b-instruct",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-vl-235b-a22b-instruct",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":2.1e-07,\"output_cost_per_token\":1.8999999999999998e-06,\"cache_read_input_token_cost\":5.0000000000000004e-08}"
+      },
+      {
+        "id": "tensorx-qwen-qwen3.5-122b-a10b",
+        "name": "TensorX qwen/qwen3.5-122b-a10b",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.5-122b-a10b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":5e-07,\"output_cost_per_token\":3.5e-06,\"cache_read_input_token_cost\":1.3e-07}"
+      },
+      {
+        "id": "tensorx-qwen-qwen3.5-9b",
+        "name": "TensorX qwen/qwen3.5-9b",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.5-9b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.5e-07,\"output_cost_per_token\":2.0000000000000002e-07,\"cache_read_input_token_cost\":4e-08}"
+      },
+      {
+        "id": "tensorx-z-ai-glm-5",
+        "name": "TensorX z-ai/glm-5",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1e-06,\"output_cost_per_token\":3.2000000000000003e-06,\"cache_read_input_token_cost\":2.5e-07}"
+      },
+      {
+        "id": "tensorx-z-ai-glm-5-turbo",
+        "name": "TensorX z-ai/glm-5-turbo",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5-turbo",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.2e-06,\"output_cost_per_token\":4e-06,\"cache_read_input_token_cost\":3e-07}"
+      },
+      {
+        "id": "tensorx-z-ai-glm-5.1",
+        "name": "TensorX z-ai/glm-5.1",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5.1",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.4e-06,\"output_cost_per_token\":4.4e-06,\"cache_read_input_token_cost\":3.5e-07}"
+      },
+      {
+        "id": "tensorx-z-ai-glm-5.2",
+        "name": "TensorX z-ai/glm-5.2",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5.2",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.5e-06,\"output_cost_per_token\":4.5e-06,\"cache_read_input_token_cost\":3.8e-07}"
+      },
+      {
+        "id": "tensorx-z-ai-glm-5v-turbo",
+        "name": "TensorX z-ai/glm-5v-turbo",
+        "scope_kind": "provider",
+        "provider_id": "tensorx",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5v-turbo",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"input_cost_per_token\":1.2e-06,\"output_cost_per_token\":4e-06,\"cache_read_input_token_cost\":3e-07}"
       }
     ]
   },
@@ -725,6 +985,30 @@
           "list_models": "/api/v2/external/serverless/models",
           "embedding": "/api/v2/external/serverless/embeddings"
         },
+        "allowed_requests": {
+          "chat_completion": true,
+          "chat_completion_stream": true,
+          "list_models": true,
+          "embedding": true
+        }
+      }
+    },
+    "tensorx": {
+      "keys": [
+        {
+          "name": "tensorx",
+          "value": "env.TENSORX_API_KEY",
+          "weight": 1,
+          "models": ["*"]
+        }
+      ],
+      "network_config": {
+        "base_url": "https://api.tensorx.ai",
+        "default_request_timeout_in_seconds": 300,
+        "max_retries": 2
+      },
+      "custom_provider_config": {
+        "base_provider_type": "openai",
         "allowed_requests": {
           "chat_completion": true,
           "chat_completion_stream": true,
