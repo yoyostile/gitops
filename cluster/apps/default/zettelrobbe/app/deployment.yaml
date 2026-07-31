@@ -88,8 +88,10 @@ spec:
               value: "*/30 * * * *"
             - name: SETUP_VALIDATION_TIMEOUT_MS
               value: "120000"
+            # Despite the name, this is the per-page OCR request timeout, not just
+            # wizard validation — oversized pages (A0 plans) exceed 120s.
             - name: SETUP_OCR_VALIDATION_TIMEOUT_MS
-              value: "120000"
+              value: "300000"
             # "MISTRAL_*" is a legacy name only: OCR_PROVIDER=custom routes via OCR_API_URL.
             - name: MISTRAL_OCR_ENABLED
               value: "yes"
