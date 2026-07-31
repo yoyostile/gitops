@@ -125,10 +125,10 @@ spec:
                   key: BIFROST_VK_EVAL
           resources:
             requests:
-              memory: "384Mi"
+              memory: "768Mi"
               cpu: "100m"
             limits:
-              memory: "1536Mi"
+              memory: "4Gi"
               cpu: "2"
           startupProbe:
             httpGet:
