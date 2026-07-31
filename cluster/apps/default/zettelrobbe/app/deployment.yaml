@@ -57,8 +57,14 @@ spec:
                 secretKeyRef:
                   name: zettelrobbe-secrets
                   key: CUSTOM_API_KEY
-            # Restrictions are off; this feeds the existing vocabulary as context
-            # so it reuses tags instead of coining near-duplicates.
+            # Unset reads as "not restricted" (paperlessService checks === 'yes'),
+            # which is what let the vocabulary grow to 629 tags.
+            - name: RESTRICT_TO_EXISTING_TAGS
+              value: "yes"
+            - name: RESTRICT_TO_EXISTING_CORRESPONDENTS
+              value: "yes"
+            - name: RESTRICT_TO_EXISTING_DOCUMENT_TYPES
+              value: "yes"
             - name: USE_EXISTING_DATA
               value: "yes"
             - name: ACTIVATE_TAGGING
