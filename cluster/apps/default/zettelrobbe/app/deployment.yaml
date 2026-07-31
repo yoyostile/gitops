@@ -61,6 +61,8 @@ spec:
             # which is what let the vocabulary grow to 629 tags.
             - name: RESTRICT_TO_EXISTING_TAGS
               value: "yes"
+            - name: RESTRICT_TO_EXISTING_DOCUMENT_TYPES
+              value: "yes"
             - name: USE_EXISTING_DATA
               value: "yes"
             - name: ACTIVATE_TAGGING
