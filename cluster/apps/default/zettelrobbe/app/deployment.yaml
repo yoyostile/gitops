@@ -73,9 +73,8 @@ spec:
               value: "yes"
             - name: ACTIVATE_TITLE
               value: "yes"
-            # Paused: nothing is written until triggered by hand.
             - name: DISABLE_AUTOMATIC_PROCESSING
-              value: "yes"
+              value: "no"
             - name: ADD_AI_PROCESSED_TAG
               value: "yes"
             - name: AI_PROCESSED_TAG_NAME
