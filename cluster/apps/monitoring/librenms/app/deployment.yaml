@@ -6,6 +6,9 @@ metadata:
   namespace: monitoring
 spec:
   replicas: 1
+  # RWO ceph-rbd PVC: rolling update deadlocks on Multi-Attach, tear old pod down first
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: librenms
