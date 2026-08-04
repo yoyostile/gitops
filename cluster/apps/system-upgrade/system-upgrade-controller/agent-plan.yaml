@@ -25,8 +25,6 @@ spec:
   drain:
     force: true
     skipWaitForDeleteTimeout: 60
-    # delete pods instead of evicting so single-instance CNPG PDBs (allowed=0)
-    # don't deadlock the drain; node-pinned DBs are down during the reboot anyway
     disableEviction: true
   upgrade:
     image: rancher/k3s-upgrade
