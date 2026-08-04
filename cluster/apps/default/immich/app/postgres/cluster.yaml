@@ -5,12 +5,12 @@ metadata:
   name: immich-postgres
   namespace: default
 spec:
-  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.5-v0.3.0@sha256:be3f025d79aa1b747817f478e07e71be43236e14d00d8a9eb3914146245035ba
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16-0.4.2@sha256:649da2df5f079dd1f214e3a877cafd0208eff3779e9c60d14d243fbca5e11c97
   instances: 1
 
   postgresql:
     shared_preload_libraries:
-      - "vectors.so"
+      - "vchord.so"
 
   managed:
     roles:
@@ -25,7 +25,7 @@ spec:
       secret:
         name: immich-postgres-user
       postInitSQL:
-        - CREATE EXTENSION IF NOT EXISTS "vectors";
+        - CREATE EXTENSION IF NOT EXISTS "vchord" CASCADE;
         - CREATE EXTENSION IF NOT EXISTS "cube" CASCADE;
         - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
 
