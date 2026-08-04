@@ -79,9 +79,13 @@ spec:
                 value: "Europe/Berlin"
               - name: TRANSFORMERS_CACHE
                 value: /cache
-              - name: MACHINE_LEARNING_PRELOAD__CLIP
+              - name: MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL
                 value: ViT-B-32__openai
-              - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION
+              - name: MACHINE_LEARNING_PRELOAD__CLIP__VISUAL
+                value: ViT-B-32__openai
+              - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__RECOGNITION
+                value: buffalo_l
+              - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
                 value: buffalo_l
 
     immich:
@@ -180,9 +184,13 @@ spec:
                   value: /cache/huggingface-xet
                 - name: MPLCONFIGDIR
                   value: /cache/matplotlib-config
-                - name: MACHINE_LEARNING_PRELOAD__CLIP
+                - name: MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL
                   value: ViT-B-32__openai
-                - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION
+                - name: MACHINE_LEARNING_PRELOAD__CLIP__VISUAL
+                  value: ViT-B-32__openai
+                - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__RECOGNITION
+                  value: buffalo_l
+                - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
                   value: buffalo_l
               resources:
                 requests:
