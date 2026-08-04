@@ -170,6 +170,8 @@ spec:
           memory: 4Gi
           gpu.intel.com/i915: "1"
         limits:
+          # bounded ceiling: models peak ~2-4Gi; no limit let node-pressure OOM-kill it
+          memory: 6Gi
           gpu.intel.com/i915: "1"
       controllers:
         main:
