@@ -221,5 +221,14 @@
         'quay.io/minio/mc',
       ],
     },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$',
+      matchPackageNames: [
+        'docker.io/maximhq/bifrost',
+      ],
+    },
   ],
 }
