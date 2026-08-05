@@ -40,14 +40,6 @@ spec:
     global:
       annotations:
         reloader.stakater.com/auto: "true"
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-        gpu.intel.com/i915: "1"
-      limits:
-        cpu: 2000m
-        gpu.intel.com/i915: "1"
 
     controllers:
       main:
@@ -87,6 +79,14 @@ spec:
                 value: buffalo_l
               - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
                 value: buffalo_l
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+                gpu.intel.com/i915: "1"
+              limits:
+                cpu: 2000m
+                gpu.intel.com/i915: "1"
 
     immich:
       metrics:
