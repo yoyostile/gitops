@@ -19,7 +19,7 @@ spec:
           - "true"
       # rancher/k3s-upgrade replaces the k3s binary in place; on NixOS that path
       # is in the read-only store, so the job fails and leaves the node cordoned.
-      - key: lab.r4r3.me/managed-by
+      - key: managed-by
         operator: NotIn
         values:
           - nixos
