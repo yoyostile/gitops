@@ -5,3 +5,4 @@ resources:
   - pve.yaml
   - unifi.yaml
   - wildcards.yaml
+  - wildcards-blog.yaml
