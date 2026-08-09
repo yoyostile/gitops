@@ -319,14 +319,12 @@ chore permanently.
 
 All hit for real.
 
-- **system-upgrade-controller cannot upgrade a NixOS node, and must not try.**
-  `rancher/k3s-upgrade` resolves the k3s binary to its `/nix/store` path and tries to
-  `cp` over it, which fails because the store is read-only — leaving the node cordoned
-  and the job looping. The `k3s-agent` Plan excludes `managed-by=nixos` and the class
-  sets that label at registration; **both halves are required**. Now that every node
-  carries the label, SUC matches nothing and is vestigial — k3s versions come from
-  `pkgs.k3s_*` here instead. Upgrading is a nixpkgs bump plus a rolling
-  `nixos-rebuild switch`, **one server at a time**, and nothing reminds you to do it.
+- **No in-cluster upgrader may touch these nodes.** Anything that swaps the k3s
+  binary in place (`rancher/k3s-upgrade` and friends) resolves it to its `/nix/store`
+  path and tries to `cp` over it; the store is read-only, so the job loops and leaves
+  the node cordoned. k3s versions come from `pkgs.k3s_*` in `modules/k3s-worker.nix`,
+  and upgrading is a nixpkgs bump plus a rolling `nixos-rebuild switch`, **one server
+  at a time**. Nothing reminds you to do it.
 - **DHCP hands out a new lease at kexec.** The installer announces hostname
   `nixos-installer`, and RouterOS issues a *different* address, so nixos-anywhere retries
   an address the machine has left. Resume with
@@ -370,7 +368,7 @@ All hit for real.
 - **`--node-label` applies at registration only.** Changing one later needs
   `kubectl label`; the flag alone will not move it. Self-labelling an unprefixed key
   (`managed-by=nixos`) via `--node-label` is confirmed working: a fresh join registers
-  with it and SUC excludes the node from the start.
+  with it already set.
 - **Node password.** k3s stores `<node>.node-password.k3s` in `kube-system`. A node
   rebuilt from scratch generates a new password and the server rejects the rejoin —
   delete the secret before re-installing under the same name.
