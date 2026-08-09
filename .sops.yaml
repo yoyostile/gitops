@@ -12,3 +12,15 @@ creation_rules:
     encrypted_regex: "^(data|stringData)$"
     age: >-
       age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+  # NixOS host secrets, read by sops-nix at activation. Recipients are the admin
+  # key plus each host's age identity, derived from its SSH host key with
+  # ssh-to-age. A host absent from this list cannot decrypt: add it here, then
+  # re-encrypt (`sops updatekeys`), before the host needs the secret.
+  #   age18ql2... = k3s-argon    (pve01)
+  #   age170pg... = k3s-neon     (pve01)
+  #   age1ugmk... = k3s-xenon    (pve03)
+  #   age16u4y... = k3s-krypton  (pve03)
+  #   age1her5... = k3s-radon    (pve02)
+  #   age1u03l... = k3s-helium   (pve02)
+  - path_regex: nix/secrets/.*\.sops\.ya?ml$
+    age: "age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55,age18ql2zujp4mnjqal0n0dhmhfq9lpxgdf0wcl2795rtx0ymxz3npfqt93tka,age170pg62004fly0upg279hnm5rw2qse0ey9jxksn2ymgf6ftwsz5jqkue2ez,age1ugmknm48ne8arjjf205ud96ppja0r4r8ec9wrcau2dzuucqlvcnqc56vml,age16u4ywch3znxmtf4nk6pnhzj5a6nu72wcr865fks6fe8ghhcxry2s3ludcy,age1her5zwngxyz0ztskmqy0qqqk8ak6fpswj8fxmpc3emxz7eg5agkqw068v2,age1u03luzqdp9ylu074tcvljfzjlj0fm6jdt9jhrw2z4zp0htr3qv8s2f92wf"
