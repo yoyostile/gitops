@@ -37,6 +37,20 @@
       '/provision/ansible/playbooks/templates/.+\\.ya?ml.j2$/',
     ],
   },
+  // The nix manager ships `enabled: false`, so it silently does nothing until
+  // switched on here. Default managerFilePatterns already match nix/flake.nix.
+  nix: {
+    enabled: true,
+    // disko and sops-nix are pinned by rev only in flake.lock, so nothing but
+    // lockFileMaintenance can ever move them. Its own default schedule is
+    // Monday 4am, which ignores the repo-wide weekend schedule — set it here.
+    lockFileMaintenance: {
+      enabled: true,
+      schedule: [
+        'before 06:00 on the first day of the month',
+      ],
+    },
+  },
   customManagers: [
     {
       customType: 'regex',
@@ -229,6 +243,37 @@
       matchPackageNames: [
         'docker.io/maximhq/bifrost',
       ],
+    },
+    {
+      // Moves the nixpkgs branch in flake.nix (nixos-26.05 -> next release).
+      // A NixOS release upgrade, not a routine bump — hence dep/major.
+      matchManagers: [
+        'nix',
+      ],
+      matchDepNames: [
+        'nixpkgs',
+      ],
+      commitMessageTopic: 'nixpkgs channel',
+      labels: [
+        'renovate/nix',
+        'dep/major',
+      ],
+      automerge: false,
+    },
+    {
+      // One PR refreshing every flake input. disko and sops-nix `follows`
+      // nixpkgs, so splitting them per-input would land inconsistent closures.
+      matchManagers: [
+        'nix',
+      ],
+      matchUpdateTypes: [
+        'lockFileMaintenance',
+      ],
+      labels: [
+        'renovate/nix',
+        'dep/patch',
+      ],
+      automerge: false,
     },
   ],
 }
