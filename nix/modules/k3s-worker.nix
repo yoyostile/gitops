@@ -79,9 +79,9 @@ in
         "--node-ip=${config.lab.host.ipv4}"
         "--node-label=topology.kubernetes.io/region=${cfg.region}"
         "--node-label=topology.kubernetes.io/zone=${cfg.zone}"
-        # system-upgrade-controller's k3s-agent Plan excludes this label; without
-        # it SUC cordons the node and its upgrade job loops trying to overwrite
-        # the k3s binary in the read-only Nix store.
+        # Marks the node as one whose k3s comes from nixpkgs, so any in-cluster
+        # upgrader can be told to skip it — overwriting the binary in the
+        # read-only Nix store fails and leaves the node cordoned.
         "--node-label=managed-by=nixos"
       ]
       ++ lib.optionals cfg.server [

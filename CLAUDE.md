@@ -69,7 +69,7 @@ Use `${VARIABLE_NAME}` syntax in manifests. When substitution is not needed, set
 
 ### Namespace Organization
 
-Apps are grouped under `cluster/apps/` by namespace: `cnpg`, `default`, `kube-system`, `monitoring`, `networking`, `system-upgrade`, `trivy-system`, `woodpecker`. To add an app, create its directory under the appropriate namespace and add it to that namespace's `kustomization.yaml`.
+Apps are grouped under `cluster/apps/` by namespace: `cnpg`, `default`, `kube-system`, `media`, `monitoring`, `networking`, `woodpecker`. To add an app, create its directory under the appropriate namespace and add it to that namespace's `kustomization.yaml`.
 
 ## Ingress Patterns
 

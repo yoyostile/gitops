@@ -6,7 +6,6 @@ resources:
   - ./kube-system/ks.yaml
   - ./mariadb-operator/ks.yaml
   - ./metallb-system/ks.yaml
-  - ./system-upgrade/ks.yaml
   - ./external-dns/ks.yaml
   - ./nfs-subdir-external-provisioner/ks.yaml
   - ./proxmox-csi/ks.yaml
