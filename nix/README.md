@@ -255,8 +255,9 @@ Served at `http://10.0.0.35/nixos-installer/netboot.ipxe`. Verify with `curl -I`
 
 netboot.xyz's main menu ends with `choose --timeout ${timeout} --default ${menu} menu ||
 goto local`, so setting `menu` and `timeout` gives unattended boot and anything unmatched
-falls through to booting from disk. Because `menus/local/boot.cfg` is itself an iPXE
-script, gate it on the MAC of the machine being provisioned:
+falls through to booting from disk. Because `config/menus/boot.cfg` is itself an iPXE
+script, gate it on the MAC of the machine being provisioned, as the first lines of the
+file so it runs before the menu:
 
 ```
 iseq ${net0/mac} bc:24:11:xx:xx:xx && chain http://10.0.0.35/nixos-installer/netboot.ipxe ||
@@ -264,11 +265,17 @@ iseq ${net0/mac} bc:24:11:xx:xx:xx && chain http://10.0.0.35/nixos-installer/net
 
 Only that VM auto-installs; every other PXE client keeps the interactive menu.
 
-**Edit `menus/local/boot.cfg`, never `menus/*.ipxe`** — the latter are shipped by the
+**Edit `config/menus/boot.cfg`, never `menus/*.ipxe`** — the latter are shipped by the
 appliance and replaced on update. That is also why the built-in `nixos.ipxe` stops at
 25.11 while `menuversion.txt` already reads 3.0.2.
 
-Unrelated but worth fixing while in there: `menus/local/boot.cfg` pins
+**`config/menus/local/boot.cfg` is not served.** A same-sized copy of `boot.cfg` sits
+there and editing it looks right and does nothing — the VM PXE-boots, takes a DHCP
+lease, then drops to the UEFI boot manager with no clue why. The menus are served over
+**TFTP**, not the nginx on :80, so check which file is live with
+`tftp 10.0.0.35` + `get boot.cfg` rather than curling it.
+
+Unrelated but worth fixing while in there: `config/menus/boot.cfg` pins
 `boot_domain netbootxyz.<lab-domain>/<version>`, and both that path and `/3.0.2/` return
 **404** because `assets/` was empty. It only feeds `memdisk` and `sigs` (and
 `sigs_enabled` is false), so nothing you use is broken — but memdisk-based entries are.
@@ -375,6 +382,20 @@ All hit for real.
 - **Don't provision volumes while the node is cordoned.** A `proxmox-data-ext4` PVC bound
   while its node was cordoned landed in the wrong zone despite the `selected-node`
   annotation; a clean retry placed it correctly.
+- **`networking.interfaces.lo` addresses are generated and never applied.** The
+  scripted-networking `network-addresses-<iface>.service` units are pulled in by each
+  interface's udev device unit; loopback has none, so the generated unit carries only
+  `PartOf=` — which stops a unit but never starts one. It sits `inactive (dead)` and the
+  addresses are silently absent. `network-setup.service` and `network-online.target` are
+  both inactive on these hosts, so add `wantedBy = [ "multi-user.target" ]` yourself.
+  This is how an anycast host comes up with a healthy BGP session and still black-holes
+  every packet steered to it.
+- **A loopback nameserver silently discards every other one.** openresolv defaults
+  `resolv_conf_local_only` to yes, so `networking.nameservers = [ "127.0.0.1" "9.9.9.11" ]`
+  writes *only* `127.0.0.1` to `/etc/resolv.conf`. `resolvconf -l` still lists both, which
+  makes it look configured. On a host that resolves through its own service, that means no
+  DNS at all whenever the service is down — exactly when you need to `nixos-rebuild` to fix
+  it. Set `networking.resolvconf.extraConfig = "resolv_conf_local_only=NO"`.
 - **`/lib/modules`** does not exist on NixOS. The tmpfiles symlink in the k3s class is
   what keeps ceph-csi's hostPath mount working.
 - **disko owns the GRUB device.** Setting `boot.loader.grub.devices` as well trips a
