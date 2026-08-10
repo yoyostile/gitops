@@ -117,6 +117,25 @@ in
       # These guests are small and nixos-rebuild is the peak memory consumer on
       # them; unbounded parallelism OOMs the switch rather than failing cleanly.
       max-jobs = 2;
+
+      # builder01's harmonia cache. Both of these are list options that NixOS
+      # already defines, and list definitions merge, so these append to
+      # cache.nixos.org rather than replacing it — repeating upstream here would
+      # only duplicate the entry.
+      #
+      # List order does not decide who is asked first; the `Priority` each cache
+      # reports in /nix-cache-info does. harmonia is pinned to 30 against
+      # upstream's 40 in modules/nix-builder.nix, which is what keeps a hit on
+      # the LAN from being fetched over the WAN instead.
+      #
+      # The literal IP is deliberate. A hostname would put AdGuard on the path
+      # of every nixos-rebuild, including the rebuild you run to fix AdGuard.
+      # An unreachable substituter is only a warning — a host still falls
+      # through to upstream when builder01 is down.
+      substituters = [ "http://10.0.0.21:5000" ];
+      trusted-public-keys = [
+        "builder01.lab.r4r3.me-1:fC6JEnF1nZ+Zi6/5mjdxkrVUiYZinipGCZ9HssOeb2M="
+      ];
     };
 
     nix.gc = {
