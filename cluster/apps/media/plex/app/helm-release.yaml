@@ -24,6 +24,12 @@ spec:
   values:
     nodeSelector:
       topology.kubernetes.io/region: lab
+      # Software transcoding a 4K HDR remux costs ~3.7 cores, and Plex requests
+      # only 75m, so the scheduler treats it as tiny and would otherwise drop it
+      # on a 4-vCPU node. pve02 hosts the 8-vCPU nodes on a 32-core box. Safe to
+      # pin: the config PVC is ceph-rbd (shared) and media is NFS, so neither is
+      # zone-bound the way proxmox-csi volumes are.
+      topology.kubernetes.io/zone: pve02
     replicas: 1
     dnsConfig:
       options:
