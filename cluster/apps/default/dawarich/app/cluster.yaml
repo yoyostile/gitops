@@ -34,10 +34,11 @@ spec:
       parameters:
         barmanObjectName: cnpg-store
 
+  # Sized from 14d of usage: p90 297Mi / 35m, peak 991Mi. No CPU limit — CPU is
+  # compressible, so a limit throttles even on an idle node.
   resources:
     requests:
-      memory: "256Mi"
-      cpu: "250m"
+      memory: "352Mi"
+      cpu: "50m"
     limits:
-      memory: "1Gi"
-      cpu: "500m"
+      memory: "1216Mi"

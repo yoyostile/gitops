@@ -59,6 +59,13 @@ spec:
       USERMAP_UID: "3000"
       USERMAP_GID: "3000"
 
+    # Sized from 14d of usage: p90 935Mi / 220m, peak 2923Mi.
+    resources:
+      requests:
+        memory: 1088Mi
+        cpu: 265m
+      limits:
+        memory: 3520Mi
     persistence:
       data:
         enabled: true

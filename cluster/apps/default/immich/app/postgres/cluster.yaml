@@ -8,6 +8,14 @@ spec:
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16-0.4.2@sha256:649da2df5f079dd1f214e3a877cafd0208eff3779e9c60d14d243fbca5e11c97
   instances: 1
 
+  # Sized from 14d of usage: p90 1010Mi / 44m, peak 1332Mi. No CPU limit by design.
+  resources:
+    requests:
+      memory: "1184Mi"
+      cpu: "55m"
+    limits:
+      memory: "1600Mi"
+
   postgresql:
     shared_preload_libraries:
       - "vchord.so"

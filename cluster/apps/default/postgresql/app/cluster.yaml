@@ -6,6 +6,14 @@ metadata:
   namespace: default
 spec:
   instances: 1
+
+  # Sized from 14d of usage: p90 429Mi / 123m, peak 1173Mi. No CPU limit by design.
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "150m"
+    limits:
+      memory: "1408Mi"
   # bootstrap:
   #   recovery:
   #     source: origin

@@ -79,13 +79,16 @@ spec:
                 value: buffalo_l
               - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
                 value: buffalo_l
+            # Sized from 14d of usage: p90 1353Mi / 100m, peak 5513Mi.
+            # Was requesting 256Mi while routinely using 1.3Gi, so the
+            # scheduler treated it as nearly free. No memory limit: the
+            # peaks are real and a limit would OOM-kill it mid-import.
             resources:
               requests:
-                cpu: 100m
-                memory: 256Mi
+                cpu: 120m
+                memory: 1568Mi
                 gpu.intel.com/i915: "1"
               limits:
-                cpu: 2000m
                 gpu.intel.com/i915: "1"
 
     immich:
@@ -192,9 +195,11 @@ spec:
                   value: buffalo_l
                 - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
                   value: buffalo_l
+              # Sized from 14d of usage: p90 2661Mi / 95m, peak 3904Mi.
               resources:
                 requests:
-                  memory: 4Gi
+                  cpu: 115m
+                  memory: 3072Mi
                   gpu.intel.com/i915: "1"
                 limits:
                   # bounded ceiling: models peak ~2-4Gi; block was at the wrong

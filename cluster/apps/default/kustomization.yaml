@@ -21,7 +21,6 @@ resources:
   - ./mosquitto/ks.yaml
   - ./paperless/ks.yaml
   - ./postgresql/ks.yaml
-  - ./random-gif/ks.yaml
   - ./redis/ks.yaml
   - ./reimbursat0r/ks.yaml
   - ./requestbin/ks.yaml
