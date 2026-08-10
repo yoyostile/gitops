@@ -6,6 +6,10 @@ metadata:
   namespace: monitoring
 spec:
   replicas: 1
+  # RWO volume: RollingUpdate deadlocks because the new pod cannot attach
+  # until the old one releases it. Recreate is required, not preference.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: librenms
