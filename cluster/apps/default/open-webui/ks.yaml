@@ -9,6 +9,7 @@ spec:
   interval: 5m
   dependsOn:
     - name: apps-default-bifrost
+    - name: apps-default-open-webui-tools
   path: ./cluster/apps/default/open-webui/app
   prune: true
   wait: true

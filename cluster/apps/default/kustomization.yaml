@@ -20,6 +20,7 @@ resources:
   - ./mikrotik-backup/ks.yaml
   - ./mosquitto/ks.yaml
   - ./open-webui/ks.yaml
+  - ./open-webui-tools/ks.yaml
   - ./paperless/ks.yaml
   - ./postgresql/ks.yaml
   - ./redis/ks.yaml

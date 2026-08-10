@@ -1,0 +1,300 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: open-webui-tools
+  namespace: default
+data:
+  server.mjs: |
+    import { createServer } from "node:http";
+    import { timingSafeEqual } from "node:crypto";
+
+    const port = Number(process.env.PORT || 3000);
+    const apiKey = process.env.API_KEY || "";
+    const paperlessUrl = process.env.PAPERLESS_URL || "http://paperless.default.svc.cluster.local:8000";
+    const paperlessPublicUrl = process.env.PAPERLESS_PUBLIC_URL || paperlessUrl;
+    const paperlessToken = process.env.PAPERLESS_API_TOKEN || "";
+    const healthTargets = JSON.parse(process.env.HEALTH_TARGETS || "[]");
+
+    if (!apiKey || !paperlessToken) {
+      throw new Error("API_KEY and PAPERLESS_API_TOKEN are required");
+    }
+
+    const openapi = {
+      openapi: "3.1.0",
+      info: {
+        title: "Homelab tools",
+        version: "1.0.0",
+        description: "Read-only tools for Paperless-ngx and homelab service health."
+      },
+      paths: {
+        "/paperless/search": {
+          get: {
+            operationId: "search_paperless_documents",
+            summary: "Search Paperless documents",
+            description: "Full-text search over document titles and extracted content. Returns short matching excerpts and metadata, never files.",
+            security: [{ bearerAuth: [] }],
+            parameters: [
+              {
+                name: "query",
+                in: "query",
+                required: true,
+                description: "Paperless full-text query, for example: invoice electricity 2025",
+                schema: { type: "string", minLength: 1, maxLength: 200 }
+              },
+              {
+                name: "page",
+                in: "query",
+                schema: { type: "integer", minimum: 1, default: 1 }
+              },
+              {
+                name: "page_size",
+                in: "query",
+                schema: { type: "integer", minimum: 1, maximum: 20, default: 5 }
+              }
+            ],
+            responses: {
+              "200": {
+                description: "Matching documents",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
+        },
+        "/paperless/documents/{document_id}": {
+          get: {
+            operationId: "get_paperless_document",
+            summary: "Read a Paperless document",
+            description: "Returns metadata and a bounded amount of extracted text for one document. Use search first to obtain the document ID.",
+            security: [{ bearerAuth: [] }],
+            parameters: [
+              {
+                name: "document_id",
+                in: "path",
+                required: true,
+                schema: { type: "integer", minimum: 1 }
+              },
+              {
+                name: "max_characters",
+                in: "query",
+                description: "Maximum extracted-text characters to return.",
+                schema: { type: "integer", minimum: 500, maximum: 20000, default: 6000 }
+              }
+            ],
+            responses: {
+              "200": {
+                description: "Document metadata and extracted text",
+                content: { "application/json": { schema: { type: "object" } } }
+              },
+              "404": { description: "Document not found" }
+            }
+          }
+        },
+        "/homelab/health": {
+          get: {
+            operationId: "check_homelab_services",
+            summary: "Check core homelab services",
+            description: "Checks whether core internal HTTP services respond. This is a live reachability check, not Uptime Kuma monitor history.",
+            security: [{ bearerAuth: [] }],
+            responses: {
+              "200": {
+                description: "Current service reachability and latency",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
+        }
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: { type: "http", scheme: "bearer" }
+        }
+      }
+    };
+
+    function sendJson(response, status, value) {
+      response.writeHead(status, {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      });
+      response.end(JSON.stringify(value));
+    }
+
+    function authorized(request) {
+      const header = request.headers.authorization || "";
+      const supplied = header.startsWith("Bearer ") ? header.slice(7) : "";
+      const expectedBuffer = Buffer.from(apiKey);
+      const suppliedBuffer = Buffer.from(supplied);
+      return expectedBuffer.length === suppliedBuffer.length && timingSafeEqual(expectedBuffer, suppliedBuffer);
+    }
+
+    function boundedInteger(value, fallback, minimum, maximum) {
+      const parsed = Number.parseInt(value || "", 10);
+      return Number.isFinite(parsed) ? Math.min(maximum, Math.max(minimum, parsed)) : fallback;
+    }
+
+    function plainText(value) {
+      return String(value || "")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&")
+        .replace(/&quot;/g, "\"")
+        .replace(/&#39;/g, "'")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    async function paperlessFetch(path) {
+      const response = await fetch(paperlessUrl + path, {
+        headers: {
+          authorization: "Token " + paperlessToken,
+          accept: "application/json; version=10"
+        },
+        signal: AbortSignal.timeout(15000)
+      });
+      if (!response.ok) {
+        const detail = (await response.text()).slice(0, 300);
+        const error = new Error("Paperless returned HTTP " + response.status + (detail ? ": " + detail : ""));
+        error.status = response.status;
+        throw error;
+      }
+      return response.json();
+    }
+
+    function documentSummary(document) {
+      const hit = document.__search_hit__ || {};
+      return {
+        id: document.id,
+        title: document.title,
+        created: document.created,
+        added: document.added,
+        correspondent_id: document.correspondent,
+        document_type_id: document.document_type,
+        tag_ids: document.tags || [],
+        archive_serial_number: document.archive_serial_number,
+        score: hit.score,
+        excerpt: plainText(hit.highlights || "").slice(0, 800),
+        web_url: paperlessPublicUrl + "/documents/" + document.id + "/details"
+      };
+    }
+
+    async function searchPaperless(url) {
+      const query = (url.searchParams.get("query") || "").trim();
+      if (!query || query.length > 200) {
+        return { status: 400, body: { error: "query must contain 1 to 200 characters" } };
+      }
+      const page = boundedInteger(url.searchParams.get("page"), 1, 1, 100000);
+      const pageSize = boundedInteger(url.searchParams.get("page_size"), 5, 1, 20);
+      const params = new URLSearchParams({ query, page: String(page), page_size: String(pageSize) });
+      const data = await paperlessFetch("/api/documents/?" + params.toString());
+      return {
+        status: 200,
+        body: {
+          query,
+          count: data.count,
+          page,
+          page_size: pageSize,
+          has_next_page: Boolean(data.next),
+          results: (data.results || []).map(documentSummary)
+        }
+      };
+    }
+
+    async function getPaperlessDocument(url, idText) {
+      const documentId = Number.parseInt(idText, 10);
+      if (!Number.isInteger(documentId) || documentId < 1) {
+        return { status: 400, body: { error: "document_id must be a positive integer" } };
+      }
+      const maxCharacters = boundedInteger(url.searchParams.get("max_characters"), 6000, 500, 20000);
+      const document = await paperlessFetch("/api/documents/" + documentId + "/");
+      const content = String(document.content || "");
+      return {
+        status: 200,
+        body: {
+          ...documentSummary(document),
+          original_file_name: document.original_file_name,
+          modified: document.modified,
+          content: content.slice(0, maxCharacters),
+          content_truncated: content.length > maxCharacters,
+          total_content_characters: content.length
+        }
+      };
+    }
+
+    async function checkTarget(target) {
+      const started = performance.now();
+      try {
+        const headers = target.paperless_auth ? {
+          authorization: "Token " + paperlessToken,
+          accept: "application/json; version=10"
+        } : {};
+        const response = await fetch(target.url, {
+          headers,
+          redirect: "manual",
+          signal: AbortSignal.timeout(5000)
+        });
+        await response.body?.cancel();
+        return {
+          name: target.name,
+          healthy: response.status >= 200 && response.status < 400,
+          http_status: response.status,
+          latency_ms: Math.round(performance.now() - started)
+        };
+      } catch (error) {
+        return {
+          name: target.name,
+          healthy: false,
+          latency_ms: Math.round(performance.now() - started),
+          error: error.name === "TimeoutError" ? "timeout" : "connection failed"
+        };
+      }
+    }
+
+    async function route(request, response) {
+      const url = new URL(request.url || "/", "http://localhost");
+      if (request.method === "GET" && url.pathname === "/health") {
+        return sendJson(response, 200, { status: "ok" });
+      }
+      if (request.method === "GET" && url.pathname === "/openapi.json") {
+        return sendJson(response, 200, openapi);
+      }
+      if (!authorized(request)) {
+        response.setHeader("www-authenticate", "Bearer");
+        return sendJson(response, 401, { error: "unauthorized" });
+      }
+      if (request.method === "GET" && url.pathname === "/paperless/search") {
+        const result = await searchPaperless(url);
+        return sendJson(response, result.status, result.body);
+      }
+      const documentMatch = url.pathname.match(/^\/paperless\/documents\/(\d+)$/);
+      if (request.method === "GET" && documentMatch) {
+        const result = await getPaperlessDocument(url, documentMatch[1]);
+        return sendJson(response, result.status, result.body);
+      }
+      if (request.method === "GET" && url.pathname === "/homelab/health") {
+        const services = await Promise.all(healthTargets.map(checkTarget));
+        return sendJson(response, 200, {
+          healthy: services.every((service) => service.healthy),
+          checked_at: new Date().toISOString(),
+          services
+        });
+      }
+      return sendJson(response, 404, { error: "not found" });
+    }
+
+    const server = createServer((request, response) => {
+      route(request, response).catch((error) => {
+        console.error(error);
+        const status = Number.isInteger(error.status) && error.status >= 400 && error.status < 600 ? error.status : 502;
+        sendJson(response, status, { error: status === 502 ? "upstream request failed" : error.message });
+      });
+    });
+
+    server.listen(port, "0.0.0.0", () => {
+      console.log("Homelab tools listening on port " + port);
+    });
+
+    for (const signal of ["SIGTERM", "SIGINT"]) {
+      process.on(signal, () => server.close(() => process.exit(0)));
+    }
