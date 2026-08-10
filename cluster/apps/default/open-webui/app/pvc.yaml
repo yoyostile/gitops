@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: open-webui-data
+  namespace: default
+spec:
+  # Open WebUI defaults to SQLite in DATA_DIR. Keep it on ceph-rbd like Bifrost
+  # rather than the NFS default.
+  storageClassName: ceph-rbd
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
