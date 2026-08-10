@@ -50,7 +50,7 @@ spec:
             - name: OAUTH_PROVIDER_NAME
               value: authentik
             - name: OPENID_PROVIDER_URL
-              value: "https://auth.${SECRET_LAB_DOMAIN}/application/o/open-webui/.well-known/openid-configuration"
+              value: "https://auth.${SECRET_LAB_DOMAIN}/application/o/open-web-ui-oauth/.well-known/openid-configuration"
             - name: OPENID_REDIRECT_URI
               value: "https://openwebui.${SECRET_LAB_DOMAIN}/oauth/oidc/callback"
             - name: OAUTH_SCOPES
