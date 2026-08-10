@@ -45,6 +45,14 @@ spec:
               value: "false"
             - name: ENABLE_OAUTH_SIGNUP
               value: "true"
+            - name: ENABLE_SIGNUP
+              value: "false"
+            - name: ENABLE_LOGIN_FORM
+              value: "false"
+            - name: ENABLE_PASSWORD_AUTH
+              value: "false"
+            - name: OAUTH_AUTO_REDIRECT
+              value: "true"
             - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
               value: "true"
             - name: OAUTH_PROVIDER_NAME
