@@ -270,6 +270,10 @@ Eviction is driven by `min-free`/`max-free` (20 GB / 60 GB) instead. That only r
 self-regulating: the cache keeps everything until disk pressure, then frees 60 GB.
 `keep-outputs`/`keep-derivations` are on so a near-identical rebuild reuses inputs.
 
+To pin something in the cache regardless, give it a gcroot — `nix build --out-link
+/root/<name>` is exactly that, which is why the netboot installer build below keeps
+its 1.97 GB closure permanently resident instead of losing it to the next sweep.
+
 ### The signing key
 
 Harmonia signs the narinfo it serves; the store itself holds unsigned, locally-built
