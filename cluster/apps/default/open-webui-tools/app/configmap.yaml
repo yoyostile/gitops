@@ -10,7 +10,7 @@ data:
     import { timingSafeEqual } from "node:crypto";
 
     const port = Number(process.env.PORT || 3000);
-    const apiKey = process.env.API_KEY || "";
+    const apiKey = (process.env.API_KEY || "").trim();
     const paperlessUrl = process.env.PAPERLESS_URL || "http://paperless.default.svc.cluster.local:8000";
     const paperlessPublicUrl = process.env.PAPERLESS_PUBLIC_URL || paperlessUrl;
     const paperlessToken = process.env.PAPERLESS_API_TOKEN || "";
