@@ -87,6 +87,7 @@ spec:
         type: emptyDir
         medium: Memory
 
-    resources:
-      limits:
-        gpu.intel.com/i915: "1"
+    # No i915 request: Plex only uses QuickSync with an active Plex Pass, and
+    # requesting the device would confine scheduling to the vGPU-equipped nodes
+    # for an accelerator it cannot reach. Re-add together with a subscription.
+    resources: {}
