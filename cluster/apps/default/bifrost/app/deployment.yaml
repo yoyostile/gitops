@@ -112,6 +112,16 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: TENSORX_API_KEY
+            - name: BIFROST_VK_OPENROUTER
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_OPENROUTER
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: OPENROUTER_API_KEY
             - name: BIFROST_VK_ZETTELROBBE
               valueFrom:
                 secretKeyRef:
