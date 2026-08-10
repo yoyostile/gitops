@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: open-webui
+  namespace: default
+  annotations:
+    hajimari.io/appName: "Open WebUI"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "chat"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd,networking-authentik@kubernetescrd"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: traefik-internal
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - openwebui.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: openwebui.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: open-webui
+                port:
+                  name: http
