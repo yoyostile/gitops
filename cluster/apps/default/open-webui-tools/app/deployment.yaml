@@ -1,0 +1,99 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: open-webui-tools
+  namespace: default
+  labels:
+    app: open-webui-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: open-webui-tools
+  template:
+    metadata:
+      labels:
+        app: open-webui-tools
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: open-webui-tools
+          image: docker.io/library/node:24.5.0-alpine3.22
+          command: ["node", "/app/server.mjs"]
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-tools-secrets
+                  key: API_KEY
+            - name: PAPERLESS_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: zettelrobbe-secrets
+                  key: PAPERLESS_API_TOKEN
+            - name: PAPERLESS_URL
+              value: "http://paperless.default.svc.cluster.local:8000"
+            - name: PAPERLESS_PUBLIC_URL
+              value: "https://paperless.${SECRET_LAB_DOMAIN}"
+            - name: HEALTH_TARGETS
+              value: >-
+                [{"name":"paperless","url":"http://paperless.default.svc.cluster.local:8000/api/","paperless_auth":true},{"name":"uptime-kuma","url":"http://uptime-kuma.default.svc.cluster.local:3001/"},{"name":"bifrost","url":"http://bifrost.default.svc.cluster.local:8080/health"},{"name":"searxng","url":"http://searxng.default.svc.cluster.local:8080/"}]
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 10m
+            limits:
+              memory: 128Mi
+              cpu: 250m
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 2
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: app
+              mountPath: /app
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: app
+          configMap:
+            name: open-webui-tools
+        - name: tmp
+          emptyDir: {}

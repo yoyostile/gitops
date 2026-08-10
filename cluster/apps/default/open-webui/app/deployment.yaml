@@ -106,6 +106,16 @@ spec:
               value: "lyceum/z-ai/glm-5.2-instant"
             - name: TASK_MODEL_EXTERNAL
               value: "lyceum/z-ai/glm-5.2-instant"
+            - name: OPEN_WEBUI_TOOLS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-tools-secrets
+                  key: API_KEY
+            # ConfigVar: seeds a fresh database. Existing instances retain the
+            # Admin Settings value and may need this connection added once there.
+            - name: TOOL_SERVER_CONNECTIONS
+              value: >-
+                [{"type":"openapi","url":"http://open-webui-tools.default.svc.cluster.local:3000","spec_type":"url","spec":"","path":"openapi.json","auth_type":"bearer","key":"$(OPEN_WEBUI_TOOLS_API_KEY)","config":{"enable":true},"info":{"id":"homelab","name":"Homelab","description":"Read-only Paperless search and service health tools."}}]
           resources:
             requests:
               memory: 512Mi
