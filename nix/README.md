@@ -10,6 +10,7 @@ flake.nix              # inputs + host auto-discovery; no per-host edits needed
 modules/
   common.nix           # every host: users, ssh, sops, network, nix GC, PVE guest
   k3s-worker.nix       # class, opt-in via lab.k3sWorker.enable
+  nix-builder.nix      # class, opt-in via lab.nixBuilder.enable
   disk-uefi.nix        # ESP + systemd-boot   — required for PXE
   disk-bios.nix        # EF02 + GRUB          — only for debian-13 template clones
 hosts/<name>/
@@ -18,6 +19,7 @@ installer/
   netboot.nix          # PXE installer image with the SSH key baked in
 secrets/
   k3s-cluster.sops.yaml  # shared by all k3s workers (the join token is shared)
+  nix-builder.sops.yaml  # builder01's binary cache signing key
 ```
 
 Every directory under `hosts/` becomes a `nixosConfiguration` automatically, named
@@ -208,6 +210,107 @@ with `svc_enable=false` so it never competes with MetalLB for Service LoadBalanc
 Declare the VIP as a `--tls-san` on servers **before** you need it — adding it later
 means reissuing API certificates, while adding it up front costs nothing.
 
+## The build host and binary cache
+
+`builder01` (10.0.0.21, VM 111 on pve02) is the one host in the fleet whose job is
+to compile. `modules/nix-builder.nix` is the class; `lab.nixBuilder.enable` turns it
+on. It exists because of three separate problems that all have the same fix:
+
+- The service guests were shrunk to 1 vCPU / 1 GB and **can no longer build their own
+  closures**. `nixos-rebuild --build-host` is now mandatory for them, not an
+  optimisation.
+- Without a cache every host derives the same closures independently.
+- The 522 MB PXE installer had to be built by hand on a k3s node and rsynced.
+
+It runs **`services.harmonia.cache`**, which serves `/nix/store` over HTTP on `:5000`.
+Nothing has to be pushed to it: a `nixos-rebuild --build-host builder01` leaves the
+result in builder01's store, and that store *is* the cache.
+
+`modules/common.nix` points the whole fleet at it, so this is transparent — a host
+that needs a path builder01 already has fetches it instead of building it.
+
+### Deploying anything
+
+```
+nixos-rebuild switch --flake ./nix#<name> \
+  --target-host root@<ip> --build-host root@10.0.0.21
+```
+
+The closure goes **builder01 → target directly**; it never travels through the Mac.
+`adguard01` (1 vCPU / 1 GB) rebuilds this way in about 12 seconds.
+
+`--build-host` and `--target-host` may name the same machine — that is the right shape
+for builder01 and for the k3s nodes, which are big enough to build for themselves.
+
+### Sizing and why there is no HA
+
+16 vCPU, 8 GB, 180 GB on **local-lvm**. A build store wants a fast local NVMe, not
+ceph: it is write-heavy, entirely reproducible, and replicating it buys nothing.
+
+For the same reason it is deliberately **not** in Proxmox HA, unlike `netboot01` and
+`tsrouter01`. Those are single-instance *and* load-bearing. Losing builder01 costs a
+slower deploy on the hosts that can still build and a broken deploy on the ones that
+cannot — annoying, not an outage, and rebuilding it is a PXE install.
+
+`max-jobs * cores` is pinned to the vCPU count rather than oversubscribed. On a build
+host RAM is the binding constraint, and an OOM kill loses the entire `nixos-rebuild`
+rather than degrading it. There is also an 8 GB swapfile, because `disk-uefi.nix` lays
+out ESP + root only and a linker spike with no swap is a hard failure.
+
+### Garbage collection is inverted here
+
+`common.nix` runs `nix-collect-garbage --delete-older-than 14d` weekly. On this host
+that is **forced off**, because it would empty the cache every week: a
+`nixos-rebuild --build-host` copies its result to the target and leaves **no gcroot
+behind**, so every closure built for another host is unreachable the moment the deploy
+finishes and a full GC pass takes all of it.
+
+Eviction is driven by `min-free`/`max-free` (20 GB / 60 GB) instead. That only runs
+*during a build*, which is also the only thing that fills the store, so it is
+self-regulating: the cache keeps everything until disk pressure, then frees 60 GB.
+`keep-outputs`/`keep-derivations` are on so a near-identical rebuild reuses inputs.
+
+### The signing key
+
+Harmonia signs the narinfo it serves; the store itself holds unsigned, locally-built
+paths. So the key is the only thing that makes the cache usable by a client that does
+not trust it blindly.
+
+```
+nix-store --generate-binary-cache-key builder01.lab.r4r3.me-1 priv pub
+```
+
+The private key is `secrets/nix-builder.sops.yaml`, consumed through `sops.secrets`.
+The public key is not secret and lives in `common.nix` under `trusted-public-keys`.
+Rotating it means both halves at once, or every host rejects the cache.
+
+Priority is pinned to **30** against cache.nixos.org's 40. That number, not the order
+of the `substituters` list, is what decides who is asked first — leave it at harmonia's
+default 50 and clients fetch over the WAN what is already sitting on the LAN.
+
+### Checking it
+
+```
+curl http://10.0.0.21:5000/nix-cache-info                 # StoreDir, Priority: 30
+curl http://10.0.0.21:5000/<storehash>.narinfo | grep Sig # signed by builder01…-1
+```
+
+To prove a client really substitutes rather than rebuilds, use a path that **cannot**
+come from cache.nixos.org — build a throwaway derivation on builder01, then realise it
+on another host, which has no `.drv` for it and therefore could only have fetched it:
+
+```
+ssh root@10.0.0.21 "nix-build --no-out-link --expr 'derivation {
+  name = \"probe\"; system = \"x86_64-linux\"; builder = \"/bin/sh\";
+  args = [ \"-c\" \"echo hi > \$out\" ]; }'"
+ssh root@<other> "nix-store --realise <that-path>"
+```
+
+The cache is plain HTTP with no authentication, on the lab VLAN only. sops-nix
+decrypts to `/run/secrets` at activation, so no repo secret is ever in a store path —
+but the store does expose every host's rendered configuration, which is why this stays
+off any routable path.
+
 ## The netboot image
 
 `installer/netboot.nix` builds a NixOS installer that PXE-boots with your SSH key
@@ -232,17 +335,22 @@ the flake to an x86_64 host and build there — the same rsync-then-build shape 
 pipeline would use:
 
 ```
-ssh root@<builder> 'rm -rf /root/nixcfg && mkdir -p /root/nixcfg'
-tar -C nix -cf - . | ssh root@<builder> 'tar -C /root/nixcfg -xf -'
-ssh root@<builder> 'nix build /root/nixcfg#packages.x86_64-linux.netbootInstaller \
+ssh root@10.0.0.21 'rm -rf /root/nixcfg && mkdir -p /root/nixcfg'
+tar -C nix -cf - . | ssh root@10.0.0.21 'tar -C /root/nixcfg -xf -'
+ssh root@10.0.0.21 'nix build /root/nixcfg#packages.x86_64-linux.netbootInstaller \
   --out-link /root/netboot-result --print-build-logs'
 ```
 
-Pick the builder in this order: **a k3s agent node, never a control-plane node, never a
-PVE host.** Nix builds are write-heavy and CPU-hungry; the hypervisors are already
-running Ceph plus every VM, and a server node hosts an etcd member that does not
-benefit from having its disk and cache thrashed. Any agent works — they are cattle and
-a build that goes wrong costs nothing.
+**Build it on `builder01`.** This used to mean picking a k3s agent by hand — never a
+control-plane node, never a PVE host — because nix builds are write-heavy and
+CPU-hungry, hypervisors already run Ceph plus every VM, and thrashing a server node's
+disk beside an etcd member is a bad trade. builder01 exists so that choice is no longer
+a judgement call, and the resulting 1.97 GB / 690-path closure lands in the cache, so
+the next host that wants any of it substitutes instead of rebuilding.
+
+The tarball is still needed because `nix build` runs on the far side of an SSH session
+and needs the flake *there*; `--build-host` is a `nixos-rebuild` feature and does not
+apply to a plain `nix build` of a flake package.
 
 Output is ~522 MB: `bzImage` (13 M), `initrd` (509 M), `netboot.ipxe`.
 
@@ -303,11 +411,15 @@ Unrelated but worth fixing while in there: `config/menus/boot.cfg` pins
 ## Day 2
 
 ```
-nixos-rebuild switch --flake ./nix#<name> --target-host root@<ip> --build-host root@<ip>
+nixos-rebuild switch --flake ./nix#<name> \
+  --target-host root@<ip> --build-host root@10.0.0.21
 ```
 
 `--build-host` is required from macOS: these are `x86_64-linux` and the Mac is not.
-Rollback is `nixos-rebuild --rollback`, or pick an older generation at boot.
+Point it at **builder01** rather than at the target — the 1 vCPU / 1 GB service guests
+cannot build their own closures at all any more, and the ones that can still do it
+faster on 16 cores. Rollback is `nixos-rebuild --rollback`, or pick an older generation
+at boot.
 
 **Drain k3s nodes first.** A switch that touches `k3s.service` restarts containerd and
 every pod on the node with it.
@@ -439,6 +551,48 @@ All hit for real.
   mismatch. `ssh-keygen -R <ip>` first — but verify the new fingerprint against
   `/etc/ssh/ssh_host_ed25519_key.pub` on the host before trusting it, rather than
   disabling checking.
+- **A free-looking IP is not free.** The DHCP lease table showed nothing for
+  `10.0.0.20/.21/.29/.30/.34/.36`, and `.29` still answered ping — a statically
+  configured device leaves no lease to find. `.36` was worse: it had a complete ARP
+  entry pointing at netboot01's own MAC, because that was the temporary address
+  netboot01 was installed on. Check all three before claiming one — no lease, no
+  *complete* ARP entry, and no ping reply:
+
+  ```
+  /ip/dhcp-server/lease/print where address=<ip>
+  /ip/arp/print where address=<ip>
+  /ping <ip> count=3
+  ```
+
+  Note every static host here sits **inside** `pool[lab]` (10.0.0.10-10.0.0.199), so
+  what actually reserves the address is a DHCP static lease on the MAC, not being
+  outside the pool. Add one before first boot; it also hands the PXE installer the
+  host's final address, which sidesteps the lease dance entirely.
+- **RouterOS eats `[` in an unquoted value.** `server=dhcp[lab]` fails with `expected
+  end of command` pointing at the bracket's column; `server="dhcp[lab]"` works. The
+  column number in the error is the only clue which argument it choked on.
+- **`nix.settings` list options merge with the NixOS defaults, they do not replace
+  them.** Setting `substituters` in `common.nix` *appends* to cache.nixos.org rather
+  than overriding it, so writing upstream out explicitly to "keep" it silently produces
+  a duplicated entry. The same applies to `trusted-public-keys`. Check with
+  `nix eval .#nixosConfigurations.<host>.config.nix.settings.substituters` rather than
+  assuming either behaviour.
+- **Substituter order in the list does not decide precedence.** The `Priority` each
+  cache advertises in `/nix-cache-info` does, and lower wins. A LAN cache left at
+  harmonia's default 50 loses to cache.nixos.org's 40 and is silently never used for
+  anything upstream also has.
+- **`services.harmonia.enable` is renamed to `services.harmonia.cache.enable`.** The
+  flat options (`signKeyPath`, `signKeyPaths`, `settings`) all moved under `.cache`
+  too. The old names still evaluate through `mkRenamedOptionModule`, so a stale
+  snippet appears to work and only the deprecation warning tells you.
+- **`nixos-anywhere --extra-files` copies the *whole* staging tree to `/`.** Generating
+  the SSH host key and the binary cache keypair into one scratch directory would have
+  shipped a cleartext signing key into the installed root filesystem. Keep the tree to
+  exactly the files that belong on the host, and check it with `find` before running.
+- **Building a cache host does not make it cache anything by itself.** `nixos-rebuild
+  --build-host` leaves no gcroot on the builder, so the fleet-wide weekly
+  `nix-collect-garbage` would delete every closure it built for other hosts. See
+  **The build host and binary cache**, "Garbage collection is inverted here".
 - **RouterOS per-user `address=` allowlists fail closed and are easy to forget.**
   `/user/print` restrictions are separate from firewall address-lists; a node that is
   not listed shows up only as `login failure for user <x> from <ip>` in the router log,
