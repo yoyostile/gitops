@@ -36,6 +36,35 @@ spec:
               value: Bifrost Chat
             - name: WEBUI_URL
               value: "https://openwebui.${SECRET_LAB_DOMAIN}"
+            - name: WEBUI_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: OPEN_WEBUI_SECRET_KEY
+            - name: ENABLE_OAUTH_PERSISTENT_CONFIG
+              value: "false"
+            - name: ENABLE_OAUTH_SIGNUP
+              value: "true"
+            - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+              value: "true"
+            - name: OAUTH_PROVIDER_NAME
+              value: authentik
+            - name: OPENID_PROVIDER_URL
+              value: "https://auth.${SECRET_LAB_DOMAIN}/application/o/open-webui/.well-known/openid-configuration"
+            - name: OPENID_REDIRECT_URI
+              value: "https://openwebui.${SECRET_LAB_DOMAIN}/oauth/oidc/callback"
+            - name: OAUTH_SCOPES
+              value: "openid email profile"
+            - name: OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: OPEN_WEBUI_OAUTH_CLIENT_ID
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cluster-secrets
+                  key: OPEN_WEBUI_OAUTH_CLIENT_SECRET
             - name: ENABLE_OLLAMA_API
               value: "false"
             - name: ENABLE_OPENAI_API
