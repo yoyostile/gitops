@@ -30,6 +30,8 @@ spec:
               value: "true"
             - name: DUCKDUCKGO_DEFAULT
               value: "true"
+            - name: SEARXNG_SETTINGS_PATH
+              value: /etc/searxng/settings.yml
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -40,7 +42,8 @@ spec:
               mountPath: /var/cache/searxng
       volumes:
         - name: config
-          emptyDir: {}
+          configMap:
+            name: searxng-settings
         - name: data
           emptyDir: {}
       restartPolicy: Always
