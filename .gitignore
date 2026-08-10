@@ -16,3 +16,9 @@ xanmanning.k3s*
 .terraform.tfstate*
 terraform.tfstate*
 certs
+.logs/
+.claude/
+provision/
+pvecsictl.yaml
+logs/
+utils/
