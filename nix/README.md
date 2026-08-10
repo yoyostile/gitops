@@ -100,6 +100,14 @@ generating the key first:
 - **`--machine q35`** going forward. Not a requirement — VM 104 PXE-booted UEFI fine on
   PVE's default i440FX — but q35 is the modern PCIe topology and the right pairing with
   OVMF.
+- **Storage follows how the service is made redundant.** A host with a running twin goes
+  on `local-lvm` with no HA — the resolvers announce the same anycast address, so losing
+  one is a BGP withdrawal and Proxmox HA would add nothing. A **single-instance** host
+  (`netboot01`, `tsrouter01`) goes on `ceph` and into HA, so it comes back by itself after
+  a node dies rather than waiting for someone to notice. Moving between them is online:
+  `qm move-disk <id> virtio0 ceph`, repeat for `efidisk0`, then `qm set <id> --delete
+  unused0,unused1` — the originals are kept as `unusedN` and silently keep consuming the
+  old storage until removed.
 
 ### Creating the VM by PXE (preferred)
 
@@ -240,16 +248,21 @@ Output is ~522 MB: `bzImage` (13 M), `initrd` (509 M), `netboot.ipxe`.
 
 ### Publishing it
 
-The netboot.xyz appliance bind-mounts `/home/yoyostile/netbootxyz/assets` to `/assets`
-and serves it with nginx on `:80`. The generated `netboot.ipxe` references `bzImage` and
-`initrd` by **relative path**, so all three must sit in one directory:
+`netboot01` (10.0.0.35) runs the upstream netboot.xyz container declaratively — see
+`modules/netboot.nix`. It mounts `/var/lib/netbootxyz/assets` as `/assets` and serves it
+with nginx on `:80`. The generated `netboot.ipxe` references `bzImage` and `initrd` by
+**relative path**, so all three must sit in one directory:
 
 ```
 ssh root@10.0.0.40 'tar -C /root/netboot-result -chf - bzImage initrd netboot.ipxe' \
-  | ssh 10.0.0.35 'sudo tar -C /home/yoyostile/netbootxyz/assets/nixos-installer -xf -'
+  | ssh root@10.0.0.35 'tar -C /var/lib/netbootxyz/assets/nixos-installer -xf -'
 ```
 
 Served at `http://10.0.0.35/nixos-installer/netboot.ipxe`. Verify with `curl -I`.
+
+`config/` and `assets/` are deliberately **mutable state**, not declared: the appliance
+ships its own `menus/*.ipxe` and rewrites them on update, and `assets/` holds large
+downloaded images. Only `boot.cfg` is asserted from the flake.
 
 ### Auto-booting it
 
@@ -265,15 +278,22 @@ iseq ${net0/mac} bc:24:11:xx:xx:xx && chain http://10.0.0.35/nixos-installer/net
 
 Only that VM auto-installs; every other PXE client keeps the interactive menu.
 
-**Edit `config/menus/boot.cfg`, never `menus/*.ipxe`** — the latter are shipped by the
-appliance and replaced on update. That is also why the built-in `nixos.ipxe` stops at
-25.11 while `menuversion.txt` already reads 3.0.2.
+**Edit `modules/netbootxyz-boot.cfg` in this repo and `nixos-rebuild`** — never the copy
+on the box, which is overwritten on every activation, and never `menus/*.ipxe`, which the
+appliance replaces on update. That is also why the built-in `nixos.ipxe` stops at 25.11
+while `menuversion.txt` already reads 3.0.2. Declaring the menu is what makes the MAC rule
+a reviewable diff and its removal a revert rather than a thing to remember.
 
-**`config/menus/local/boot.cfg` is not served.** A same-sized copy of `boot.cfg` sits
-there and editing it looks right and does nothing — the VM PXE-boots, takes a DHCP
-lease, then drops to the UEFI boot manager with no clue why. The menus are served over
-**TFTP**, not the nginx on :80, so check which file is live with
-`tftp 10.0.0.35` + `get boot.cfg` rather than curling it.
+Two traps that cost real time before the menu was declared:
+
+- **`config/menus/local/boot.cfg` is not served.** A same-sized copy sits there, so
+  editing it looks right and does nothing — the VM PXE-boots, takes a DHCP lease, then
+  drops to the UEFI boot manager with no clue why.
+- **The menus go over TFTP, not the nginx on `:80`** — every HTTP path 404s. Check which
+  file is live with `curl tftp://10.0.0.35/boot.cfg`, and run it **from a lab host**:
+  dnsmasq replies from a fresh source port, which a NixOS host firewall or a client on
+  another subnet drops, so a timeout there means nothing. The container logs
+  `sent /config/menus/boot.cfg to <ip>` either way — trust that over the client.
 
 Unrelated but worth fixing while in there: `config/menus/boot.cfg` pins
 `boot_domain netbootxyz.<lab-domain>/<version>`, and both that path and `/3.0.2/` return
