@@ -19,6 +19,11 @@ spec:
       containers:
         - name: librenms
           image: librenms/librenms:26.7.0
+          # Snapshot only (114Mi/12m) — conservative floor, not a 14d p90.
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 25m
           securityContext:
             capabilities:
               add:
@@ -54,6 +59,12 @@ spec:
               mountPath: /data
         - name: dispatcher
           image: librenms/librenms:26.7.0
+          # Sized from 14d of usage: p90 212Mi / 312m, peak 1464Mi. The poller
+          # is bursty by nature, so no memory limit.
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 375m
           securityContext:
             capabilities:
               add:

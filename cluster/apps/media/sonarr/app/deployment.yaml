@@ -43,10 +43,12 @@ spec:
               mountPath: /mnt/tank/media
             - name: usenet
               mountPath: /mnt/fast/usenet
+          # Sized from 14d of usage: p90 692Mi, peak 2845Mi. No memory limit —
+          # the peaks are import/scan bursts and a limit would OOM-kill them.
           resources:
             requests:
-              cpu: 100m
-              memory: 250Mi
+              cpu: 50m
+              memory: 800Mi
       volumes:
         - name: config
           persistentVolumeClaim:

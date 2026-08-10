@@ -47,6 +47,13 @@ spec:
         kubeScheduler: false
         kubeStateMetrics: false
     grafana:
+      # Sized from 14d of usage: p90 565Mi / 57m, peak 687Mi.
+      resources:
+        requests:
+          memory: 672Mi
+          cpu: 70m
+        limits:
+          memory: 896Mi
       env:
         GF_STRAVA_DS_DATA_PATH: /var/lib/grafana/plugins/grafana-strava-datasource
         GF_SERVER_ROOT_URL: "https://g.${SECRET_LAB_DOMAIN}"
@@ -233,6 +240,13 @@ spec:
             scheme: http
             static_configs:
               - targets: ["hass.lab.${SECRET_LAB_DOMAIN}:8123"]
+        # Sized from 14d of usage: p90 1986Mi / 173m, peak 6098Mi.
+        # Deliberately no memory limit: the peaks are real (compaction,
+        # large queries) and a limit would OOM-kill what it protects.
+        resources:
+          requests:
+            memory: 2304Mi
+            cpu: 210m
         retention: 730d
         retentionSize: 200GB
         walCompression: true
