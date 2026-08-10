@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: searxng-settings
+  namespace: default
+data:
+  settings.yml: |
+    use_default_settings: true
+
+    search:
+      formats:
+        - html
+        - json
