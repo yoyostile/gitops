@@ -95,9 +95,14 @@ spec:
             # wizard validation — oversized pages (A0 plans) exceed 120s.
             - name: SETUP_OCR_VALIDATION_TIMEOUT_MS
               value: "300000"
+            # Off: paperless owns text extraction. Its default OCR mode is `skip`,
+            # which takes a PDF's embedded text verbatim and only rasterises when
+            # there is none — so a second OCR pass here replaces exact text with a
+            # model's reading of a picture of it. Tagging below is unaffected.
+            #
             # "MISTRAL_*" is a legacy name only: OCR_PROVIDER=custom routes via OCR_API_URL.
             - name: MISTRAL_OCR_ENABLED
-              value: "yes"
+              value: "no"
             - name: OCR_PROVIDER
               value: "custom"
             - name: OCR_API_URL
