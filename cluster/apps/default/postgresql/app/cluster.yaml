@@ -5,7 +5,7 @@ metadata:
   name: psql-cluster
   namespace: default
 spec:
-  instances: 2
+  instances: 1
   # bootstrap:
   #   recovery:
   #     source: origin
