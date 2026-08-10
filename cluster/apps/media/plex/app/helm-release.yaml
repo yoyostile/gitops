@@ -87,13 +87,12 @@ spec:
         type: emptyDir
         medium: Memory
 
-    # No i915 request: Plex only uses QuickSync with an active Plex Pass, and
-    # requesting the device would confine scheduling to the vGPU-equipped nodes
-    # for an accelerator it cannot reach. Re-add together with a subscription.
-    # Sized from 14d of usage: p90 632Mi / 62m, peak 5071Mi. No memory limit —
-    # peaks are transcode bursts and a limit would kill playback mid-stream.
-    # The i915 request is also the scheduling constraint: pve02's AMD iGPU
+    # No memory limit — peaks are transcode bursts and a limit would kill
+    # playback mid-stream.
+    #
+    # The i915 request doubles as the scheduling constraint: pve02's AMD iGPU
     # cannot be sliced, so only the pve01/pve03 nodes advertise the device.
+    # Without it Plex will happily land there and transcode in software.
     resources:
       requests:
         memory: 736Mi
