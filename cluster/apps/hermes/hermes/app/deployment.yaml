@@ -1,0 +1,137 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes
+  namespace: hermes
+  labels:
+    app: hermes
+spec:
+  replicas: 1
+  # A single gateway owns the session and memory files on the RWO volume.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hermes
+  template:
+    metadata:
+      labels:
+        app: hermes
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 10000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: render-managed-config
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -ec
+            - |
+              umask 077
+              sed "s|__BIFROST_VK__|${BIFROST_VK}|g" \
+                /template/config.yaml > /managed/config.yaml
+              printf 'OPENAI_API_KEY=%s\nAPI_SERVER_ENABLED=true\nAPI_SERVER_HOST=0.0.0.0\nAPI_SERVER_KEY=%s\n' \
+                "$BIFROST_VK" "$API_SERVER_KEY" > /managed/.env
+          env:
+            - name: BIFROST_VK
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secrets
+                  key: OPENAI_API_KEY
+            - name: API_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secrets
+                  key: API_SERVER_KEY
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10000
+            runAsGroup: 10000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: managed-config-template
+              mountPath: /template
+              readOnly: true
+            - name: managed-config
+              mountPath: /managed
+      containers:
+        - name: hermes
+          image: docker.io/nousresearch/hermes-agent:v2026.7.20
+          # Keep the image's /init entrypoint: it starts s6 and drops the agent
+          # processes to the unprivileged hermes user.
+          args: ["gateway", "run"]
+          ports:
+            # No Service selects these ports. They are available only through
+            # kubectl port-forward for initial configuration and local use.
+            - name: api
+              containerPort: 8642
+            - name: dashboard
+              containerPort: 9119
+          env:
+            - name: HERMES_UID
+              value: "10000"
+            - name: HERMES_GID
+              value: "10000"
+            - name: HERMES_TIMEZONE
+              value: Europe/Berlin
+            - name: API_SERVER_ENABLED
+              value: "true"
+            - name: API_SERVER_HOST
+              value: 0.0.0.0
+            - name: API_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secrets
+                  key: API_SERVER_KEY
+            - name: HERMES_DASHBOARD
+              value: "1"
+            # The dashboard has no network-facing listener or auth provider.
+            # kubectl port-forward reaches loopback inside the pod namespace.
+            - name: HERMES_DASHBOARD_HOST
+              value: 127.0.0.1
+            - name: HERMES_DASHBOARD_PORT
+              value: "9119"
+            - name: SEARXNG_URL
+              value: http://searxng.default.svc.cluster.local:8080
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secrets
+                  key: OPENAI_API_KEY
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 100m
+            limits:
+              memory: 4Gi
+              cpu: "2"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              # Required only by the image's root-owned s6 initialization;
+              # supervised Hermes processes run as UID/GID 10000.
+              add: ["CHOWN", "DAC_OVERRIDE", "FOWNER"]
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: managed-config
+              mountPath: /etc/hermes
+              readOnly: true
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: hermes-data
+        - name: managed-config
+          emptyDir: {}
+        - name: managed-config-template
+          configMap:
+            name: hermes-managed-config
