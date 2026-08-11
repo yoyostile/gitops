@@ -22,7 +22,10 @@ spec:
         # the step pod with its service containers (e.g. a postgres service) — they
         # can land on different nodes and the second one fails with Multi-Attach.
         # Pin every pipeline pod to one node so the RWO volume is always local.
-        WOODPECKER_BACKEND_K8S_POD_NODE_SELECTOR: '{"kubernetes.io/hostname":"k3s2"}'
+        # This names a specific node, so retiring it strands every pipeline in
+        # Pending with "didn't match Pod's node affinity/selector" — which is how
+        # the previous value (k3s2) failed. Repoint it when this node goes.
+        WOODPECKER_BACKEND_K8S_POD_NODE_SELECTOR: '{"kubernetes.io/hostname":"k3s-helium"}'
       persistence:
         storageClass: "ceph-rbd"
     server:
