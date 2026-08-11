@@ -132,6 +132,11 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_ZETTELROBBE
+            - name: BIFROST_VK_NOTGROSCHEN
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_NOTGROSCHEN
             # Broad key, eval:* rake tasks only — never put this in an app's env.
             - name: BIFROST_VK_EVAL
               valueFrom:

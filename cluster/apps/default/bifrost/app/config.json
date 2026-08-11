@@ -52,6 +52,20 @@
         ]
       },
       {
+        "id": "vk-notgroschen",
+        "name": "notgroschen",
+        "description": "notgroschen merchant classification and taxonomy proposal. Sees merchant NAMES only - never transactions, amounts or IBANs. Lyceum Qwen3-235B only (EU-hosted); the data is personal banking, so it must not route outside the EU.",
+        "value": "env.BIFROST_VK_NOTGROSCHEN",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "lyceum",
+            "allowed_models": ["Qwen/Qwen3-235B-A22B-Instruct-2507"],
+            "key_ids": ["*"]
+          }
+        ]
+      },
+      {
         "id": "vk-general-openai-eu",
         "name": "general-openai-eu",
         "description": "General-purpose key for OpenAI on the EU residency endpoint. Not wired to reimbursat0r - the invoice path stays ollama-only. Models are unrestricted here because the boundary worth enforcing is the provider, not the model list; a spend cap does the rest.",
