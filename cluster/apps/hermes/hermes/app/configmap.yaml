@@ -9,7 +9,9 @@ data:
     providers:
       bifrost:
         api: http://bifrost.default.svc.cluster.local:8080/v1
-        api_key: __BIFROST_VK__
+        api_key: bifrost
+        extra_headers:
+          x-bf-vk: __BIFROST_VK__
         transport: chat_completions
         default_model: tensorx/z-ai/glm-5.2
         context_length: 1000000
