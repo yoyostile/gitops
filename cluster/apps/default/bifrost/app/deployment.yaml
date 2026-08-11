@@ -127,6 +127,16 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: OPENROUTER_API_KEY
+            - name: BIFROST_VK_HETZNER
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_HETZNER
+            - name: HETZNER_INFERENCE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: HETZNER_INFERENCE_API_KEY
             - name: BIFROST_VK_ZETTELROBBE
               valueFrom:
                 secretKeyRef:

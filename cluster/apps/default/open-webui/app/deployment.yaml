@@ -82,7 +82,7 @@ spec:
             # Same OpenAI-compatible Bifrost endpoint with provider-scoped
             # virtual keys. The broad eval key stays out of long-running pods.
             - name: OPENAI_API_BASE_URLS
-              value: "http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1"
+              value: "http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1"
             - name: BIFROST_VK_GENERAL
               valueFrom:
                 secretKeyRef:
@@ -103,8 +103,13 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_OPENROUTER
+            - name: BIFROST_VK_HETZNER
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_HETZNER
             - name: OPENAI_API_KEYS
-              value: "$(BIFROST_VK_GENERAL);$(BIFROST_VK_LYCEUM);$(BIFROST_VK_TENSORX);$(BIFROST_VK_OPENROUTER)"
+              value: "$(BIFROST_VK_GENERAL);$(BIFROST_VK_LYCEUM);$(BIFROST_VK_TENSORX);$(BIFROST_VK_OPENROUTER);$(BIFROST_VK_HETZNER)"
             # Known-good through the existing Bifrost setup; users can change
             # their own default in Open WebUI after first login.
             - name: DEFAULT_MODELS
