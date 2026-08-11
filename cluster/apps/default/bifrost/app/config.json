@@ -146,6 +146,20 @@
         ]
       },
       {
+        "id": "vk-hermes",
+        "name": "hermes",
+        "description": "Hermes Agent pilot. OpenRouter Claude Sonnet only; isolated from interactive clients and capped independently.",
+        "value": "env.BIFROST_VK_HERMES",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "openrouter",
+            "allowed_models": ["anthropic/claude-sonnet-4.6"],
+            "key_ids": ["*"]
+          }
+        ]
+      },
+      {
         "id": "vk-eval",
         "name": "eval",
         "description": "Benchmarking only, spans every provider so one run can compare local vs Anthropic vs EU clouds. Deliberately NOT in any Deployment env - pass it ad hoc (kubectl exec -- env EVAL_BIFROST_VK=...) so no long-running pod holds a key this broad.",
@@ -186,6 +200,12 @@
       }
     ],
     "budgets": [
+      {
+        "id": "budget-hermes",
+        "virtual_key_id": "vk-hermes",
+        "max_limit": 10,
+        "reset_duration": "1M"
+      },
       {
         "id": "budget-general-tensorx",
         "virtual_key_id": "vk-general-tensorx",
