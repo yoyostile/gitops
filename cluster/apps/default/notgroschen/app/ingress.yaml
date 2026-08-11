@@ -1,0 +1,69 @@
+---
+# Two Ingress objects on the SAME host because Traefik middleware annotations
+# apply to a whole Ingress, not per path:
+#
+#   1. `notgroschen`      — path /    — internal-ips-only + Authentik (the UI)
+#   2. `notgroschen-api`  — path /api — internal-ips-only ONLY
+#
+# /api is pushed to by bin/notgroschen-sync (an osascript|curl pipe on the
+# owner's Mac) which authenticates with its own bearer token (INGEST_TOKEN)
+# and cannot do Authentik SSO. Traefik orders routers by rule length, so the
+# longer `... && PathPrefix(`/api`)` rule wins for /api requests and those
+# skip the forward-auth. Both ingresses keep the internal-IP allowlist.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notgroschen
+  namespace: default
+  annotations:
+    hajimari.io/appName: "notgroschen"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "piggy-bank"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd,networking-authentik@kubernetescrd"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: "traefik-internal"
+  tls:
+    - hosts:
+        - "notgroschen.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "notgroschen.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: notgroschen
+                port:
+                  name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notgroschen-api
+  namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    # No Authentik here: /api/* authenticates with INGEST_TOKEN (Bearer).
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: "traefik-internal"
+  tls:
+    - hosts:
+        - "notgroschen.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "notgroschen.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: notgroschen
+                port:
+                  name: http
