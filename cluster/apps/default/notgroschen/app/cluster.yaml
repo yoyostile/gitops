@@ -1,0 +1,40 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: psql-notgroschen
+  namespace: default
+spec:
+  instances: 1
+
+  # Tiny database (~23k transaction rows, single user). No CPU limit by design
+  # (matches psql-cluster).
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+
+  # No bootstrap section: CNPG initdb defaults apply. The notgroschen role and
+  # database are created manually (one psql step, documented in the app repo's
+  # CLAUDE.md) — this repo has no Database CR pattern for CNPG.
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        # Reuses the shared ObjectStore (cluster/apps/default/postgresql/app/
+        # object-store.yaml). serverName defaults to the cluster name, so this
+        # cluster's backups land under psql-notgroschen/ and cannot collide
+        # with psql-cluster's.
+        barmanObjectName: cnpg-store
+
+  storage:
+    storageClass: "proxmox-data-ext4"
+    pvcTemplate:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 2Gi

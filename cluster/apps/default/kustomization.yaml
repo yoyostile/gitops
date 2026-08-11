@@ -19,6 +19,7 @@ resources:
   - ./metabase/ks.yaml
   - ./mikrotik-backup/ks.yaml
   - ./mosquitto/ks.yaml
+  - ./notgroschen/ks.yaml
   - ./open-webui/ks.yaml
   - ./open-webui-tools/ks.yaml
   - ./paperless/ks.yaml
