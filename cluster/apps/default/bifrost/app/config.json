@@ -160,9 +160,23 @@
         ]
       },
       {
+        "id": "vk-general-hetzner",
+        "name": "general-hetzner",
+        "description": "Hetzner experimental inference in Germany. The current catalog is free, so no paid pricing overrides or spend budget apply yet. Isolated behind its own virtual key.",
+        "value": "env.BIFROST_VK_HETZNER",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "hetzner",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          }
+        ]
+      },
+      {
         "id": "vk-hermes",
         "name": "hermes",
-        "description": "Hermes Agent pilot. TensorX and Lyceum remain the EU primary/fallback; all models from both providers plus OpenRouter are available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
+        "description": "Hermes Agent pilot. TensorX and Lyceum remain the EU primary/fallback; Hetzner's experimental German endpoint and OpenRouter are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
         "value": "env.BIFROST_VK_HERMES",
         "is_active": true,
         "provider_configs": [
@@ -178,6 +192,11 @@
           },
           {
             "provider": "openrouter",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "hetzner",
             "allowed_models": ["*"],
             "key_ids": ["*"]
           }
@@ -217,6 +236,11 @@
           },
           {
             "provider": "openrouter",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "hetzner",
             "allowed_models": ["*"],
             "key_ids": ["*"]
           }
@@ -1098,6 +1122,29 @@
           "chat_completion_stream": true,
           "list_models": true,
           "embedding": true
+        }
+      }
+    },
+    "hetzner": {
+      "keys": [
+        {
+          "name": "hetzner-experiments",
+          "value": "env.HETZNER_INFERENCE_API_KEY",
+          "weight": 1,
+          "models": ["*"]
+        }
+      ],
+      "network_config": {
+        "base_url": "https://inference.hetzner.com/api/v1",
+        "default_request_timeout_in_seconds": 300,
+        "max_retries": 2
+      },
+      "custom_provider_config": {
+        "base_provider_type": "openai",
+        "allowed_requests": {
+          "chat_completion": true,
+          "chat_completion_stream": true,
+          "list_models": true
         }
       }
     },
