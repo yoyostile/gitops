@@ -22,6 +22,51 @@ spec:
   upgrade:
     remediation:
       retries: 3
+  # The k8s-at-home chart predates native sidecars and has no way to express an
+  # initContainer with restartPolicy: Always, so the tunnel is patched in after
+  # rendering rather than bent into chart values.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: sabnzbd
+            patch: |
+              - op: add
+                path: /spec/template/spec/initContainers
+                value:
+                  - name: wg
+                    image: alpine:3.22
+                    restartPolicy: Always
+                    securityContext:
+                      capabilities:
+                        add: ["NET_ADMIN"]
+                    command: ["/bin/sh", "-c"]
+                    args:
+                      - |
+                        set -e
+                        apk add --no-cache wireguard-tools iproute2 >/dev/null
+                        install -d /etc/wireguard
+                        install -m600 /secret/wg0.conf /etc/wireguard/wg0.conf
+                        wg-quick down wg0 2>/dev/null || true
+                        GW=$(ip route show default | awk '/default/ {print $3; exit}')
+                        for n in 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 100.64.0.0/10; do
+                          ip route replace "$n" via "$GW" dev eth0
+                        done
+                        wg-quick up wg0
+                        ip route replace unreachable default
+                        sleep infinity
+                    volumeMounts:
+                      - name: wg
+                        mountPath: /secret
+                        readOnly: true
+              - op: add
+                path: /spec/template/spec/volumes/-
+                value:
+                  name: wg
+                  secret:
+                    secretName: sabnzbd-wg
+                    defaultMode: 0600
   values:
     nodeSelector:
       topology.kubernetes.io/region: lab

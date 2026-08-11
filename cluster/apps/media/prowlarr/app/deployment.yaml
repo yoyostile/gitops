@@ -20,6 +20,43 @@ spec:
     spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
+      # Native sidecar (initContainer + restartPolicy: Always): it must reach
+      # Ready before prowlarr starts, or prowlarr's first indexer calls would
+      # leave before the tunnel exists. A plain sidecar has no such ordering.
+      initContainers:
+        - name: wg
+          image: alpine:3.22
+          restartPolicy: Always
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN"]
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              apk add --no-cache wireguard-tools iproute2 >/dev/null
+              install -d /etc/wireguard
+              install -m600 /secret/wg0.conf /etc/wireguard/wg0.conf
+              # Idempotent: this container restarts into a namespace that may
+              # already hold wg0, and wg-quick refuses to bring up a live link.
+              wg-quick down wg0 2>/dev/null || true
+              # Private space stays on the pod's own path. Derived from the
+              # running default route, never hardcoded — the node's pod-CIDR
+              # gateway changes whenever a node is rebuilt.
+              GW=$(ip route show default | awk '/default/ {print $3; exit}')
+              for n in 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 100.64.0.0/10; do
+                ip route replace "$n" via "$GW" dev eth0
+              done
+              wg-quick up wg0
+              # Killswitch. Public destinations are covered by wg0's AllowedIPs;
+              # if the tunnel drops those routes vanish and traffic must not
+              # silently fall back to the node's uplink.
+              ip route replace unreachable default
+              sleep infinity
+          volumeMounts:
+            - name: wg
+              mountPath: /secret
+              readOnly: true
       containers:
         - name: prowlarr
           image: lscr.io/linuxserver/prowlarr:2.5.2
@@ -47,3 +84,7 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: prowlarr-config-ceph
+        - name: wg
+          secret:
+            secretName: prowlarr-wg
+            defaultMode: 0600
