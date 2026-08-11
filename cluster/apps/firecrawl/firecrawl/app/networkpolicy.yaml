@@ -55,7 +55,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-hermes-api
+  name: allow-api-clients
   namespace: firecrawl
 spec:
   podSelector:
@@ -71,6 +71,12 @@ spec:
           podSelector:
             matchLabels:
               app: hermes
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: default
+          podSelector:
+            matchLabels:
+              app: open-webui
       ports:
         - protocol: TCP
           port: 3002
