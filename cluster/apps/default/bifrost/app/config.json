@@ -148,18 +148,23 @@
       {
         "id": "vk-hermes",
         "name": "hermes",
-        "description": "Hermes Agent pilot. EU inference only: TensorX GLM-5.2 primary with Lyceum GLM-5.2 Instant fallback; isolated from interactive clients and capped independently.",
+        "description": "Hermes Agent pilot. TensorX and Lyceum remain the EU primary/fallback; all models from both providers plus OpenRouter are available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
         "value": "env.BIFROST_VK_HERMES",
         "is_active": true,
         "provider_configs": [
           {
             "provider": "tensorx",
-            "allowed_models": ["z-ai/glm-5.2"],
+            "allowed_models": ["*"],
             "key_ids": ["*"]
           },
           {
             "provider": "lyceum",
-            "allowed_models": ["z-ai/glm-5.2-instant"],
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "openrouter",
+            "allowed_models": ["*"],
             "key_ids": ["*"]
           }
         ]
