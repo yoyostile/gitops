@@ -13,6 +13,10 @@ data:
         transport: chat_completions
         default_model: tensorx/z-ai/glm-5.2
         context_length: 1000000
+        # Model discovery has its own request path and does not inherit
+        # model.default_headers.
+        extra_headers:
+          x-bf-vk: __BIFROST_VK__
     model:
       provider: custom:bifrost
       default: tensorx/z-ai/glm-5.2
