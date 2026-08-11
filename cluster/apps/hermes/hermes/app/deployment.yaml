@@ -34,10 +34,10 @@ spec:
             - -ec
             - |
               umask 077
-              sed "s|__BIFROST_VK__|${BIFROST_VK}|g" \
+              sed "s|__BIFROST_VK__|$${BIFROST_VK}|g" \
                 /template/config.yaml > /managed/config.yaml
               printf 'OPENAI_API_KEY=%s\nAPI_SERVER_ENABLED=true\nAPI_SERVER_HOST=0.0.0.0\nAPI_SERVER_KEY=%s\n' \
-                "$BIFROST_VK" "$API_SERVER_KEY" > /managed/.env
+                "$${BIFROST_VK}" "$${API_SERVER_KEY}" > /managed/.env
           env:
             - name: BIFROST_VK
               valueFrom:
