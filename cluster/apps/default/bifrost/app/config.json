@@ -148,13 +148,18 @@
       {
         "id": "vk-hermes",
         "name": "hermes",
-        "description": "Hermes Agent pilot. OpenRouter Claude Sonnet only; isolated from interactive clients and capped independently.",
+        "description": "Hermes Agent pilot. EU inference only: TensorX GLM-5.2 primary with Lyceum GLM-5.2 Instant fallback; isolated from interactive clients and capped independently.",
         "value": "env.BIFROST_VK_HERMES",
         "is_active": true,
         "provider_configs": [
           {
-            "provider": "openrouter",
-            "allowed_models": ["anthropic/claude-sonnet-4.6"],
+            "provider": "tensorx",
+            "allowed_models": ["z-ai/glm-5.2"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "lyceum",
+            "allowed_models": ["z-ai/glm-5.2-instant"],
             "key_ids": ["*"]
           }
         ]

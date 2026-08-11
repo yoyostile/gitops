@@ -11,14 +11,17 @@ data:
         api: http://bifrost.default.svc.cluster.local:8080/v1
         api_key: __BIFROST_VK__
         transport: chat_completions
-        default_model: openrouter/anthropic/claude-sonnet-4.6
-        context_length: 200000
+        default_model: tensorx/z-ai/glm-5.2
+        context_length: 1000000
     model:
       provider: custom:bifrost
-      default: openrouter/anthropic/claude-sonnet-4.6
+      default: tensorx/z-ai/glm-5.2
+    fallback_providers:
+      - provider: custom:bifrost
+        model: lyceum/z-ai/glm-5.2-instant
     agent:
       # Avoid injecting reasoning_effort into the Chat Completions proxy path;
-      # the selected Claude model applies its own adaptive default.
+      # the selected models apply their own reasoning defaults.
       reasoning_effort: none
     security:
       redact_secrets: true
