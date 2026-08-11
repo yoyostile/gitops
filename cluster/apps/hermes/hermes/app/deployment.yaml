@@ -101,6 +101,8 @@ spec:
               value: "9119"
             - name: SEARXNG_URL
               value: http://searxng.default.svc.cluster.local:8080
+            - name: FIRECRAWL_API_URL
+              value: http://firecrawl-firecrawl-api.firecrawl.svc.cluster.local:3002
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:

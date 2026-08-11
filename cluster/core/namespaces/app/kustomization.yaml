@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - cert-manager.yaml
   - cnpg.yaml
+  - firecrawl.yaml
   - hermes.yaml
   - mariadb-operator.yaml
   - media.yaml
