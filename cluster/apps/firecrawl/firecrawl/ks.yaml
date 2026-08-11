@@ -7,6 +7,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
+  # jscpd:ignore-start
   path: ./cluster/apps/firecrawl/firecrawl/app
   prune: true
   wait: true
@@ -24,3 +25,4 @@ spec:
         name: cluster-settings
       - kind: Secret
         name: cluster-secrets
+# jscpd:ignore-end

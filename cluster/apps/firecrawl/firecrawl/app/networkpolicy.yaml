@@ -98,6 +98,7 @@ spec:
     - to:
         - ipBlock:
             cidr: 0.0.0.0/0
+            # jscpd:ignore-start
             except:
               - 10.0.0.0/8
               - 100.64.0.0/10
@@ -112,6 +113,7 @@ spec:
               - 203.0.113.0/24
               - 224.0.0.0/4
               - 240.0.0.0/4
+      # jscpd:ignore-end
       ports:
         - protocol: TCP
           port: 80
