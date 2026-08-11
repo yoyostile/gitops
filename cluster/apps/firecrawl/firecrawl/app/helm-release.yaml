@@ -92,6 +92,16 @@ spec:
                 value: --max-old-space-size=1536
           - target:
               kind: Deployment
+              name: firecrawl-firecrawl-nuq-postgres
+            patch: |
+              # The Ceph RBD PVC is ReadWriteOnce; avoid a rolling-update
+              # surge that leaves the replacement pod in Multi-Attach.
+              - op: add
+                path: /spec/strategy
+                value:
+                  type: Recreate
+          - target:
+              kind: Deployment
               name: firecrawl-firecrawl-redis
             patch: |
               - op: add
@@ -147,7 +157,7 @@ spec:
     nuqPostgres:
       image:
         repository: ghcr.io/firecrawl/nuq-postgres
-        tag: latest
+        tag: latest@sha256:aed86f62858f29bd971abddcdeb301c12888098d2cf5d33c1ba42b053bc460f6
         pullPolicy: IfNotPresent
       persistence:
         enabled: true
@@ -172,7 +182,7 @@ spec:
           memory: 1Gi
     playwright:
       repository: ghcr.io/firecrawl/playwright-service
-      tag: latest
+      tag: latest@sha256:468009bae00911d40d7120d58489a1d529362c22c45585cb9076094fe61b0025
       pullPolicy: IfNotPresent
       replicaCount: 1
     playwrightConfig:
