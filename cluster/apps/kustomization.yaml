@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - cnpg
   - default
+  - hermes
   - kube-system
   - media
   - monitoring

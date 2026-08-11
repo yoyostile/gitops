@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-managed-config
+  namespace: hermes
+data:
+  config.yaml: |
+    providers:
+      bifrost:
+        api: http://bifrost.default.svc.cluster.local:8080/v1
+        api_key: __BIFROST_VK__
+        transport: chat_completions
+        default_model: tensorx/z-ai/glm-5.2
+        context_length: 1000000
+    model:
+      provider: custom:bifrost
+      default: tensorx/z-ai/glm-5.2
+    fallback_providers:
+      - provider: custom:bifrost
+        model: lyceum/z-ai/glm-5.2-instant
+    agent:
+      # Avoid injecting reasoning_effort into the Chat Completions proxy path;
+      # the selected models apply their own reasoning defaults.
+      reasoning_effort: none
+    security:
+      redact_secrets: true
+    terminal:
+      backend: local
+      cwd: /opt/data
+      timeout: 180
+      home_mode: profile
+    skills:
+      guard_agent_created: true
+      write_approval: true
+    tool_loop_guardrails:
+      hard_stop_enabled: true
+      hard_stop_after:
+        exact_failure: 5
+        idempotent_no_progress: 5
+    compression:
+      enabled: true
+      threshold: 0.5
