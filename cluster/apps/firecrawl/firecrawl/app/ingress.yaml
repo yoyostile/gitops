@@ -1,0 +1,29 @@
+---
+# USE_DB_AUTHENTICATION is false, so Firecrawl accepts any bearer token. The
+# IP allowlist is the only gate — never move this to the external Traefik.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: firecrawl
+  namespace: firecrawl
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
+    external-dns/internal: "true"
+spec:
+  ingressClassName: traefik-internal
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - firecrawl.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: firecrawl.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: firecrawl-firecrawl-api
+                port:
+                  number: 3002

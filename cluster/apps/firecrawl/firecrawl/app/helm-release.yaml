@@ -203,6 +203,9 @@ spec:
       NUQ_WORKER_COUNT: "1"
       USE_DB_AUTHENTICATION: "false"
       IS_KUBERNETES: "true"
+      # /v1/search has no built-in backend when self-hosted. SearXNG works only
+      # because its settings enable the `json` output format.
+      SEARXNG_ENDPOINT: http://searxng.default.svc.cluster.local:8080
       ENV: production
       LOGGING_LEVEL: INFO
       extra:
