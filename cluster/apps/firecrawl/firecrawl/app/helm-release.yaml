@@ -100,6 +100,13 @@ spec:
                 path: /spec/strategy
                 value:
                   type: Recreate
+              # Mount-backed filesystems can contain lost+found at their root;
+              # initialize PostgreSQL in a dedicated subdirectory instead.
+              - op: add
+                path: /spec/template/spec/containers/0/env/-
+                value:
+                  name: PGDATA
+                  value: /var/lib/postgresql/data/pgdata
           - target:
               kind: Deployment
               name: firecrawl-firecrawl-redis
