@@ -77,9 +77,45 @@ spec:
           podSelector:
             matchLabels:
               app: open-webui
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: networking
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: traefik-internal-networking
       ports:
         - protocol: TCP
           port: 3002
+---
+# /v1/search proxies through SearXNG. allow-public-web cannot cover this: it
+# excludes 10.0.0.0/8, which contains the cluster service and pod CIDRs.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-searxng
+  namespace: firecrawl
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - firecrawl-api
+          - firecrawl-worker
+          - firecrawl-nuq-worker
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: default
+          podSelector:
+            matchLabels:
+              app: searxng
+      ports:
+        - protocol: TCP
+          port: 8080
 ---
 # Scraping is restricted to public HTTP(S) destinations. This prevents a URL
 # supplied to Hermes from turning Firecrawl into a path to the homelab LAN.
