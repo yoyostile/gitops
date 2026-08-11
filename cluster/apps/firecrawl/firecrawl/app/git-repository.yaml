@@ -1,0 +1,12 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: firecrawl
+  namespace: firecrawl
+spec:
+  interval: 1h
+  url: https://github.com/firecrawl/firecrawl.git
+  ref:
+    # Source commit that produced ghcr.io/firecrawl/firecrawl:2.11.197.
+    commit: af55c2a050a69c03199c9fff4d49bb4ea5acbc26

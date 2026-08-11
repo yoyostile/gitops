@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - cnpg
   - default
+  - firecrawl
   - hermes
   - kube-system
   - media

@@ -1,0 +1,194 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: firecrawl
+  namespace: firecrawl
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./examples/kubernetes/firecrawl-helm
+      reconcileStrategy: Revision
+      sourceRef:
+        kind: GitRepository
+        name: firecrawl
+        namespace: firecrawl
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: firecrawl-values
+      valuesKey: postgres-password
+      targetPath: nuqPostgres.auth.password
+  postRenderers:
+    - kustomize:
+        images:
+          - name: ghcr.io/firecrawl/firecrawl
+            digest: sha256:d4fef17701ca388b2f06074b0624c95d2a4dced655d9267ef0545f2231bd325f
+          - name: ghcr.io/firecrawl/playwright-service
+            digest: sha256:468009bae00911d40d7120d58489a1d529362c22c45585cb9076094fe61b0025
+          - name: ghcr.io/firecrawl/nuq-postgres
+            digest: sha256:aed86f62858f29bd971abddcdeb301c12888098d2cf5d33c1ba42b053bc460f6
+          - name: docker.io/library/redis
+            digest: sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232
+          - name: docker.io/library/rabbitmq
+            digest: sha256:606d8c0d6b3c18d1da9afc53bc7cdb2a8d5486df91b5a9830e9e07626c9ae281
+        patches:
+          - target:
+              kind: Deployment
+            patch: |
+              - op: add
+                path: /spec/template/spec/automountServiceAccountToken
+                value: false
+              - op: add
+                path: /spec/template/spec/securityContext
+                value:
+                  seccompProfile:
+                    type: RuntimeDefault
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-playwright
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/0/resources
+                value:
+                  requests:
+                    cpu: 200m
+                    memory: 512Mi
+                  limits:
+                    cpu: "2"
+                    memory: 2Gi
+              - op: add
+                path: /spec/template/spec/containers/0/securityContext
+                value:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop: ["ALL"]
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-api
+            patch: |
+              - op: replace
+                path: /spec/template/spec/containers/0/args/0
+                value: --max-old-space-size=1536
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-worker
+            patch: |
+              - op: replace
+                path: /spec/template/spec/containers/0/args/0
+                value: --max-old-space-size=1024
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-nuq-worker
+            patch: |
+              - op: replace
+                path: /spec/template/spec/containers/0/args/0
+                value: --max-old-space-size=1536
+          - target:
+              kind: Deployment
+              name: firecrawl-firecrawl-redis
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/0/resources
+                value:
+                  requests:
+                    cpu: 50m
+                    memory: 128Mi
+                  limits:
+                    cpu: 500m
+                    memory: 512Mi
+  values:
+    resources:
+      enabled: true
+    image:
+      repository: ghcr.io/firecrawl/firecrawl
+      tag: 2.11.197
+      pullPolicy: IfNotPresent
+      dockerSecretEnabled: false
+    api:
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          cpu: "2"
+          memory: 2Gi
+    worker:
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          cpu: "1"
+          memory: 1536Mi
+    extractWorker:
+      enabled: false
+    nuqWorker:
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 200m
+          memory: 768Mi
+        limits:
+          cpu: "2"
+          memory: 2Gi
+    nuqPrefetchWorker:
+      enabled: false
+    cclogWorker:
+      enabled: false
+    nuqPostgres:
+      image:
+        repository: ghcr.io/firecrawl/nuq-postgres
+        tag: latest
+        pullPolicy: IfNotPresent
+      persistence:
+        enabled: true
+        size: 10Gi
+        storageClass: ceph-rbd
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+    rabbitmq:
+      enabled: true
+      image: docker.io/library/rabbitmq:3.13-management-alpine
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+    playwright:
+      repository: ghcr.io/firecrawl/playwright-service
+      tag: latest
+      pullPolicy: IfNotPresent
+      replicaCount: 1
+    playwrightConfig:
+      MAX_CONCURRENT_PAGES: "2"
+      BLOCK_MEDIA: "true"
+    redis:
+      image: docker.io/library/redis:8.2.1-alpine
+      replicaCount: 1
+    config:
+      NUM_WORKERS_PER_QUEUE: "2"
+      NUQ_WORKER_COUNT: "1"
+      USE_DB_AUTHENTICATION: "false"
+      IS_KUBERNETES: "true"
+      ENV: production
+      LOGGING_LEVEL: INFO
+      extra:
+        CRAWL_CONCURRENT_REQUESTS: "2"
+        MAX_CONCURRENT_JOBS: "2"
+        BROWSER_POOL_SIZE: "2"

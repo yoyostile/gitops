@@ -1,11 +1,9 @@
 ---
-# Hermes can execute model-generated shell and browser actions. Start from no
-# network access, then permit only the inference/search services and public TLS.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny
-  namespace: hermes
+  namespace: firecrawl
 spec:
   podSelector: {}
   policyTypes:
@@ -16,11 +14,9 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-dns
-  namespace: hermes
+  namespace: firecrawl
 spec:
-  podSelector:
-    matchLabels:
-      app: hermes
+  podSelector: {}
   policyTypes:
     - Egress
   egress:
@@ -37,86 +33,65 @@ spec:
         - protocol: TCP
           port: 53
 ---
+# The API, queues, database, and browser service communicate only inside this
+# namespace. No component is exposed through an Ingress or LoadBalancer.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-bifrost
-  namespace: hermes
+  name: allow-internal-components
+  namespace: firecrawl
 spec:
-  podSelector:
-    matchLabels:
-      app: hermes
+  podSelector: {}
   policyTypes:
+    - Ingress
     - Egress
+  ingress:
+    - from:
+        - podSelector: {}
   egress:
     - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: default
-          podSelector:
-            matchLabels:
-              app: bifrost
-      ports:
-        - protocol: TCP
-          port: 8080
+        - podSelector: {}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-searxng
-  namespace: hermes
+  name: allow-hermes-api
+  namespace: firecrawl
 spec:
   podSelector:
     matchLabels:
-      app: hermes
+      app: firecrawl-api
   policyTypes:
-    - Egress
-  egress:
-    - to:
+    - Ingress
+  ingress:
+    - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: default
+              kubernetes.io/metadata.name: hermes
           podSelector:
             matchLabels:
-              app: searxng
-      ports:
-        - protocol: TCP
-          port: 8080
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-firecrawl
-  namespace: hermes
-spec:
-  podSelector:
-    matchLabels:
-      app: hermes
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: firecrawl
-          podSelector:
-            matchLabels:
-              app: firecrawl-api
+              app: hermes
       ports:
         - protocol: TCP
           port: 3002
 ---
-# Messaging, GitHub and browser research need public HTTPS. Explicitly exclude
-# private, link-local, loopback and reserved ranges to prevent lateral access.
+# Scraping is restricted to public HTTP(S) destinations. This prevents a URL
+# supplied to Hermes from turning Firecrawl into a path to the homelab LAN.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-public-https
-  namespace: hermes
+  name: allow-public-web
+  namespace: firecrawl
 spec:
   podSelector:
-    matchLabels:
-      app: hermes
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - firecrawl-api
+          - firecrawl-worker
+          - firecrawl-nuq-worker
+          - firecrawl-playwright
   policyTypes:
     - Egress
   egress:
@@ -138,5 +113,7 @@ spec:
               - 224.0.0.0/4
               - 240.0.0.0/4
       ports:
+        - protocol: TCP
+          port: 80
         - protocol: TCP
           port: 443

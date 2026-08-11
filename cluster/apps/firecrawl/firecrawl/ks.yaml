@@ -3,15 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: apps-hermes-hermes
+  name: apps-firecrawl-firecrawl
   namespace: flux-system
 spec:
   interval: 5m
-  dependsOn:
-    - name: apps-default-bifrost
-    - name: apps-default-searxng
-    - name: apps-firecrawl-firecrawl
-  path: ./cluster/apps/hermes/hermes/app
+  path: ./cluster/apps/firecrawl/firecrawl/app
   prune: true
   wait: true
   sourceRef:
