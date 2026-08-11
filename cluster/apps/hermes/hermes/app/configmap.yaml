@@ -25,6 +25,9 @@ data:
       # Avoid injecting reasoning_effort into the Chat Completions proxy path;
       # the selected models apply their own reasoning defaults.
       reasoning_effort: none
+    web:
+      search_backend: searxng
+      extract_backend: firecrawl
     security:
       redact_secrets: true
     terminal:

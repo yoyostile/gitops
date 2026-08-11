@@ -83,6 +83,29 @@ spec:
         - protocol: TCP
           port: 8080
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-firecrawl
+  namespace: hermes
+spec:
+  podSelector:
+    matchLabels:
+      app: hermes
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: firecrawl
+          podSelector:
+            matchLabels:
+              app: firecrawl-api
+      ports:
+        - protocol: TCP
+          port: 3002
+---
 # Messaging, GitHub and browser research need public HTTPS. Explicitly exclude
 # private, link-local, loopback and reserved ranges to prevent lateral access.
 apiVersion: networking.k8s.io/v1

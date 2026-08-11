@@ -10,6 +10,7 @@ spec:
   dependsOn:
     - name: apps-default-bifrost
     - name: apps-default-searxng
+    - name: apps-firecrawl-firecrawl
   path: ./cluster/apps/hermes/hermes/app
   prune: true
   wait: true
