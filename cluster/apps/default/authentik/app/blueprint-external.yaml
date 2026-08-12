@@ -193,53 +193,19 @@ data:
           negate: false
           failure_result: false
           timeout: 30
-      # Dead services, retired 2026-08-12. Removing the entry alone would orphan
-      # the objects -- authentik only deletes on an explicit absent state. Order
-      # matters: binding before its application, application before its provider.
-      - model: authentik_policies.policybinding
-        state: absent
-        identifiers:
-          target: !Find [authentik_core.application, [slug, change-detection]]
-          order: 0
-          user: !Find [authentik_core.user, [username, yoyostile]]
+      # Retired 2026-08-12. Prune these entries once applied.
       - model: authentik_core.application
         state: absent
-        identifiers:
-          slug: change-detection
-      - model: authentik_providers_proxy.proxyprovider
-        state: absent
-        identifiers:
-          name: Provider for Change Detection
-      - model: authentik_policies.policybinding
-        state: absent
-        identifiers:
-          target: !Find [authentik_core.application, [slug, airbyte]]
-          order: 0
-          user: !Find [authentik_core.user, [username, yoyostile]]
-      - model: authentik_core.application
-        state: absent
-        identifiers:
-          slug: airbyte
-      - model: authentik_core.application
-        state: absent
-        identifiers:
-          slug: mealie
-      - model: authentik_policies.policybinding
-        state: absent
-        identifiers:
-          target: !Find [authentik_core.application, [slug, onedev]]
-          order: 0
-          group: !Find [authentik_core.group, [name, OneDev]]
-      - model: authentik_core.application
-        state: absent
-        identifiers:
-          slug: onedev
-      - model: authentik_core.application
-        state: present
         identifiers:
           slug: tailscale
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          target: !Find [authentik_core.application, [slug, hermes-dashboard]]
+          order: 0
+          user: !Find [authentik_core.user, [username, yoyostile]]
         attrs:
-          meta_hide: false
-          name: Tailscale
-          open_in_new_tab: false
-          policy_engine_mode: any
+          enabled: true
+          negate: false
+          failure_result: false
+          timeout: 30
