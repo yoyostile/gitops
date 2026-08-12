@@ -5,3 +5,4 @@ resources:
   - ingress.yaml
   - pvc.yaml
   - wg-secret.sops.yaml
+  - authentik-blueprint.yaml

@@ -8,8 +8,89 @@ spec:
   interval: 5m
   values:
     blueprints:
+      # Shipped by this Kustomization, so they always exist and the chart's own
+      # (non-optional) mount is safe.
       configMaps:
         - authentik-blueprint-hermes
+        - authentik-blueprint-external
+        - authentik-blueprint-outpost
+      secrets:
+        - authentik-blueprint-identity
+    worker:
+      # Per-app blueprints come from each app's own Kustomization and may
+      # legitimately be absent (not reconciled yet, or app removed). The chart's
+      # blueprints.configMaps mounts have no `optional`, so a missing ConfigMap
+      # would wedge the worker in ContainerCreating -- mount them by hand
+      # instead. Discovery is a recursive glob under /blueprints, so any path
+      # below it is found.
+      volumes:
+        - name: bp-grafana
+          configMap:
+            name: authentik-blueprint-grafana
+            optional: true
+        - name: bp-glitchtip
+          configMap:
+            name: authentik-blueprint-glitchtip
+            optional: true
+        - name: bp-librenms
+          configMap:
+            name: authentik-blueprint-librenms
+            optional: true
+        - name: bp-open-web-ui-oauth
+          configMap:
+            name: authentik-blueprint-open-web-ui-oauth
+            optional: true
+        - name: bp-paperless
+          configMap:
+            name: authentik-blueprint-paperless
+            optional: true
+        - name: bp-uptime-kuma
+          configMap:
+            name: authentik-blueprint-uptime-kuma
+            optional: true
+        - name: bp-teslamate
+          configMap:
+            name: authentik-blueprint-teslamate
+            optional: true
+        - name: bp-sabnzbd
+          configMap:
+            name: authentik-blueprint-sabnzbd
+            optional: true
+        - name: bp-zigbee2mqtt
+          configMap:
+            name: authentik-blueprint-zigbee2mqtt
+            optional: true
+        - name: bp-notgroschen
+          configMap:
+            name: authentik-blueprint-notgroschen
+            optional: true
+        - name: bp-evcc
+          configMap:
+            name: authentik-blueprint-evcc
+            optional: true
+      volumeMounts:
+        - name: bp-grafana
+          mountPath: /blueprints/mounted/app-grafana
+        - name: bp-glitchtip
+          mountPath: /blueprints/mounted/app-glitchtip
+        - name: bp-librenms
+          mountPath: /blueprints/mounted/app-librenms
+        - name: bp-open-web-ui-oauth
+          mountPath: /blueprints/mounted/app-open-web-ui-oauth
+        - name: bp-paperless
+          mountPath: /blueprints/mounted/app-paperless
+        - name: bp-uptime-kuma
+          mountPath: /blueprints/mounted/app-uptime-kuma
+        - name: bp-teslamate
+          mountPath: /blueprints/mounted/app-teslamate
+        - name: bp-sabnzbd
+          mountPath: /blueprints/mounted/app-sabnzbd
+        - name: bp-zigbee2mqtt
+          mountPath: /blueprints/mounted/app-zigbee2mqtt
+        - name: bp-notgroschen
+          mountPath: /blueprints/mounted/app-notgroschen
+        - name: bp-evcc
+          mountPath: /blueprints/mounted/app-evcc
   chart:
     spec:
       # renovate: registryUrl=https://charts.goauthentik.io

@@ -6,3 +6,4 @@ resources:
   - ingress.yaml
   - pvc.yaml
   - service.yaml
+  - authentik-blueprint.yaml

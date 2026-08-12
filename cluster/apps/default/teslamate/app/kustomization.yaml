@@ -5,3 +5,4 @@ resources:
   - dashboards
   - helm-release.yaml
   - abrp.yaml
+  - authentik-blueprint.yaml

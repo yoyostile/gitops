@@ -1,0 +1,47 @@
+---
+# authentik provider/application for this app, applied by authentik's
+# blueprint worker. Mounted read-only into the authentik worker, so it
+# must live in the `default` namespace even when the app does not.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-notgroschen
+  namespace: default
+data:
+  notgroschen.yaml: |
+    version: 1
+    metadata:
+      name: Notgroschen (gitops)
+      labels:
+        blueprints.goauthentik.io/instantiate: "true"
+    entries:
+      - model: authentik_providers_proxy.proxyprovider
+        state: present
+        identifiers:
+          name: Notgroschen
+        attrs:
+          access_token_validity: hours=1
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          basic_auth_enabled: false
+          external_host: https://notgroschen.${SECRET_LAB_DOMAIN}
+          intercept_header_auth: true
+          internal_host_ssl_validation: true
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: Proxy outpost']]
+            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: Application Entitlements']]
+            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''openid''']]
+            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''email''']]
+            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''profile''']]
+          refresh_token_validity: days=30
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: notgroschen
+        attrs:
+          meta_hide: false
+          name: Notgroschen
+          open_in_new_tab: false
+          policy_engine_mode: any
+          provider: !Find [authentik_providers_proxy.proxyprovider, [name, Notgroschen]]
