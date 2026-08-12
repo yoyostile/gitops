@@ -44,9 +44,18 @@ data:
       # VAAPI on the Intel iGPU; the pod requests gpu.intel.com/i915 for this.
       hwaccel_args: preset-vaapi
 
+    # Frigate serves its authenticated UI on 8971 with its own TLS by default,
+    # which makes Traefik answer 400. Terminate TLS at the edge instead; auth
+    # stays on.
+    tls:
+      enabled: false
+
     detect:
-      # Resolution is probed from the stream, so the vertical cameras need no
-      # special casing. 5 fps is plenty: frames are dropped before decode.
+      # enabled defaults to FALSE in 0.17 -- without this nothing is ever
+      # detected, while cameras still look healthy in the UI. Resolution is
+      # probed from the stream, so the vertical cameras need no special casing.
+      # 5 fps is plenty: frames are dropped before decode.
+      enabled: true
       fps: 5
 
     objects:
