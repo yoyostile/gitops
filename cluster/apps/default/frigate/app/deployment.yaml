@@ -20,6 +20,11 @@ spec:
       labels:
         app: frigate
     spec:
+      # The MS-A2 (Ryzen 9 8945HX, 8 cores) rather than the Intel iGPU nodes:
+      # the enrichments are CPU-only whatever the host, and decoding 3
+      # sub-megapixel streams at 5 fps does not need hardware acceleration.
+      nodeSelector:
+        topology.kubernetes.io/zone: pve02
       containers:
         - name: frigate
           # renovate: datasource=github-releases depName=blakeblackshear/frigate
@@ -30,8 +35,6 @@ spec:
           env:
             - name: TZ
               value: ${TZ}
-            - name: LIBVA_DRIVER_NAME
-              value: iHD
           ports:
             - name: http
               containerPort: 8971
@@ -39,15 +42,13 @@ spec:
               containerPort: 8554
           resources:
             requests:
-              cpu: 500m
-              memory: 1Gi
-              gpu.intel.com/i915: 1
+              cpu: "1"
+              memory: 2Gi
             limits:
-              # requesting i915 is what pins this to an iGPU node -- no
-              # nodeSelector needed, the device plugin advertises it on
-              # argon/neon (pve01) and krypton/xenon (pve03)
-              memory: 3Gi
-              gpu.intel.com/i915: 1
+              # everything is software here: decode, object detection, and the
+              # semantic-search / face / lpr enrichments
+              cpu: "6"
+              memory: 8Gi
           volumeMounts:
             - name: config
               mountPath: /config
