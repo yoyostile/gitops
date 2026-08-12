@@ -1063,7 +1063,7 @@
       "network_config": {
         "base_url": "https://api.lyceum.technology",
         "default_request_timeout_in_seconds": 300,
-        "max_retries": 2
+        "max_retries": 0
       },
       "custom_provider_config": {
         "base_provider_type": "openai",
@@ -1076,7 +1076,7 @@
         "allowed_requests": {
           "chat_completion": true,
           "chat_completion_stream": true,
-          "list_models": false,
+          "list_models": true,
           "embedding": true
         }
       }
