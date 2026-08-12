@@ -75,6 +75,18 @@ spec:
                   key: OPEN_WEBUI_OAUTH_CLIENT_SECRET
             - name: ENABLE_OLLAMA_API
               value: "false"
+            # All four connections point at the same Bifrost URL and differ only
+            # by virtual key, so the UI renders four identical rows. Names are
+            # keyed by connection INDEX as a string -- a URL key would apply to
+            # all four at once.
+            - name: OPENAI_API_CONFIGS
+              value: '{"0":{"name":"bifrost general"},"1":{"name":"bifrost lyceum"},"2":{"name":"bifrost openrouter"},"3":{"name":"bifrost hetzner"}}'
+            # Hold the base model list in app state instead of re-querying every
+            # connection on each page load. Lyceum's /models takes 1-19s, so this
+            # is the difference between an 8s and an instant load. Cost: newly
+            # added upstream models need the UI refresh or a pod restart.
+            - name: ENABLE_BASE_MODELS_CACHE
+              value: "true"
             - name: ENABLE_OPENAI_API
               value: "true"
             - name: ENABLE_OPENAI_API_PASSTHROUGH
