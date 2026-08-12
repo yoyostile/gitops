@@ -54,7 +54,7 @@
       {
         "id": "vk-notgroschen",
         "name": "notgroschen",
-        "description": "notgroschen merchant/transaction classification, taxonomy and tag proposal. The boundary that matters is the PROVIDER, not the model: personal banking data must not leave the EU, so this key is restricted to EU-hosted providers (lyceum/Berlin, tensorx/Scaleway FR) and any model they serve - the app picks one at runtime so models can be compared without a redeploy.",
+        "description": "notgroschen merchant/transaction classification, taxonomy and tag proposal. The boundary that matters is the PROVIDER, not the model: personal banking data must not be processed outside the EU, so this key is restricted to EU-processing providers and any model they serve - the app picks one at runtime so models can be compared without a redeploy. lyceum = Berlin, hetzner = Germany, openai = the EU residency endpoint (owner's ruling; a US company under an EU data-processing agreement, unlike the other two). tensorx was dropped - it now serves no models.",
         "value": "env.BIFROST_VK_NOTGROSCHEN",
         "is_active": true,
         "provider_configs": [
@@ -64,7 +64,12 @@
             "key_ids": ["*"]
           },
           {
-            "provider": "tensorx",
+            "provider": "hetzner",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "openai",
             "allowed_models": ["*"],
             "key_ids": ["*"]
           }
