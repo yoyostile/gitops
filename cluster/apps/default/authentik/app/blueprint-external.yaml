@@ -193,101 +193,47 @@ data:
           negate: false
           failure_result: false
           timeout: 30
-      - model: authentik_providers_proxy.proxyprovider
-        state: present
-        identifiers:
-          name: Provider for Change Detection
-        attrs:
-          access_token_validity: hours=24
-          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
-          basic_auth_enabled: false
-          external_host: https://change.${SECRET_LAB_DOMAIN}
-          intercept_header_auth: true
-          internal_host: http://changedetection.default.svc
-          internal_host_ssl_validation: false
-          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
-          mode: forward_single
-          property_mappings:
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: Proxy outpost']]
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: Application Entitlements']]
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''openid''']]
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''email''']]
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''profile''']]
-          refresh_token_validity: days=30
-      - model: authentik_core.application
-        state: present
-        identifiers:
-          slug: change-detection
-        attrs:
-          meta_hide: false
-          name: Change Detection
-          open_in_new_tab: false
-          policy_engine_mode: any
-          provider: !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Change Detection]]
+      # Dead services, retired 2026-08-12. Removing the entry alone would orphan
+      # the objects -- authentik only deletes on an explicit absent state. Order
+      # matters: binding before its application, application before its provider.
       - model: authentik_policies.policybinding
-        state: present
+        state: absent
         identifiers:
           target: !Find [authentik_core.application, [slug, change-detection]]
           order: 0
           user: !Find [authentik_core.user, [username, yoyostile]]
-        attrs:
-          enabled: true
-          negate: false
-          failure_result: false
-          timeout: 30
       - model: authentik_core.application
-        state: present
+        state: absent
         identifiers:
-          slug: airbyte
-        attrs:
-          meta_hide: false
-          name: Airbyte
-          open_in_new_tab: false
-          policy_engine_mode: any
+          slug: change-detection
+      - model: authentik_providers_proxy.proxyprovider
+        state: absent
+        identifiers:
+          name: Provider for Change Detection
       - model: authentik_policies.policybinding
-        state: present
+        state: absent
         identifiers:
           target: !Find [authentik_core.application, [slug, airbyte]]
           order: 0
           user: !Find [authentik_core.user, [username, yoyostile]]
-        attrs:
-          enabled: true
-          negate: false
-          failure_result: false
-          timeout: 30
       - model: authentik_core.application
-        state: present
+        state: absent
+        identifiers:
+          slug: airbyte
+      - model: authentik_core.application
+        state: absent
         identifiers:
           slug: mealie
-        attrs:
-          meta_hide: false
-          name: Mealie
-          open_in_new_tab: false
-          policy_engine_mode: any
-      - model: authentik_core.group
-        state: created
-        identifiers:
-          name: OneDev
-      - model: authentik_core.application
-        state: present
-        identifiers:
-          slug: onedev
-        attrs:
-          meta_hide: false
-          name: OneDev
-          open_in_new_tab: false
-          policy_engine_mode: any
       - model: authentik_policies.policybinding
-        state: present
+        state: absent
         identifiers:
           target: !Find [authentik_core.application, [slug, onedev]]
           order: 0
           group: !Find [authentik_core.group, [name, OneDev]]
-        attrs:
-          enabled: true
-          negate: false
-          failure_result: false
-          timeout: 30
+      - model: authentik_core.application
+        state: absent
+        identifiers:
+          slug: onedev
       - model: authentik_core.application
         state: present
         identifiers:
