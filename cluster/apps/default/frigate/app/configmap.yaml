@@ -44,11 +44,32 @@ data:
       # VAAPI on the Intel iGPU; the pod requests gpu.intel.com/i915 for this.
       hwaccel_args: preset-vaapi
 
-    # Frigate serves its authenticated UI on 8971 with its own TLS by default,
-    # which makes Traefik answer 400. Terminate TLS at the edge instead; auth
-    # stays on.
+    # Frigate serves its UI on 8971 with its own TLS by default, which makes
+    # Traefik answer 400. Terminate TLS at the edge instead.
     tls:
       enabled: false
+
+    # Authentik's forward-auth middleware gates the ingress and injects the
+    # identity headers (the shared networking-authentik middleware already lists
+    # them in authResponseHeaders), so Frigate's own login is turned off.
+    # Port 8971 is what validates these headers -- port 5000 ignores them and
+    # treats every request as admin, which is why the Service targets 8971.
+    auth:
+      enabled: false
+      trusted_proxies:
+        - 10.42.0.0/16
+
+    proxy:
+      header_map:
+        user: x-authentik-username
+        role: x-authentik-groups
+      # authentik joins group names with a pipe
+      separator: "|"
+      default_role: viewer
+      role_map:
+        admin:
+          - authentik Admins
+      logout_url: /outpost.goauthentik.io/sign_out
 
     detect:
       # enabled defaults to FALSE in 0.17 -- without this nothing is ever
