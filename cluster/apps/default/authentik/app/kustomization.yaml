@@ -4,3 +4,4 @@ resources:
   - configmap.sops.yaml
   - blueprint-hermes.yaml
   - helm-release.yaml
+  - ingress-internal.yaml
