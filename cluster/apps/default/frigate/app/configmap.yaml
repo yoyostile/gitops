@@ -63,12 +63,16 @@ data:
       header_map:
         user: x-authentik-username
         role: x-authentik-groups
+        # role_map belongs under header_map, not under proxy -- the docs show it
+        # a level higher and Frigate then rejects the whole config with
+        # "Extra inputs are not permitted". Note auth.roles is something else
+        # entirely (custom role -> cameras) and reserves admin/viewer.
+        role_map:
+          admin:
+            - authentik Admins
       # authentik joins group names with a pipe
       separator: "|"
       default_role: viewer
-      role_map:
-        admin:
-          - authentik Admins
       logout_url: /outpost.goauthentik.io/sign_out
 
     detect:
