@@ -68,6 +68,10 @@ spec:
           configMap:
             name: authentik-blueprint-evcc
             optional: true
+        - name: bp-frigate
+          configMap:
+            name: authentik-blueprint-frigate
+            optional: true
       volumeMounts:
         - name: bp-grafana
           mountPath: /blueprints/mounted/app-grafana
@@ -91,6 +95,8 @@ spec:
           mountPath: /blueprints/mounted/app-notgroschen
         - name: bp-evcc
           mountPath: /blueprints/mounted/app-evcc
+        - name: bp-frigate
+          mountPath: /blueprints/mounted/app-frigate
   chart:
     spec:
       # renovate: registryUrl=https://charts.goauthentik.io
