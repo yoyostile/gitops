@@ -24,7 +24,6 @@ data:
           type: proxy
           providers:
             - !Find [authentik_providers_proxy.proxyprovider, [name, Notgroschen]]
-            - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Change Detection]]
             - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Home Assistant]]
             - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Sabnzbd]]
             - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Uptime Kuma]]
