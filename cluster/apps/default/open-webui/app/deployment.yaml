@@ -75,12 +75,16 @@ spec:
                   key: OPEN_WEBUI_OAUTH_CLIENT_SECRET
             - name: ENABLE_OLLAMA_API
               value: "false"
-            # All four connections point at the same Bifrost URL and differ only
-            # by virtual key, so the UI renders four identical rows. Names are
-            # keyed by connection INDEX as a string -- a URL key would apply to
-            # all four at once.
+            # All four connections point at the same Bifrost URL and differ only by
+            # virtual key. The connection LIST only ever renders the URL -- this
+            # build has no name field -- so tag each one instead: the tag shows in
+            # the connection's edit dialog and is copied onto every model it
+            # serves, so the picker shows which gateway a model came from.
+            # Keyed by connection INDEX as a string; a URL key would hit all four.
+            # Do NOT use prefix_id here: it rewrites model ids to
+            # "<prefix>.<id>", which would break TASK_MODEL_EXTERNAL.
             - name: OPENAI_API_CONFIGS
-              value: '{"0":{"name":"bifrost general"},"1":{"name":"bifrost lyceum"},"2":{"name":"bifrost openrouter"},"3":{"name":"bifrost hetzner"}}'
+              value: '{"0":{"tags":["general"]},"1":{"tags":["lyceum"]},"2":{"tags":["openrouter"]},"3":{"tags":["hetzner"]}}'
             # Hold the base model list in app state instead of re-querying every
             # connection on each page load. Lyceum's /models takes 1-19s, so this
             # is the difference between an 8s and an instant load. Cost: newly
