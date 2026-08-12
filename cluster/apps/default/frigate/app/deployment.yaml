@@ -64,7 +64,9 @@ spec:
           livenessProbe:
             httpGet:
               path: /api/version
-              port: http
+              # 5000 is the internal port that ignores auth headers; probing
+              # 8971 would be subject to proxy auth and restart a healthy pod
+              port: 5000
             initialDelaySeconds: 60
             periodSeconds: 30
             failureThreshold: 5
