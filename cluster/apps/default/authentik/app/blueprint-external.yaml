@@ -193,11 +193,6 @@ data:
           negate: false
           failure_result: false
           timeout: 30
-      # Retired 2026-08-12. Prune these entries once applied.
-      - model: authentik_core.application
-        state: absent
-        identifiers:
-          slug: tailscale
       - model: authentik_policies.policybinding
         state: present
         identifiers:

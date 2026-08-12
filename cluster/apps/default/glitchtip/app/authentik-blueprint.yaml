@@ -63,3 +63,14 @@ data:
           open_in_new_tab: false
           policy_engine_mode: any
           provider: !Find [authentik_providers_oauth2.oauth2provider, [name, Provider for Glitchtip]]
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          target: !Find [authentik_core.application, [slug, glitchtip]]
+          order: 0
+          user: !Find [authentik_core.user, [username, yoyostile]]
+        attrs:
+          enabled: true
+          negate: false
+          failure_result: false
+          timeout: 30
