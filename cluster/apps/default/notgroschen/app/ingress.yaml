@@ -47,7 +47,9 @@ metadata:
   namespace: default
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    # No Authentik here: /api/* authenticates with INGEST_TOKEN (Bearer).
+    # No Authentik here: these paths authenticate with INGEST_TOKEN (Bearer)
+    # because neither caller can do SSO — bin/notgroschen-sync is an
+    # osascript|curl pipe, and an MCP client speaks JSON-RPC, not OIDC.
     traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
     external-dns/internal: "true"
 spec:
@@ -61,6 +63,13 @@ spec:
       http:
         paths:
           - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: notgroschen
+                port:
+                  name: http
+          - path: /mcp
             pathType: Prefix
             backend:
               service:
