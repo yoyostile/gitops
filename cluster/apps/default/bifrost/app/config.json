@@ -54,13 +54,18 @@
       {
         "id": "vk-notgroschen",
         "name": "notgroschen",
-        "description": "notgroschen merchant classification and taxonomy proposal. Sees merchant NAMES only - never transactions, amounts or IBANs. Lyceum Qwen3-235B only (EU-hosted); the data is personal banking, so it must not route outside the EU.",
+        "description": "notgroschen merchant/transaction classification, taxonomy and tag proposal. The boundary that matters is the PROVIDER, not the model: personal banking data must not leave the EU, so this key is restricted to EU-hosted providers (lyceum/Berlin, tensorx/Scaleway FR) and any model they serve - the app picks one at runtime so models can be compared without a redeploy.",
         "value": "env.BIFROST_VK_NOTGROSCHEN",
         "is_active": true,
         "provider_configs": [
           {
             "provider": "lyceum",
-            "allowed_models": ["Qwen/Qwen3-235B-A22B-Instruct-2507"],
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "tensorx",
+            "allowed_models": ["*"],
             "key_ids": ["*"]
           }
         ]
