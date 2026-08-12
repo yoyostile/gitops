@@ -12,18 +12,21 @@ data:
       port: 1883
       topic_prefix: frigate
 
+    # Runs on the MS-A2 (pve02), whose VM exposes no /dev/dri render node -- so no
+    # OpenVINO and no VAAPI. 8 Zen4 cores do object detection, decode and all
+    # three enrichments in software instead.
     detectors:
-      ov:
-        type: openvino
-        device: GPU
+      cpu:
+        type: cpu
+        num_threads: 4
 
     model:
-      width: 300
-      height: 300
+      width: 320
+      height: 320
       input_tensor: nhwc
-      input_pixel_format: bgr
-      path: /openvino-model/ssdlite_mobilenet_v2.xml
-      labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+      input_pixel_format: rgb
+      path: /cpu_model.tflite
+      labelmap_path: /labelmap.txt
 
     # UniFi Protect will not talk plain rtsps:// to ffmpeg -- it needs the rtspx
     # protocol through go2rtc, which handles the TLS/SRTP handshake. So the camera
@@ -40,9 +43,8 @@ data:
         garten_high: "{FRIGATE_GARTEN_RECORD}"
         durchgang_high: "{FRIGATE_DURCHGANG_RECORD}"
 
-    ffmpeg:
-      # VAAPI on the Intel iGPU; the pod requests gpu.intel.com/i915 for this.
-      hwaccel_args: preset-vaapi
+    # No hwaccel_args on purpose: without a render node VAAPI fails outright.
+    # Software decode of 3 sub-megapixel streams at 5 fps costs well under a core.
 
     # Frigate serves its UI on 8971 with its own TLS by default, which makes
     # Traefik answer 400. Terminate TLS at the edge instead.
@@ -86,6 +88,8 @@ data:
     objects:
       track:
         - person
+        # required for lpr -- it only inspects car/motorcycle objects
+        - car
 
     motion:
       # IR sensor noise is what wakes the detector at night; contrast
@@ -93,6 +97,21 @@ data:
       improve_contrast: true
       threshold: 30
       contour_area: 15
+
+    # Enrichments. All three run on CPU regardless of host (Frigate does not use
+    # OpenVINO for these), which is the main reason this app lives on the MS-A2.
+    semantic_search:
+      enabled: true
+      model_size: small
+      reindex: false
+
+    face_recognition:
+      enabled: true
+      model_size: small
+
+    lpr:
+      enabled: true
+      model_size: small
 
     snapshots:
       enabled: true
