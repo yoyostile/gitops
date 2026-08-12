@@ -176,7 +176,7 @@
       {
         "id": "vk-hermes",
         "name": "hermes",
-        "description": "Hermes Agent pilot. TensorX and Lyceum remain the EU primary/fallback; Hetzner's experimental German endpoint and OpenRouter are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
+        "description": "Hermes Agent pilot. Lyceum is the EU primary (TensorX removed 2026-08-12, funds exceeded); Hetzner's experimental German endpoint, OpenRouter and OpenAI (EU endpoint) are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
         "value": "env.BIFROST_VK_HERMES",
         "is_active": true,
         "provider_configs": [
@@ -192,6 +192,11 @@
           },
           {
             "provider": "hetzner",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "openai",
             "allowed_models": ["*"],
             "key_ids": ["*"]
           }
