@@ -69,8 +69,8 @@ spec:
           # processes to the unprivileged hermes user.
           args: ["gateway", "run"]
           ports:
-            # No Service selects these ports. They are available only through
-            # kubectl port-forward for initial configuration and local use.
+            # The API remains pod-only. Only the authenticated dashboard is
+            # selected by a Service and internal Ingress.
             - name: api
               containerPort: 8642
             - name: dashboard
@@ -93,10 +93,8 @@ spec:
                   key: API_SERVER_KEY
             - name: HERMES_DASHBOARD
               value: "1"
-            # The dashboard has no network-facing listener or auth provider.
-            # kubectl port-forward reaches loopback inside the pod namespace.
             - name: HERMES_DASHBOARD_HOST
-              value: 127.0.0.1
+              value: 0.0.0.0
             - name: HERMES_DASHBOARD_PORT
               value: "9119"
             - name: SEARXNG_URL

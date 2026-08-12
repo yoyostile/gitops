@@ -8,6 +8,7 @@ metadata:
 spec:
   interval: 5m
   dependsOn:
+    - name: apps-default-authentik
     - name: apps-default-bifrost
     - name: apps-default-searxng
     - name: apps-firecrawl-firecrawl

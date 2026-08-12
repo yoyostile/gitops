@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hermes
+  namespace: hermes
+  annotations:
+    hajimari.io/appName: Hermes
+    hajimari.io/enable: "true"
+    hajimari.io/icon: robot
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.middlewares: networking-internal-ips-only@kubernetescrd
+    external-dns/internal: "true"
+spec:
+  ingressClassName: traefik-internal
+  tls:
+    - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+      hosts:
+        - hermes.${SECRET_LAB_DOMAIN}
+  rules:
+    - host: hermes.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hermes
+                port:
+                  name: dashboard
