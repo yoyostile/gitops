@@ -1,0 +1,33 @@
+---
+# The embedded outpost's provider list is a single all-or-nothing M2M
+# patch: every proxy provider must be listed here or it silently loses
+# its outpost assignment and stops being served.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-outpost
+  namespace: default
+data:
+  outpost.yaml: |
+    version: 1
+    metadata:
+      name: Embedded outpost providers (gitops)
+      labels:
+        blueprints.goauthentik.io/instantiate: "true"
+    entries:
+      - model: authentik_outposts.outpost
+        state: present
+        identifiers:
+          managed: goauthentik.io/outposts/embedded
+        attrs:
+          name: authentik Embedded Outpost
+          type: proxy
+          providers:
+            - !Find [authentik_providers_proxy.proxyprovider, [name, Notgroschen]]
+            - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Change Detection]]
+            - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Home Assistant]]
+            - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Sabnzbd]]
+            - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Uptime Kuma]]
+            - !Find [authentik_providers_proxy.proxyprovider, [name, Provider for Zigbee2mqtt]]
+            - !Find [authentik_providers_proxy.proxyprovider, [name, Teslamate]]
+            - !Find [authentik_providers_proxy.proxyprovider, [name, "${SECRET_LAB_DOMAIN}"]]

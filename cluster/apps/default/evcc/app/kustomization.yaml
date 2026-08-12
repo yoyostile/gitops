@@ -7,3 +7,4 @@ resources:
   - service.yaml
   - ingress.yaml
   - pvc.yaml
+  - authentik-blueprint.yaml

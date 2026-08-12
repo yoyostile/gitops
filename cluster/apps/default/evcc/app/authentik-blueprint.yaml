@@ -1,0 +1,41 @@
+---
+# authentik provider/application for this app, applied by authentik's
+# blueprint worker. Mounted read-only into the authentik worker, so it
+# must live in the `default` namespace even when the app does not.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-evcc
+  namespace: default
+data:
+  evcc.yaml: |
+    version: 1
+    metadata:
+      name: evcc (gitops)
+      labels:
+        blueprints.goauthentik.io/instantiate: "true"
+    entries:
+      - model: authentik_core.group
+        state: created
+        identifiers:
+          name: evcc
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: evcc
+        attrs:
+          meta_hide: false
+          name: evcc
+          open_in_new_tab: false
+          policy_engine_mode: any
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          target: !Find [authentik_core.application, [slug, evcc]]
+          order: 0
+          group: !Find [authentik_core.group, [name, evcc]]
+        attrs:
+          enabled: true
+          negate: false
+          failure_result: false
+          timeout: 30
