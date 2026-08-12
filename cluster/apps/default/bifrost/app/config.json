@@ -104,11 +104,6 @@
             "provider": "lyceum",
             "allowed_models": ["*"],
             "key_ids": ["*"]
-          },
-          {
-            "provider": "tensorx",
-            "allowed_models": ["*"],
-            "key_ids": ["*"]
           }
         ]
       },
@@ -123,11 +118,6 @@
             "provider": "lyceum",
             "allowed_models": ["*"],
             "key_ids": ["*"]
-          },
-          {
-            "provider": "tensorx",
-            "allowed_models": ["*"],
-            "key_ids": ["*"]
           }
         ]
       },
@@ -136,7 +126,7 @@
         "name": "general-tensorx",
         "description": "TensorX (EU, Scaleway FR). Second EU provider alongside Lyceum; carries qwen3-vl-235b which Lyceum lacks.",
         "value": "env.BIFROST_VK_TENSORX",
-        "is_active": true,
+        "is_active": false,
         "provider_configs": [
           {
             "provider": "tensorx",
@@ -181,11 +171,6 @@
         "is_active": true,
         "provider_configs": [
           {
-            "provider": "tensorx",
-            "allowed_models": ["*"],
-            "key_ids": ["*"]
-          },
-          {
             "provider": "lyceum",
             "allowed_models": ["*"],
             "key_ids": ["*"]
@@ -226,11 +211,6 @@
           },
           {
             "provider": "lyceum",
-            "allowed_models": ["*"],
-            "key_ids": ["*"]
-          },
-          {
-            "provider": "tensorx",
             "allowed_models": ["*"],
             "key_ids": ["*"]
           },
@@ -1096,7 +1076,7 @@
         "allowed_requests": {
           "chat_completion": true,
           "chat_completion_stream": true,
-          "list_models": true,
+          "list_models": false,
           "embedding": true
         }
       }
