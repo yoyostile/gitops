@@ -36,6 +36,10 @@ spec:
           configMap:
             name: authentik-blueprint-librenms
             optional: true
+        - name: bp-mealie
+          configMap:
+            name: authentik-blueprint-mealie
+            optional: true
         - name: bp-open-web-ui-oauth
           configMap:
             name: authentik-blueprint-open-web-ui-oauth
@@ -79,6 +83,8 @@ spec:
           mountPath: /blueprints/mounted/app-glitchtip
         - name: bp-librenms
           mountPath: /blueprints/mounted/app-librenms
+        - name: bp-mealie
+          mountPath: /blueprints/mounted/app-mealie
         - name: bp-open-web-ui-oauth
           mountPath: /blueprints/mounted/app-open-web-ui-oauth
         - name: bp-paperless

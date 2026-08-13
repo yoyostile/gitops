@@ -17,6 +17,7 @@ resources:
   - ./immich/ks.yaml
   - ./immich-public-proxy/ks.yaml
   - ./mariadb/ks.yaml
+  - ./mealie/ks.yaml
   - ./metabase/ks.yaml
   - ./mikrotik-backup/ks.yaml
   - ./mosquitto/ks.yaml
