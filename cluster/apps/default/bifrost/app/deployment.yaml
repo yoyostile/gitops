@@ -142,6 +142,11 @@ spec:
                 secretKeyRef:
                   name: bifrost-secrets
                   key: BIFROST_VK_ZETTELROBBE
+            - name: BIFROST_VK_MEALIE
+              valueFrom:
+                secretKeyRef:
+                  name: bifrost-secrets
+                  key: BIFROST_VK_MEALIE
             - name: BIFROST_VK_NOTGROSCHEN
               valueFrom:
                 secretKeyRef:
