@@ -92,9 +92,9 @@
       {
         "id": "vk-general-lyceum",
         "name": "general-lyceum",
-        "description": "DISABLED 2026-08-13: Lyceum funds exhausted - it still lists 31 models but every chat_completion returns 402, so dynamic model discovery keeps offering models that cannot serve. Unlike tensorx it did not vanish from listings, which is why the key is deactivated rather than left to fail. General-purpose key for Lyceum serverless inference (Berlin, EU residency, open-weight models). Own key rather than sharing the OpenAI one so spend and blast radius stay separate. Not wired to reimbursat0r. Re-enable by flipping is_active once topped up.",
+        "description": "General-purpose key for Lyceum serverless inference (Berlin, EU residency, open-weight models). Own key rather than sharing the OpenAI one so spend and blast radius stay separate. Not wired to reimbursat0r. Briefly disabled 2026-08-13 when funds ran out and every chat_completion returned 402 while /v1/models still advertised 31 models - re-activated the same day after a top-up. If 402s reappear, check the account balance before suspecting config: unlike tensorx, Lyceum does not drop out of listings when it runs dry.",
         "value": "env.BIFROST_VK_LYCEUM",
-        "is_active": false,
+        "is_active": true,
         "provider_configs": [
           {
             "provider": "lyceum",
@@ -193,7 +193,7 @@
       {
         "id": "vk-hermes",
         "name": "hermes",
-        "description": "Hermes Agent, now a dedicated VM rather than a pod. Hetzner's German endpoint is the EU primary (TensorX removed 2026-08-12 and Lyceum 2026-08-13, both funds exceeded); OpenRouter and OpenAI (EU endpoint) are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently. Curated 2026-08-13 from 545 models to 23 - an agent model picker is unusable at 545, and allowed_models filters /v1/models as well as completions. OpenRouter mirrors the general-openrouter list so there is one set to maintain; OpenAI is trimmed to current cheap tiers as the EU-residency escape hatch (the pro tiers are omitted deliberately: gpt-5.5-pro is $30/$180 and scores below gpt-5.6-sol). Hetzner stays ['*'] on purpose - it serves only 4 models, all current and EU, so new ones should appear without a commit.",
+        "description": "Hermes Agent, now a dedicated VM rather than a pod. Hetzner's German endpoint is the EU primary (TensorX removed 2026-08-12 and Lyceum 2026-08-13, both funds exceeded); OpenRouter and OpenAI (EU endpoint) are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently. Curated 2026-08-13 from 545 models to 20 - an agent model picker is unusable at 545, and allowed_models filters /v1/models as well as completions. OpenRouter mirrors the general-openrouter list so there is one set to maintain. The openai provider was removed from this key on the owner's instruction; reach OpenAI models via openrouter instead, or re-add an openai provider_config for the EU-residency endpoint. Hetzner stays ['*'] on purpose - it serves only 4 models, all current and EU, so new ones should appear without a commit.",
         "value": "env.BIFROST_VK_HERMES",
         "is_active": true,
         "provider_configs": [
@@ -222,15 +222,6 @@
           {
             "provider": "hetzner",
             "allowed_models": ["*"],
-            "key_ids": ["*"]
-          },
-          {
-            "provider": "openai",
-            "allowed_models": [
-              "gpt-5.6-terra",
-              "gpt-5.6-luna",
-              "gpt-5.4-mini"
-            ],
             "key_ids": ["*"]
           }
         ]
