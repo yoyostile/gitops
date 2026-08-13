@@ -193,13 +193,30 @@
       {
         "id": "vk-hermes",
         "name": "hermes",
-        "description": "Hermes Agent, now a dedicated VM rather than a pod. Hetzner's German endpoint is the EU primary (TensorX removed 2026-08-12 and Lyceum 2026-08-13, both funds exceeded); OpenRouter and OpenAI (EU endpoint) are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
+        "description": "Hermes Agent, now a dedicated VM rather than a pod. Hetzner's German endpoint is the EU primary (TensorX removed 2026-08-12 and Lyceum 2026-08-13, both funds exceeded); OpenRouter and OpenAI (EU endpoint) are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently. Curated 2026-08-13 from 545 models to 23 - an agent model picker is unusable at 545, and allowed_models filters /v1/models as well as completions. OpenRouter mirrors the general-openrouter list so there is one set to maintain; OpenAI is trimmed to current cheap tiers as the EU-residency escape hatch (the pro tiers are omitted deliberately: gpt-5.5-pro is $30/$180 and scores below gpt-5.6-sol). Hetzner stays ['*'] on purpose - it serves only 4 models, all current and EU, so new ones should appear without a commit.",
         "value": "env.BIFROST_VK_HERMES",
         "is_active": true,
         "provider_configs": [
           {
             "provider": "openrouter",
-            "allowed_models": ["*"],
+            "allowed_models": [
+              "anthropic/claude-opus-5",
+              "x-ai/grok-4.6",
+              "qwen/qwen3.8-max",
+              "meta/muse-spark-1.2",
+              "openai/gpt-5.6-terra",
+              "anthropic/claude-sonnet-5",
+              "google/gemini-3.6-flash",
+              "openai/gpt-5.6-luna",
+              "deepseek/deepseek-v4-pro-0813",
+              "deepseek/deepseek-v4-flash-0731",
+              "minimax/minimax-m3",
+              "z-ai/glm-5.2",
+              "moonshotai/kimi-k2.7-code",
+              "qwen/qwen3-coder-next",
+              "qwen/qwen3-vl-235b-a22b-instruct",
+              "z-ai/glm-5v-turbo"
+            ],
             "key_ids": ["*"]
           },
           {
@@ -209,7 +226,11 @@
           },
           {
             "provider": "openai",
-            "allowed_models": ["*"],
+            "allowed_models": [
+              "gpt-5.6-terra",
+              "gpt-5.6-luna",
+              "gpt-5.4-mini"
+            ],
             "key_ids": ["*"]
           }
         ]
