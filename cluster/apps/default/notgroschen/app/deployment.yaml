@@ -42,10 +42,7 @@ spec:
               memory: "256Mi"
               cpu: "100m"
             limits:
-              # Serving needs ~260Mi; the ceiling is set by notgroschen:rebuild,
-              # which OOMKilled at 768Mi once it grew to derive balances and
-              # tags on top of flow types and merchants over 23k bookings in
-              # one pipeline. The 21MB plist parse at ingest is the other peak.
+              # Serving needs ~260Mi; notgroschen:rebuild sets the ceiling.
               memory: "2Gi"
               cpu: "1"
           startupProbe:
