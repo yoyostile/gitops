@@ -132,6 +132,30 @@
         ]
       },
       {
+        "id": "vk-mealie",
+        "name": "mealie",
+        "description": "Mealie recipe AI: URL fallback parsing and ingredient parsing (text), recipe-from-photo (vision), recipe-from-video (transcription). Mealie calls chat.completions.parse, i.e. strict json_schema structured outputs - verified 2026-08-13 that gemini-3.6-flash and qwen3-vl honour it and z-ai/glm-5v-turbo does NOT (returns markdown, which breaks the SDK parse). openai is pinned to whisper-1 because transcription is the only thing it is here for; mealie's own fallback for a failed transcription is a chat request with input_audio, which none of these models serve.",
+        "value": "env.BIFROST_VK_MEALIE",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "openrouter",
+            "allowed_models": ["google/gemini-3.6-flash", "qwen/qwen3-vl-235b-a22b-instruct"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "hetzner",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "openai",
+            "allowed_models": ["whisper-1"],
+            "key_ids": ["*"]
+          }
+        ]
+      },
+      {
         "id": "vk-general-tensorx",
         "name": "general-tensorx",
         "description": "TensorX (EU, Scaleway FR). Second EU provider alongside Lyceum; carries qwen3-vl-235b which Lyceum lacks.",
@@ -295,6 +319,12 @@
         "id": "budget-paperless-ai",
         "virtual_key_id": "vk-paperless-ai",
         "max_limit": 10,
+        "reset_duration": "1M"
+      },
+      {
+        "id": "budget-mealie",
+        "virtual_key_id": "vk-mealie",
+        "max_limit": 5,
         "reset_duration": "1M"
       },
       {
