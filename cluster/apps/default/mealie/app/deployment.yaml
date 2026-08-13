@@ -1,0 +1,112 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mealie
+  namespace: default
+  labels:
+    app: mealie
+spec:
+  replicas: 1
+  # RWO volume: a rolling update deadlocks on the attach.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mealie
+  template:
+    metadata:
+      labels:
+        app: mealie
+    spec:
+      containers:
+        - name: mealie
+          image: ghcr.io/mealie-recipes/mealie:v3.22.0
+          ports:
+            - name: http
+              containerPort: 9000
+          env:
+            - name: TZ
+              value: "${TZ}"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: UVICORN_WORKERS
+              value: "1"
+            # Also the base for the OIDC redirect URI (mealie appends /login), so
+            # it has to match the redirect_uris in the authentik blueprint exactly.
+            - name: BASE_URL
+              value: "https://mealie.${SECRET_LAB_DOMAIN}"
+            - name: ALLOW_SIGNUP
+              value: "false"
+            # Leaves ?direct=1 as a way in if authentik is down.
+            - name: ALLOW_PASSWORD_LOGIN
+              value: "true"
+            - name: DB_ENGINE
+              value: "postgres"
+            - name: POSTGRES_SERVER
+              value: "psql-cluster-rw.default"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "mealie"
+            - name: POSTGRES_DB
+              value: "mealie"
+            - name: POSTGRES_PASSWORD
+              value: "${SECRET_MEALIE_POSTGRES_PASSWORD}"
+            - name: OIDC_AUTH_ENABLED
+              value: "true"
+            - name: OIDC_SIGNUP_ENABLED
+              value: "true"
+            - name: OIDC_CONFIGURATION_URL
+              value: "https://auth.${SECRET_LAB_DOMAIN}/application/o/mealie/.well-known/openid-configuration"
+            - name: OIDC_CLIENT_ID
+              value: "${MEALIE_OAUTH_CLIENT_ID}"
+            - name: OIDC_CLIENT_SECRET
+              value: "${MEALIE_OAUTH_CLIENT_SECRET}"
+            - name: OIDC_PROVIDER_NAME
+              value: "authentik"
+            - name: OIDC_AUTO_REDIRECT
+              value: "true"
+            - name: OIDC_REMEMBER_ME
+              value: "true"
+            # Groups come from authentik's default profile mapping, which lists
+            # direct memberships only -- a parent group like Homelab never shows up.
+            - name: OIDC_USER_GROUP
+              value: "Mealie"
+            - name: OIDC_ADMIN_GROUP
+              value: "DevOps"
+            # Load-bearing: authentik's default email mapping hardcodes
+            # email_verified: false, so mealie >= 3.21 refuses every login with
+            # "email_verified claim is missing or false" while this is true.
+            - name: OIDC_REQUIRES_EMAIL_VERIFICATION
+              value: "false"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "50m"
+            limits:
+              memory: "1Gi"
+          startupProbe:
+            httpGet:
+              path: /api/app/about
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /api/app/about
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mealie-data
