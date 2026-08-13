@@ -148,13 +148,30 @@
       {
         "id": "vk-general-openrouter",
         "name": "general-openrouter",
-        "description": "General-purpose OpenRouter access. Prices come from Bifrost's automatically synchronized model catalog; isolated behind its own virtual key and monthly budget.",
+        "description": "General-purpose OpenRouter access. Prices come from Bifrost's automatically synchronized model catalog; isolated behind its own virtual key and monthly budget. Curated 2026-08-13 from 410 models to 16: Bifrost filters /v1/models by allowed_models, so this list IS the OpenWebUI model picker. Chosen on the Artificial Analysis intelligence index plus OpenRouter's live pricing, then cut at $10/M output - claude-opus-5 is the single exception, kept as the premium escape hatch at #1 overall. Dropped as strictly dominated: claude-fable-5 (lower index than opus-5 at double the price) and gpt-5.6-sol / kimi-k3 / gemini-3.1-pro / claude-sonnet-5-class spend, all matched or beaten by grok-4.6 at $2/$6. No :batch variants (async endpoints, useless in a chat picker) and no :free duplicates. Re-check when a new generation lands; vendor launch claims did not match the independent index.",
         "value": "env.BIFROST_VK_OPENROUTER",
         "is_active": true,
         "provider_configs": [
           {
             "provider": "openrouter",
-            "allowed_models": ["*"],
+            "allowed_models": [
+              "anthropic/claude-opus-5",
+              "x-ai/grok-4.6",
+              "qwen/qwen3.8-max",
+              "meta/muse-spark-1.2",
+              "openai/gpt-5.6-terra",
+              "anthropic/claude-sonnet-5",
+              "google/gemini-3.6-flash",
+              "openai/gpt-5.6-luna",
+              "deepseek/deepseek-v4-pro-0813",
+              "deepseek/deepseek-v4-flash-0731",
+              "minimax/minimax-m3",
+              "z-ai/glm-5.2",
+              "moonshotai/kimi-k2.7-code",
+              "qwen/qwen3-coder-next",
+              "qwen/qwen3-vl-235b-a22b-instruct",
+              "z-ai/glm-5v-turbo"
+            ],
             "key_ids": ["*"]
           }
         ]
