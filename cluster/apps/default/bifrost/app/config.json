@@ -92,9 +92,9 @@
       {
         "id": "vk-general-lyceum",
         "name": "general-lyceum",
-        "description": "General-purpose key for Lyceum serverless inference (Berlin, EU residency, open-weight models). Own key rather than sharing the OpenAI one so spend and blast radius stay separate. Not wired to reimbursat0r.",
+        "description": "DISABLED 2026-08-13: Lyceum funds exhausted - it still lists 31 models but every chat_completion returns 402, so dynamic model discovery keeps offering models that cannot serve. Unlike tensorx it did not vanish from listings, which is why the key is deactivated rather than left to fail. General-purpose key for Lyceum serverless inference (Berlin, EU residency, open-weight models). Own key rather than sharing the OpenAI one so spend and blast radius stay separate. Not wired to reimbursat0r. Re-enable by flipping is_active once topped up.",
         "value": "env.BIFROST_VK_LYCEUM",
-        "is_active": true,
+        "is_active": false,
         "provider_configs": [
           {
             "provider": "lyceum",
@@ -176,15 +176,10 @@
       {
         "id": "vk-hermes",
         "name": "hermes",
-        "description": "Hermes Agent pilot. Lyceum is the EU primary (TensorX removed 2026-08-12, funds exceeded); Hetzner's experimental German endpoint, OpenRouter and OpenAI (EU endpoint) are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
+        "description": "Hermes Agent, now a dedicated VM rather than a pod. Hetzner's German endpoint is the EU primary (TensorX removed 2026-08-12 and Lyceum 2026-08-13, both funds exceeded); OpenRouter and OpenAI (EU endpoint) are also available for manual selection. OpenRouter traffic may leave Europe. Isolated and capped independently.",
         "value": "env.BIFROST_VK_HERMES",
         "is_active": true,
         "provider_configs": [
-          {
-            "provider": "lyceum",
-            "allowed_models": ["*"],
-            "key_ids": ["*"]
-          },
           {
             "provider": "openrouter",
             "allowed_models": ["*"],
@@ -246,7 +241,7 @@
       {
         "id": "budget-hermes",
         "virtual_key_id": "vk-hermes",
-        "max_limit": 10,
+        "max_limit": 25,
         "reset_duration": "1M"
       },
       {
