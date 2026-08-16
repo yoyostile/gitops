@@ -1,0 +1,97 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguard-exporter
+  namespace: default
+  labels:
+    app: adguard-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adguard-exporter
+  template:
+    metadata:
+      labels:
+        app: adguard-exporter
+    spec:
+      containers:
+        - name: adguard-exporter
+          image: ghcr.io/henrywhitaker3/adguard-exporter:v1.2.1
+          env:
+            # The exporter wants one comma-separated list per field, so the two
+            # hosts get stitched together with Kubernetes' $(VAR) expansion --
+            # that only resolves names declared *earlier* in this list, so the
+            # three secret lookups have to stay above the joined values.
+            # Credentials are read from the adguard-home-sync secret instead of
+            # being duplicated into a second SOPS file.
+            - name: ORIGIN_URL
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-home-sync
+                  key: ORIGIN_URL
+            - name: ORIGIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-home-sync
+                  key: ORIGIN_USERNAME
+            - name: ORIGIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-home-sync
+                  key: ORIGIN_PASSWORD
+            - name: REPLICA1_URL
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-home-sync
+                  key: REPLICA1_URL
+            - name: REPLICA1_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-home-sync
+                  key: REPLICA1_USERNAME
+            - name: REPLICA1_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-home-sync
+                  key: REPLICA1_PASSWORD
+            - name: ADGUARD_SERVERS
+              value: $(ORIGIN_URL),$(REPLICA1_URL)
+            - name: ADGUARD_USERNAMES
+              value: $(ORIGIN_USERNAME),$(REPLICA1_USERNAME)
+            - name: ADGUARD_PASSWORDS
+              value: $(ORIGIN_PASSWORD),$(REPLICA1_PASSWORD)
+            - name: BIND_ADDR
+              value: :9618
+          ports:
+            - name: metrics
+              containerPort: 9618
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534

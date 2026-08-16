@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps-default-adguard-exporter
+  namespace: flux-system
+spec:
+  interval: 5m
+  path: ./cluster/apps/default/adguard-exporter/app
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+    # The credentials live in the adguard-home-sync secret, so that app has to
+    # exist first.
+    - name: apps-default-adguard-home-sync
+  postBuild:
+    substitute: {}
