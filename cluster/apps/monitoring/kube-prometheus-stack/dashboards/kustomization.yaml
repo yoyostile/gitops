@@ -9,6 +9,11 @@ configMapGenerator:
   - name: cnpg-dashboard
     files:
       - cnpg-dashboard.json=https://raw.githubusercontent.com/cloudnative-pg/grafana-dashboards/refs/heads/main/charts/cluster/grafana-dashboard.json
+  # Generated, not inlined like main.yaml: generatorOptions disables Flux
+  # substitution, so the Grafana $instance/$__range vars need no $$ escaping.
+  - name: host-temperatures-dashboard
+    files:
+      - host-temperatures.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
