@@ -1,7 +1,6 @@
 ---
 # Providers/applications for services that have no folder in this repo
-# (Proxmox, Home Assistant, Tailscale, ...) plus Hermes, whose
-# kustomization forces namespace: hermes.
+# (Proxmox, Home Assistant, Tailscale, ...).
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -36,46 +35,6 @@ data:
             - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''email''']]
             - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''profile''']]
           refresh_token_validity: days=30
-      - model: authentik_providers_oauth2.oauth2provider
-        state: present
-        identifiers:
-          name: Hermes dashboard
-        attrs:
-          access_code_validity: minutes=1
-          access_token_validity: hours=1
-          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
-          client_id: hermes-dashboard
-          client_type: public
-          grant_types:
-            - authorization_code
-            - refresh_token
-          include_claims_in_id_token: true
-          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
-          issuer_mode: per_provider
-          logout_method: backchannel
-          property_mappings:
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''openid''']]
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''email''']]
-            - !Find [authentik_providers_oauth2.scopemapping, [name, 'authentik default OAuth Mapping: OpenID ''profile''']]
-          redirect_uris:
-            - matching_mode: strict
-              redirect_uri_type: authorization
-              url: https://hermes.${SECRET_LAB_DOMAIN}/auth/callback
-          refresh_token_threshold: seconds=0
-          refresh_token_validity: days=30
-          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
-          sub_mode: hashed_user_id
-      - model: authentik_core.application
-        state: present
-        identifiers:
-          slug: hermes-dashboard
-        attrs:
-          meta_hide: false
-          meta_launch_url: https://hermes.${SECRET_LAB_DOMAIN}
-          name: Hermes
-          open_in_new_tab: false
-          policy_engine_mode: any
-          provider: !Find [authentik_providers_oauth2.oauth2provider, [name, Hermes dashboard]]
       - model: authentik_core.group
         state: created
         identifiers:
@@ -193,14 +152,18 @@ data:
           negate: false
           failure_result: false
           timeout: 30
+      # Retired 2026-08-16. Prune these entries once applied.
       - model: authentik_policies.policybinding
-        state: present
+        state: absent
         identifiers:
           target: !Find [authentik_core.application, [slug, hermes-dashboard]]
           order: 0
           user: !Find [authentik_core.user, [username, yoyostile]]
-        attrs:
-          enabled: true
-          negate: false
-          failure_result: false
-          timeout: 30
+      - model: authentik_core.application
+        state: absent
+        identifiers:
+          slug: hermes-dashboard
+      - model: authentik_providers_oauth2.oauth2provider
+        state: absent
+        identifiers:
+          name: Hermes dashboard

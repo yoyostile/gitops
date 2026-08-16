@@ -11,7 +11,6 @@ spec:
       # Shipped by this Kustomization, so they always exist and the chart's own
       # (non-optional) mount is safe.
       configMaps:
-        - authentik-blueprint-hermes
         - authentik-blueprint-external
         - authentik-blueprint-outpost
       secrets:
