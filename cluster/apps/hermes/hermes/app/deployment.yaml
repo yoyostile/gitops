@@ -64,7 +64,7 @@ spec:
               mountPath: /managed
       containers:
         - name: hermes
-          image: docker.io/nousresearch/hermes-agent:v2026.7.20
+          image: docker.io/nousresearch/hermes-agent:v2026.8.16
           # Keep the image's /init entrypoint: it starts s6 and drops the agent
           # processes to the unprivileged hermes user.
           args: ["gateway", "run"]
