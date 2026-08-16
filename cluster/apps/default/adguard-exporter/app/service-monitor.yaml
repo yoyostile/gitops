@@ -16,14 +16,16 @@ spec:
         - sourceLabels: [__name__]
           regex: adguard_processing_time_milliseconds.*
           action: drop
-        # These histograms carry a `client` label holding a raw IP. Clients come
-        # and go with DHCP, so the series set grows without bound against a 730d
-        # retention. The per-upstream aggregate stays useful; the per-client
-        # breakdown is what churns, and avg_processing_time_seconds already
-        # covers the question "is resolution slow".
+        # Redundant with adguard_queries_details, which carries the same counts
+        # without the bucket explosion.
         - sourceLabels: [__name__]
           regex: adguard_queries_details_histogram.*
           action: drop
+        # Deliberately NOT dropped: adguard_processing_time_seconds_bucket keeps
+        # a `client` label holding a raw IP, so the series set grows with every
+        # new DHCP address and never shrinks against the 730d retention. The
+        # per-client breakdown is wanted, so this is an accepted cost -- roughly
+        # 1900 series today. If it ever needs cutting, that metric is the 60%.
   namespaceSelector:
     matchNames:
       - default
