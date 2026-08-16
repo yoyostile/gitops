@@ -15,6 +15,9 @@ configMapGenerator:
   - name: main-dashboard
     files:
       - main.json
+  - name: adguard-dashboard
+    files:
+      - adguard.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
