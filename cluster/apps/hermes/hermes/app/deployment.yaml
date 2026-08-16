@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: render-managed-config
-          image: docker.io/library/busybox:1.37.0
+          image: docker.io/library/busybox:1.38.0
           command:
             - sh
             - -ec
