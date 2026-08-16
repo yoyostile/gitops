@@ -2759,22 +2759,918 @@
       }
     },
     {
-      "type": "row",
-      "title": "Haus & Klima",
+      "type": "timeseries",
+      "title": "Laden vs. Erzeugung",
       "id": 45,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Die eine Sicht, die weder TeslaMate noch EVCC allein liefert: Ladeleistung gegen die eigene Erzeugung. Netz negativ = Einspeisung. Läuft die Ladekurve hoch, während Netz ins Positive kippt, kam der Strom nicht vom Dach.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 74
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_power_w{entity=\"sensor.evcc_ladeziegel_evcc_charge_power\"}",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "Ladeleistung"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_power_w{entity=\"sensor.evcc_site_evcc_pv_power\"}",
+          "refId": "B",
+          "range": true,
+          "instant": false,
+          "legendFormat": "PV"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_power_w{entity=\"sensor.evcc_site_evcc_grid_power\"}",
+          "refId": "C",
+          "range": true,
+          "instant": false,
+          "legendFormat": "Netz"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Fahrzeug-SoC",
+      "id": 46,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 74
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_battery_percent{entity=\"sensor.evcc_tesla_model_3_evcc_vehicle_soc\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 70
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Reichweite",
+      "id": 47,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 74
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_distance_km{entity=\"sensor.evcc_tesla_model_3_evcc_vehicle_range\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthkm",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Solaranteil Session",
+      "id": 48,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 74
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_unit_percent{entity=\"sensor.evcc_ladeziegel_evcc_session_solar_percentage\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 30
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Session geladen",
+      "id": 49,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 78
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_energy_kwh{entity=\"sensor.evcc_ladeziegel_evcc_session_energy\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "davon aus dem Netz",
+      "id": 50,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Nur der zugekaufte Anteil, zum aktuellen EVCC-Netztarif.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 78
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "scalar(hass_sensor_energy_kwh{entity=\"sensor.evcc_ladeziegel_evcc_session_energy\"}) * (1 - scalar(hass_sensor_unit_percent{entity=\"sensor.evcc_ladeziegel_evcc_session_solar_percentage\"})/100) * scalar(hass_sensor_unit_eur_per_kwh{entity=\"sensor.evcc_site_evcc_tariff_grid\"})",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "gespart durch PV",
+      "id": 51,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Was dieselbe Lademenge bei vollem Netzbezug zusätzlich gekostet hätte.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 78
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "scalar(hass_sensor_energy_kwh{entity=\"sensor.evcc_ladeziegel_evcc_session_energy\"}) * (scalar(hass_sensor_unit_percent{entity=\"sensor.evcc_ladeziegel_evcc_session_solar_percentage\"})/100) * scalar(hass_sensor_unit_eur_per_kwh{entity=\"sensor.evcc_site_evcc_tariff_grid\"})",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "row",
+      "title": "Auto",
+      "id": 52,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 74
+        "y": 82
+      },
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "Daten alt",
+      "id": 53,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Steht bewusst als erste Kachel: das Auto schläft die meiste Zeit, dann friert der Rest dieser Zeile ein. Ab 30 Minuten ist alles rechts davon ein Rückblick, keine Aussage über jetzt -- ein 'unverschlossen' von heute Nacht sieht sonst aus wie ein aktueller Alarm.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 83
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(time() - max(hass_last_updated_time_seconds{entity=~\"binary_sensor.tesla.*\"})) / 60",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "m",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "text",
+                "value": 30
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Verschlossen",
+      "id": 54,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 83
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_locked\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "OFFEN",
+                  "color": "orange",
+                  "index": 0
+                },
+                "1": {
+                  "text": "ja",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Fenster",
+      "id": 55,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 83
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_windows_open\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "zu",
+                  "color": "green",
+                  "index": 0
+                },
+                "1": {
+                  "text": "OFFEN",
+                  "color": "orange",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Sentry",
+      "id": 56,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 83
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_sentry_mode\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "aus",
+                  "color": "text",
+                  "index": 0
+                },
+                "1": {
+                  "text": "aktiv",
+                  "color": "blue",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Eingesteckt",
+      "id": 57,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 83
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_plugged_in\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "nein",
+                  "color": "text",
+                  "index": 0
+                },
+                "1": {
+                  "text": "ja",
+                  "color": "blue",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Update",
+      "id": 58,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 83
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_update_available\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "aktuell",
+                  "color": "text",
+                  "index": 0
+                },
+                "1": {
+                  "text": "verfügbar",
+                  "color": "yellow",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "row",
+      "title": "Haus & Klima",
+      "id": 59,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 87
       },
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "Raumtemperaturen",
-      "id": 46,
+      "id": 60,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2784,7 +3680,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 75
+        "y": 88
       },
       "targets": [
         {
@@ -2837,7 +3733,7 @@
     {
       "type": "timeseries",
       "title": "Luftfeuchte",
-      "id": 47,
+      "id": 61,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2847,7 +3743,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 75
+        "y": 88
       },
       "targets": [
         {
@@ -2902,7 +3798,7 @@
     {
       "type": "timeseries",
       "title": "Vitocal Temperaturen",
-      "id": 48,
+      "id": 62,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2912,7 +3808,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 83
+        "y": 96
       },
       "targets": [
         {
@@ -2965,7 +3861,7 @@
     {
       "type": "barchart",
       "title": "Kompressorstarts pro Tag",
-      "id": 49,
+      "id": 63,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2975,7 +3871,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 83
+        "y": 96
       },
       "targets": [
         {
@@ -3039,7 +3935,7 @@
     {
       "type": "timeseries",
       "title": "Laufzeit je Takt (rollend 7d)",
-      "id": 50,
+      "id": 64,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3049,7 +3945,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 83
+        "y": 96
       },
       "targets": [
         {
@@ -3103,7 +3999,7 @@
     {
       "type": "stat",
       "title": "Starts/Tag Ø 30d",
-      "id": 51,
+      "id": 65,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3113,7 +4009,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 91
+        "y": 104
       },
       "targets": [
         {
@@ -3160,7 +4056,7 @@
     {
       "type": "stat",
       "title": "Ø Laufzeit je Takt 30d",
-      "id": 52,
+      "id": 66,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3170,7 +4066,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 91
+        "y": 104
       },
       "targets": [
         {
@@ -3217,7 +4113,7 @@
     {
       "type": "stat",
       "title": "Laufzeit h/Tag 30d",
-      "id": 53,
+      "id": 67,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3227,7 +4123,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 91
+        "y": 104
       },
       "targets": [
         {
@@ -3274,7 +4170,7 @@
     {
       "type": "stat",
       "title": "Heizkreis",
-      "id": 54,
+      "id": 68,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3284,7 +4180,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 91
+        "y": 104
       },
       "targets": [
         {
@@ -3347,7 +4243,7 @@
     {
       "type": "stat",
       "title": "JAZ Heizung",
-      "id": 55,
+      "id": 69,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3357,7 +4253,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 91
+        "y": 104
       },
       "targets": [
         {
@@ -3404,7 +4300,7 @@
     {
       "type": "stat",
       "title": "JAZ Warmwasser",
-      "id": 56,
+      "id": 70,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3414,7 +4310,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 91
+        "y": 104
       },
       "targets": [
         {
