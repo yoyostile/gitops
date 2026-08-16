@@ -3216,9 +3216,241 @@
       }
     },
     {
+      "type": "stat",
+      "title": "Netzbezug 30d",
+      "id": 52,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 82
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]))",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Einspeisung 30d",
+      "id": 53,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 82
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]))",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Saldo 30d",
+      "id": 54,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Bezug minus Einspeisung. Positiv heißt: übers Netz mehr geholt als abgegeben. Negativ wäre Überschuss.",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 82
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d])) - on() (max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]))",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "text",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Stromkosten 30d",
+      "id": 55,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Nur der Netzbezug, gegen den 30-Tage-Mittelwert des EVCC-Netztarifs. Eine Gegenkachel für die Einspeisevergütung fehlt bewusst: EVCCs Einspeisetarif steht über den gesamten Zeitraum auf 0, eine Erlöskachel zeigte also dauerhaft 0,00 € und sähe aus wie ein Defekt. Sobald der Tarif in EVCC gepflegt ist, lohnt sie sich.",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 82
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d])) * on() avg_over_time(hass_sensor_unit_eur_per_kwh{entity=\"sensor.evcc_site_evcc_tariff_grid\"}[30d])",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
       "type": "barchart",
       "title": "Netzbezug vs. Einspeisung pro Tag",
-      "id": 52,
+      "id": 56,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3228,7 +3460,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 82
+        "y": 86
       },
       "targets": [
         {
@@ -3305,20 +3537,20 @@
     {
       "type": "row",
       "title": "Haus & Klima",
-      "id": 53,
+      "id": 57,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 91
+        "y": 95
       },
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "Raumtemperaturen",
-      "id": 54,
+      "id": 58,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3328,7 +3560,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 92
+        "y": 96
       },
       "targets": [
         {
@@ -3381,7 +3613,7 @@
     {
       "type": "timeseries",
       "title": "Luftfeuchte",
-      "id": 55,
+      "id": 59,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3391,7 +3623,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 92
+        "y": 96
       },
       "targets": [
         {
@@ -3446,7 +3678,7 @@
     {
       "type": "timeseries",
       "title": "Vitocal Temperaturen",
-      "id": 56,
+      "id": 60,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3456,7 +3688,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 100
+        "y": 104
       },
       "targets": [
         {
@@ -3509,7 +3741,7 @@
     {
       "type": "barchart",
       "title": "Kompressorstarts pro Tag",
-      "id": 57,
+      "id": 61,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3519,7 +3751,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 100
+        "y": 104
       },
       "targets": [
         {
@@ -3583,7 +3815,7 @@
     {
       "type": "timeseries",
       "title": "Laufzeit je Takt (rollend 7d)",
-      "id": 58,
+      "id": 62,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3593,7 +3825,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 100
+        "y": 104
       },
       "targets": [
         {
@@ -3647,7 +3879,7 @@
     {
       "type": "stat",
       "title": "Starts/Tag Ø 30d",
-      "id": 59,
+      "id": 63,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3657,7 +3889,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 108
+        "y": 112
       },
       "targets": [
         {
@@ -3704,7 +3936,7 @@
     {
       "type": "stat",
       "title": "Ø Laufzeit je Takt 30d",
-      "id": 60,
+      "id": 64,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3714,7 +3946,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 108
+        "y": 112
       },
       "targets": [
         {
@@ -3761,7 +3993,7 @@
     {
       "type": "stat",
       "title": "Laufzeit h/Tag 30d",
-      "id": 61,
+      "id": 65,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3771,7 +4003,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 108
+        "y": 112
       },
       "targets": [
         {
@@ -3818,7 +4050,7 @@
     {
       "type": "stat",
       "title": "Heizkreis",
-      "id": 62,
+      "id": 66,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3828,7 +4060,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 108
+        "y": 112
       },
       "targets": [
         {
@@ -3891,7 +4123,7 @@
     {
       "type": "stat",
       "title": "JAZ Heizung",
-      "id": 63,
+      "id": 67,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3901,7 +4133,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 108
+        "y": 112
       },
       "targets": [
         {
@@ -3948,7 +4180,7 @@
     {
       "type": "stat",
       "title": "JAZ Warmwasser",
-      "id": 64,
+      "id": 68,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3958,7 +4190,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 108
+        "y": 112
       },
       "targets": [
         {
