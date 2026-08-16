@@ -21,9 +21,6 @@ spec:
             - secretRef:
                 name: adguard-home-sync
           env:
-            # Without a cron this only syncs once at startup and then just sits
-            # on its API port waiting for a trigger -- which is why the pod stays
-            # alive and looks like a daemon while the replica quietly drifts.
             - name: CRON
               value: "*/15 * * * *"
           args: ["run"]
