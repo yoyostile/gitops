@@ -9,6 +9,21 @@ metadata:
 spec:
   endpoints:
     - port: metrics
+      metricRelabelings:
+        # The exporter emits ~7300 series, and the processing-time histogram
+        # ships twice -- once in seconds, once in milliseconds, same data.
+        # Keep the seconds variant, which matches every other histogram here.
+        - sourceLabels: [__name__]
+          regex: adguard_processing_time_milliseconds.*
+          action: drop
+        # These histograms carry a `client` label holding a raw IP. Clients come
+        # and go with DHCP, so the series set grows without bound against a 730d
+        # retention. The per-upstream aggregate stays useful; the per-client
+        # breakdown is what churns, and avg_processing_time_seconds already
+        # covers the question "is resolution slow".
+        - sourceLabels: [__name__]
+          regex: adguard_queries_details_histogram.*
+          action: drop
   namespaceSelector:
     matchNames:
       - default
