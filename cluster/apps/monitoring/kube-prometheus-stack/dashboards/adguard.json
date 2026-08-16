@@ -986,13 +986,13 @@
     },
     {
       "type": "bargauge",
-      "title": "Upstreams — Antwortzeit",
+      "title": "Upstreams — Antwortzeit (ab 100 Antworten)",
       "id": 20,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Ausreißer hier lohnen einen Blick: ein einzelner langsamer Upstream zieht die Auflösung für alle Clients hoch, die zufällig dort landen.",
+      "description": "Nur Upstreams mit mehr als 100 Antworten im 24h-Fenster. Ohne diese Schwelle dominiert Rauschen die Anzeige: kaum genutzte Fallbacks sammeln zwei, drei Messungen ein und stehen dann mit einem Sekunden-Mittelwert dauerhaft rot da, obwohl sie irrelevant sind.",
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -1006,7 +1006,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "topk(10, max by (upstream) (adguard_top_upstreams_avg_response_time_seconds))",
+          "expr": "topk(10, max by (upstream) (adguard_top_upstreams_avg_response_time_seconds) and on(upstream) (sum by (upstream) (adguard_top_upstreams) > 100))",
           "refId": "A",
           "range": false,
           "instant": true,
