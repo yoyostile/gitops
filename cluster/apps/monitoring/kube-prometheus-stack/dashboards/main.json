@@ -3216,33 +3216,20 @@
       }
     },
     {
-      "type": "row",
-      "title": "Auto",
+      "type": "barchart",
+      "title": "Netzbezug vs. Einspeisung pro Tag",
       "id": 52,
-      "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Tageswerte über 30 Tage, fest, unabhängig vom Zeitraum oben. Die Ecotracker-Zähler sind kumulativ und werden als Gauge exportiert, deshalb max minus min je Tag statt increase(). Nebeneinander statt gestapelt: Bezug und Einspeisung sind Gegenrichtungen, eine Summe aus beiden hätte keine Bedeutung.",
       "gridPos": {
-        "h": 1,
+        "h": 9,
         "w": 24,
         "x": 0,
         "y": 82
       },
-      "panels": []
-    },
-    {
-      "type": "stat",
-      "title": "Daten alt",
-      "id": 53,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Steht bewusst als erste Kachel: das Auto schläft die meiste Zeit, dann friert der Rest dieser Zeile ein. Ab 30 Minuten ist alles rechts davon ein Rückblick, keine Aussage über jetzt -- ein 'unverschlossen' von heute Nacht sieht sonst aus wie ein aktueller Alarm.",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
-        "y": 83
-      },
       "targets": [
         {
           "datasource": {
@@ -3250,105 +3237,52 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(time() - max(hass_last_updated_time_seconds{entity=~\"binary_sensor.tesla.*\"})) / 60",
+          "expr": "max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[24h]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[24h])",
           "refId": "A",
-          "range": false,
-          "instant": true
-        }
-      ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "m",
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "text",
-                "value": 30
-              }
-            ]
-          }
+          "range": true,
+          "instant": false,
+          "legendFormat": "Bezug",
+          "interval": "1d"
         },
-        "overrides": []
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Verschlossen",
-      "id": 54,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 83
-      },
-      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_locked\"}",
-          "refId": "A",
-          "range": false,
-          "instant": true
+          "expr": "max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[24h]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[24h])",
+          "refId": "B",
+          "range": true,
+          "instant": false,
+          "legendFormat": "Einspeisung",
+          "interval": "1d"
         }
       ],
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
+        "orientation": "vertical",
+        "showValue": "never",
+        "xTickLabelRotation": -45,
+        "xTickLabelSpacing": 100,
+        "stacking": "none",
+        "groupWidth": 0.7,
+        "barWidth": 0.9,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
-          "decimals": 0,
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "OFFEN",
-                  "color": "orange",
-                  "index": 0
-                },
-                "1": {
-                  "text": "ja",
-                  "color": "green",
-                  "index": 1
-                }
-              }
-            }
-          ],
+          "unit": "kwatth",
+          "decimals": 1,
+          "color": {
+            "mode": "palette-classic"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3357,320 +3291,34 @@
                 "value": null
               }
             ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Fenster",
-      "id": 55,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 83
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
           },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_windows_open\"}",
-          "refId": "A",
-          "range": false,
-          "instant": true
-        }
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 0,
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "zu",
-                  "color": "green",
-                  "index": 0
-                },
-                "1": {
-                  "text": "OFFEN",
-                  "color": "orange",
-                  "index": 1
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
+          "custom": {
+            "lineWidth": 0,
+            "fillOpacity": 85,
+            "gradientMode": "none"
           }
         },
         "overrides": []
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Sentry",
-      "id": 56,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
       },
-      "description": "",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 83
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_sentry_mode\"}",
-          "refId": "A",
-          "range": false,
-          "instant": true
-        }
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 0,
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "aus",
-                  "color": "text",
-                  "index": 0
-                },
-                "1": {
-                  "text": "aktiv",
-                  "color": "blue",
-                  "index": 1
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Eingesteckt",
-      "id": 57,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 83
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_plugged_in\"}",
-          "refId": "A",
-          "range": false,
-          "instant": true
-        }
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 0,
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "nein",
-                  "color": "text",
-                  "index": 0
-                },
-                "1": {
-                  "text": "ja",
-                  "color": "blue",
-                  "index": 1
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Update",
-      "id": 58,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 83
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.tesla_tesla_update_available\"}",
-          "refId": "A",
-          "range": false,
-          "instant": true
-        }
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 0,
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "aktuell",
-                  "color": "text",
-                  "index": 0
-                },
-                "1": {
-                  "text": "verfügbar",
-                  "color": "yellow",
-                  "index": 1
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
+      "timeFrom": "30d"
     },
     {
       "type": "row",
       "title": "Haus & Klima",
-      "id": 59,
+      "id": 53,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 87
+        "y": 91
       },
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "Raumtemperaturen",
-      "id": 60,
+      "id": 54,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3680,7 +3328,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 88
+        "y": 92
       },
       "targets": [
         {
@@ -3733,7 +3381,7 @@
     {
       "type": "timeseries",
       "title": "Luftfeuchte",
-      "id": 61,
+      "id": 55,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3743,7 +3391,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 88
+        "y": 92
       },
       "targets": [
         {
@@ -3798,7 +3446,7 @@
     {
       "type": "timeseries",
       "title": "Vitocal Temperaturen",
-      "id": 62,
+      "id": 56,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3808,7 +3456,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 96
+        "y": 100
       },
       "targets": [
         {
@@ -3861,7 +3509,7 @@
     {
       "type": "barchart",
       "title": "Kompressorstarts pro Tag",
-      "id": 63,
+      "id": 57,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3871,7 +3519,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 96
+        "y": 100
       },
       "targets": [
         {
@@ -3902,8 +3550,8 @@
           "showLegend": false
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "fieldConfig": {
@@ -3935,7 +3583,7 @@
     {
       "type": "timeseries",
       "title": "Laufzeit je Takt (rollend 7d)",
-      "id": 64,
+      "id": 58,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3945,7 +3593,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 96
+        "y": 100
       },
       "targets": [
         {
@@ -3999,7 +3647,7 @@
     {
       "type": "stat",
       "title": "Starts/Tag Ø 30d",
-      "id": 65,
+      "id": 59,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4009,7 +3657,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -4056,7 +3704,7 @@
     {
       "type": "stat",
       "title": "Ø Laufzeit je Takt 30d",
-      "id": 66,
+      "id": 60,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4066,7 +3714,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -4113,7 +3761,7 @@
     {
       "type": "stat",
       "title": "Laufzeit h/Tag 30d",
-      "id": 67,
+      "id": 61,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4123,7 +3771,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -4170,7 +3818,7 @@
     {
       "type": "stat",
       "title": "Heizkreis",
-      "id": 68,
+      "id": 62,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4180,7 +3828,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -4243,7 +3891,7 @@
     {
       "type": "stat",
       "title": "JAZ Heizung",
-      "id": 69,
+      "id": 63,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4253,7 +3901,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -4300,7 +3948,7 @@
     {
       "type": "stat",
       "title": "JAZ Warmwasser",
-      "id": 70,
+      "id": 64,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4310,7 +3958,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
