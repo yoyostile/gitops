@@ -960,7 +960,7 @@
     },
     {
       "type": "row",
-      "title": "Energie",
+      "title": "Cluster & Netz",
       "id": 17,
       "collapsed": false,
       "gridPos": {
@@ -972,9 +972,623 @@
       "panels": []
     },
     {
+      "type": "bargauge",
+      "title": "TLS-Zertifikate",
+      "id": 18,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Restlaufzeit in Tagen. Skala endet bei 90, weil Let's-Encrypt-Zertifikate genau so lange gelten — ein voller Balken heißt frisch ausgestellt. min by (cn), sonst erscheint jedes Zertifikat doppelt (traefik und traefik-internal).",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 33
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "min by (cn) ((traefik_tls_certs_not_after - time()) / 86400)",
+          "refId": "A",
+          "range": false,
+          "instant": true,
+          "legendFormat": "{{cn}}"
+        }
+      ],
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "sortBy": "Value",
+        "sortOrder": "Descending",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "d",
+          "decimals": 0,
+          "min": 0,
+          "max": 90,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 14
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 45
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Traefik Requests nach Code",
+      "id": 19,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 33
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (code) (rate(traefik_service_requests_total[5m]))",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "{{code}}"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "decimals": 2,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 25,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Traefik Antwortzeit",
+      "id": 20,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Über den Entrypoint, nicht je Service: traefik_service_* trägt hier nur 'traefik' und 'traefik-internal' als service-Label, eine Aufschlüsselung nach Backend gibt die Metrik nicht her.",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 33
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(traefik_entrypoint_request_duration_seconds_bucket[5m])))",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "p95"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(traefik_entrypoint_request_duration_seconds_bucket[5m])))",
+          "refId": "B",
+          "range": true,
+          "instant": false,
+          "legendFormat": "p50"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "PoE-Verbrauch je Switch",
+      "id": 21,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 41
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (name) (unpoller_device_port_poe_watts)",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "{{name}}"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["lastNotNull", "max"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "CoreDNS",
+      "id": 22,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 41
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(coredns_cache_hits_total[5m])) / sum(rate(coredns_cache_requests_total[5m])) * 100",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "Cache-Trefferquote %"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(coredns_dns_requests_total[5m]))",
+          "refId": "B",
+          "range": true,
+          "instant": false,
+          "legendFormat": "Anfragen/s"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "k3s-Zertifikate",
+      "id": 23,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Kürzeste Restlaufzeit über alle k3s-Zertifikate. Laufen die ab, steht der Cluster.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 41
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "min(k3s_certificate_expiration_seconds) / 86400",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "d",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 14
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "etcd-Snapshots/h",
+      "id": 24,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 41
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(k3s_etcd_snapshot_save_duration_seconds_count[1h])) * 3600",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Internet-Drops 24h",
+      "id": 25,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Der Metrikname ist upstream als 'intenet' verschrieben, das ist kein Tippfehler hier.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 45
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(increase(unpoller_site_intenet_drops_total[24h]))",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Offene Verbindungen",
+      "id": 26,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 45
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(traefik_open_connections)",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "row",
+      "title": "Energie",
+      "id": 27,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 49
+      },
+      "panels": []
+    },
+    {
       "type": "stat",
       "title": "Rack jetzt",
-      "id": 18,
+      "id": 28,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -984,7 +1598,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 33
+        "y": 50
       },
       "targets": [
         {
@@ -1031,7 +1645,7 @@
     {
       "type": "stat",
       "title": "Rack heute",
-      "id": 19,
+      "id": 29,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1041,7 +1655,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 33
+        "y": 50
       },
       "targets": [
         {
@@ -1088,7 +1702,7 @@
     {
       "type": "stat",
       "title": "Rack ~ €/Monat",
-      "id": 20,
+      "id": 30,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1098,7 +1712,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 33
+        "y": 50
       },
       "targets": [
         {
@@ -1145,7 +1759,7 @@
     {
       "type": "stat",
       "title": "Netztarif",
-      "id": 21,
+      "id": 31,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1155,7 +1769,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 33
+        "y": 50
       },
       "targets": [
         {
@@ -1202,7 +1816,7 @@
     {
       "type": "stat",
       "title": "Hausakku SoC",
-      "id": 22,
+      "id": 32,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1212,7 +1826,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 33
+        "y": 50
       },
       "targets": [
         {
@@ -1271,7 +1885,7 @@
     {
       "type": "stat",
       "title": "PV-Prognose heute",
-      "id": 23,
+      "id": 33,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1281,7 +1895,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 33
+        "y": 50
       },
       "targets": [
         {
@@ -1328,7 +1942,7 @@
     {
       "type": "timeseries",
       "title": "Rack-Leistung",
-      "id": 24,
+      "id": 34,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1338,7 +1952,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 37
+        "y": 54
       },
       "targets": [
         {
@@ -1415,7 +2029,7 @@
     {
       "type": "timeseries",
       "title": "Haus",
-      "id": 25,
+      "id": 35,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1425,7 +2039,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 37
+        "y": 54
       },
       "targets": [
         {
@@ -1514,20 +2128,20 @@
     {
       "type": "row",
       "title": "Haus & Klima",
-      "id": 26,
+      "id": 36,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 62
       },
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "Raumtemperaturen",
-      "id": 27,
+      "id": 37,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1537,7 +2151,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 63
       },
       "targets": [
         {
@@ -1590,7 +2204,7 @@
     {
       "type": "timeseries",
       "title": "Luftfeuchte",
-      "id": 28,
+      "id": 38,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1600,7 +2214,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 46
+        "y": 63
       },
       "targets": [
         {
@@ -1654,8 +2268,8 @@
     },
     {
       "type": "timeseries",
-      "title": "Vitocal",
-      "id": 29,
+      "title": "Vitocal Temperaturen",
+      "id": 39,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1663,9 +2277,9 @@
       "description": "",
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 8,
         "x": 0,
-        "y": 54
+        "y": 71
       },
       "targets": [
         {
@@ -1716,19 +2330,19 @@
       }
     },
     {
-      "type": "timeseries",
-      "title": "Traefik 5xx",
-      "id": 30,
+      "type": "barchart",
+      "title": "Kompressorstarts pro Tag",
+      "id": 40,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Ohne '> 0'-Filter: sonst ist das Panel im Normalfall leer und damit nicht von 'Metrik kaputt' zu unterscheiden. So liegt es auf der Null.",
+      "description": "Tageswerte über 30 Tage, fest, unabhängig vom Zeitraum oben. Ohne Ampelfarben, weil die Zahl der Heizlast folgt und nicht dem Zustand der Maschine: im Heizbetrieb sind ~19 Starts/Tag normal, im Warmwasser-Sommer ~2,4. Zwei Tage mit je 20 Starts können ein gesundes 40-min-Takten oder ein mieses 8-min-Takten sein -- dafür das Panel rechts.",
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 54
+        "w": 8,
+        "x": 8,
+        "y": 71
       },
       "targets": [
         {
@@ -1737,19 +2351,93 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum by (service) (rate(traefik_service_requests_total{code=~\"5..\"}[15m]))",
+          "expr": "(max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[24h]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[24h]))",
           "refId": "A",
           "range": true,
           "instant": false,
-          "legendFormat": "{{service}}"
+          "legendFormat": "Starts",
+          "interval": "1d"
+        }
+      ],
+      "options": {
+        "orientation": "vertical",
+        "showValue": "never",
+        "xTickLabelRotation": -45,
+        "xTickLabelSpacing": 100,
+        "stacking": "none",
+        "groupWidth": 0.7,
+        "barWidth": 0.9,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "lineWidth": 0,
+            "fillOpacity": 85,
+            "gradientMode": "none"
+          }
+        },
+        "overrides": []
+      },
+      "timeFrom": "30d"
+    },
+    {
+      "type": "timeseries",
+      "title": "Laufzeit je Takt (rollend 7d)",
+      "id": 41,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Die aussagekräftige Zahl: kurze Takte sind das Problem, nicht viele. Bewusst über ein 7-Tage-Fenster und NICHT pro Tag -- der Stundenzähler zählt nur ganze Stunden, ein Tageswert von 1 h liegt also irgendwo zwischen 0,5 und 1,5, und Tages-Taktlängen sind reines Rauschen. Absichtlich ohne Ampelfarben: die Schwelle <20 min gilt für den Heizbetrieb, im reinen Warmwasser-Sommer sind ~14 min normal, eine feste Färbung wäre also die halbe Zeit falsch. Einordnung: <20 Taktung · 20-35 grenzwertig · >35 unauffällig. Der '> 0'-Filter verhindert Division durch null an Tagen ohne Start.",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 71
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[7d]) - min_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[7d])) * 60 / on() ((max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[7d]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[7d])) > 0)",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "Minuten je Takt"
         }
       ],
       "options": {
         "legend": {
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": []
+          "calcs": ["lastNotNull", "max"]
         },
         "tooltip": {
           "mode": "multi",
@@ -1758,12 +2446,12 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps",
-          "decimals": 3,
+          "unit": "m",
+          "decimals": 1,
           "custom": {
             "drawStyle": "line",
             "lineWidth": 1,
-            "fillOpacity": 0,
+            "fillOpacity": 15,
             "showPoints": "never",
             "spanNulls": true,
             "stacking": {
@@ -1773,6 +2461,365 @@
           },
           "color": {
             "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "timeFrom": "30d"
+    },
+    {
+      "type": "stat",
+      "title": "Starts/Tag Ø 30d",
+      "id": 42,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 79
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d])) / 30",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Ø Laufzeit je Takt 30d",
+      "id": 43,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Über 30 Tage summiert, damit die Ganzstunden-Quantisierung herausmittelt. <20 Taktung · 20-35 grenzwertig · >35 unauffällig, aber nur im Heizbetrieb -- Warmwasser allein liegt normal bei ~14 min.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 79
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d]) - min_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d])) * 60 / on() (max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d]))",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "m",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Laufzeit h/Tag 30d",
+      "id": 44,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Immer zusammen mit der Taktlänge lesen: kurze Takte BEI geringer Auslastung sind die Überdimensionierungs-Signatur, kurze Takte bei hoher Auslastung wären stattdessen ein Hydraulik- oder Regelungsproblem.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 79
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(max_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d]) - min_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d])) / 30",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "h",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Heizkreis",
+      "id": 45,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Steht die Umwälzpumpe still, sind alle Starts Warmwasser -- dann sagen Taktzahlen nichts über die Heizkurve aus.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 79
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.e3_vitocal_16_heizkreisumwalzpumpe\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "aus (nur WW)",
+                  "color": "text",
+                  "index": 0
+                },
+                "1": {
+                  "text": "Heizbetrieb",
+                  "color": "blue",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "JAZ Heizung",
+      "id": 46,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 79
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_state{entity=\"sensor.e3_vitocal_16_saisonale_arbeitszahl_heizung\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "JAZ Warmwasser",
+      "id": 47,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 79
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_state{entity=\"sensor.e3_vitocal_16_saisonale_arbeitszahl_warmwasser\"}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
           }
         },
         "overrides": []
