@@ -31,7 +31,7 @@
       "description": "Kustomizations/HelmReleases, die nicht sauber reconcilen.",
       "gridPos": {
         "h": 4,
-        "w": 3,
+        "w": 4,
         "x": 0,
         "y": 1
       },
@@ -92,8 +92,8 @@
       "description": "",
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 3,
+        "w": 4,
+        "x": 4,
         "y": 1
       },
       "targets": [
@@ -153,8 +153,8 @@
       "description": "",
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 6,
+        "w": 4,
+        "x": 8,
         "y": 1
       },
       "targets": [
@@ -230,8 +230,99 @@
     },
     {
       "type": "stat",
-      "title": "Targets down",
+      "title": "DNS-Resolver",
       "id": 5,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Beide AdGuard-Instanzen bedienen dieselbe Anycast-Adresse 3.3.3.3, und dahinter gibt es keinen Fallback. Fällt eine aus, merkt das sonst niemand -- der Exporter läuft weiter, 'Targets down' bleibt also grün. Details im AdGuard-Dashboard.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(adguard_running) or vector(-1)",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "?",
+                  "color": "text",
+                  "index": 0
+                },
+                "0": {
+                  "text": "BEIDE AUS",
+                  "color": "red",
+                  "index": 1
+                },
+                "1": {
+                  "text": "1 von 2",
+                  "color": "orange",
+                  "index": 2
+                },
+                "2": {
+                  "text": "2 von 2",
+                  "color": "green",
+                  "index": 3
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Targets down",
+      "id": 6,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -239,8 +330,8 @@
       "description": "",
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 9,
+        "w": 4,
+        "x": 16,
         "y": 1
       },
       "targets": [
@@ -291,67 +382,6 @@
     },
     {
       "type": "stat",
-      "title": "HA nicht verfügbar",
-      "id": 6,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Bewusst neutral eingefärbt: der Wert ist dauerhaft dreistellig (abgemeldete Geräte) und taugt erst als Ampel, wenn er einmal aufgeräumt wurde. Bis dahin ist die Tendenz interessant, nicht der Absolutwert.",
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 12,
-        "y": 1
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "count(hass_entity_available == 0) or vector(0)",
-          "refId": "A",
-          "range": false,
-          "instant": true
-        }
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "text",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "type": "stat",
       "title": "Restarts 1h",
       "id": 7,
       "datasource": {
@@ -361,8 +391,8 @@
       "description": "",
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 15,
+        "w": 4,
+        "x": 20,
         "y": 1
       },
       "targets": [
@@ -417,8 +447,69 @@
     },
     {
       "type": "stat",
-      "title": "Postgres-Backup",
+      "title": "HA nicht verfügbar",
       "id": 8,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Bewusst neutral eingefärbt: der Wert ist dauerhaft dreistellig (abgemeldete Geräte) und taugt erst als Ampel, wenn er einmal aufgeräumt wurde. Bis dahin ist die Tendenz interessant, nicht der Absolutwert.",
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(hass_entity_available == 0) or vector(0)",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "text",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Postgres-Backup",
+      "id": 9,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -426,9 +517,9 @@
       "description": "Alter des ältesten verfügbaren CNPG-Backups über alle Cluster. Nachdem Velero keinen brauchbaren Zeitstempel exportiert, ist barman das einzige Backup-Signal, dem man ansieht ob es noch läuft.",
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 18,
-        "y": 1
+        "w": 8,
+        "x": 8,
+        "y": 5
       },
       "targets": [
         {
@@ -483,7 +574,7 @@
     {
       "type": "stat",
       "title": "OS-Updates",
-      "id": 9,
+      "id": 10,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -491,9 +582,9 @@
       "description": "Höchster Wert über die PVE-Hosts.",
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 21,
-        "y": 1
+        "w": 8,
+        "x": 16,
+        "y": 5
       },
       "targets": [
         {
@@ -548,20 +639,20 @@
     {
       "type": "row",
       "title": "Kapazität",
-      "id": 10,
+      "id": 11,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "panels": []
     },
     {
       "type": "bargauge",
       "title": "Am vollsten — Filesystems & PVCs",
-      "id": 11,
+      "id": 12,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -571,7 +662,7 @@
         "h": 9,
         "w": 10,
         "x": 0,
-        "y": 6
+        "y": 10
       },
       "targets": [
         {
@@ -646,7 +737,7 @@
     {
       "type": "bargauge",
       "title": "RAM frei",
-      "id": 12,
+      "id": 13,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -656,7 +747,7 @@
         "h": 9,
         "w": 6,
         "x": 10,
-        "y": 6
+        "y": 10
       },
       "targets": [
         {
@@ -719,7 +810,7 @@
     {
       "type": "bargauge",
       "title": "NVMe-Verschleiß",
-      "id": 13,
+      "id": 14,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -729,7 +820,7 @@
         "h": 9,
         "w": 4,
         "x": 16,
-        "y": 6
+        "y": 10
       },
       "targets": [
         {
@@ -792,7 +883,7 @@
     {
       "type": "bargauge",
       "title": "Ceph",
-      "id": 14,
+      "id": 15,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -802,7 +893,7 @@
         "h": 9,
         "w": 4,
         "x": 20,
-        "y": 6
+        "y": 10
       },
       "targets": [
         {
@@ -865,20 +956,20 @@
     {
       "type": "row",
       "title": "Hosts",
-      "id": 15,
+      "id": 16,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 19
       },
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "CPU-Temperatur (heißester Sensor je Host)",
-      "id": 16,
+      "id": 17,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -888,7 +979,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 20
       },
       "targets": [
         {
@@ -961,7 +1052,7 @@
     {
       "type": "timeseries",
       "title": "CPU ausgelastet",
-      "id": 17,
+      "id": 18,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -971,7 +1062,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 20
       },
       "targets": [
         {
@@ -1026,7 +1117,7 @@
     {
       "type": "timeseries",
       "title": "CPU-Takt",
-      "id": 18,
+      "id": 19,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1036,7 +1127,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 28
       },
       "targets": [
         {
@@ -1089,7 +1180,7 @@
     {
       "type": "timeseries",
       "title": "Netzwerkdurchsatz",
-      "id": 19,
+      "id": 20,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1099,7 +1190,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 28
       },
       "targets": [
         {
@@ -1164,20 +1255,20 @@
     {
       "type": "row",
       "title": "Cluster & Netz",
-      "id": 20,
+      "id": 21,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 36
       },
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "WAN-Durchsatz",
-      "id": 21,
+      "id": 22,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1187,7 +1278,7 @@
         "h": 8,
         "w": 16,
         "x": 0,
-        "y": 33
+        "y": 37
       },
       "targets": [
         {
@@ -1276,7 +1367,7 @@
     {
       "type": "stat",
       "title": "ONT Fehler 24h",
-      "id": 22,
+      "id": 23,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1286,7 +1377,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 33
+        "y": 37
       },
       "targets": [
         {
@@ -1341,7 +1432,7 @@
     {
       "type": "stat",
       "title": "WAN Peak ↓ 24h",
-      "id": 23,
+      "id": 24,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1351,7 +1442,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 33
+        "y": 37
       },
       "targets": [
         {
@@ -1398,7 +1489,7 @@
     {
       "type": "stat",
       "title": "ONT Drops 24h",
-      "id": 24,
+      "id": 25,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1408,7 +1499,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 37
+        "y": 41
       },
       "targets": [
         {
@@ -1459,7 +1550,7 @@
     {
       "type": "stat",
       "title": "LTE-Volumen 24h",
-      "id": 25,
+      "id": 26,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1469,7 +1560,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 37
+        "y": 41
       },
       "targets": [
         {
@@ -1516,7 +1607,7 @@
     {
       "type": "bargauge",
       "title": "TLS-Zertifikate",
-      "id": 26,
+      "id": 27,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1526,7 +1617,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 45
       },
       "targets": [
         {
@@ -1589,7 +1680,7 @@
     {
       "type": "timeseries",
       "title": "Traefik Requests nach Code",
-      "id": 27,
+      "id": 28,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1599,7 +1690,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 45
       },
       "targets": [
         {
@@ -1652,7 +1743,7 @@
     {
       "type": "timeseries",
       "title": "Traefik Antwortzeit",
-      "id": 28,
+      "id": 29,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1662,7 +1753,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 45
       },
       "targets": [
         {
@@ -1727,7 +1818,7 @@
     {
       "type": "timeseries",
       "title": "PoE-Verbrauch je Switch",
-      "id": 29,
+      "id": 30,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1737,7 +1828,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 49
+        "y": 53
       },
       "targets": [
         {
@@ -1790,7 +1881,7 @@
     {
       "type": "timeseries",
       "title": "CoreDNS",
-      "id": 30,
+      "id": 31,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1800,7 +1891,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 49
+        "y": 53
       },
       "targets": [
         {
@@ -1865,7 +1956,7 @@
     {
       "type": "stat",
       "title": "k3s-Zertifikate",
-      "id": 31,
+      "id": 32,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1875,7 +1966,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 49
+        "y": 53
       },
       "targets": [
         {
@@ -1934,7 +2025,7 @@
     {
       "type": "stat",
       "title": "etcd-Snapshots/h",
-      "id": 32,
+      "id": 33,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1944,7 +2035,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 49
+        "y": 53
       },
       "targets": [
         {
@@ -1995,7 +2086,7 @@
     {
       "type": "stat",
       "title": "Internet-Drops 24h",
-      "id": 33,
+      "id": 34,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2005,7 +2096,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 53
+        "y": 57
       },
       "targets": [
         {
@@ -2060,7 +2151,7 @@
     {
       "type": "stat",
       "title": "Offene Verbindungen",
-      "id": 34,
+      "id": 35,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2070,7 +2161,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 53
+        "y": 57
       },
       "targets": [
         {
@@ -2117,20 +2208,20 @@
     {
       "type": "row",
       "title": "Energie",
-      "id": 35,
+      "id": 36,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 61
       },
       "panels": []
     },
     {
       "type": "stat",
       "title": "Rack jetzt",
-      "id": 36,
+      "id": 37,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2140,7 +2231,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 58
+        "y": 62
       },
       "targets": [
         {
@@ -2187,7 +2278,7 @@
     {
       "type": "stat",
       "title": "Rack heute",
-      "id": 37,
+      "id": 38,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2197,7 +2288,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 58
+        "y": 62
       },
       "targets": [
         {
@@ -2244,7 +2335,7 @@
     {
       "type": "stat",
       "title": "Rack ~ €/Monat",
-      "id": 38,
+      "id": 39,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2254,7 +2345,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 58
+        "y": 62
       },
       "targets": [
         {
@@ -2301,7 +2392,7 @@
     {
       "type": "stat",
       "title": "Netztarif",
-      "id": 39,
+      "id": 40,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2311,7 +2402,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 58
+        "y": 62
       },
       "targets": [
         {
@@ -2358,7 +2449,7 @@
     {
       "type": "stat",
       "title": "Hausakku SoC",
-      "id": 40,
+      "id": 41,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2368,7 +2459,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 58
+        "y": 62
       },
       "targets": [
         {
@@ -2427,7 +2518,7 @@
     {
       "type": "stat",
       "title": "PV-Prognose heute",
-      "id": 41,
+      "id": 42,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2437,7 +2528,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 58
+        "y": 62
       },
       "targets": [
         {
@@ -2484,7 +2575,7 @@
     {
       "type": "timeseries",
       "title": "Rack-Leistung",
-      "id": 42,
+      "id": 43,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2494,7 +2585,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 62
+        "y": 66
       },
       "targets": [
         {
@@ -2571,7 +2662,7 @@
     {
       "type": "timeseries",
       "title": "Haus",
-      "id": 43,
+      "id": 44,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2581,7 +2672,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 62
+        "y": 66
       },
       "targets": [
         {
@@ -2670,20 +2761,20 @@
     {
       "type": "row",
       "title": "Haus & Klima",
-      "id": 44,
+      "id": 45,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 70
+        "y": 74
       },
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "Raumtemperaturen",
-      "id": 45,
+      "id": 46,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2693,7 +2784,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 71
+        "y": 75
       },
       "targets": [
         {
@@ -2746,7 +2837,7 @@
     {
       "type": "timeseries",
       "title": "Luftfeuchte",
-      "id": 46,
+      "id": 47,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2756,7 +2847,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 71
+        "y": 75
       },
       "targets": [
         {
@@ -2811,7 +2902,7 @@
     {
       "type": "timeseries",
       "title": "Vitocal Temperaturen",
-      "id": 47,
+      "id": 48,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2821,7 +2912,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 79
+        "y": 83
       },
       "targets": [
         {
@@ -2874,7 +2965,7 @@
     {
       "type": "barchart",
       "title": "Kompressorstarts pro Tag",
-      "id": 48,
+      "id": 49,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2884,7 +2975,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 79
+        "y": 83
       },
       "targets": [
         {
@@ -2948,7 +3039,7 @@
     {
       "type": "timeseries",
       "title": "Laufzeit je Takt (rollend 7d)",
-      "id": 49,
+      "id": 50,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2958,7 +3049,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 79
+        "y": 83
       },
       "targets": [
         {
@@ -3012,7 +3103,7 @@
     {
       "type": "stat",
       "title": "Starts/Tag Ø 30d",
-      "id": 50,
+      "id": 51,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3022,7 +3113,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 87
+        "y": 91
       },
       "targets": [
         {
@@ -3069,7 +3160,7 @@
     {
       "type": "stat",
       "title": "Ø Laufzeit je Takt 30d",
-      "id": 51,
+      "id": 52,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3079,7 +3170,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 87
+        "y": 91
       },
       "targets": [
         {
@@ -3126,7 +3217,7 @@
     {
       "type": "stat",
       "title": "Laufzeit h/Tag 30d",
-      "id": 52,
+      "id": 53,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3136,7 +3227,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 87
+        "y": 91
       },
       "targets": [
         {
@@ -3183,7 +3274,7 @@
     {
       "type": "stat",
       "title": "Heizkreis",
-      "id": 53,
+      "id": 54,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3193,7 +3284,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 87
+        "y": 91
       },
       "targets": [
         {
@@ -3256,7 +3347,7 @@
     {
       "type": "stat",
       "title": "JAZ Heizung",
-      "id": 54,
+      "id": 55,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3266,7 +3357,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 87
+        "y": 91
       },
       "targets": [
         {
@@ -3313,7 +3404,7 @@
     {
       "type": "stat",
       "title": "JAZ Warmwasser",
-      "id": 55,
+      "id": 56,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3323,7 +3414,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 87
+        "y": 91
       },
       "targets": [
         {
