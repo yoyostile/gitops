@@ -3398,7 +3398,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Nur der Netzbezug, gegen den 30-Tage-Mittelwert des EVCC-Netztarifs. Eine Gegenkachel für die Einspeisevergütung fehlt bewusst: EVCCs Einspeisetarif steht über den gesamten Zeitraum auf 0, eine Erlöskachel zeigte also dauerhaft 0,00 € und sähe aus wie ein Defekt. Sobald der Tarif in EVCC gepflegt ist, lohnt sie sich.",
+      "description": "Nur der Netzbezug, gegen den 30-Tage-Mittelwert des EVCC-Netztarifs. Eine Gegenkachel für Einspeiseerlöse gibt es nicht, weil es keine Vergütung gibt -- die 0 im EVCC-Einspeisetarif ist korrekt und keine fehlende Konfiguration. Jede eingespeiste kWh ist damit ohne Gegenwert abgegeben, weshalb Eigenverbrauch hier mehr zählt als Erlös.",
       "gridPos": {
         "h": 4,
         "w": 6,
