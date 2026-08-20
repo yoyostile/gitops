@@ -146,9 +146,17 @@ in
 
     time.timeZone = "Europe/Berlin";
 
+    programs.mtr.enable = true;
+
     environment.systemPackages = with pkgs; [
+      bind
       git
       htop
+      jq
+      lsof
+      ripgrep
+      tcpdump
+      tmux
       vim
     ];
   };
