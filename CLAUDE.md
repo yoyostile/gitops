@@ -32,7 +32,7 @@ Lint/format configs live in `.github/linters/`.
 
 Flux applies resources in a strict dependency chain:
 
-```
+```text
 cluster/base/flux-system    (Flux controllers, GitRepository, HelmRepositories, encrypted secrets)
         ↓
 cluster/crds                (CRDs: cert-manager, prometheus-operator, mariadb-operator, metallb, traefik)
@@ -46,7 +46,7 @@ cluster/apps                (Applications, organized by namespace)
 
 Each app follows this pattern:
 
-```
+```text
 cluster/apps/{namespace}/{app-name}/
 ├── ks.yaml                    # Flux Kustomization - points to ./app, configures substitution
 └── app/
@@ -62,6 +62,7 @@ Apps are either Helm-based (using `HelmRelease` CRD referencing a `HelmRepositor
 ### Variable Substitution
 
 Flux Kustomizations use `postBuild.substituteFrom` to inject variables from:
+
 - `cluster-settings` ConfigMap (cluster-wide non-secret config)
 - `cluster-secrets` Secret (cluster-wide secret values)
 

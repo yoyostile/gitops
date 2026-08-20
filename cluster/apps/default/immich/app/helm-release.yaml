@@ -209,6 +209,6 @@ spec:
         cache:
           enabled: true
           size: 10Gi
-          type: 'persistentVolumeClaim'
+          type: "persistentVolumeClaim"
           accessMode: ReadWriteMany
-          storageClass: 'nfs-client'
+          storageClass: "nfs-client"
