@@ -8,20 +8,15 @@ spec:
   interval: 5m
   values:
     blueprints:
-      # Shipped by this Kustomization, so they always exist and the chart's own
-      # (non-optional) mount is safe.
+      # These ConfigMaps are shipped with this Kustomization.
       configMaps:
         - authentik-blueprint-external
         - authentik-blueprint-outpost
       secrets:
         - authentik-blueprint-identity
     worker:
-      # Per-app blueprints come from each app's own Kustomization and may
-      # legitimately be absent (not reconciled yet, or app removed). The chart's
-      # blueprints.configMaps mounts have no `optional`, so a missing ConfigMap
-      # would wedge the worker in ContainerCreating -- mount them by hand
-      # instead. Discovery is a recursive glob under /blueprints, so any path
-      # below it is found.
+      # Per-app blueprints are optional, so mount them outside the chart's
+      # non-optional blueprints.configMaps list.
       volumes:
         - name: bp-grafana
           configMap:

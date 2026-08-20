@@ -11,9 +11,7 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-      # boot.cfg is upstream netboot.xyz iPXE served verbatim, and its trailing
-      # whitespace is load-bearing: `set <name> ` assigns an empty string, while
-      # `set <name>` with no value argument is a syntax error mid-script.
+      # iPXE uses a trailing space to assign an empty value in boot.cfg.
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
         exclude: ^nix/modules/netbootxyz-boot\.cfg$

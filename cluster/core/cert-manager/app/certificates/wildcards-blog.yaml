@@ -9,9 +9,7 @@ spec:
     annotations:
       reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
       reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
-  # Deliberately not "${SECRET_BLOG_DOMAIN/./-}-tls": that name is already taken
-  # by the ingress-shim cert on the heck-sh app in the default namespace, and
-  # auto-reflection would fight it for ownership.
+  # Avoid the ingress-shim secret name, which conflicts during reflection.
   secretName: "${SECRET_BLOG_DOMAIN/./-}-wildcard-tls"
   issuerRef:
     name: letsencrypt-production

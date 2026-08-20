@@ -5,8 +5,7 @@ metadata:
   name: frigate
   namespace: default
   annotations:
-    # config.yml is a subPath mount, which kubelet never refreshes in place --
-    # only a new pod picks up a changed ConfigMap.
+    # Restart the pod to refresh this subPath-mounted ConfigMap.
     reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
@@ -20,9 +19,7 @@ spec:
       labels:
         app: frigate
     spec:
-      # The MS-A2 (Ryzen 9 8945HX, 8 cores) rather than the Intel iGPU nodes:
-      # the enrichments are CPU-only whatever the host, and decoding 3
-      # sub-megapixel streams at 5 fps does not need hardware acceleration.
+      # CPU-only enrichments run on the MS-A2 node.
       nodeSelector:
         topology.kubernetes.io/zone: pve02
       containers:
@@ -45,8 +42,7 @@ spec:
               cpu: "1"
               memory: 2Gi
             limits:
-              # everything is software here: decode, object detection, and the
-              # semantic-search / face / lpr enrichments
+              # Decode, detection, and enrichments all run on CPU.
               cpu: "6"
               memory: 8Gi
           volumeMounts:
@@ -65,8 +61,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /api/version
-              # 5000 is the internal port that ignores auth headers; probing
-              # 8971 would be subject to proxy auth and restart a healthy pod
+              # Port 5000 bypasses proxy authentication for health checks.
               port: 5000
             initialDelaySeconds: 60
             periodSeconds: 30

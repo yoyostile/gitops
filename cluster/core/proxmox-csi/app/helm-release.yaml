@@ -33,9 +33,5 @@ spec:
         fstype: ext4
         annotations:
           storageclass.kubernetes.io/is-default-class: "false"
-        # No allowedTopologies on purpose. When a StorageClass sets it, the
-        # provisioner builds the CSI accessibility requirement from that instead
-        # of from the node the scheduler picked — so a region-only entry drops
-        # the zone, the driver places the disk on an arbitrary PVE host, and the
-        # pod is then dragged to wherever the disk landed. Leaving it unset is
-        # what makes WaitForFirstConsumer put the volume where the pod is.
+        # Leave allowedTopologies unset so WaitForFirstConsumer uses the
+        # scheduler-selected node's region and zone.

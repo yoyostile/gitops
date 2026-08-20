@@ -15,16 +15,10 @@ spec:
       replicaCount: 1
       env:
         WOODPECKER_BACKEND_K8S_STORAGE_CLASS: "ceph-rbd"
-        # ceph-rbd is filesystem-mode RBD: RWX needs volumeMode Block, so pipeline
-        # PVCs must be RWO (provisioning fails as RWX/ReadWriteMany otherwise).
+        # Filesystem-mode Ceph RBD pipeline volumes must be RWO.
         WOODPECKER_BACKEND_K8S_STORAGE_RWX: "false"
-        # RWX=false makes the workspace PVC ReadWriteOnce but does NOT co-schedule
-        # the step pod with its service containers (e.g. a postgres service) — they
-        # can land on different nodes and the second one fails with Multi-Attach.
-        # Pin every pipeline pod to one node so the RWO volume is always local.
-        # This names a specific node, so retiring it strands every pipeline in
-        # Pending with "didn't match Pod's node affinity/selector" — which is how
-        # the previous value (k3s2) failed. Repoint it when this node goes.
+        # Co-locate steps and services to prevent Multi-Attach; update this when
+        # retiring the selected node.
         WOODPECKER_BACKEND_K8S_POD_NODE_SELECTOR: '{"kubernetes.io/hostname":"k3s-helium"}'
       persistence:
         storageClass: "ceph-rbd"

@@ -1,15 +1,6 @@
 ---
-# Two Ingress objects on the SAME host because Traefik middleware annotations
-# apply to a whole Ingress, not per path:
-#
-#   1. `notgroschen`      — path /    — internal-ips-only + Authentik (the UI)
-#   2. `notgroschen-api`  — path /api — internal-ips-only ONLY
-#
-# /api is pushed to by bin/notgroschen-sync (an osascript|curl pipe on the
-# owner's Mac) which authenticates with its own bearer token (INGEST_TOKEN)
-# and cannot do Authentik SSO. Traefik orders routers by rule length, so the
-# longer `... && PathPrefix(`/api`)` rule wins for /api requests and those
-# skip the forward-auth. Both ingresses keep the internal-IP allowlist.
+# Middleware applies per Ingress, so the bearer-authenticated API uses a
+# separate router from the Authentik-protected UI.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -47,9 +38,7 @@ metadata:
   namespace: default
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    # No Authentik here: these paths authenticate with INGEST_TOKEN (Bearer)
-    # because neither caller can do SSO — bin/notgroschen-sync is an
-    # osascript|curl pipe, and an MCP client speaks JSON-RPC, not OIDC.
+    # API callers use INGEST_TOKEN instead of browser SSO.
     traefik.ingress.kubernetes.io/router.middlewares: "networking-internal-ips-only@kubernetescrd"
     external-dns/internal: "true"
 spec:
