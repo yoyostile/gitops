@@ -266,3 +266,14 @@ spec:
     prometheus-node-exporter:
       hostRootFsMount:
         enabled: false
+      # The DaemonSet's ServiceMonitor labels `instance` with the pod IP, while
+      # the static additionalScrapeConfigs job above uses FQDNs -- and both land
+      # in job="node-exporter", so panels mixed hostnames with bare IPs. Rewrite
+      # instance to the k8s node name. Trade-off: this breaks series continuity,
+      # so samples written before this change stay keyed by IP forever.
+      prometheus:
+        monitor:
+          relabelings:
+            - action: replace
+              sourceLabels: [__meta_kubernetes_pod_node_name]
+              targetLabel: instance
