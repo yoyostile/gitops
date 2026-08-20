@@ -31,12 +31,6 @@ spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
 
-    ## This chart relies on the common library chart from bjw-s
-    ## You can find it at https://github.com/bjw-s/helm-charts/tree/main/charts/library/common
-    ## Refer there for more detail about the supported values
-
-    # These entries are shared between all the Immich components
-
     global:
       annotations:
         reloader.stakater.com/auto: "true"
@@ -55,8 +49,6 @@ spec:
                 value: ${IMMICH_REDIS_PASSWORD}
               - name: REDIS_DBINDEX
                 value: "4"
-              # - name: DB_HOSTNAME
-              #   value: "{{ .Release.Name }}-postgresql"
               - name: DB_HOSTNAME
                 value: "immich-postgres-rw"
               - name: DB_USERNAME
@@ -79,10 +71,7 @@ spec:
                 value: buffalo_l
               - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
                 value: buffalo_l
-            # Sized from 14d of usage: p90 1353Mi / 100m, peak 5513Mi.
-            # Was requesting 256Mi while routinely using 1.3Gi, so the
-            # scheduler treated it as nearly free. No memory limit: the
-            # peaks are real and a limit would OOM-kill it mid-import.
+            # Sized from 14 days of observed usage; imports need burst memory.
             resources:
               requests:
                 cpu: 120m
@@ -93,33 +82,18 @@ spec:
 
     immich:
       metrics:
-        # Enabling this will create the service monitors needed to monitor immich with the prometheus operator
         enabled: false
       persistence:
-        # Main data store for all photos shared between different components.
         library:
           existingClaim: immich-nfs
 
-      # configuration is immich-config.json converted to yaml
-      # ref: https://immich.app/docs/install/config-file/
-      #
       configuration: {}
-        # trash:
-        #   enabled: false
-        #   days: 30
-        # storageTemplate:
-        #   enabled: true
-        #   template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
-
-    # Dependencies
 
     valkey:
       enabled: false
       architecture: standalone
       auth:
         enabled: false
-
-    # Immich components
 
     server:
       enabled: true
@@ -195,15 +169,14 @@ spec:
                   value: buffalo_l
                 - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
                   value: buffalo_l
-              # Sized from 14d of usage: p90 2661Mi / 95m, peak 3904Mi.
+              # Sized from 14 days of observed usage.
               resources:
                 requests:
                   cpu: 115m
                   memory: 3072Mi
                   gpu.intel.com/i915: "1"
                 limits:
-                  # bounded ceiling: models peak ~2-4Gi; block was at the wrong
-                  # level before (BestEffort → node-pressure OOM-killed it)
+                  # Bound model memory while allowing observed 2–4 GiB peaks.
                   memory: 6Gi
                   gpu.intel.com/i915: "1"
       controller:
@@ -236,7 +209,6 @@ spec:
         cache:
           enabled: true
           size: 10Gi
-          # Optional: Set this to persistentVolumeClaim to avoid downloading the ML models every start.
           type: "persistentVolumeClaim"
           accessMode: ReadWriteMany
           storageClass: "nfs-client"

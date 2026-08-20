@@ -5,9 +5,7 @@
 
   nixpkgs.hostPlatform = "x86_64-linux";
 
-  # The whole reason for a custom image. nixos-images' installer restores SSH
-  # access by reading authorized_keys out of the *initrd*; the stock netboot
-  # initrd from GitHub has none, which is why it needs a console visit.
+  # Bake remote access into the initrd for unattended installation.
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGA6mJ5U3GlaON6hlpA5lz9BStGoZfV1W7EiIfYHBvw7"
   ];

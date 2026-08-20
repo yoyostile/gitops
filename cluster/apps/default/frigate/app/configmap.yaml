@@ -12,9 +12,7 @@ data:
       port: 1883
       topic_prefix: frigate
 
-    # Runs on the MS-A2 (pve02), whose VM exposes no /dev/dri render node -- so no
-    # OpenVINO and no VAAPI. 8 Zen4 cores do object detection, decode and all
-    # three enrichments in software instead.
+    # This VM has no render node; detection and decoding run on CPU.
     detectors:
       cpu:
         type: cpu
@@ -28,12 +26,8 @@ data:
       path: /cpu_model.tflite
       labelmap_path: /labelmap.txt
 
-    # UniFi Protect will not talk plain rtsps:// to ffmpeg -- it needs the rtspx
-    # protocol through go2rtc, which handles the TLS/SRTP handshake. So the camera
-    # URLs are declared here (Protect's rtsps:// path with the scheme swapped to
-    # rtspx:// and ?enableSrtp dropped) and the cameras below consume go2rtc's
-    # local restream instead. {FRIGATE_*} placeholders are substituted into this
-    # block by go2rtc/create_config.py.
+    # go2rtc handles UniFi Protect's TLS/SRTP handshake. Its create_config.py
+    # substitutes the {FRIGATE_*} placeholders below.
     go2rtc:
       streams:
         haustuere: "{FRIGATE_HAUSTUERE_DETECT}"
@@ -43,19 +37,13 @@ data:
         garten_high: "{FRIGATE_GARTEN_RECORD}"
         durchgang_high: "{FRIGATE_DURCHGANG_RECORD}"
 
-    # No hwaccel_args on purpose: without a render node VAAPI fails outright.
-    # Software decode of 3 sub-megapixel streams at 5 fps costs well under a core.
+    # No hwaccel_args: the VM has no render node.
 
-    # Frigate serves its UI on 8971 with its own TLS by default, which makes
-    # Traefik answer 400. Terminate TLS at the edge instead.
+    # Terminate TLS at Traefik.
     tls:
       enabled: false
 
-    # Authentik's forward-auth middleware gates the ingress and injects the
-    # identity headers (the shared networking-authentik middleware already lists
-    # them in authResponseHeaders), so Frigate's own login is turned off.
-    # Port 8971 is what validates these headers -- port 5000 ignores them and
-    # treats every request as admin, which is why the Service targets 8971.
+    # Authentik supplies identity headers on port 8971; port 5000 ignores them.
     auth:
       enabled: false
       trusted_proxies:
@@ -65,10 +53,7 @@ data:
       header_map:
         user: x-authentik-username
         role: x-authentik-groups
-        # role_map belongs under header_map, not under proxy -- the docs show it
-        # a level higher and Frigate then rejects the whole config with
-        # "Extra inputs are not permitted". Note auth.roles is something else
-        # entirely (custom role -> cameras) and reserves admin/viewer.
+        # role_map belongs under header_map; auth.roles configures camera access.
         role_map:
           admin:
             - authentik Admins
@@ -78,10 +63,7 @@ data:
       logout_url: /outpost.goauthentik.io/sign_out
 
     detect:
-      # enabled defaults to FALSE in 0.17 -- without this nothing is ever
-      # detected, while cameras still look healthy in the UI. Resolution is
-      # probed from the stream, so the vertical cameras need no special casing.
-      # 5 fps is plenty: frames are dropped before decode.
+      # Detection defaults off. Stream resolution is probed automatically.
       enabled: true
       fps: 5
 
@@ -92,14 +74,12 @@ data:
         - car
 
     motion:
-      # IR sensor noise is what wakes the detector at night; contrast
-      # improvement plus a higher threshold is the cheap half of the fix.
+      # Reduce false positives from nighttime IR noise.
       improve_contrast: true
       threshold: 30
       contour_area: 15
 
-    # Enrichments. All three run on CPU regardless of host (Frigate does not use
-    # OpenVINO for these), which is the main reason this app lives on the MS-A2.
+    # Frigate runs these enrichments on CPU.
     semantic_search:
       enabled: true
       model_size: small
@@ -121,12 +101,7 @@ data:
         default: 14
 
     record:
-      # Deliberately off. Frigate writes *every* segment and prunes the ones
-      # without events afterwards, so "event-only" retention still means
-      # ~150-200 GB/day of full-res writes for these three cameras, and UniFi
-      # Protect already archives all of them 24/7. To enable: set enabled: true,
-      # add the commented-out record input to each camera, and move the media
-      # PVC to nfs-client -- that churn does not belong on the ceph SSD pool.
+      # UniFi Protect already records continuously; avoid duplicate Ceph writes.
       enabled: false
       continuous:
         days: 0
@@ -144,9 +119,6 @@ data:
             - path: rtsp://127.0.0.1:8554/haustuere
               input_args: preset-rtsp-restream
               roles: [detect]
-            # - path: rtsp://127.0.0.1:8554/haustuere_high
-            #   input_args: preset-rtsp-restream
-            #   roles: [record]
 
       garten:
         ffmpeg:
@@ -154,9 +126,6 @@ data:
             - path: rtsp://127.0.0.1:8554/garten
               input_args: preset-rtsp-restream
               roles: [detect]
-            # - path: rtsp://127.0.0.1:8554/garten_high
-            #   input_args: preset-rtsp-restream
-            #   roles: [record]
 
       durchgang:
         ffmpeg:
@@ -164,12 +133,7 @@ data:
             - path: rtsp://127.0.0.1:8554/durchgang
               input_args: preset-rtsp-restream
               roles: [detect]
-            # - path: rtsp://127.0.0.1:8554/durchgang_high
-            #   input_args: preset-rtsp-restream
-            #   roles: [record]
 
-    # Must equal CURRENT_CONFIG_VERSION of the running image. An absent or older
-    # value makes Frigate migrate the config and *write* config.yml, which fails
-    # against this read-only ConfigMap mount -- so bump this together with the
-    # image tag, never separately.
+    # Keep aligned with the image's CURRENT_CONFIG_VERSION; migration cannot
+    # write to this read-only ConfigMap mount.
     version: 0.17-0

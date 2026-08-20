@@ -6,8 +6,7 @@ metadata:
   namespace: monitoring
 spec:
   replicas: 1
-  # RWO volume: RollingUpdate deadlocks because the new pod cannot attach
-  # until the old one releases it. Recreate is required, not preference.
+  # Recreate prevents Multi-Attach on the ReadWriteOnce volume.
   strategy:
     type: Recreate
   selector:
@@ -23,7 +22,7 @@ spec:
       containers:
         - name: librenms
           image: librenms/librenms:26.7.0
-          # Snapshot only (114Mi/12m) — conservative floor, not a 14d p90.
+          # Conservative floor from a short usage sample.
           resources:
             requests:
               memory: 256Mi
@@ -40,7 +39,7 @@ spec:
             - name: LIBRENMS_BASE_URL
               value: "https://librenms.${SECRET_LAB_DOMAIN}"
           startupProbe:
-            # boot runs config:cache + DB validation; allow up to ~5min
+            # Boot performs config caching and database validation.
             httpGet:
               path: /
               port: 8000
@@ -63,8 +62,7 @@ spec:
               mountPath: /data
         - name: dispatcher
           image: librenms/librenms:26.7.0
-          # Sized from 14d of usage: p90 212Mi / 312m, peak 1464Mi. The poller
-          # is bursty by nature, so no memory limit.
+          # Sized from observed usage; polling needs burst memory.
           resources:
             requests:
               memory: 256Mi

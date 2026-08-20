@@ -27,35 +27,28 @@ spec:
           ports:
             - containerPort: 80
           env:
-            # Solid Queue runs inside Puma (web + jobs + recurring in one pod).
-            # Its tables now live in the primary DB (CreateSolidQueueCacheCableTables
-            # migration, applied by db:prepare before Puma starts).
+            # Run Solid Queue with Puma in this single-pod deployment.
             - name: SOLID_QUEUE_IN_PUMA
               value: "true"
             - name: RAILS_LOG_TO_STDOUT
               value: "true"
             - name: PAPERLESS_TAG
               value: "mama"
-            # Gate the sync window on when a doc was SCANNED into paperless, not the
-            # invoice's printed date — an old-dated invoice scanned today must import.
+            # Sync by scan time rather than the invoice's printed date.
             - name: PAPERLESS_SYNC_DATE_FIELD
               value: "added"
-            # A Rückforderung/Aufhebungsbescheid references "Erstattungsbescheid" but is
-            # NOT a reimbursement notice (it reclaims money) — keep it out of the notice path.
+            # Exclude documents that reclaim rather than reimburse money.
             - name: PAPERLESS_NOTICE_QUERY
               value: "Erstattungsbescheid NOT Rückforderung NOT Aufhebungsbescheid"
-            # Via Bifrost: BIFROST_VK_INVOICE is scoped to ollama, so the invoice
-            # path cannot reach a cloud provider even if the model name says so.
+            # BIFROST_VK_INVOICE restricts this path to Ollama.
             - name: EXTRACTION_BACKEND
               value: "bifrost"
             - name: BIFROST_URL
               value: "http://bifrost.default.svc.cluster.local:8080"
-            # Best of the Lyceum models on the invoice eval: 93.3% fields, 0 errors,
-            # reproducible across two runs. Rollback is ollama/qwen2.5:7b-32k, where
-            # the "-32k" is required because num_ctx cannot cross the gateway.
+            # Selected by the invoice extraction evaluation.
             - name: EXTRACTION_MODEL_INVOICE
               value: "lyceum/meta-llama/Llama-3.3-70B-Instruct"
-            # Bescheid line-items are harder; 7B botched 2/4 in eval.
+            # Selected by the notice line-item evaluation.
             - name: EXTRACTION_MODEL_NOTICE
               value: "lyceum/Qwen/Qwen3-235B-A22B-Instruct-2507"
             - name: BIFROST_VK_INVOICE

@@ -1,12 +1,5 @@
 ---
-# authentik provider/application for this app, applied by authentik's
-# blueprint worker. Mounted read-only into the authentik worker, so it
-# must live in the `default` namespace even when the app does not.
-#
-# Unlike the other app blueprints, client_secret is declared here (via
-# substitution, so Git only holds the placeholder) rather than left for
-# authentik to generate: mealie reads the same value out of cluster-secrets,
-# and letting authentik pick it would mean copying it back by hand.
+# Declare client_secret because Mealie reads the same substituted value.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -54,8 +47,7 @@ data:
           refresh_token_validity: days=30
           signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
           sub_mode: hashed_user_id
-      # The slug is load-bearing: OIDC_CONFIGURATION_URL points at
-      # /application/o/mealie/.well-known/openid-configuration.
+      # Must match the slug in OIDC_CONFIGURATION_URL.
       - model: authentik_core.application
         state: present
         identifiers:

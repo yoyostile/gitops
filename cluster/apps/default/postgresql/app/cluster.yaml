@@ -7,27 +7,13 @@ metadata:
 spec:
   instances: 1
 
-  # Sized from 14d of usage: p90 429Mi / 123m, peak 1173Mi. No CPU limit by design.
+  # Sized from 14 days of observed usage; CPU may burst.
   resources:
     requests:
       memory: "512Mi"
       cpu: "150m"
     limits:
       memory: "1408Mi"
-  # bootstrap:
-  #   recovery:
-  #     source: origin
-  #     recoveryTarget:
-  #       backupID: "20260204T120009"
-  #       targetImmediate: true
-
-  # externalClusters:
-  #   - name: origin
-  #     plugin:
-  #       name: barman-cloud.cloudnative-pg.io
-  #       parameters:
-  #         barmanObjectName: cnpg-store
-  #         serverName: psql-cluster
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io

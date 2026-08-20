@@ -1,8 +1,5 @@
 ---
-# Internal only. The UI is a management surface holding an Anthropic key, so it
-# stays behind the IP allowlist; it also has its own admin login
-# (governance.auth_config in config.json). Inference goes pod-to-pod over the
-# ClusterIP service, not through here.
+# Keep the credential-bearing management UI internal. Inference uses ClusterIP.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

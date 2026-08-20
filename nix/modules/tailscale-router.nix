@@ -9,12 +9,8 @@ let
   cfg = config.lab.tailscaleRouter;
   ip = config.lab.host.ipv4;
 
-  # 100.64.0.0/10 is announced into the lab over BGP so LAN clients can reach
-  # tailnet peers without being on the tailnet themselves. The protocol must be
-  # named `tailscale`: tailscaled enables and disables a BIRD protocol of that
-  # exact name over --bird-socket, which is what withdraws the route by itself
-  # when the daemon stops or loses its routes. Renaming it silently breaks the
-  # gating and leaves a black-hole route announced.
+  # tailscaled controls the protocol named `tailscale` through --bird-socket;
+  # renaming it prevents automatic route withdrawal.
   birdConfig = ''
     log stderr all;
     router id ${ip};
@@ -88,9 +84,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # This host carries the routing role alone, deliberately kept off the
-    # resolvers: on the old Debian box both lived together behind one BGP
-    # session, so an AdGuard failure withdrew LAN-to-tailnet routing too.
+    # Keep routing independent from the DNS hosts.
     sops.secrets."tailscale-router-authkey" = {
       sopsFile = ../secrets/tailscale-router.sops.yaml;
       mode = "0400";
@@ -98,8 +92,7 @@ in
 
     services.tailscale = {
       enable = true;
-      # Sets the ip_forward sysctls; without them the node advertises routes it
-      # cannot actually forward.
+      # Enables the required forwarding sysctls.
       useRoutingFeatures = "server";
       authKeyFile = config.sops.secrets."tailscale-router-authkey".path;
       extraUpFlags = [
@@ -107,8 +100,7 @@ in
         "--advertise-routes=${lib.concatStringsSep "," cfg.advertiseRoutes}"
         "--advertise-exit-node"
       ];
-      # NixOS's RuntimeDirectory puts the control socket here, which is the same
-      # path /var/run/bird/bird.ctl resolved to on the Debian box.
+      # Match BIRD's NixOS runtime socket.
       extraDaemonFlags = [ "--bird-socket=/run/bird/bird.ctl" ];
     };
 
@@ -123,9 +115,7 @@ in
         22
         179
       ];
-      # 3784/4784 are BFD, 41641 is tailscale's direct UDP port. Omitting the
-      # BFD ports gives the silent failure the README documents: the session
-      # reaches Established and then resets every few seconds, forever.
+      # 3784/4784 are BFD; 41641 is Tailscale's direct UDP port.
       allowedUDPPorts = [
         3784
         4784

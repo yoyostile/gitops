@@ -47,7 +47,7 @@ spec:
         kubeScheduler: false
         kubeStateMetrics: false
     grafana:
-      # Sized from 14d of usage: p90 565Mi / 57m, peak 687Mi.
+      # Sized from 14 days of observed usage.
       resources:
         requests:
           memory: 672Mi
@@ -66,9 +66,7 @@ spec:
         GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "https://auth.${SECRET_LAB_DOMAIN}/application/o/token/"
         GF_AUTH_GENERIC_OAUTH_API_URL: "https://auth.${SECRET_LAB_DOMAIN}/application/o/userinfo/"
         GF_AUTH_SIGNOUT_REDIRECT_URL: "https://auth.${SECRET_LAB_DOMAIN}/application/o/grafana/end-session/"
-        # Optionally enable auto-login (bypasses Grafana login screen)
         GF_AUTH_OAUTH_AUTO_LOGIN: "true"
-        # Optionally map user groups to Grafana roles
         GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
       adminPassword: ${SECRET_GRAFANA_PASSWORD}
       dashboardProviders:
@@ -127,10 +125,6 @@ spec:
             revision: 9
             datasource: Prometheus
         unifi:
-          # unifiPollerClientDPI:
-          #   gnetId: 11310
-          #   revision: 5
-          #   datasource: Prometheus
           unifiPollerClientInsights:
             gnetId: 11315
             revision: 9
@@ -143,19 +137,10 @@ spec:
             gnetId: 11314
             revision: 10
             datasource: Prometheus
-          # unifiPollerUSGInsights:
-          #   gnetId: 11313
-          #   revision: 9
-          #   datasource: Prometheus
           unifiPollerUSWInsights:
             gnetId: 11312
             revision: 9
             datasource: Prometheus
-      # extraVolumeMounts:
-      #   - name: grafana-plugins
-      #     existingClaim: grafana-plugins
-      #     mountPath: /var/lib/grafana/plugins
-      #     readOnly: false
       grafana.ini:
         plugins:
           allow_loading_unsigned_plugins: panodata-map-panel
@@ -234,15 +219,12 @@ spec:
             scrape_interval: 60s
             metrics_path: /api/prometheus
 
-            # Long-Lived Access Token
             bearer_token: ${HASS_BEARER_TOKEN}
 
             scheme: http
             static_configs:
               - targets: ["hass.lab.${SECRET_LAB_DOMAIN}:8123"]
-        # Sized from 14d of usage: p90 1986Mi / 173m, peak 6098Mi.
-        # Deliberately no memory limit: the peaks are real (compaction,
-        # large queries) and a limit would OOM-kill what it protects.
+        # Sized from 14 days of observed usage; compaction needs burst memory.
         resources:
           requests:
             memory: 2304Mi
@@ -266,11 +248,7 @@ spec:
     prometheus-node-exporter:
       hostRootFsMount:
         enabled: false
-      # The DaemonSet's ServiceMonitor labels `instance` with the pod IP, while
-      # the static additionalScrapeConfigs job above uses FQDNs -- and both land
-      # in job="node-exporter", so panels mixed hostnames with bare IPs. Rewrite
-      # instance to the k8s node name. Trade-off: this breaks series continuity,
-      # so samples written before this change stay keyed by IP forever.
+      # Normalize node-exporter instances to node names across discovery methods.
       prometheus:
         monitor:
           relabelings:

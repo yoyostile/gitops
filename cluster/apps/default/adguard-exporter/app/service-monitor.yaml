@@ -10,22 +10,15 @@ spec:
   endpoints:
     - port: metrics
       metricRelabelings:
-        # The exporter emits ~7300 series, and the processing-time histogram
-        # ships twice -- once in seconds, once in milliseconds, same data.
-        # Keep the seconds variant, which matches every other histogram here.
+        # Drop the duplicate millisecond processing-time histogram.
         - sourceLabels: [__name__]
           regex: adguard_processing_time_milliseconds.*
           action: drop
-        # Redundant with adguard_queries_details, which carries the same counts
-        # without the bucket explosion.
+        # adguard_queries_details provides the same counts without buckets.
         - sourceLabels: [__name__]
           regex: adguard_queries_details_histogram.*
           action: drop
-        # Deliberately NOT dropped: adguard_processing_time_seconds_bucket keeps
-        # a `client` label holding a raw IP, so the series set grows with every
-        # new DHCP address and never shrinks against the 730d retention. The
-        # per-client breakdown is wanted, so this is an accepted cost -- roughly
-        # 1900 series today. If it ever needs cutting, that metric is the 60%.
+        # Keep per-client processing buckets despite their high cardinality.
   namespaceSelector:
     matchNames:
       - default

@@ -1,11 +1,5 @@
-# Floating API-server VIP, auto-applied by k3s from
-# /var/lib/rancher/k3s/server/manifests/. It deliberately does NOT live in
-# cluster/ under Flux: the address kubectl and new agents dial must come up
-# without depending on the GitOps controllers that themselves need the API.
-#
-# ARP mode with leader election — exactly one control-plane node answers for
-# the VIP at a time and it moves on failure. Service LoadBalancers stay with
-# MetalLB (svc_enable=false); this handles the control plane only.
+# k3s applies this API VIP independently of Flux. ARP leader election moves it
+# between control-plane nodes; MetalLB remains responsible for Services.
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -59,9 +53,7 @@ spec:
     spec:
       serviceAccountName: kube-vip
       hostNetwork: true
-      # Must run on every control-plane node so the VIP has somewhere to fail
-      # over to, and must tolerate everything — it has to come up on a node
-      # that is otherwise cordoned or still initialising.
+      # Run on and tolerate every control-plane node for failover.
       nodeSelector:
         node-role.kubernetes.io/control-plane: "true"
       tolerations:
@@ -86,8 +78,7 @@ spec:
               value: "true"
             - name: cp_namespace
               value: kube-system
-            # MetalLB owns Service LoadBalancers; kube-vip must not also claim
-            # them or the two fight over the same addresses.
+            # MetalLB owns Service LoadBalancers.
             - name: svc_enable
               value: "false"
             - name: vip_leaderelection

@@ -94,14 +94,12 @@ spec:
               kind: Deployment
               name: firecrawl-firecrawl-nuq-postgres
             patch: |
-              # The Ceph RBD PVC is ReadWriteOnce; avoid a rolling-update
-              # surge that leaves the replacement pod in Multi-Attach.
+              # Recreate prevents Multi-Attach on the ReadWriteOnce Ceph volume.
               - op: add
                 path: /spec/strategy
                 value:
                   type: Recreate
-              # Mount-backed filesystems can contain lost+found at their root;
-              # initialize PostgreSQL in a dedicated subdirectory instead.
+              # Keep PostgreSQL data below the mount root and its lost+found.
               - op: add
                 path: /spec/template/spec/containers/0/env/-
                 value:
@@ -203,8 +201,7 @@ spec:
       NUQ_WORKER_COUNT: "1"
       USE_DB_AUTHENTICATION: "false"
       IS_KUBERNETES: "true"
-      # /v1/search has no built-in backend when self-hosted. SearXNG works only
-      # because its settings enable the `json` output format.
+      # Self-hosted search uses SearXNG's JSON output.
       SEARXNG_ENDPOINT: http://searxng.default.svc.cluster.local:8080
       ENV: production
       LOGGING_LEVEL: INFO

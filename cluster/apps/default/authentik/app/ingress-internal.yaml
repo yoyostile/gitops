@@ -1,7 +1,5 @@
 ---
-# Same host as the public ingress on purpose: internal DNS resolves auth.* to
-# traefik-internal, so in-cluster OIDC clients reach Authentik without hairpinning
-# through Cloudflare (which 403s server-side JWKS fetches). Keeps a single OIDC issuer.
+# Internal DNS avoids Cloudflare hairpinning while preserving one OIDC issuer.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

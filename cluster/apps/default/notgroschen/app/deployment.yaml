@@ -26,11 +26,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 80
-          # All app config comes from the secret: DATABASE_URL,
-          # SECRET_KEY_BASE, INGEST_TOKEN, LLM_BASE_URL, LLM_API_KEY,
-          # LLM_MODEL, SOLID_QUEUE_IN_PUMA. NB: SOLID_QUEUE_IN_PUMA is
-          # truthy when PRESENT with any non-empty value — to disable it,
-          # the key must be removed from the secret, not set to "false".
+          # SOLID_QUEUE_IN_PUMA is truthy whenever present; remove it to disable.
           envFrom:
             - secretRef:
                 name: notgroschen-secrets
@@ -42,7 +38,7 @@ spec:
               memory: "256Mi"
               cpu: "100m"
             limits:
-              # Serving needs ~260Mi; notgroschen:rebuild sets the ceiling.
+              # notgroschen:rebuild sets the memory ceiling.
               memory: "2Gi"
               cpu: "1"
           startupProbe:

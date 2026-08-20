@@ -1,7 +1,5 @@
 ---
-# The embedded outpost's provider list is a single all-or-nothing M2M
-# patch: every proxy provider must be listed here or it silently loses
-# its outpost assignment and stops being served.
+# This all-or-nothing patch must list every embedded-outpost provider.
 apiVersion: v1
 kind: ConfigMap
 metadata:

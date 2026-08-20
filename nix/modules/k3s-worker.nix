@@ -79,24 +79,18 @@ in
         "--node-ip=${config.lab.host.ipv4}"
         "--node-label=topology.kubernetes.io/region=${cfg.region}"
         "--node-label=topology.kubernetes.io/zone=${cfg.zone}"
-        # Marks the node as one whose k3s comes from nixpkgs, so any in-cluster
-        # upgrader can be told to skip it — overwriting the binary in the
-        # read-only Nix store fails and leaves the node cordoned.
+        # In-cluster upgraders must skip Nix-managed nodes.
         "--node-label=managed-by=nixos"
       ]
       ++ lib.optionals cfg.server [
-        # These must match the founding server exactly. A joining server that
-        # omits them re-enables the bundled traefik/servicelb/metrics-server,
-        # and a flannel backend mismatch breaks pod networking cluster-wide.
+        # Cluster-wide server flags must match on every control-plane node.
         "--disable=traefik"
         "--disable=servicelb"
         "--disable=metrics-server"
         "--flannel-backend=wireguard-native"
         "--tls-san=${cfg.apiVip}"
         "--tls-san=${config.lab.host.ipv4}"
-        # Keep kubelet from handing the last of the node's memory to pods: an
-        # OOM sweep that reaps etcd on a quorum member is how the whole API
-        # goes down, and these nodes schedule workloads too.
+        # Reserve capacity for k3s and etcd on nodes that also run workloads.
         "--kubelet-arg=system-reserved=cpu=200m,memory=512Mi"
         "--kubelet-arg=kube-reserved=cpu=200m,memory=512Mi"
       ];
@@ -107,7 +101,7 @@ in
       kube-vip.source = ./kube-vip.yaml;
     };
 
-    ## Storage drivers the cluster expects from a node
+    ## Storage
     boot.kernelModules = [
       "rbd"
       "overlay"
@@ -127,8 +121,7 @@ in
       "fs.inotify.max_user_instances" = 8192;
     };
 
-    # k3s manages its own iptables chains; flannel wireguard and every NodePort
-    # would need hand-maintained holes otherwise.
+    # k3s manages the required iptables chains.
     networking.firewall.enable = false;
 
     hardware.graphics = lib.mkIf cfg.gpu {

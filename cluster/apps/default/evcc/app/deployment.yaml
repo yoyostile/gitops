@@ -6,8 +6,7 @@ metadata:
   namespace: default
 spec:
   replicas: 1
-  # data PVC is ReadWriteOnce (ceph-rbd); Recreate avoids Multi-Attach
-  # deadlock when a new pod surges before the old one releases the volume
+  # Recreate prevents Multi-Attach on the ReadWriteOnce data volume.
   strategy:
     type: Recreate
   selector:

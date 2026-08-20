@@ -22,7 +22,6 @@ spec:
     remediation:
       retries: 3
   values:
-    # CSI Configuration for connecting to Ceph cluster
     csiConfig:
       - clusterID: "${SECRET_CEPH_CLUSTER_ID}"
         monitors:
@@ -32,7 +31,6 @@ spec:
         rbd:
           mirrorDaemonCount: 1
 
-    # StorageClass configuration
     storageClass:
       create: true
       name: ceph-rbd
@@ -45,7 +43,6 @@ spec:
       reclaimPolicy: Delete
       allowVolumeExpansion: true
       mountOptions: []
-      # Secret references
       provisionerSecret: ceph-rbd-secret
       provisionerSecretNamespace: kube-system
       controllerExpandSecret: ceph-rbd-secret
@@ -55,14 +52,12 @@ spec:
       nodeStageSecret: ceph-rbd-secret
       nodeStageSecretNamespace: kube-system
 
-    # Secret configuration
     secret:
       create: false
       name: ceph-rbd-secret
       userID: admin
       userKey: ""
 
-    # CSIDriver configuration
     CSIDriver:
       fsGroupPolicy: "File"
       seLinuxMount: true

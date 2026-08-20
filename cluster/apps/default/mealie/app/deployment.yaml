@@ -36,8 +36,7 @@ spec:
               value: "info"
             - name: UVICORN_WORKERS
               value: "1"
-            # Also the base for the OIDC redirect URI (mealie appends /login), so
-            # it has to match the redirect_uris in the authentik blueprint exactly.
+            # Must match the Authentik redirect URI base.
             - name: BASE_URL
               value: "https://mealie.${SECRET_LAB_DOMAIN}"
             - name: ALLOW_SIGNUP
@@ -73,15 +72,12 @@ spec:
               value: "true"
             - name: OIDC_REMEMBER_ME
               value: "true"
-            # Groups come from authentik's default profile mapping, which lists
-            # direct memberships only -- a parent group like Homelab never shows up.
+            # Authentik exposes direct group memberships only.
             - name: OIDC_USER_GROUP
               value: "Mealie"
             - name: OIDC_ADMIN_GROUP
               value: "DevOps"
-            # Load-bearing: authentik's default email mapping hardcodes
-            # email_verified: false, so mealie >= 3.21 refuses every login with
-            # "email_verified claim is missing or false" while this is true.
+            # Authentik's default mapping reports email_verified=false.
             - name: OIDC_REQUIRES_EMAIL_VERIFICATION
               value: "false"
           resources:

@@ -22,9 +22,7 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  # The k8s-at-home chart predates native sidecars and has no way to express an
-  # initContainer with restartPolicy: Always, so the tunnel is patched in after
-  # rendering rather than bent into chart values.
+  # Patch in the native WireGuard sidecar unsupported by this chart.
   postRenderers:
     - kustomize:
         patches:

@@ -20,12 +20,8 @@ spec:
         - name: adguard-exporter
           image: ghcr.io/henrywhitaker3/adguard-exporter:v1.2.1
           env:
-            # The exporter wants one comma-separated list per field, so the two
-            # hosts get stitched together with Kubernetes' $(VAR) expansion --
-            # that only resolves names declared *earlier* in this list, so the
-            # three secret lookups have to stay above the joined values.
-            # Credentials are read from the adguard-home-sync secret instead of
-            # being duplicated into a second SOPS file.
+            # Kubernetes expands only variables declared earlier in this list;
+            # reuse credentials from adguard-home-sync.
             - name: ORIGIN_URL
               valueFrom:
                 secretKeyRef:

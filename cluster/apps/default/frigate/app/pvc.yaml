@@ -1,5 +1,5 @@
 ---
-# frigate.db is SQLite: it must not live on NFS, so config is on ceph-rbd.
+# Keep the SQLite database on Ceph RBD, not NFS.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -13,9 +13,7 @@ spec:
     requests:
       storage: 5Gi
 ---
-# Snapshots only while record is disabled, so this stays small. If recording is
-# ever enabled, move this claim to nfs-client instead of growing it -- continuous
-# full-res segment churn does not belong on the SSD-backed ceph pool.
+# Move recordings to nfs-client before enabling continuous retention.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
