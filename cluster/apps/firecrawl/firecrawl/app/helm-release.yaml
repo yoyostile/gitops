@@ -123,7 +123,7 @@ spec:
       enabled: true
     image:
       repository: ghcr.io/firecrawl/firecrawl
-      tag: 2.11.216
+      tag: 2.11.220
       pullPolicy: IfNotPresent
       dockerSecretEnabled: false
     api:
