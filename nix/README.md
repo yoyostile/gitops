@@ -231,16 +231,49 @@ that needs a path builder01 already has fetches it instead of building it.
 
 ### Deploying anything
 
+builder01 is **normally powered off** (see *Normally powered off*, below), so a deploy
+starts it, does every host in one go, and shuts it down again:
+
 ```
+ssh root@10.0.0.3 'qm start 111'        # builder01 on pve02 — confirm by name, not VMID
+
 nixos-rebuild switch --flake ./nix#<name> \
   --target-host root@<ip> --build-host root@10.0.0.21
+
+ssh root@10.0.0.3 'qm shutdown 111'
 ```
+
+Batch the whole fleet between one start and one shutdown rather than cycling the VM per
+host — the point of the cache is that host two onwards substitutes what host one built.
 
 The closure goes **builder01 → target directly**; it never travels through the Mac.
 `adguard01` (1 vCPU / 1 GB) rebuilds this way in about 12 seconds.
 
 `--build-host` and `--target-host` may name the same machine — that is the right shape
 for builder01 and for the k3s nodes, which are big enough to build for themselves.
+
+### Normally powered off
+
+This VM is **shut down when not building.** 16 vCPU and 8 GB idling for what is often a
+single monthly Renovate bump is not a trade worth making, so it is started for a deploy
+and stopped afterwards.
+
+Two things make that safe rather than fragile, and both are already configured — don't
+"fix" them:
+
+- **`onboot` is unset** (PVE default `0`), so a pve02 reboot leaves builder01 down. It
+  and the `debian-13` template are the only guests in the cluster without `onboot=1`.
+- **It is not in `ha-manager`**, so nothing restarts it on its own. That is the same
+  decision as *no HA* below, arrived at for a second reason.
+
+Every host still lists `http://10.0.0.21:5000` as a substituter while it is off. An
+unreachable substituter is a **warning, not an error** — a host falls through to
+cache.nixos.org and the rebuild succeeds. Nothing breaks; the LAN cache simply only
+ever helps on a deploy you drove through builder01 anyway, which is all of them.
+
+The store eviction below (`min-free`/`max-free`, with `nix.gc.automatic = false`) fires
+only *during* a build, so a powered-off builder neither grows its store nor collects it.
+The GC design already suited a host that is usually off.
 
 ### Sizing and why there is no HA
 
@@ -366,7 +399,7 @@ with nginx on `:80`. The generated `netboot.ipxe` references `bzImage` and `init
 **relative path**, so all three must sit in one directory:
 
 ```
-ssh root@10.0.0.40 'tar -C /root/netboot-result -chf - bzImage initrd netboot.ipxe' \
+ssh root@10.0.0.21 'tar -C /root/netboot-result -chf - bzImage initrd netboot.ipxe' \
   | ssh root@10.0.0.35 'tar -C /var/lib/netbootxyz/assets/nixos-installer -xf -'
 ```
 
@@ -415,8 +448,12 @@ Unrelated but worth fixing while in there: `config/menus/boot.cfg` pins
 ## Day 2
 
 ```
+ssh root@10.0.0.3 'qm start 111'        # builder01 is normally off
+
 nixos-rebuild switch --flake ./nix#<name> \
   --target-host root@<ip> --build-host root@10.0.0.21
+
+ssh root@10.0.0.3 'qm shutdown 111'
 ```
 
 `--build-host` is required from macOS: these are `x86_64-linux` and the Mac is not.
