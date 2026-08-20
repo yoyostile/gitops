@@ -1,8 +1,7 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-# Required: generator output carries no namespace, and Flux's SSA rejects that.
-# `kubectl apply -f` does NOT reproduce the failure (it defaults from kubeconfig).
+# Flux SSA requires a namespace on generated resources.
 namespace: default
 resources:
   - secret.sops.yaml
@@ -10,17 +9,13 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-# governance.pricing_overrides in config.json is GENERATED — regenerate with:
+# Regenerate governance.pricing_overrides in config.json with:
 #   LYCEUM_API_KEY=$(kubectl -n default get secret bifrost-secrets \
 #       -o jsonpath='{.data.LYCEUM_API_KEY}' | base64 -d) \
 #     python3 cluster/apps/default/bifrost/app/gen-lyceum-pricing.py
-#
-# config_store must stay ENABLED: governance refuses to start without it, and
-# governance is where the virtual keys live. source_of_truth keeps Git authoritative.
-# The ConfigMap name hash is load-bearing: config.json is read only at startup.
-#
-# disable_content_logging is false, so prompts and completions (incl. invoice OCR)
-# are stored on the bifrost-data PVC. Deliberate, for model comparison.
+# Keep config_store enabled for governance and virtual keys. The name hash
+# restarts Bifrost when its startup-only configuration changes.
+# Content logging stores prompts and completions on bifrost-data for comparison.
 configMapGenerator:
   - name: bifrost-config
     files:

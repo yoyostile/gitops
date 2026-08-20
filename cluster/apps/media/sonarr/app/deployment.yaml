@@ -6,8 +6,7 @@ metadata:
   namespace: media
 spec:
   replicas: 1
-  # config PVC is ReadWriteOnce (ceph-rbd); Recreate avoids Multi-Attach
-  # deadlock when a new pod surges before the old one releases the volume
+  # Recreate prevents Multi-Attach on the ReadWriteOnce config volume.
   strategy:
     type: Recreate
   selector:
@@ -43,8 +42,7 @@ spec:
               mountPath: /mnt/tank/media
             - name: usenet
               mountPath: /mnt/fast/usenet
-          # Sized from 14d of usage: p90 692Mi, peak 2845Mi. No memory limit —
-          # the peaks are import/scan bursts and a limit would OOM-kill them.
+          # Sized from observed usage; imports and scans need burst memory.
           resources:
             requests:
               cpu: 50m

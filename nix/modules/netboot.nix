@@ -32,9 +32,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # The same upstream image the Debian box ran, so the full netboot.xyz
-    # catalogue (Debian, Windows, memtest, …) is unchanged — only the host
-    # around it becomes declarative.
+    # Keep the upstream netboot.xyz catalogue intact.
     virtualisation.oci-containers = {
       backend = "docker";
       containers.netbootxyz = {
@@ -55,9 +53,7 @@ in
       };
     };
 
-    # config/ and assets/ stay mutable state on purpose: the appliance ships its
-    # own menus/*.ipxe and replaces them on update, and assets/ holds large
-    # downloaded images. Only boot.cfg is asserted from the flake.
+    # Only boot.cfg is declarative; the appliance owns config/ and assets/.
     systemd.tmpfiles.rules = [
       "d ${stateDir} 0755 1000 1000 -"
       "d ${stateDir}/config 0755 1000 1000 -"
@@ -65,15 +61,8 @@ in
       "d ${stateDir}/assets 0755 1000 1000 -"
     ];
 
-    # dnsmasq inside the container runs with --tftp-secure and serves only files
-    # owned by its own uid (1000). A /nix/store symlink is root-owned and would
-    # silently stop being served, so the menu is installed as a real file with
-    # that ownership instead. Re-asserted on every activation, which is the
-    # point: a hand-edit on the box reverts at the next rebuild.
-    # Ordered AFTER the container, not before: on a fresh /config the appliance
-    # seeds its own stock menus on first start and would overwrite anything
-    # written ahead of it — leaving the default netboot.xyz menu in place and no
-    # sign that the declared one was ever applied.
+    # --tftp-secure requires uid 1000 ownership. Install after the container has
+    # seeded a fresh config directory so it cannot overwrite the declared menu.
     systemd.services.netbootxyz-boot-menu = {
       description = "Install the declared netboot.xyz boot menu";
       wantedBy = [ "multi-user.target" ];

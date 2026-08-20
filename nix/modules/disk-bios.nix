@@ -1,12 +1,9 @@
 { config, ... }:
 
-# SeaBIOS + GRUB. Only for hosts cloned from the `debian-13` template, which is
-# SeaBIOS — a UEFI clone will not boot far enough to SSH into. PXE-provisioned
-# hosts want disk-uefi.nix instead; see README.
+# SeaBIOS + GRUB for hosts cloned from the Debian template.
 
 {
-  # disko registers the disk from the EF02 partition; setting
-  # boot.loader.grub.devices as well trips a mirroredBoots duplicate assertion.
+  # disko registers the GRUB device from the EF02 partition.
   boot.loader.grub.enable = true;
 
   disko.devices.disk.main = {

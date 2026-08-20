@@ -75,29 +75,18 @@ spec:
                   key: OPEN_WEBUI_OAUTH_CLIENT_SECRET
             - name: ENABLE_OLLAMA_API
               value: "false"
-            # All three connections point at the same Bifrost URL and differ only
-            # by virtual key. The connection LIST only ever renders the URL -- this
-            # build has no name field -- so tag each one instead: the tag shows in
-            # the connection's edit dialog and is copied onto every model it
-            # serves, so the picker shows which gateway a model came from.
-            # Keyed by connection INDEX as a string, so removing a connection
-            # RE-INDEXES the ones after it; a URL key would hit all three.
-            # Do NOT use prefix_id here: it rewrites model ids to
-            # "<prefix>.<id>", which would break TASK_MODEL_EXTERNAL.
+            # Connections share a URL and differ by virtual key. Tags identify
+            # them without rewriting model IDs; keys are connection indexes.
             - name: OPENAI_API_CONFIGS
               value: '{"0":{"tags":["general"]},"1":{"tags":["openrouter"]},"2":{"tags":["hetzner"]}}'
-            # Hold the base model list in app state instead of re-querying every
-            # connection on each page load. Kept on after lyceum's removal: it
-            # still saves a round trip per connection per load. Cost: newly
-            # added upstream models need the UI refresh or a pod restart.
+            # Cache model lists; refresh the UI or restart after upstream changes.
             - name: ENABLE_BASE_MODELS_CACHE
               value: "true"
             - name: ENABLE_OPENAI_API
               value: "true"
             - name: ENABLE_OPENAI_API_PASSTHROUGH
               value: "false"
-            # Same OpenAI-compatible Bifrost endpoint with provider-scoped
-            # virtual keys. The broad eval key stays out of long-running pods.
+            # Provider-scoped virtual keys for the shared Bifrost endpoint.
             - name: OPENAI_API_BASE_URLS
               value: "http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1;http://bifrost.default.svc.cluster.local:8080/v1"
             - name: BIFROST_VK_GENERAL
@@ -122,9 +111,7 @@ spec:
                   key: BIFROST_VK_HETZNER
             - name: OPENAI_API_KEYS
               value: "$(BIFROST_VK_GENERAL);$(BIFROST_VK_OPENROUTER);$(BIFROST_VK_HETZNER)"
-            # Known-good through the existing Bifrost setup; users can change
-            # their own default in Open WebUI after first login. Hetzner rather
-            # than OpenRouter so the default stays EU-processed.
+            # EU-processed default; users can override it after first login.
             - name: DEFAULT_MODELS
               value: "hetzner/GLM-5.2-NVFP4"
             - name: TASK_MODEL_EXTERNAL
@@ -134,8 +121,7 @@ spec:
                 secretKeyRef:
                   name: open-webui-tools-secrets
                   key: API_KEY
-            # ConfigVar: seeds a fresh database. Existing instances retain the
-            # Admin Settings value and may need this connection added once there.
+            # Seeds fresh databases; existing instances retain Admin Settings.
             - name: TOOL_SERVER_CONNECTIONS
               value: >-
                 [{"type":"openapi","url":"http://open-webui-tools.default.svc.cluster.local:3000","spec_type":"url","spec":"","path":"openapi.json","auth_type":"bearer","key":"$(OPEN_WEBUI_TOOLS_API_KEY)","config":{"enable":true},"info":{"id":"homelab","name":"Homelab","description":"Read-only Paperless search and service health tools."}}]

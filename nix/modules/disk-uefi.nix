@@ -1,11 +1,6 @@
 { config, ... }:
 
-# UEFI + systemd-boot. Use this for anything provisioned over PXE: DHCP serves
-# `netboot.xyz.efi` unconditionally (there is no option-93 arch matcher), so a
-# SeaBIOS guest cannot netboot at all.
-#
-# Partitioning and bootloader live together on purpose — an ESP with GRUB, or a
-# BIOS boot partition with systemd-boot, are both silently unbootable.
+# UEFI + systemd-boot for PXE-provisioned hosts.
 
 {
   boot.loader.systemd-boot.enable = true;

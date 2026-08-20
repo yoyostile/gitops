@@ -21,7 +21,6 @@ spec:
     - name: traefik
       namespace: networking
 
-  # See https://github.com/k8s-at-home/charts/blob/master/charts/paperless/values.yaml
   values:
     nodeSelector:
       topology.kubernetes.io/region: lab
@@ -30,7 +29,7 @@ spec:
       tag: 3.0.5
 
     env:
-      # Mandatory from 3.0. Also signs sessions, so changing it logs everyone out.
+      # Signs sessions; rotation logs out all users.
       PAPERLESS_SECRET_KEY: "${SECRET_PAPERLESS_SECRET_KEY}"
       PAPERLESS_OCR_LANGUAGE: deu
       PAPERLESS_TIME_ZONE: "${TZ}"
@@ -42,24 +41,24 @@ spec:
       PAPERLESS_SOCIALACCOUNT_PROVIDERS: ${SECRET_PAPERLESS_SOCIALACCOUNT_PROVIDERS}
       PAPERLESS_OCR_USER_ARGS: "{\"invalidate_digital_signatures\": true}"
 
-      # Built-in AI via Bifrost; the virtual key is scoped to lyceum only.
+      # The virtual key restricts built-in AI to Lyceum.
       PAPERLESS_AI_ENABLED: "true"
       PAPERLESS_AI_LLM_BACKEND: "openai-like"
-      # /v1 required: OpenAILike appends /chat/completions itself.
+      # OpenAILike appends /chat/completions to this /v1 base.
       PAPERLESS_AI_LLM_ENDPOINT: "http://bifrost.default.svc.cluster.local:8080/v1"
       PAPERLESS_AI_LLM_API_KEY: "${SECRET_PAPERLESS_BIFROST_VK}"
-      # Lowercase "lyceum" — the provider name in Bifrost, not "Lyceum/...".
+      # Prefix with Bifrost's lowercase provider name.
       PAPERLESS_AI_LLM_MODEL: "lyceum/z-ai/glm-5.2-instant"
       PAPERLESS_AI_LLM_EMBEDDING_BACKEND: "openai-like"
       PAPERLESS_AI_LLM_EMBEDDING_MODEL: "lyceum/Qwen/Qwen3-Embedding-8B"
-      # Load-bearing: Bifrost is a ClusterIP (RFC1918).
+      # Bifrost uses an RFC1918 ClusterIP.
       PAPERLESS_AI_LLM_ALLOW_INTERNAL_ENDPOINTS: "true"
       PAPERLESS_AI_LLM_REQUEST_TIMEOUT: "300"
       PAPERLESS_AI_LLM_OUTPUT_LANGUAGE: "de"
       USERMAP_UID: "3000"
       USERMAP_GID: "3000"
 
-    # Sized from 14d of usage: p90 935Mi / 220m, peak 2923Mi.
+    # Sized from 14 days of observed usage.
     resources:
       requests:
         memory: 1088Mi

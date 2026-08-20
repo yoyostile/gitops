@@ -9,8 +9,7 @@ metadata:
     component: app
 spec:
   replicas: 1
-  # RWO-backed PVCs: a rolling update wedges because the new pod cannot take
-  # the volumes while the old one still holds them.
+  # Recreate prevents Multi-Attach on the ReadWriteOnce volumes.
   strategy:
     type: Recreate
   selector:
@@ -88,9 +87,7 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "500m"
-          # web-entrypoint.sh runs schema + data migrations before exec'ing
-          # puma; boot takes ~65s on 1.7.9. Without a startupProbe the liveness
-          # probe kills the container mid-migration and it never binds :3000.
+          # Allow schema and data migrations to finish before liveness checks.
           startupProbe:
             httpGet:
               path: /api/v1/health

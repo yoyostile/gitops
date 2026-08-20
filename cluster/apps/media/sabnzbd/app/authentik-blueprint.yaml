@@ -1,7 +1,4 @@
 ---
-# authentik provider/application for this app, applied by authentik's
-# blueprint worker. Mounted read-only into the authentik worker, so it
-# must live in the `default` namespace even when the app does not.
 apiVersion: v1
 kind: ConfigMap
 metadata:

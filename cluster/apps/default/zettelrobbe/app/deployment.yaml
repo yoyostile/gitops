@@ -57,8 +57,7 @@ spec:
                 secretKeyRef:
                   name: zettelrobbe-secrets
                   key: CUSTOM_API_KEY
-            # Unset reads as "not restricted" (paperlessService checks === 'yes'),
-            # which is what let the vocabulary grow to 629 tags.
+            # The service treats an unset value as unrestricted.
             - name: RESTRICT_TO_EXISTING_TAGS
               value: "yes"
             - name: RESTRICT_TO_EXISTING_DOCUMENT_TYPES
@@ -79,8 +78,7 @@ spec:
               value: "yes"
             - name: AI_PROCESSED_TAG_NAME
               value: "ai-processed"
-            # Mirrors the setup wizard; see /app/data/runtime-overrides.json.
-            # Username, NOT the email — matched literally against /api/users/.
+            # Must be the Paperless username, not its email address.
             - name: PAPERLESS_USERNAME
               value: "yoyostile"
             - name: IGNORE_TAGS
@@ -91,28 +89,21 @@ spec:
               value: "*/30 * * * *"
             - name: SETUP_VALIDATION_TIMEOUT_MS
               value: "120000"
-            # Despite the name, this is the per-page OCR request timeout, not just
-            # wizard validation — oversized pages (A0 plans) exceed 120s.
+            # Per-page OCR timeout; large-format plans exceed the default.
             - name: SETUP_OCR_VALIDATION_TIMEOUT_MS
               value: "300000"
-            # Off: paperless owns text extraction. Its default OCR mode is `skip`,
-            # which takes a PDF's embedded text verbatim and only rasterises when
-            # there is none — so a second OCR pass here replaces exact text with a
-            # model's reading of a picture of it. Tagging below is unaffected.
-            #
-            # "MISTRAL_*" is a legacy name only: OCR_PROVIDER=custom routes via OCR_API_URL.
+            # Paperless owns text extraction; a second OCR pass can degrade
+            # embedded PDF text. MISTRAL_* is legacy naming for the custom provider.
             - name: MISTRAL_OCR_ENABLED
               value: "no"
             - name: OCR_PROVIDER
               value: "custom"
             - name: OCR_API_URL
               value: "http://bifrost.default.svc.cluster.local:8080/v1"
-            # qwen3-vl beat Qwen2.5-VL-72B on handwriting in a same-image A/B: it
-            # resolved the signature column the other returned as "K. Ke?" and read
-            # HLT where the other saw HCT. ~5x the image tokens, still sub-cent.
+            # Selected from handwriting evaluation.
             - name: MISTRAL_OCR_MODEL
               value: "tensorx/qwen/qwen3-vl-235b-a22b-instruct"
-            # Default 10 silently truncates longer documents to the first 10 pages.
+            # Avoid silently truncating documents longer than ten pages.
             - name: OCR_PDF_RENDER_MAX_PAGES
               value: "30"
             - name: OCR_API_KEY
