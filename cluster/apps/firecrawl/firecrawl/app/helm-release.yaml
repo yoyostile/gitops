@@ -177,7 +177,7 @@ spec:
           memory: 1Gi
     rabbitmq:
       enabled: true
-      image: docker.io/library/rabbitmq:3.13-management-alpine
+      image: docker.io/library/rabbitmq:4.3-management-alpine
       resources:
         requests:
           cpu: 100m
