@@ -21,7 +21,7 @@ spec:
         topology.kubernetes.io/region: lab
       containers:
         - name: librenms
-          image: librenms/librenms:26.7.0
+          image: librenms/librenms:26.8.1
           # Conservative floor from a short usage sample.
           resources:
             requests:
@@ -61,7 +61,7 @@ spec:
             - name: librenms
               mountPath: /data
         - name: dispatcher
-          image: librenms/librenms:26.7.0
+          image: librenms/librenms:26.8.1
           # Sized from observed usage; polling needs burst memory.
           resources:
             requests:
