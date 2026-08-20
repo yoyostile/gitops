@@ -7,8 +7,9 @@ MD013:
   line_length: 240
   # Number of characters for headings
   heading_line_length: 80
-  # Number of characters for code blocks
-  code_block_line_length: 80
+  # Number of characters for code blocks. Matches line_length: this repo's
+  # examples are long kubectl/sops/qm one-liners that must stay copy-pasteable.
+  code_block_line_length: 240
   # Include code blocks
   code_blocks: true
   # Include tables

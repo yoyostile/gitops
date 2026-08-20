@@ -237,6 +237,6 @@ spec:
           enabled: true
           size: 10Gi
           # Optional: Set this to persistentVolumeClaim to avoid downloading the ML models every start.
-          type: 'persistentVolumeClaim'
+          type: "persistentVolumeClaim"
           accessMode: ReadWriteMany
-          storageClass: 'nfs-client'
+          storageClass: "nfs-client"

@@ -36,7 +36,7 @@ spec:
     extraArgs:
       - --service-type-filter=LoadBalancer
       - "{{`--fqdn-template={{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
-      - '--annotation-filter=external-dns/external=true'
+      - "--annotation-filter=external-dns/external=true"
     txtOwnerId: gitops
     env:
       - name: CF_API_TOKEN
@@ -129,6 +129,6 @@ spec:
           timeoutSeconds: 5
     extraArgs:
       - "{{`--fqdn-template={{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
-      - '--request-timeout=60s'
-      - '--ignore-ingress-tls-spec'
-      - '--annotation-filter=external-dns/internal=true'
+      - "--request-timeout=60s"
+      - "--ignore-ingress-tls-spec"
+      - "--annotation-filter=external-dns/internal=true"

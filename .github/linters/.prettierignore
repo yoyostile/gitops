@@ -1,2 +1,4 @@
 *.sops.*
 gotk-components.yaml
+# Agent worktrees are separate checkouts, not part of this tree
+.claude/worktrees/

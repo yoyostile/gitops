@@ -8,7 +8,7 @@ spec:
   immediate: true
   cluster:
     name: psql-cluster
-  schedule: '0 0 */12 * * *'
+  schedule: "0 0 */12 * * *"
   backupOwnerReference: self
   method: plugin
   pluginConfiguration:
