@@ -255,7 +255,7 @@ for builder01 and for the k3s nodes, which are big enough to build for themselve
 ### Normally powered off
 
 This VM is **shut down when not building.** 16 vCPU and 8 GB idling for what is often a
-single monthly Renovate bump is not a trade worth making, so it is started for a deploy
+single weekly Renovate bump is not a trade worth making, so it is started for a deploy
 and stopped afterwards.
 
 Two things make that safe rather than fragile, and both are already configured — don't

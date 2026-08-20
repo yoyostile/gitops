@@ -42,12 +42,12 @@
   nix: {
     enabled: true,
     // disko and sops-nix are pinned by rev only in flake.lock, so nothing but
-    // lockFileMaintenance can ever move them. Its own default schedule is
-    // Monday 4am, which ignores the repo-wide weekend schedule — set it here.
+    // lockFileMaintenance can ever move them. Run it weekly inside the
+    // repo-wide weekend window so routine NixOS updates do not wait a month.
     lockFileMaintenance: {
       enabled: true,
       schedule: [
-        'before 06:00 on the first day of the month',
+        '* 0-5 * * 0',
       ],
     },
   },
