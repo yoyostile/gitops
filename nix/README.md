@@ -46,7 +46,7 @@ Rollback with `nixos-rebuild --rollback` or select an older generation at boot.
 ## Add or reinstall a host
 
 Hosts use their ed25519 SSH host key as their sops age identity. Generate and
-register that key *before* installation so the first activation can decrypt its
+register that key _before_ installation so the first activation can decrypt its
 secrets:
 
 1. Add `nix/hosts/<name>/default.nix`. Set `lab.host.ipv4`, enable its roles,
