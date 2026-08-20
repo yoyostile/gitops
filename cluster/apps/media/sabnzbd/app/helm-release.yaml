@@ -76,7 +76,7 @@ spec:
           value: "1"
     image:
       repository: linuxserver/sabnzbd
-      tag: 5.0.4
+      tag: 5.1.1
     env:
       TZ: ${TZ}
       PGID: 3000
