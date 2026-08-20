@@ -122,3 +122,17 @@ Secret (`cluster-secrets.sops.yaml`): `SECRET_LAB_DOMAIN`, `SECRET_LAB_IP`, `SEC
 - `direnv` auto-loads `.envrc` which sets `KUBECONFIG` and `SOPS_AGE_KEY_FILE`
 - Kubeconfig: `provision/kubeconfig`
 - Dependency updates are automated via Renovate (config: `.github/renovate.json5`)
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues in `yoyostile/gitops`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, used verbatim as label strings. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
