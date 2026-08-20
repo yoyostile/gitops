@@ -196,7 +196,7 @@ spec:
       MAX_CONCURRENT_PAGES: "2"
       BLOCK_MEDIA: "true"
     redis:
-      image: docker.io/library/redis:8.2.1-alpine
+      image: docker.io/library/redis:8.10.1-alpine
       replicaCount: 1
     config:
       NUM_WORKERS_PER_QUEUE: "2"
