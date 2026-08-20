@@ -140,7 +140,10 @@
         "provider_configs": [
           {
             "provider": "openrouter",
-            "allowed_models": ["google/gemini-3.6-flash", "qwen/qwen3-vl-235b-a22b-instruct"],
+            "allowed_models": [
+              "google/gemini-3.6-flash",
+              "qwen/qwen3-vl-235b-a22b-instruct"
+            ],
             "key_ids": ["*"]
           },
           {
