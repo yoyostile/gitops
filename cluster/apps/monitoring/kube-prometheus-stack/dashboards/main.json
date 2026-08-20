@@ -3217,7 +3217,7 @@
     },
     {
       "type": "stat",
-      "title": "Netzbezug 30d",
+      "title": "PV-Erzeugung 30d",
       "id": 52,
       "datasource": {
         "type": "prometheus",
@@ -3226,7 +3226,7 @@
       "description": "",
       "gridPos": {
         "h": 4,
-        "w": 6,
+        "w": 4,
         "x": 0,
         "y": 82
       },
@@ -3237,7 +3237,64 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]))",
+          "expr": "(hass_sensor_energy_kwh{entity=\"sensor.evcc_site_evcc_pv_energy\"} - hass_sensor_energy_kwh{entity=\"sensor.evcc_site_evcc_pv_energy\"} offset 30d)",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Netzbezug 30d",
+      "id": 53,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 82
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} offset 30d)",
           "refId": "A",
           "range": false,
           "instant": true
@@ -3275,16 +3332,16 @@
     {
       "type": "stat",
       "title": "Einspeisung 30d",
-      "id": 53,
+      "id": 54,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "Ohne Vergütung ist das kein Erlös, sondern verschenkte Energie -- deshalb neutral und nicht grün eingefärbt.",
       "gridPos": {
         "h": 4,
-        "w": 6,
-        "x": 6,
+        "w": 4,
+        "x": 8,
         "y": 82
       },
       "targets": [
@@ -3294,7 +3351,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]))",
+          "expr": "(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} offset 30d)",
           "refId": "A",
           "range": false,
           "instant": true
@@ -3320,7 +3377,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "text",
                 "value": null
               }
             ]
@@ -3331,16 +3388,16 @@
     },
     {
       "type": "stat",
-      "title": "Saldo 30d",
-      "id": 54,
+      "title": "Eigenverbrauch 30d",
+      "id": 55,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Bezug minus Einspeisung. Positiv heißt: übers Netz mehr geholt als abgegeben. Negativ wäre Überschuss.",
+      "description": "Anteil der eigenen Erzeugung, der im Haus geblieben ist. Bei fehlender Einspeisevergütung ist das die Kennzahl, die zählt -- jede nicht selbst verbrauchte kWh ist ohne Gegenwert abgegeben.",
       "gridPos": {
         "h": 4,
-        "w": 6,
+        "w": 4,
         "x": 12,
         "y": 82
       },
@@ -3351,7 +3408,76 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d])) - on() (max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[30d]))",
+          "expr": "100 * ((hass_sensor_energy_kwh{entity=\"sensor.evcc_site_evcc_pv_energy\"} - hass_sensor_energy_kwh{entity=\"sensor.evcc_site_evcc_pv_energy\"} offset 30d) - on() (hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} offset 30d)) / on() (hass_sensor_energy_kwh{entity=\"sensor.evcc_site_evcc_pv_energy\"} - hass_sensor_energy_kwh{entity=\"sensor.evcc_site_evcc_pv_energy\"} offset 30d)",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "green",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Saldo 30d",
+      "id": 56,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Bezug minus Einspeisung. Positiv heißt: übers Netz mehr geholt als abgegeben.",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 82
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} offset 30d) - on() (hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} offset 30d)",
           "refId": "A",
           "range": false,
           "instant": true
@@ -3393,16 +3519,16 @@
     {
       "type": "stat",
       "title": "Stromkosten 30d",
-      "id": 55,
+      "id": 57,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Nur der Netzbezug, gegen den 30-Tage-Mittelwert des EVCC-Netztarifs. Eine Gegenkachel für Einspeiseerlöse gibt es nicht, weil es keine Vergütung gibt -- die 0 im EVCC-Einspeisetarif ist korrekt und keine fehlende Konfiguration. Jede eingespeiste kWh ist damit ohne Gegenwert abgegeben, weshalb Eigenverbrauch hier mehr zählt als Erlös.",
+      "description": "Nur der Netzbezug, gegen den 30-Tage-Mittelwert des EVCC-Netztarifs. Eine Gegenkachel für Einspeiseerlöse gibt es nicht, weil es keine Vergütung gibt -- die 0 im EVCC-Einspeisetarif ist korrekt und keine fehlende Konfiguration.",
       "gridPos": {
         "h": 4,
-        "w": 6,
-        "x": 18,
+        "w": 4,
+        "x": 20,
         "y": 82
       },
       "targets": [
@@ -3412,7 +3538,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[30d])) * on() avg_over_time(hass_sensor_unit_eur_per_kwh{entity=\"sensor.evcc_site_evcc_tariff_grid\"}[30d])",
+          "expr": "(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} offset 30d) * on() avg_over_time(hass_sensor_unit_eur_per_kwh{entity=\"sensor.evcc_site_evcc_tariff_grid\"}[30d])",
           "refId": "A",
           "range": false,
           "instant": true
@@ -3450,7 +3576,7 @@
     {
       "type": "barchart",
       "title": "Netzbezug vs. Einspeisung pro Tag",
-      "id": 56,
+      "id": 58,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3469,7 +3595,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[24h]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"}[24h])",
+          "expr": "hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_in\"} offset 24h",
           "refId": "A",
           "range": true,
           "instant": false,
@@ -3482,7 +3608,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "max_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[24h]) - min_over_time(hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"}[24h])",
+          "expr": "hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} - hass_sensor_energy_kwh{entity=\"sensor.ecotracker_energy_out\"} offset 24h",
           "refId": "B",
           "range": true,
           "instant": false,
@@ -3537,7 +3663,7 @@
     {
       "type": "row",
       "title": "Haus & Klima",
-      "id": 57,
+      "id": 59,
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -3550,7 +3676,7 @@
     {
       "type": "timeseries",
       "title": "Raumtemperaturen",
-      "id": 58,
+      "id": 60,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3613,7 +3739,7 @@
     {
       "type": "timeseries",
       "title": "Luftfeuchte",
-      "id": 59,
+      "id": 61,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3678,7 +3804,7 @@
     {
       "type": "timeseries",
       "title": "Vitocal Temperaturen",
-      "id": 60,
+      "id": 62,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3741,7 +3867,7 @@
     {
       "type": "barchart",
       "title": "Kompressorstarts pro Tag",
-      "id": 61,
+      "id": 63,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3760,7 +3886,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[24h]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[24h]))",
+          "expr": "(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} - hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} offset 24h)",
           "refId": "A",
           "range": true,
           "instant": false,
@@ -3815,7 +3941,7 @@
     {
       "type": "timeseries",
       "title": "Laufzeit je Takt (rollend 7d)",
-      "id": 62,
+      "id": 64,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3834,7 +3960,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[7d]) - min_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[7d])) * 60 / on() ((max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[7d]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[7d])) > 0)",
+          "expr": "(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"} - hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"} offset 7d) * 60 / on() ((hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} - hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} offset 7d) > 0)",
           "refId": "A",
           "range": true,
           "instant": false,
@@ -3879,7 +4005,7 @@
     {
       "type": "stat",
       "title": "Starts/Tag Ø 30d",
-      "id": 63,
+      "id": 65,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3898,7 +4024,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d])) / 30",
+          "expr": "(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} - hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} offset 30d) / 30",
           "refId": "A",
           "range": false,
           "instant": true
@@ -3936,7 +4062,7 @@
     {
       "type": "stat",
       "title": "Ø Laufzeit je Takt 30d",
-      "id": 64,
+      "id": 66,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -3955,7 +4081,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d]) - min_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d])) * 60 / on() (max_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d]) - min_over_time(hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"}[30d]))",
+          "expr": "(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"} - hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"} offset 30d) * 60 / on() (hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} - hass_sensor_state{entity=\"sensor.e3_vitocal_16_kompressorstarts\"} offset 30d)",
           "refId": "A",
           "range": false,
           "instant": true
@@ -3993,7 +4119,7 @@
     {
       "type": "stat",
       "title": "Laufzeit h/Tag 30d",
-      "id": 65,
+      "id": 67,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4012,7 +4138,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(max_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d]) - min_over_time(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"}[30d])) / 30",
+          "expr": "(hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"} - hass_sensor_unit_h{entity=\"sensor.e3_vitocal_16_kompressorbetriebsstunden\"} offset 30d) / 30",
           "refId": "A",
           "range": false,
           "instant": true
@@ -4050,7 +4176,7 @@
     {
       "type": "stat",
       "title": "Heizkreis",
-      "id": 66,
+      "id": 68,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4123,7 +4249,7 @@
     {
       "type": "stat",
       "title": "JAZ Heizung",
-      "id": 67,
+      "id": 69,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -4180,7 +4306,7 @@
     {
       "type": "stat",
       "title": "JAZ Warmwasser",
-      "id": 68,
+      "id": 70,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
