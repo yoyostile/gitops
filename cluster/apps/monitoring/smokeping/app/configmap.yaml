@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smokeping
+  namespace: monitoring
+data:
+  PGID: "3000"
+  PUID: "3000"
+  TZ: "${TZ}"
