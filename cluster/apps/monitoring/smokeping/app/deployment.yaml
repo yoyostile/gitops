@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: smokeping
+  name: smokeping-app
   namespace: monitoring
   labels:
     app.kubernetes.io/name: smokeping
@@ -30,7 +30,7 @@ spec:
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: smokeping
+                name: smokeping-app
           ports:
             - name: http
               containerPort: 80

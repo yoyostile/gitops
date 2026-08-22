@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: smokeping
+  name: smokeping-app
   namespace: monitoring
   annotations:
     hajimari.io/enable: "true"
@@ -27,6 +27,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: smokeping
+                name: smokeping-app
                 port:
                   number: 80
