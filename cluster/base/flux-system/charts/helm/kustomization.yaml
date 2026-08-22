@@ -32,7 +32,6 @@ resources:
   - midokura-charts.yaml
   - minecraft-server-charts.yaml
   - minio-charts.yaml
-  - nicholaswilde-charts.yaml
   - nfs-subdir-external-provisioner-charts.yaml
   - node-feature-discovery-charts.yaml
   - onedev-charts.yaml
