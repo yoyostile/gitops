@@ -1,0 +1,88 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plex
+  namespace: media
+spec:
+  replicas: 1
+  # Recreate prevents Multi-Attach with the ReadWriteOnce config volume, and
+  # keeps two pods from contending for hostPort 32400 on the same node.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: plex
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: plex
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
+      hostNetwork: true
+      # hostNetwork defaults to the node resolver; without this the pod loses
+      # cluster DNS entirely.
+      dnsPolicy: ClusterFirstWithHostNet
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+      containers:
+        - name: plex
+          image: lscr.io/linuxserver/plex:1.43.3.10896-cb3ebc72d-ls321
+          env:
+            - name: TZ
+              value: "${TZ}"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: VERSION
+              value: docker
+          ports:
+            - name: http
+              containerPort: 32400
+              protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: http
+          readinessProbe:
+            tcpSocket:
+              port: http
+          # No memory limit — peaks are transcode bursts and a limit would kill
+          # playback mid-stream.
+          #
+          # The i915 request doubles as the scheduling constraint: pve02's AMD
+          # iGPU cannot be sliced, so only the pve01/pve03 nodes advertise the
+          # device. The region nodeSelector alone does not exclude pve02, so
+          # without this Plex lands there and transcodes in software.
+          resources:
+            requests:
+              cpu: 75m
+              memory: 736Mi
+            limits:
+              gpu.intel.com/i915: "1"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: media
+              mountPath: /media
+            - name: transcode
+              mountPath: /transcode
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: plex-data-ceph
+        - name: media
+          nfs:
+            server: "${SECRET_NFS_HOST}"
+            path: "${SECRET_NFS_ST0RAGE_PATH}"
+        - name: transcode
+          emptyDir:
+            medium: Memory

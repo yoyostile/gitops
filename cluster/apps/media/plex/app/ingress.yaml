@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plex
+  namespace: media
+  annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "movie-play"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    external-dns/external: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: "plex.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: plex
+                port:
+                  number: 32400
+  tls:
+    - hosts:
+        - "plex.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
