@@ -66,8 +66,11 @@ spec:
       limits:
         memory: 3520Mi
     persistence:
+      # retain keeps the PVC on helm uninstall, so removing this HelmRelease
+      # cannot take the document store with it.
       data:
         enabled: true
+        retain: true
         storageClass: "nfs-client"
         accessMode: ReadWriteOnce
         size: 5Gi
@@ -75,6 +78,7 @@ spec:
           velero.io/exclude-from-backup: "true"
       media:
         enabled: true
+        retain: true
         storageClass: "nfs-client"
         accessMode: ReadWriteOnce
         size: 5Gi
