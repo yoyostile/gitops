@@ -160,6 +160,16 @@
       matchPackageNames: ["docker.io/maximhq/bifrost"],
     },
     {
+      // lscr.io/linuxserver/lidarr carries one stray `8.1.2135` tag that is
+      // really app version 0.8.1.2135. Renovate sorts 8 > 3 and "upgrades"
+      // into it, which downgrades Lidarr from 3.x to 0.8.x. The old binary
+      // then cannot read quality id 37 (ALAC 24bit) and every quality-profile
+      // read 500s. Real releases are the 2.x/3.x plain-semver line.
+      matchDatasources: ["docker"],
+      matchPackageNames: ["lscr.io/linuxserver/lidarr"],
+      allowedVersions: "!/^8\\./",
+    },
+    {
       // Moves the nixpkgs branch in flake.nix (nixos-26.05 -> next release).
       // A NixOS release upgrade, not a routine bump — hence dep/major.
       matchManagers: ["nix"],
