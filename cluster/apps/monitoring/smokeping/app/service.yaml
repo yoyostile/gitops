@@ -6,7 +6,7 @@ metadata:
   namespace: monitoring
   labels:
     app.kubernetes.io/name: smokeping
-    app.kubernetes.io/instance: smokeping
+    app.kubernetes.io/instance: smokeping-app
 spec:
   type: ClusterIP
   ports:
@@ -16,4 +16,4 @@ spec:
       protocol: TCP
   selector:
     app.kubernetes.io/name: smokeping
-    app.kubernetes.io/instance: smokeping
+    app.kubernetes.io/instance: smokeping-app
