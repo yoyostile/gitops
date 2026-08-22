@@ -118,7 +118,7 @@ spec:
         misc:
           nodeExporterFull:
             gnetId: 1860
-            revision: 41
+            revision: 45
             datasource: Prometheus
           traefikDashboard:
             gnetId: 17347
