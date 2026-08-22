@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: smokeping
+  name: smokeping-app
   namespace: monitoring
 data:
   PGID: "3000"
