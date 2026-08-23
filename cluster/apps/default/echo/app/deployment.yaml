@@ -28,4 +28,11 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
+          # Sized from 30 days of observed usage.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 96Mi
+            limits:
+              memory: 192Mi
       restartPolicy: Always

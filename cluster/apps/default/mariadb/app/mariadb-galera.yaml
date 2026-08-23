@@ -45,8 +45,23 @@ spec:
         metallb.universe.tf/loadBalancerIPs: 172.16.38.207
         external-dns/internal: "true"
 
+  # Sized from 30 days of observed usage.
+  resources:
+    requests:
+      cpu: 75m
+      memory: 1280Mi
+    limits:
+      memory: 2Gi
+
   metrics:
     enabled: true
+    exporter:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 48Mi
 
   tls:
     enabled: false
