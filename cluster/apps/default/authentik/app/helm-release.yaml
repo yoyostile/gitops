@@ -7,6 +7,12 @@ metadata:
 spec:
   interval: 5m
   values:
+    authentik:
+      web:
+        # Set as an env var, so it is read-only in System > Settings. Optional
+        # in 2026.8 but required from 2026.11; OIDC redirect URIs and e-mail
+        # links are built from it.
+        base_url: https://auth.${SECRET_LAB_DOMAIN}
     blueprints:
       # These ConfigMaps are shipped with this Kustomization.
       configMaps:
