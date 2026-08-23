@@ -1,0 +1,125 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paperless
+  namespace: default
+spec:
+  replicas: 1
+  # Recreate prevents Multi-Attach with the ReadWriteOnce volumes.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: paperless
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: paperless
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
+      containers:
+        - name: paperless
+          image: ghcr.io/paperless-ngx/paperless-ngx:3.0.5
+          env:
+            # The chart derived these three from the release name, the service
+            # port and the ingress host. PAPERLESS_URL is not cosmetic: OIDC
+            # redirect URIs and CSRF origins are built from it.
+            - name: COMPOSE_PROJECT_NAME
+              value: paperless
+            - name: PAPERLESS_PORT
+              value: "8000"
+            - name: PAPERLESS_URL
+              value: "https://paperless.${SECRET_LAB_DOMAIN}"
+
+            # Signs sessions; rotation logs out all users.
+            - name: PAPERLESS_SECRET_KEY
+              value: "${SECRET_PAPERLESS_SECRET_KEY}"
+            - name: PAPERLESS_OCR_LANGUAGE
+              value: deu
+            - name: PAPERLESS_TIME_ZONE
+              value: "${TZ}"
+            - name: PAPERLESS_CONSUMER_POLLING
+              value: "60"
+            - name: PAPERLESS_REDIS
+              value: "${SECRET_PAPERLESS_REDIS}"
+            - name: PAPERLESS_DBHOST
+              value: "psql-cluster-rw.default"
+            - name: PAPERLESS_DBPASS
+              value: "${SECRET_PAPERLESS_POSTGRES_PASSWORD}"
+            - name: PAPERLESS_APPS
+              value: allauth.socialaccount.providers.openid_connect
+            - name: PAPERLESS_SOCIALACCOUNT_PROVIDERS
+              value: ${SECRET_PAPERLESS_SOCIALACCOUNT_PROVIDERS}
+            - name: PAPERLESS_OCR_USER_ARGS
+              value: '{"invalidate_digital_signatures": true}'
+
+            # The virtual key restricts built-in AI to Lyceum.
+            - name: PAPERLESS_AI_ENABLED
+              value: "true"
+            - name: PAPERLESS_AI_LLM_BACKEND
+              value: "openai-like"
+            # OpenAILike appends /chat/completions to this /v1 base.
+            - name: PAPERLESS_AI_LLM_ENDPOINT
+              value: "http://bifrost.default.svc.cluster.local:8080/v1"
+            - name: PAPERLESS_AI_LLM_API_KEY
+              value: "${SECRET_PAPERLESS_BIFROST_VK}"
+            # Prefix with Bifrost's lowercase provider name.
+            - name: PAPERLESS_AI_LLM_MODEL
+              value: "lyceum/z-ai/glm-5.2-instant"
+            - name: PAPERLESS_AI_LLM_EMBEDDING_BACKEND
+              value: "openai-like"
+            - name: PAPERLESS_AI_LLM_EMBEDDING_MODEL
+              value: "lyceum/Qwen/Qwen3-Embedding-8B"
+            # Bifrost uses an RFC1918 ClusterIP.
+            - name: PAPERLESS_AI_LLM_ALLOW_INTERNAL_ENDPOINTS
+              value: "true"
+            - name: PAPERLESS_AI_LLM_REQUEST_TIMEOUT
+              value: "300"
+            - name: PAPERLESS_AI_LLM_OUTPUT_LANGUAGE
+              value: "de"
+            - name: USERMAP_UID
+              value: "3000"
+            - name: USERMAP_GID
+              value: "3000"
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: http
+          readinessProbe:
+            tcpSocket:
+              port: http
+          # Sized from 14 days of observed usage.
+          resources:
+            requests:
+              cpu: 265m
+              memory: 1088Mi
+            limits:
+              memory: 3520Mi
+          volumeMounts:
+            - name: data
+              mountPath: /usr/src/paperless/data
+            - name: media
+              mountPath: /usr/src/paperless/media
+      # The chart also carried disabled consume/export NFS mounts, kept here so
+      # the paths are not lost if they are ever switched on:
+      #   consume -> ${SECRET_NFS_HOST}:${SECRET_NFS_PATH}/paperless/import
+      #              at /usr/src/paperless/consume
+      #   export  -> ${SECRET_NFS_HOST}:${SECRET_NFS_PATH}/paperless/export
+      #              at /usr/src/paperless/export
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: paperless-data
+        - name: media
+          persistentVolumeClaim:
+            claimName: paperless-media
