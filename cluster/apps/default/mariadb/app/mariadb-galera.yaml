@@ -45,13 +45,13 @@ spec:
         metallb.universe.tf/loadBalancerIPs: 172.16.38.207
         external-dns/internal: "true"
 
-  # Sized from 30 days of observed usage.
+  # Sized from 30 days of observed usage. No memory limit on purpose: MariaDB
+  # sizes its buffer pool against what it sees, and an OOM kill here evicts a
+  # Galera node, which can force an SST instead of a clean restart.
   resources:
     requests:
       cpu: 75m
       memory: 1280Mi
-    limits:
-      memory: 2Gi
 
   metrics:
     enabled: true
