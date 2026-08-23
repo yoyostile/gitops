@@ -170,6 +170,18 @@
       allowedVersions: "!/^8\\./",
     },
     {
+      // firecrawl's chart comes from their Git repo and every image is pinned
+      // by digest in the HelmRelease postRenderer, so the tag in `values` is
+      // inert — kustomize replaces it with the digest. Bumping the tag alone
+      // changes nothing at runtime. Upstream also still ships
+      // `image: rabbitmq:3-management`, so moving to 4.x would put us ahead of
+      // what firecrawl tests against. The broker is ephemeral (no volumes),
+      // so it follows firecrawl, not us.
+      matchDatasources: ["docker"],
+      matchPackageNames: ["docker.io/library/rabbitmq"],
+      enabled: false,
+    },
+    {
       // Moves the nixpkgs branch in flake.nix (nixos-26.05 -> next release).
       // A NixOS release upgrade, not a routine bump — hence dep/major.
       matchManagers: ["nix"],
