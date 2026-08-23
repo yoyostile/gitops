@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: teslamate
-          image: teslamate/teslamate:4.1.1
+          image: teslamate/teslamate:4.2.0
           env:
             - name: TZ
               value: "${TZ}"
