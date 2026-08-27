@@ -92,10 +92,11 @@ spec:
             # Per-page OCR timeout; large-format plans exceed the default.
             - name: SETUP_OCR_VALIDATION_TIMEOUT_MS
               value: "300000"
-            # Paperless owns text extraction; a second OCR pass can degrade
-            # embedded PDF text. MISTRAL_* is legacy naming for the custom provider.
+            # On: paperless's `skip` OCR mode takes a PDF's embedded text verbatim,
+            # so scans and handwriting reach it as pictures with no text at all.
+            # MISTRAL_* is legacy naming for the custom provider.
             - name: MISTRAL_OCR_ENABLED
-              value: "no"
+              value: "yes"
             - name: OCR_PROVIDER
               value: "custom"
             - name: OCR_API_URL
