@@ -99,8 +99,11 @@ spec:
               value: "yes"
             - name: OCR_PROVIDER
               value: "custom"
+            # Full endpoint, not a base URL: zettelrobbe POSTs here verbatim and
+            # appends nothing, unlike CUSTOM_BASE_URL above. Pointing this at /v1
+            # makes every page fail with 405.
             - name: OCR_API_URL
-              value: "http://bifrost.default.svc.cluster.local:8080/v1"
+              value: "http://bifrost.default.svc.cluster.local:8080/v1/chat/completions"
             # Selected from handwriting evaluation.
             - name: MISTRAL_OCR_MODEL
               value: "tensorx/qwen/qwen3-vl-235b-a22b-instruct"
