@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: zettelrobbe
-          image: docker.io/admonstrator/zettelrobbe:v2026.08.04
+          image: docker.io/admonstrator/zettelrobbe:v2026.08.05
           ports:
             - name: http
               containerPort: 3000
