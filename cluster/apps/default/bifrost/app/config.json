@@ -351,486 +351,6 @@
     ],
     "pricing_overrides": [
       {
-        "id": "lyceum-MiniMaxAI-MiniMax-M2.5",
-        "name": "Lyceum MiniMaxAI/MiniMax-M2.5",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "MiniMaxAI/MiniMax-M2.5",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":3e-07}"
-      },
-      {
-        "id": "lyceum-MiniMaxAI-MiniMax-M2.5-fast",
-        "name": "Lyceum MiniMaxAI/MiniMax-M2.5-fast",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "MiniMaxAI/MiniMax-M2.5-fast",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":3e-07}"
-      },
-      {
-        "id": "lyceum-NousResearch-Hermes-4-405B",
-        "name": "Lyceum NousResearch/Hermes-4-405B",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "NousResearch/Hermes-4-405B",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-06,\"output_cost_per_token\":3e-06,\"input_cost_per_token\":1e-06}"
-      },
-      {
-        "id": "lyceum-NousResearch-Hermes-4-70B",
-        "name": "Lyceum NousResearch/Hermes-4-70B",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "NousResearch/Hermes-4-70B",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1.3e-07,\"output_cost_per_token\":4e-07,\"input_cost_per_token\":1.3e-07}"
-      },
-      {
-        "id": "lyceum-PrimeIntellect-INTELLECT-3",
-        "name": "Lyceum PrimeIntellect/INTELLECT-3",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "PrimeIntellect/INTELLECT-3",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":2e-07,\"output_cost_per_token\":1.1e-06,\"input_cost_per_token\":2e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen2.5-VL-72B-Instruct",
-        "name": "Lyceum Qwen/Qwen2.5-VL-72B-Instruct",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen2.5-VL-72B-Instruct",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":2.5e-07,\"output_cost_per_token\":7.5e-07,\"input_cost_per_token\":2.5e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-235B-A22B-Instruct-2507",
-        "name": "Lyceum Qwen/Qwen3-235B-A22B-Instruct-2507",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-235B-A22B-Instruct-2507",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":2e-07,\"output_cost_per_token\":6e-07,\"input_cost_per_token\":2e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-235B-A22B-Thinking-2507-fast",
-        "name": "Lyceum Qwen/Qwen3-235B-A22B-Thinking-2507-fast",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-235B-A22B-Thinking-2507-fast",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":5e-07,\"output_cost_per_token\":2e-06,\"input_cost_per_token\":5e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-30B-A3B-Instruct-2507",
-        "name": "Lyceum Qwen/Qwen3-30B-A3B-Instruct-2507",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-30B-A3B-Instruct-2507",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-32B",
-        "name": "Lyceum Qwen/Qwen3-32B",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-32B",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-Embedding-8B",
-        "name": "Lyceum Qwen/Qwen3-Embedding-8B",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-Embedding-8B",
-        "request_types": ["embedding"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-08,\"input_cost_per_token\":1e-08}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-Next-80B-A3B-Thinking",
-        "name": "Lyceum Qwen/Qwen3-Next-80B-A3B-Thinking",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-Next-80B-A3B-Thinking",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":1.5e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-Next-80B-A3B-Thinking-fast",
-        "name": "Lyceum Qwen/Qwen3-Next-80B-A3B-Thinking-fast",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-Next-80B-A3B-Thinking-fast",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":1.5e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3-Next-80B-Thinking",
-        "name": "Lyceum Qwen/Qwen3-Next-80B-Thinking",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3-Next-80B-Thinking",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":1.5e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3.5-397B-A17B",
-        "name": "Lyceum Qwen/Qwen3.5-397B-A17B",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3.5-397B-A17B",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":6e-07,\"output_cost_per_token\":3.6e-06,\"input_cost_per_token\":6e-07}"
-      },
-      {
-        "id": "lyceum-Qwen-Qwen3.5-397B-A17B-fast",
-        "name": "Lyceum Qwen/Qwen3.5-397B-A17B-fast",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "Qwen/Qwen3.5-397B-A17B-fast",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":6e-07,\"output_cost_per_token\":3.6e-06,\"input_cost_per_token\":6e-07}"
-      },
-      {
-        "id": "lyceum-deepseek-ai-DeepSeek-V3.2",
-        "name": "Lyceum deepseek-ai/DeepSeek-V3.2",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "deepseek-ai/DeepSeek-V3.2",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":4.5e-07,\"input_cost_per_token\":3e-07}"
-      },
-      {
-        "id": "lyceum-deepseek-ai-DeepSeek-V3.2-fast",
-        "name": "Lyceum deepseek-ai/DeepSeek-V3.2-fast",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "deepseek-ai/DeepSeek-V3.2-fast",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":4e-07,\"output_cost_per_token\":2e-06,\"input_cost_per_token\":4e-07}"
-      },
-      {
-        "id": "lyceum-deepseek-ai-DeepSeek-V4-Pro",
-        "name": "Lyceum deepseek-ai/DeepSeek-V4-Pro",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "deepseek-ai/DeepSeek-V4-Pro",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":4.4e-07,\"output_cost_per_token\":3.5e-06,\"input_cost_per_token\":1.75e-06}"
-      },
-      {
-        "id": "lyceum-deepseek-deepseek-v4-flash",
-        "name": "Lyceum deepseek/deepseek-v4-flash",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "deepseek/deepseek-v4-flash",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":4e-08,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1.5e-07}"
-      },
-      {
-        "id": "lyceum-deepseek-deepseek-v4-pro",
-        "name": "Lyceum deepseek/deepseek-v4-pro",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "deepseek/deepseek-v4-pro",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":4.4e-07,\"output_cost_per_token\":3.5e-06,\"input_cost_per_token\":1.75e-06}"
-      },
-      {
-        "id": "lyceum-google-gemma-2-2b-it",
-        "name": "Lyceum google/gemma-2-2b-it",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "google/gemma-2-2b-it",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":2e-08,\"output_cost_per_token\":6e-08,\"input_cost_per_token\":2e-08}"
-      },
-      {
-        "id": "lyceum-google-gemma-3-27b-it",
-        "name": "Lyceum google/gemma-3-27b-it",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "google/gemma-3-27b-it",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
-      },
-      {
-        "id": "lyceum-meta-llama-Llama-3.3-70B-Instruct",
-        "name": "Lyceum meta-llama/Llama-3.3-70B-Instruct",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "meta-llama/Llama-3.3-70B-Instruct",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1.3e-07,\"output_cost_per_token\":4e-07,\"input_cost_per_token\":1.3e-07}"
-      },
-      {
-        "id": "lyceum-meta-llama-Meta-Llama-3.1-8B-Instruct",
-        "name": "Lyceum meta-llama/Meta-Llama-3.1-8B-Instruct",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "meta-llama/Meta-Llama-3.1-8B-Instruct",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":2e-08,\"output_cost_per_token\":6e-08,\"input_cost_per_token\":2e-08}"
-      },
-      {
-        "id": "lyceum-minimax-minimax-m3",
-        "name": "Lyceum minimax/minimax-m3",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "minimax/minimax-m3",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":2e-06,\"input_cost_per_token\":4e-07}"
-      },
-      {
-        "id": "lyceum-moonshotai-Kimi-K2.5",
-        "name": "Lyceum moonshotai/Kimi-K2.5",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "moonshotai/Kimi-K2.5",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":5e-07,\"output_cost_per_token\":2.5e-06,\"input_cost_per_token\":5e-07}"
-      },
-      {
-        "id": "lyceum-moonshotai-Kimi-K2.5-fast",
-        "name": "Lyceum moonshotai/Kimi-K2.5-fast",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "moonshotai/Kimi-K2.5-fast",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":5e-07,\"output_cost_per_token\":2.5e-06,\"input_cost_per_token\":5e-07}"
-      },
-      {
-        "id": "lyceum-moonshotai-Kimi-K2.6",
-        "name": "Lyceum moonshotai/Kimi-K2.6",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "moonshotai/Kimi-K2.6",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":2.5e-07,\"output_cost_per_token\":4e-06,\"input_cost_per_token\":1e-06}"
-      },
-      {
-        "id": "lyceum-moonshotai-Kimi-K3",
-        "name": "Lyceum moonshotai/Kimi-K3",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "moonshotai/Kimi-K3",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3e-06,\"output_cost_per_token\":1.5e-05,\"input_cost_per_token\":3e-06}"
-      },
-      {
-        "id": "lyceum-moonshotai-kimi-k2.6-2",
-        "name": "Lyceum moonshotai/kimi-k2.6",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "moonshotai/kimi-k2.6",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":2.5e-07,\"output_cost_per_token\":4e-06,\"input_cost_per_token\":1e-06}"
-      },
-      {
-        "id": "lyceum-moonshotai-kimi-k2.7-code",
-        "name": "Lyceum moonshotai/kimi-k2.7-code",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "moonshotai/kimi-k2.7-code",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3.1e-07,\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.25e-06}"
-      },
-      {
-        "id": "lyceum-moonshotai-kimi-k3-2",
-        "name": "Lyceum moonshotai/kimi-k3",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "moonshotai/kimi-k3",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":7.5e-07,\"output_cost_per_token\":1.5e-05,\"input_cost_per_token\":3e-06}"
-      },
-      {
-        "id": "lyceum-nvidia-Cosmos3-Super-Reasoner",
-        "name": "Lyceum nvidia/Cosmos3-Super-Reasoner",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "nvidia/Cosmos3-Super-Reasoner",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
-      },
-      {
-        "id": "lyceum-nvidia-Llama-3_1-Nemotron-Ultra-253B-v1",
-        "name": "Lyceum nvidia/Llama-3_1-Nemotron-Ultra-253B-v1",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "nvidia/Llama-3_1-Nemotron-Ultra-253B-v1",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":6e-07,\"output_cost_per_token\":1.8e-06,\"input_cost_per_token\":6e-07}"
-      },
-      {
-        "id": "lyceum-nvidia-NVIDIA-Nemotron-3-Nano-30B-A3B",
-        "name": "Lyceum nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":6e-08,\"output_cost_per_token\":2.4e-07,\"input_cost_per_token\":6e-08}"
-      },
-      {
-        "id": "lyceum-nvidia-Nemotron-3-Nano-Omni",
-        "name": "Lyceum nvidia/Nemotron-3-Nano-Omni",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "nvidia/Nemotron-3-Nano-Omni",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":6e-08,\"output_cost_per_token\":2.4e-07,\"input_cost_per_token\":6e-08}"
-      },
-      {
-        "id": "lyceum-nvidia-Nemotron-3-Ultra-550b-a55b",
-        "name": "Lyceum nvidia/Nemotron-3-Ultra-550b-a55b",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "nvidia/Nemotron-3-Ultra-550b-a55b",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-06,\"output_cost_per_token\":3e-06,\"input_cost_per_token\":1e-06}"
-      },
-      {
-        "id": "lyceum-nvidia-nemotron-3-super-120b-a12b",
-        "name": "Lyceum nvidia/nemotron-3-super-120b-a12b",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "nvidia/nemotron-3-super-120b-a12b",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":9e-07,\"input_cost_per_token\":3e-07}"
-      },
-      {
-        "id": "lyceum-openai-gpt-oss-120b",
-        "name": "Lyceum openai/gpt-oss-120b",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "openai/gpt-oss-120b",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":6e-07,\"input_cost_per_token\":1.5e-07}"
-      },
-      {
-        "id": "lyceum-openai-gpt-oss-120b-fast",
-        "name": "Lyceum openai/gpt-oss-120b-fast",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "openai/gpt-oss-120b-fast",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":5e-07,\"input_cost_per_token\":1e-07}"
-      },
-      {
-        "id": "lyceum-openbmb-MiniCPM-V-4_5",
-        "name": "Lyceum openbmb/MiniCPM-V-4_5",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "openbmb/MiniCPM-V-4_5",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":6.6e-07,\"output_cost_per_token\":1.11e-06,\"input_cost_per_token\":6.6e-07}"
-      },
-      {
-        "id": "lyceum-qwen-qwen3-coder-30b-a3b-instruct",
-        "name": "Lyceum qwen/qwen3-coder-30b-a3b-instruct",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "qwen/qwen3-coder-30b-a3b-instruct",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-08,\"output_cost_per_token\":2.5e-07,\"input_cost_per_token\":6e-08}"
-      },
-      {
-        "id": "lyceum-qwen-qwen3.5-9b",
-        "name": "Lyceum qwen/qwen3.5-9b",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "qwen/qwen3.5-9b",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":4e-08,\"output_cost_per_token\":2e-07,\"input_cost_per_token\":1.5e-07}"
-      },
-      {
-        "id": "lyceum-z-ai-glm-5.2",
-        "name": "Lyceum z-ai/glm-5.2",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "z-ai/glm-5.2",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3.8e-07,\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.5e-06}"
-      },
-      {
-        "id": "lyceum-z-ai-glm-5.2-instant",
-        "name": "Lyceum z-ai/glm-5.2-instant (ESTIMATE, rates copied from z-ai/glm-5.2)",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "z-ai/glm-5.2-instant",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":3.8e-07,\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.5e-06}"
-      },
-      {
-        "id": "lyceum-zai-org-GLM-5",
-        "name": "Lyceum zai-org/GLM-5",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "zai-org/GLM-5",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1e-06,\"output_cost_per_token\":3.2e-06,\"input_cost_per_token\":1e-06}"
-      },
-      {
-        "id": "lyceum-zai-org-GLM-5.1",
-        "name": "Lyceum zai-org/GLM-5.1",
-        "scope_kind": "provider",
-        "provider_id": "lyceum",
-        "match_type": "exact",
-        "pattern": "zai-org/GLM-5.1",
-        "request_types": ["chat_completion"],
-        "pricing_patch": "{\"cache_read_input_token_cost\":1.4e-06,\"output_cost_per_token\":4.4e-06,\"input_cost_per_token\":1.4e-06}"
-      },
-      {
         "id": "tensorx-deepseek-deepseek-chat-v3.1",
         "name": "TensorX deepseek/deepseek-chat-v3.1",
         "scope_kind": "provider",
@@ -1069,6 +589,656 @@
         "pattern": "z-ai/glm-5v-turbo",
         "request_types": ["chat_completion"],
         "pricing_patch": "{\"input_cost_per_token\":1.2e-06,\"output_cost_per_token\":4e-06,\"cache_read_input_token_cost\":3e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-ai-deepseek-v3.2",
+        "name": "Lyceum deepseek-ai/deepseek-v3.2",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek-ai/deepseek-v3.2",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":4.5e-07,\"input_cost_per_token\":3e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-ai-deepseek-v3.2-fast",
+        "name": "Lyceum deepseek-ai/deepseek-v3.2-fast",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek-ai/deepseek-v3.2-fast",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":4e-07,\"output_cost_per_token\":2e-06,\"input_cost_per_token\":4e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-ai-deepseek-v4-flash-0731",
+        "name": "Lyceum deepseek-ai/deepseek-v4-flash-0731",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek-ai/deepseek-v4-flash-0731",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6e-08,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":2.5e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-ai-deepseek-v4-pro",
+        "name": "Lyceum deepseek-ai/deepseek-v4-pro",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek-ai/deepseek-v4-pro",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":4.4e-07,\"output_cost_per_token\":3.5e-06,\"input_cost_per_token\":1.75e-06}"
+      },
+      {
+        "id": "lyceum-deepseek-deepseek-r1-0528",
+        "name": "Lyceum deepseek/deepseek-r1-0528",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-r1-0528",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.7e-07,\"output_cost_per_token\":2.6e-06,\"input_cost_per_token\":6.6e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-deepseek-v3.2",
+        "name": "Lyceum deepseek/deepseek-v3.2",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-v3.2",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":7e-08,\"output_cost_per_token\":5e-07,\"input_cost_per_token\":3e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-deepseek-v4-flash",
+        "name": "Lyceum deepseek/deepseek-v4-flash",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-v4-flash",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":4e-08,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1.5e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-deepseek-v4-flash-0731",
+        "name": "Lyceum deepseek/deepseek-v4-flash-0731",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-v4-flash-0731",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6e-08,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":2.5e-07}"
+      },
+      {
+        "id": "lyceum-deepseek-deepseek-v4-pro",
+        "name": "Lyceum deepseek/deepseek-v4-pro",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "deepseek/deepseek-v4-pro",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":4.4e-07,\"output_cost_per_token\":3.5e-06,\"input_cost_per_token\":1.75e-06}"
+      },
+      {
+        "id": "lyceum-google-gemma-2-2b-it",
+        "name": "Lyceum google/gemma-2-2b-it",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "google/gemma-2-2b-it",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2e-08,\"output_cost_per_token\":6e-08,\"input_cost_per_token\":2e-08}"
+      },
+      {
+        "id": "lyceum-google-gemma-3-27b-it",
+        "name": "Lyceum google/gemma-3-27b-it",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "google/gemma-3-27b-it",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
+      },
+      {
+        "id": "lyceum-meta-llama-llama-3.3-70b-instruct",
+        "name": "Lyceum meta-llama/llama-3.3-70b-instruct",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "meta-llama/llama-3.3-70b-instruct",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.3e-07,\"output_cost_per_token\":4e-07,\"input_cost_per_token\":1.3e-07}"
+      },
+      {
+        "id": "lyceum-meta-llama-meta-llama-3.1-8b-instruct",
+        "name": "Lyceum meta-llama/meta-llama-3.1-8b-instruct",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "meta-llama/meta-llama-3.1-8b-instruct",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2e-08,\"output_cost_per_token\":6e-08,\"input_cost_per_token\":2e-08}"
+      },
+      {
+        "id": "lyceum-minimax-minimax-m2.5",
+        "name": "Lyceum minimax/minimax-m2.5",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "minimax/minimax-m2.5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":7e-08,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":3e-07}"
+      },
+      {
+        "id": "lyceum-minimax-minimax-m3",
+        "name": "Lyceum minimax/minimax-m3",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "minimax/minimax-m3",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":2e-06,\"input_cost_per_token\":4e-07}"
+      },
+      {
+        "id": "lyceum-minimaxai-minimax-m2.5",
+        "name": "Lyceum minimaxai/minimax-m2.5",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "minimaxai/minimax-m2.5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":3e-07}"
+      },
+      {
+        "id": "lyceum-minimaxai-minimax-m2.5-fast",
+        "name": "Lyceum minimaxai/minimax-m2.5-fast",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "minimaxai/minimax-m2.5-fast",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":3e-07}"
+      },
+      {
+        "id": "lyceum-minimaxai-minimax-m3",
+        "name": "Lyceum minimaxai/minimax-m3",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "minimaxai/minimax-m3",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":2e-06,\"input_cost_per_token\":4e-07}"
+      },
+      {
+        "id": "lyceum-moonshotai-kimi-k2.5",
+        "name": "Lyceum moonshotai/kimi-k2.5",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k2.5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":5e-07,\"output_cost_per_token\":2.5e-06,\"input_cost_per_token\":5e-07}"
+      },
+      {
+        "id": "lyceum-moonshotai-kimi-k2.5-fast",
+        "name": "Lyceum moonshotai/kimi-k2.5-fast",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k2.5-fast",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":5e-07,\"output_cost_per_token\":2.5e-06,\"input_cost_per_token\":5e-07}"
+      },
+      {
+        "id": "lyceum-moonshotai-kimi-k2.6",
+        "name": "Lyceum moonshotai/kimi-k2.6",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k2.6",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2.5e-07,\"output_cost_per_token\":4e-06,\"input_cost_per_token\":1e-06}"
+      },
+      {
+        "id": "lyceum-moonshotai-kimi-k2.7-code",
+        "name": "Lyceum moonshotai/kimi-k2.7-code",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k2.7-code",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3.1e-07,\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.25e-06}"
+      },
+      {
+        "id": "lyceum-moonshotai-kimi-k3",
+        "name": "Lyceum moonshotai/kimi-k3",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "moonshotai/kimi-k3",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":7.5e-07,\"output_cost_per_token\":1.5e-05,\"input_cost_per_token\":3e-06}"
+      },
+      {
+        "id": "lyceum-nousresearch-hermes-4-405b",
+        "name": "Lyceum nousresearch/hermes-4-405b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nousresearch/hermes-4-405b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-06,\"output_cost_per_token\":3e-06,\"input_cost_per_token\":1e-06}"
+      },
+      {
+        "id": "lyceum-nousresearch-hermes-4-70b",
+        "name": "Lyceum nousresearch/hermes-4-70b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nousresearch/hermes-4-70b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.3e-07,\"output_cost_per_token\":4e-07,\"input_cost_per_token\":1.3e-07}"
+      },
+      {
+        "id": "lyceum-nvidia-cosmos3-super-reasoner",
+        "name": "Lyceum nvidia/cosmos3-super-reasoner",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nvidia/cosmos3-super-reasoner",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
+      },
+      {
+        "id": "lyceum-nvidia-llama-3_1-nemotron-ultra-253b-v1",
+        "name": "Lyceum nvidia/llama-3_1-nemotron-ultra-253b-v1",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nvidia/llama-3_1-nemotron-ultra-253b-v1",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6e-07,\"output_cost_per_token\":1.8e-06,\"input_cost_per_token\":6e-07}"
+      },
+      {
+        "id": "lyceum-nvidia-nemotron-3-nano-omni",
+        "name": "Lyceum nvidia/nemotron-3-nano-omni",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nvidia/nemotron-3-nano-omni",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6e-08,\"output_cost_per_token\":2.4e-07,\"input_cost_per_token\":6e-08}"
+      },
+      {
+        "id": "lyceum-nvidia-nemotron-3-super-120b-a12b",
+        "name": "Lyceum nvidia/nemotron-3-super-120b-a12b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nvidia/nemotron-3-super-120b-a12b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":9e-07,\"input_cost_per_token\":3e-07}"
+      },
+      {
+        "id": "lyceum-nvidia-nemotron-3-ultra-550b-a55b",
+        "name": "Lyceum nvidia/nemotron-3-ultra-550b-a55b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nvidia/nemotron-3-ultra-550b-a55b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-06,\"output_cost_per_token\":3e-06,\"input_cost_per_token\":1e-06}"
+      },
+      {
+        "id": "lyceum-nvidia-nvidia-nemotron-3-nano-30b-a3b",
+        "name": "Lyceum nvidia/nvidia-nemotron-3-nano-30b-a3b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "nvidia/nvidia-nemotron-3-nano-30b-a3b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6e-08,\"output_cost_per_token\":2.4e-07,\"input_cost_per_token\":6e-08}"
+      },
+      {
+        "id": "lyceum-openai-gpt-oss-120b",
+        "name": "Lyceum openai/gpt-oss-120b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "openai/gpt-oss-120b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":6e-07,\"input_cost_per_token\":1.5e-07}"
+      },
+      {
+        "id": "lyceum-openai-gpt-oss-120b-fast",
+        "name": "Lyceum openai/gpt-oss-120b-fast",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "openai/gpt-oss-120b-fast",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":5e-07,\"input_cost_per_token\":1e-07}"
+      },
+      {
+        "id": "lyceum-openbmb-minicpm-v-4_5",
+        "name": "Lyceum openbmb/minicpm-v-4_5",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "openbmb/minicpm-v-4_5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6.6e-07,\"output_cost_per_token\":1.11e-06,\"input_cost_per_token\":6.6e-07}"
+      },
+      {
+        "id": "lyceum-primeintellect-intellect-3",
+        "name": "Lyceum primeintellect/intellect-3",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "primeintellect/intellect-3",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2e-07,\"output_cost_per_token\":1.1e-06,\"input_cost_per_token\":2e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen2.5-vl-72b-instruct",
+        "name": "Lyceum qwen/qwen2.5-vl-72b-instruct",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen2.5-vl-72b-instruct",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2.5e-07,\"output_cost_per_token\":7.5e-07,\"input_cost_per_token\":2.5e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-235b-a22b-2507",
+        "name": "Lyceum qwen/qwen3-235b-a22b-2507",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-235b-a22b-2507",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2e-08,\"output_cost_per_token\":4.6e-07,\"input_cost_per_token\":7e-08}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-235b-a22b-instruct-2507",
+        "name": "Lyceum qwen/qwen3-235b-a22b-instruct-2507",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-235b-a22b-instruct-2507",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2e-07,\"output_cost_per_token\":6e-07,\"input_cost_per_token\":2e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-235b-a22b-thinking-2507-fast",
+        "name": "Lyceum qwen/qwen3-235b-a22b-thinking-2507-fast",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-235b-a22b-thinking-2507-fast",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":5e-07,\"output_cost_per_token\":2e-06,\"input_cost_per_token\":5e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-30b-a3b-instruct-2507",
+        "name": "Lyceum qwen/qwen3-30b-a3b-instruct-2507",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-30b-a3b-instruct-2507",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-32b",
+        "name": "Lyceum qwen/qwen3-32b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-32b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":3e-07,\"input_cost_per_token\":1e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-coder-30b-a3b-instruct",
+        "name": "Lyceum qwen/qwen3-coder-30b-a3b-instruct",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-coder-30b-a3b-instruct",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-08,\"output_cost_per_token\":2.5e-07,\"input_cost_per_token\":6e-08}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-embedding-8b",
+        "name": "Lyceum qwen/qwen3-embedding-8b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-embedding-8b",
+        "request_types": ["embedding"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-08,\"input_cost_per_token\":1e-08}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-next-80b-a3b-thinking",
+        "name": "Lyceum qwen/qwen3-next-80b-a3b-thinking",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-next-80b-a3b-thinking",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":1.5e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-next-80b-a3b-thinking-fast",
+        "name": "Lyceum qwen/qwen3-next-80b-a3b-thinking-fast",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-next-80b-a3b-thinking-fast",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":1.5e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3-next-80b-thinking",
+        "name": "Lyceum qwen/qwen3-next-80b-thinking",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3-next-80b-thinking",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.5e-07,\"output_cost_per_token\":1.2e-06,\"input_cost_per_token\":1.5e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3.5-122b-a10b",
+        "name": "Lyceum qwen/qwen3.5-122b-a10b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.5-122b-a10b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.3e-07,\"output_cost_per_token\":3.5e-06,\"input_cost_per_token\":5e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3.5-397b-a17b",
+        "name": "Lyceum qwen/qwen3.5-397b-a17b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.5-397b-a17b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6e-07,\"output_cost_per_token\":3.6e-06,\"input_cost_per_token\":6e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3.5-397b-a17b-fast",
+        "name": "Lyceum qwen/qwen3.5-397b-a17b-fast",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.5-397b-a17b-fast",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6e-07,\"output_cost_per_token\":3.6e-06,\"input_cost_per_token\":6e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3.5-9b",
+        "name": "Lyceum qwen/qwen3.5-9b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.5-9b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":4e-08,\"output_cost_per_token\":2e-07,\"input_cost_per_token\":1.5e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3.8-2.4t-a95b",
+        "name": "Lyceum qwen/qwen3.8-2.4t-a95b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.8-2.4t-a95b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":6.3e-07,\"output_cost_per_token\":6e-06,\"input_cost_per_token\":2.5e-06}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3.8-27b",
+        "name": "Lyceum qwen/qwen3.8-27b",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.8-27b",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-07,\"output_cost_per_token\":2.4e-06,\"input_cost_per_token\":4e-07}"
+      },
+      {
+        "id": "lyceum-qwen-qwen3.8-flash-next",
+        "name": "Lyceum qwen/qwen3.8-flash-next",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "qwen/qwen3.8-flash-next",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":5e-08,\"output_cost_per_token\":5e-07,\"input_cost_per_token\":2e-07}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5",
+        "name": "Lyceum z-ai/glm-5",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":2.5e-07,\"output_cost_per_token\":3.2e-06,\"input_cost_per_token\":1e-06}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5-turbo",
+        "name": "Lyceum z-ai/glm-5-turbo",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5-turbo",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":4e-06,\"input_cost_per_token\":1.2e-06}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5.1",
+        "name": "Lyceum z-ai/glm-5.1",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5.1",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3.5e-07,\"output_cost_per_token\":4.4e-06,\"input_cost_per_token\":1.4e-06}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5.2",
+        "name": "Lyceum z-ai/glm-5.2",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5.2",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3.8e-07,\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.5e-06}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5.2-instant",
+        "name": "Lyceum z-ai/glm-5.2-instant (ESTIMATE, rates copied from z-ai/glm-5.2)",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5.2-instant",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3.8e-07,\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.5e-06}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5.3",
+        "name": "Lyceum z-ai/glm-5.3",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5.3",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":4.4e-07,\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.75e-06}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5.3-flash",
+        "name": "Lyceum z-ai/glm-5.3-flash",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5.3-flash",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":5e-08,\"output_cost_per_token\":5e-07,\"input_cost_per_token\":2e-07}"
+      },
+      {
+        "id": "lyceum-z-ai-glm-5v-turbo",
+        "name": "Lyceum z-ai/glm-5v-turbo",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "z-ai/glm-5v-turbo",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":3e-07,\"output_cost_per_token\":4e-06,\"input_cost_per_token\":1.2e-06}"
+      },
+      {
+        "id": "lyceum-zai-org-glm-5",
+        "name": "Lyceum zai-org/glm-5",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "zai-org/glm-5",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1e-06,\"output_cost_per_token\":3.2e-06,\"input_cost_per_token\":1e-06}"
+      },
+      {
+        "id": "lyceum-zai-org-glm-5.1",
+        "name": "Lyceum zai-org/glm-5.1",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "zai-org/glm-5.1",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":1.4e-06,\"output_cost_per_token\":4.4e-06,\"input_cost_per_token\":1.4e-06}"
+      },
+      {
+        "id": "lyceum-zai-org-glm-5.2",
+        "name": "Lyceum zai-org/glm-5.2",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "zai-org/glm-5.2",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"output_cost_per_token\":4.5e-06,\"input_cost_per_token\":1.5e-06}"
+      },
+      {
+        "id": "lyceum-zai-org-glm-5.3-flash",
+        "name": "Lyceum zai-org/glm-5.3-flash",
+        "scope_kind": "provider",
+        "provider_id": "lyceum",
+        "match_type": "exact",
+        "pattern": "zai-org/glm-5.3-flash",
+        "request_types": ["chat_completion"],
+        "pricing_patch": "{\"cache_read_input_token_cost\":5e-08,\"output_cost_per_token\":5e-07,\"input_cost_per_token\":2e-07}"
       }
     ]
   },
