@@ -10,7 +10,6 @@ resources:
   - ./echo/ks.yaml
   - ./evcc/ks.yaml
   - ./echoip/ks.yaml
-  - ./frigate/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml
   - ./heck-sh/ks.yaml
