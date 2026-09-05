@@ -20,7 +20,22 @@ spec:
         - authentik-blueprint-outpost
       secrets:
         - authentik-blueprint-identity
+    server:
+      # Sized from 30 days of observed usage.
+      resources:
+        requests:
+          cpu: 100m
+          memory: 1Gi
+        limits:
+          memory: 1536Mi
     worker:
+      # Sized from 30 days of observed usage.
+      resources:
+        requests:
+          cpu: 150m
+          memory: 640Mi
+        limits:
+          memory: 1Gi
       # Per-app blueprints are optional, so mount them outside the chart's
       # non-optional blueprints.configMaps list.
       volumes:

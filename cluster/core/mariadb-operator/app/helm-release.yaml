@@ -15,7 +15,20 @@ spec:
         name: mariadb-operator-charts
         namespace: flux-system
   values:
+    # Resources sized from 30 days of observed usage.
     webhook:
       cert:
         certManager:
           enabled: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+    resources:
+      requests:
+        cpu: 10m
+        memory: 192Mi
+      limits:
+        memory: 320Mi

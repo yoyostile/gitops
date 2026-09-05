@@ -32,6 +32,13 @@ spec:
               value: https://shhh.${SECRET_LAB_DOMAIN}
           image: ghcr.io/yoyostile/shhh:latest
           imagePullPolicy: Always
+          # Sized from 30 days of observed usage.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 192Mi
+            limits:
+              memory: 320Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst

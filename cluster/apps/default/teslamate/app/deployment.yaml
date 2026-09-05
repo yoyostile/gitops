@@ -51,3 +51,10 @@ spec:
           readinessProbe:
             tcpSocket:
               port: http
+          # Sized from 30 days of observed usage.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 384Mi
+            limits:
+              memory: 640Mi

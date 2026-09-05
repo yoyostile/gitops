@@ -38,6 +38,13 @@ spec:
       - "{{`--fqdn-template={{.Name}}.lab.${SECRET_LAB_DOMAIN}`}}"
       - "--annotation-filter=external-dns/external=true"
     txtOwnerId: gitops
+    # Sized from 30 days of observed usage.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
     env:
       - name: CF_API_TOKEN
         valueFrom:
@@ -72,6 +79,13 @@ spec:
     nodeSelector:
       topology.kubernetes.io/region: lab
     replicaCount: 1
+    # Sized from 30 days of observed usage.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
     rbac:
       create: true
     sources:
@@ -115,6 +129,12 @@ spec:
               secretKeyRef:
                 name: mikrotik-credentials
                 key: MIKROTIK_SKIP_TLS_VERIFY
+        resources:
+          requests:
+            cpu: 10m
+            memory: 48Mi
+          limits:
+            memory: 96Mi
         livenessProbe:
           httpGet:
             path: /healthz
