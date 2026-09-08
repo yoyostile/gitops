@@ -30,7 +30,7 @@ spec:
             value: "1"
       containers:
         - name: plex
-          image: lscr.io/linuxserver/plex:1.43.3.10896-cb3ebc72d-ls321
+          image: lscr.io/linuxserver/plex:1.43.3.10896-cb3ebc72d-ls323
           env:
             - name: TZ
               value: "${TZ}"
