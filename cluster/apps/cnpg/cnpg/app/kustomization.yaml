@@ -5,3 +5,18 @@ namespace: cnpg
 resources:
   - helm-release.yaml
   - https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/v0.10.0/manifest.yaml
+patches:
+  # The upstream release manifest ships no requests, so the pod runs BestEffort.
+  # Sized from 30 days of observed usage.
+  - target:
+      kind: Deployment
+      name: barman-cloud
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi

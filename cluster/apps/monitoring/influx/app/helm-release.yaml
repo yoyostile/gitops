@@ -43,3 +43,10 @@ spec:
       data:
         max-series-per-database: 0
         max-values-per-tag: 0
+    # Sized from 30 days of observed usage.
+    resources:
+      requests:
+        cpu: 15m
+        memory: 256Mi
+      limits:
+        memory: 512Mi

@@ -29,6 +29,40 @@ spec:
     # to keep the existing legacy FRR (BGP) mode. The two are mutually exclusive.
     frrk8s:
       enabled: false
+    # Sized from 30 days of observed usage.
+    controller:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
     speaker:
+      resources:
+        requests:
+          cpu: 15m
+          memory: 128Mi
+        limits:
+          memory: 192Mi
       frr:
         enabled: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
+      frrMetrics:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
+      reloader:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 48Mi

@@ -26,3 +26,10 @@ spec:
     configuration:
       logging:
         minimumLevel: Debug
+    # Sized from 30 days of observed usage.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 512Mi
+      limits:
+        memory: 768Mi

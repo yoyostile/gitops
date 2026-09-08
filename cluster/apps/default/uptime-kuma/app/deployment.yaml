@@ -40,6 +40,13 @@ spec:
                 secretKeyRef:
                   name: mariadb-galera
                   key: uptime-kuma-password
+          # Sized from 30 days of observed usage.
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 384Mi
           volumeMounts:
             - mountPath: /app/data
               name: uptime-kuma
