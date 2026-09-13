@@ -31,3 +31,10 @@ spec:
       path: ${SECRET_NFS_PATH}/k3s-nfs-provisioner
     storageClass:
       defaultClass: true
+    # Sized from 30 days of observed usage.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
