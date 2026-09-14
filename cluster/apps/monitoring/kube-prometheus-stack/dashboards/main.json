@@ -54,7 +54,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -115,7 +117,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -176,7 +180,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -262,7 +268,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -353,7 +361,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -414,7 +424,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -479,7 +491,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -540,7 +554,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -605,7 +621,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -698,7 +716,9 @@
         "sortBy": "Value",
         "sortOrder": "Descending",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -771,7 +791,9 @@
         "sortBy": "Value",
         "sortOrder": "Descending",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -844,7 +866,9 @@
         "sortBy": "Value",
         "sortOrder": "Descending",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -917,7 +941,9 @@
         "sortBy": "Value",
         "sortOrder": "Descending",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -1000,7 +1026,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -1083,7 +1112,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -1148,7 +1180,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -1335,7 +1370,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -1398,7 +1436,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -1463,7 +1503,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -1520,7 +1562,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -1581,7 +1625,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -1641,7 +1687,9 @@
         "sortBy": "Value",
         "sortOrder": "Descending",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -1849,7 +1897,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -1987,7 +2038,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2056,7 +2109,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2117,7 +2172,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2182,7 +2239,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2252,7 +2311,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2309,7 +2370,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2366,7 +2429,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2423,7 +2488,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2480,7 +2547,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2549,7 +2618,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2630,7 +2701,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -2879,7 +2953,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -2948,7 +3024,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3005,7 +3083,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3074,7 +3154,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3131,7 +3213,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3188,7 +3272,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3216,6 +3302,77 @@
       }
     },
     {
+      "type": "timeseries",
+      "title": "Hausakku SoC",
+      "id": 71,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 82
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_battery_percent{entity=\"sensor.marstek_venus_soc_batterie\"}",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "SoC"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "min",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "min": 0,
+          "max": 100,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
       "type": "stat",
       "title": "PV-Erzeugung 30d",
       "id": 52,
@@ -3227,7 +3384,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 0,
+        "x": 12,
         "y": 82
       },
       "targets": [
@@ -3249,7 +3406,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3284,7 +3443,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 4,
+        "x": 16,
         "y": 82
       },
       "targets": [
@@ -3306,7 +3465,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3341,7 +3502,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 8,
+        "x": 20,
         "y": 82
       },
       "targets": [
@@ -3363,7 +3524,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3399,7 +3562,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 82
+        "y": 86
       },
       "targets": [
         {
@@ -3420,7 +3583,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3468,7 +3633,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 82
+        "y": 86
       },
       "targets": [
         {
@@ -3489,7 +3654,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3529,7 +3696,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 82
+        "y": 86
       },
       "targets": [
         {
@@ -3550,7 +3717,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -3586,7 +3755,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 86
+        "y": 90
       },
       "targets": [
         {
@@ -3669,7 +3838,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 95
+        "y": 99
       },
       "panels": []
     },
@@ -3686,7 +3855,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 96
+        "y": 100
       },
       "targets": [
         {
@@ -3707,7 +3876,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -3749,7 +3921,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 96
+        "y": 100
       },
       "targets": [
         {
@@ -3770,7 +3942,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -3814,7 +3989,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -3835,7 +4010,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -3877,7 +4055,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -3951,7 +4129,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 104
+        "y": 108
       },
       "targets": [
         {
@@ -3972,7 +4150,10 @@
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
-          "calcs": ["lastNotNull", "max"]
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
           "mode": "multi",
@@ -4015,7 +4196,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 112
+        "y": 116
       },
       "targets": [
         {
@@ -4036,7 +4217,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -4072,7 +4255,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 112
+        "y": 116
       },
       "targets": [
         {
@@ -4093,7 +4276,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -4129,7 +4314,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 112
+        "y": 116
       },
       "targets": [
         {
@@ -4150,7 +4335,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -4186,7 +4373,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 112
+        "y": 116
       },
       "targets": [
         {
@@ -4207,7 +4394,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -4259,7 +4448,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 112
+        "y": 116
       },
       "targets": [
         {
@@ -4280,7 +4469,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -4316,7 +4507,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 112
+        "y": 116
       },
       "targets": [
         {
@@ -4337,7 +4528,9 @@
         "justifyMode": "auto",
         "textMode": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         }
@@ -4364,7 +4557,9 @@
   "preload": false,
   "refresh": "1m",
   "schemaVersion": 41,
-  "tags": ["overview"],
+  "tags": [
+    "overview"
+  ],
   "templating": {
     "list": []
   },
