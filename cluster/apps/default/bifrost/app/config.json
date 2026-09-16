@@ -21,18 +21,13 @@
       {
         "id": "vk-reimbursat0r-invoice",
         "name": "reimbursat0r-invoice",
-        "description": "Invoice extraction. Lyceum Llama-3.3-70B (EU) active; ollama kept as rollback. NOTE: invoice OCR text now leaves the LAN - the earlier local-only guarantee no longer holds for this path.",
+        "description": "Invoice extraction. Lyceum deepseek-v4-flash (EU). Llama-3.3-70B was removed from Lyceum's catalogue 2026-09; ollama dropped as rollback (Mac Mini unreachable from the cluster). NOTE: invoice OCR text leaves the LAN - the earlier local-only guarantee no longer holds for this path.",
         "value": "env.BIFROST_VK_INVOICE",
         "is_active": true,
         "provider_configs": [
           {
-            "provider": "ollama",
-            "allowed_models": ["qwen2.5:7b-32k", "qwen2.5:14b-32k"],
-            "key_ids": ["*"]
-          },
-          {
             "provider": "lyceum",
-            "allowed_models": ["meta-llama/Llama-3.3-70B-Instruct"],
+            "allowed_models": ["deepseek/deepseek-v4-flash-0731"],
             "key_ids": ["*"]
           }
         ]
@@ -78,7 +73,7 @@
       {
         "id": "vk-general-openai-eu",
         "name": "general-openai-eu",
-        "description": "General-purpose key for OpenAI on the EU residency endpoint. Not wired to reimbursat0r - the invoice path stays ollama-only. Models are unrestricted here because the boundary worth enforcing is the provider, not the model list; a spend cap does the rest.",
+        "description": "General-purpose key for OpenAI on the EU residency endpoint. Not wired to reimbursat0r - the invoice path is lyceum-only. Models are unrestricted here because the boundary worth enforcing is the provider, not the model list; a spend cap does the rest.",
         "value": "env.BIFROST_VK_GENERAL",
         "is_active": true,
         "provider_configs": [

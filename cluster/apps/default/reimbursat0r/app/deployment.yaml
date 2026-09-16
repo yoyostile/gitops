@@ -40,14 +40,14 @@ spec:
             # Exclude documents that reclaim rather than reimburse money.
             - name: PAPERLESS_NOTICE_QUERY
               value: "Erstattungsbescheid NOT Rückforderung NOT Aufhebungsbescheid"
-            # BIFROST_VK_INVOICE restricts this path to Ollama.
+            # BIFROST_VK_INVOICE restricts this path to Lyceum.
             - name: EXTRACTION_BACKEND
               value: "bifrost"
             - name: BIFROST_URL
               value: "http://bifrost.default.svc.cluster.local:8080"
-            # Selected by the invoice extraction evaluation.
+            # Lyceum dropped Llama-3.3-70B (404 model not found, 2026-09-16); switched to deepseek-v4-flash.
             - name: EXTRACTION_MODEL_INVOICE
-              value: "lyceum/meta-llama/Llama-3.3-70B-Instruct"
+              value: "lyceum/deepseek/deepseek-v4-flash-0731"
             # Selected by the notice line-item evaluation.
             - name: EXTRACTION_MODEL_NOTICE
               value: "lyceum/Qwen/Qwen3-235B-A22B-Instruct-2507"
