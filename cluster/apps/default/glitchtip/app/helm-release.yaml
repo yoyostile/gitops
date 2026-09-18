@@ -55,6 +55,9 @@ spec:
         value: "false"
       - name: ENABLE_ORGANIZATION_CREATION
         value: "true"
+      # Serves /mcp (streamable HTTP + OAuth DCR) from the web ASGI app.
+      - name: GLITCHTIP_ENABLE_MCP
+        value: "true"
       - name: CELERY_WORKER_AUTOSCALE
         value: "1,3"
       - name: CELERY_WORKER_MAX_TASKS_PER_CHILD
