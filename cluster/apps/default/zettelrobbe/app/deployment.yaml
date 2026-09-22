@@ -103,10 +103,11 @@ spec:
             # /api/chat ollama-style first. A full endpoint here yields 405s.
             - name: OCR_API_URL
               value: "http://bifrost.default.svc.cluster.local:8080/v1"
-            # The zettelrobbe virtual key only reaches the lyceum provider, and this
-            # is the sole vision model it exposes.
+            # The zettelrobbe virtual key only reaches the lyceum provider; the
+            # model list there churns, and a dropped model surfaces as a 405 from
+            # the Ollama-native fallback, never as the real 403 model_blocked.
             - name: MISTRAL_OCR_MODEL
-              value: "lyceum/Qwen/Qwen2.5-VL-72B-Instruct"
+              value: "lyceum/qwen/qwen3.8-27b"
             # Avoid silently truncating documents longer than ten pages.
             - name: OCR_PDF_RENDER_MAX_PAGES
               value: "30"
