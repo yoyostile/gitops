@@ -45,9 +45,9 @@ spec:
               value: "bifrost"
             - name: BIFROST_URL
               value: "http://bifrost.default.svc.cluster.local:8080"
-            # Lyceum dropped Llama-3.3-70B (404 model not found, 2026-09-16); switched to deepseek-v4-flash.
+            # deepseek-v4-flash returned empty content on some invoices (eval 2026-09-28); glm-5.3-flash had none.
             - name: EXTRACTION_MODEL_INVOICE
-              value: "lyceum/deepseek/deepseek-v4-flash-0731"
+              value: "lyceum/z-ai/glm-5.3-flash"
             # Selected by the notice line-item evaluation.
             - name: EXTRACTION_MODEL_NOTICE
               value: "lyceum/Qwen/Qwen3-235B-A22B-Instruct-2507"

@@ -21,13 +21,13 @@
       {
         "id": "vk-reimbursat0r-invoice",
         "name": "reimbursat0r-invoice",
-        "description": "Invoice extraction. Lyceum deepseek-v4-flash (EU). Llama-3.3-70B was removed from Lyceum's catalogue 2026-09; ollama dropped as rollback (Mac Mini unreachable from the cluster). NOTE: invoice OCR text leaves the LAN - the earlier local-only guarantee no longer holds for this path.",
+        "description": "Invoice extraction. Lyceum glm-5.3-flash (EU). Llama-3.3-70B was removed from Lyceum's catalogue 2026-09; deepseek-v4-flash-0731 replaced it but returned empty content on some invoices; ollama dropped as rollback (Mac Mini unreachable from the cluster). NOTE: invoice OCR text leaves the LAN - the earlier local-only guarantee no longer holds for this path.",
         "value": "env.BIFROST_VK_INVOICE",
         "is_active": true,
         "provider_configs": [
           {
             "provider": "lyceum",
-            "allowed_models": ["deepseek/deepseek-v4-flash-0731"],
+            "allowed_models": ["z-ai/glm-5.3-flash"],
             "key_ids": ["*"]
           }
         ]
