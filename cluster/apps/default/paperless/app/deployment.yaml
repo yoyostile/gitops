@@ -71,7 +71,7 @@ spec:
             - name: PAPERLESS_AI_LLM_EMBEDDING_BACKEND
               value: "openai-like"
             - name: PAPERLESS_AI_LLM_EMBEDDING_MODEL
-              value: "lyceum/Qwen/Qwen3-Embedding-8B"
+              value: "lyceum/qwen/qwen3-embedding-8b"
             # Bifrost uses an RFC1918 ClusterIP.
             - name: PAPERLESS_AI_LLM_ALLOW_INTERNAL_ENDPOINTS
               value: "true"
