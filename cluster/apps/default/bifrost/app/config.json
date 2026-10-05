@@ -41,7 +41,7 @@
         "provider_configs": [
           {
             "provider": "lyceum",
-            "allowed_models": ["Qwen/Qwen3-235B-A22B-Instruct-2507"],
+            "allowed_models": ["qwen/qwen3-235b-a22b-instruct-2507"],
             "key_ids": ["*"]
           }
         ]
