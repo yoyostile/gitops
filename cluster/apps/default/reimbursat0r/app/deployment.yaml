@@ -50,7 +50,7 @@ spec:
               value: "lyceum/z-ai/glm-5.3-flash"
             # Selected by the notice line-item evaluation.
             - name: EXTRACTION_MODEL_NOTICE
-              value: "lyceum/Qwen/Qwen3-235B-A22B-Instruct-2507"
+              value: "lyceum/qwen/qwen3-235b-a22b-instruct-2507"
             - name: BIFROST_VK_INVOICE
               valueFrom:
                 secretKeyRef:
