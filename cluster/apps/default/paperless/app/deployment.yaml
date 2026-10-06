@@ -21,7 +21,7 @@ spec:
         topology.kubernetes.io/region: lab
       containers:
         - name: paperless
-          image: ghcr.io/paperless-ngx/paperless-ngx:3.1.3
+          image: ghcr.io/paperless-ngx/paperless-ngx:3.3.0
           env:
             # The chart derived these three from the release name, the service
             # port and the ingress host. PAPERLESS_URL is not cosmetic: OIDC
