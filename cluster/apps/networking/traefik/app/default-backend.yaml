@@ -18,7 +18,7 @@ metadata:
   namespace: networking
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    external-dns.alpha.kubernetes.io/controller: "skip"
+    external-dns.kubernetes.io/controller: "skip"
 spec:
   ingressClassName: traefik
   tls:
