@@ -81,7 +81,7 @@ Apps are grouped under `cluster/apps/` by namespace: `cnpg`, `default`, `kube-sy
   - DNS managed by Mikrotik via external-dns-internal
 - **External/public ingress** (e.g., searxng, echoip):
   - `ingressClassName: traefik`
-  - Annotations: `external-dns/external: "true"`, `external-dns.alpha.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"`, `external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"`, middleware `networking-cloudflarewarp@kubernetescrd`
+  - Annotations: `external-dns/external: "true"`, `external-dns.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"`, `external-dns.kubernetes.io/cloudflare-proxied: "true"`, middleware `networking-cloudflarewarp@kubernetescrd`
   - DNS managed by Cloudflare via external-dns
 - Wildcard TLS cert covers `*.${SECRET_LAB_DOMAIN}`, `*.lab.${SECRET_LAB_DOMAIN}`, `*.lan.${SECRET_LAB_DOMAIN}`, `*.hzn.${SECRET_LAB_DOMAIN}`
 - TLS secret name pattern: `${SECRET_LAB_DOMAIN/./-}-tls`
