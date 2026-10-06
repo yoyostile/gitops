@@ -29,3 +29,24 @@ spec:
       repository: registry.k8s.io/nfd/node-feature-discovery
     nodeFeatureRule:
       createCRD: true
+
+  # NixOS: /lib/modules is an absolute symlink that dangles inside the
+  # container, so kernel.enabledmodule (needs modules.builtin) never appears.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: DaemonSet
+              name: node-feature-discovery-worker
+            patch: |
+              apiVersion: apps/v1
+              kind: DaemonSet
+              metadata:
+                name: node-feature-discovery-worker
+              spec:
+                template:
+                  spec:
+                    volumes:
+                      - name: host-lib
+                        hostPath:
+                          path: /run/booted-system/kernel-modules/lib
