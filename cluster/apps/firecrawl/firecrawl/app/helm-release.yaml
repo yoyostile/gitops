@@ -28,12 +28,8 @@ spec:
   postRenderers:
     - kustomize:
         images:
-          - name: ghcr.io/firecrawl/firecrawl
-            digest: sha256:d4fef17701ca388b2f06074b0624c95d2a4dced655d9267ef0545f2231bd325f
           - name: ghcr.io/firecrawl/playwright-service
             digest: sha256:468009bae00911d40d7120d58489a1d529362c22c45585cb9076094fe61b0025
-          - name: ghcr.io/firecrawl/nuq-postgres
-            digest: sha256:aed86f62858f29bd971abddcdeb301c12888098d2cf5d33c1ba42b053bc460f6
           - name: docker.io/library/redis
             digest: sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232
           - name: docker.io/library/rabbitmq
