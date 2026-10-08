@@ -26,6 +26,17 @@ spec:
           token_secret: "${SECRET_PROXMOX_CSI_TOKEN}"
           region: lab
 
+    # Sized from 30 days of observed usage; only the node plugin's own
+    # container lacked requests, the CSI sidecars ship with chart defaults.
+    node:
+      plugin:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
+
     storageClass:
       - name: proxmox-data-ext4
         storage: local-lvm

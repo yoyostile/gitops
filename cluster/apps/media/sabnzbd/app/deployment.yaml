@@ -77,6 +77,14 @@ spec:
           readinessProbe:
             tcpSocket:
               port: http
+          # Sized from 30 days of observed usage; unpacking bursts to ~5x
+          # the steady-state footprint, hence the wide limit.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 320Mi
+            limits:
+              memory: 2560Mi
           volumeMounts:
             - name: config
               mountPath: /config
