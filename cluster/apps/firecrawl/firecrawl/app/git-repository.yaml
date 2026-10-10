@@ -9,4 +9,4 @@ spec:
   url: https://github.com/firecrawl/firecrawl.git
   ref:
     # Source commit that produced ghcr.io/firecrawl/firecrawl:2.11.197.
-    commit: 8c84d8b6a155495b8088c286d878b2f875de3918
+    commit: 6f892bc5026efc6355d017ec38dfffb84c228100
