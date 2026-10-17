@@ -4,32 +4,10 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - datasource.sops.yaml
-configMapGenerator:
-  - name: finance-wealth-dashboard
-    files:
-      - dashboards/wealth.json
-  - name: finance-cashflow-dashboard
-    files:
-      - dashboards/cashflow.json
-  - name: finance-consumption-dashboard
-    files:
-      - dashboards/consumption.json
-  - name: finance-depot-moneymoney-dashboard
-    files:
-      - dashboards/depot-moneymoney.json
-  - name: finance-depot-parqet-dashboard
-    files:
-      - dashboards/depot-parqet.json
-  - name: finance-burnrate-dashboard
-    files:
-      - dashboards/burnrate.json
-  - name: finance-prognose-dashboard
-    files:
-      - dashboards/prognose.json
-generatorOptions:
-  disableNameSuffixHash: true
-  annotations:
-    kustomize.toolkit.fluxcd.io/substitute: disabled
-    grafana_folder: "Finanzen"
-  labels:
-    grafana_dashboard: "1"
+  - dashboards/wealth.sops.yaml
+  - dashboards/cashflow.sops.yaml
+  - dashboards/consumption.sops.yaml
+  - dashboards/depot-moneymoney.sops.yaml
+  - dashboards/depot-parqet.sops.yaml
+  - dashboards/burnrate.sops.yaml
+  - dashboards/prognose.sops.yaml
