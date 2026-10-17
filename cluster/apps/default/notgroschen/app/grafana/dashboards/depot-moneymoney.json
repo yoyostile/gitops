@@ -1,0 +1,385 @@
+{
+  "uid": "finance-depot-mm",
+  "title": "Finanzen · Depot (MoneyMoney)",
+  "description": "Depotwerte und Positionen aus den MoneyMoney-Snapshots (portfolio_snapshots, holdings).",
+  "tags": ["finanzen", "notgroschen"],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-90d",
+    "to": "now"
+  },
+  "refresh": "",
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "scope",
+        "label": "Einheit",
+        "type": "custom",
+        "query": "Haushalt : me+joint,Ich (Hälfte) : me,Gemeinschaftskonto (Hälfte) : joint,Mama (verwaltet) : mama",
+        "current": {
+          "text": "Haushalt",
+          "value": "me+joint"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Haushalt = me + joint. Mama wird nie mit dem Haushalt summiert.",
+        "options": [
+          {
+            "text": "Haushalt",
+            "value": "me+joint",
+            "selected": true
+          },
+          {
+            "text": "Ich (Hälfte)",
+            "value": "me",
+            "selected": false
+          },
+          {
+            "text": "Gemeinschaftskonto (Hälfte)",
+            "value": "joint",
+            "selected": false
+          },
+          {
+            "text": "Mama (verwaltet)",
+            "value": "mama",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "label": "Top N",
+        "type": "custom",
+        "query": "10,15,25,50",
+        "current": {
+          "text": "15",
+          "value": "15"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": null,
+        "options": [
+          {
+            "text": "10",
+            "value": "10",
+            "selected": false
+          },
+          {
+            "text": "15",
+            "value": "15",
+            "selected": true
+          },
+          {
+            "text": "25",
+            "value": "25",
+            "selected": false
+          },
+          {
+            "text": "50",
+            "value": "50",
+            "selected": false
+          }
+        ]
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Depots (letzter Abruf)",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (\n  SELECT DISTINCT ON (ab.account_id) ab.account_id, ab.balance_at\n  FROM account_balances ab\n  WHERE ab.source = 'observed'\n  ORDER BY ab.account_id, ab.balance_at DESC\n)\nSELECT SUM(ab.balance_cents) / 100.0 AS \"Depotwert\",\n       COUNT(*) FILTER (WHERE ab.balance_cents <> 0) AS \"Depots mit Bestand\",\n       MAX(l.balance_at) AS \"Stand\"\nFROM latest l\nJOIN account_balances ab ON ab.account_id = l.account_id AND ab.balance_at = l.balance_at AND ab.source = 'observed'\nJOIN accounts a ON a.id = ab.account_id\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND a.portfolio AND ab.currency = 'EUR'"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Depots mit Bestand"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stand"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 1
+    },
+    {
+      "type": "timeseries",
+      "title": "Depotwert je Depot",
+      "description": "Marktwert je Depot an jedem MoneyMoney-Abruf. Keine Historie vor dem ersten Abruf: Depots werden nie zurückgerechnet.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT ab.balance_at AS time, a.name || ' (' || a.person || ')' AS metric, ab.balance_cents / 100.0 AS value\nFROM account_balances ab\nJOIN accounts a ON a.id = ab.account_id\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND a.portfolio AND a.active AND ab.source = 'observed' AND ab.currency = 'EUR'\n  AND ab.balance_at > '2000-01-01' AND $__timeFilter(ab.balance_at)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "always",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "Positionen über Zeit",
+      "description": "Summe je Position über alle Depots der Einheit, je Abruftag. Top N nach aktuellem Wert.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 24,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH snap AS (\n  SELECT ps.id, ps.taken_at::date AS d\n  FROM portfolio_snapshots ps JOIN accounts a ON a.id = ps.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND $__timeFilter(ps.taken_at)\n),\npos AS (\n  SELECT snap.d, COALESCE(h.name, h.isin) AS pos, SUM(h.value_cents) AS c\n  FROM holdings h JOIN snap ON snap.id = h.portfolio_snapshot_id\n  WHERE h.currency = 'EUR' AND h.value_cents IS NOT NULL\n  GROUP BY 1, 2\n),\ntop AS (\n  SELECT pos FROM pos WHERE d = (SELECT MAX(d) FROM pos) ORDER BY c DESC LIMIT $top\n)\nSELECT d::timestamp AS time, CASE WHEN pos IN (SELECT pos FROM top) THEN pos ELSE 'Übrige' END AS metric,\n       SUM(c) / 100.0 AS value\nFROM pos\nGROUP BY 1, 2\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "always",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 3
+    },
+    {
+      "type": "table",
+      "title": "Aktuelle Positionen",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 24,
+        "h": 12
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest_snap AS (\n  SELECT DISTINCT ON (ps.account_id) ps.id, ps.account_id, ps.taken_at\n  FROM portfolio_snapshots ps\n  ORDER BY ps.account_id, ps.taken_at DESC\n),\npos AS (\n  SELECT COALESCE(h.name, h.isin) AS \"Position\", h.isin AS \"ISIN\",\n         string_agg(DISTINCT a.name || ' (' || a.person || ')', ', ') AS \"Depot\",\n         SUM(h.quantity) AS \"Stück\", SUM(h.value_cents) / 100.0 AS \"Wert\",\n         MAX(ls.taken_at) AS \"Stand\"\n  FROM holdings h\n  JOIN latest_snap ls ON ls.id = h.portfolio_snapshot_id\n  JOIN accounts a ON a.id = ls.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND h.currency = 'EUR' AND h.value_cents IS NOT NULL\n  GROUP BY COALESCE(h.name, h.isin), h.isin\n)\nSELECT *, \"Wert\" / NULLIF(SUM(\"Wert\") OVER (), 0) AS \"Anteil\" FROM pos ORDER BY \"Wert\" DESC"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Wert"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anteil"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stand"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 4
+    }
+  ]
+}

@@ -1,0 +1,421 @@
+{
+  "uid": "finance-cashflow",
+  "title": "Finanzen · Cashflow",
+  "description": "Einnahmen, Konsum, Sparquote und wiederkehrende Kosten aus notgroschen.",
+  "tags": ["finanzen", "notgroschen"],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-5y",
+    "to": "now"
+  },
+  "refresh": "",
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "scope",
+        "label": "Einheit",
+        "type": "custom",
+        "query": "Haushalt : me+joint,Ich (Hälfte) : me,Gemeinschaftskonto (Hälfte) : joint,Mama (verwaltet) : mama",
+        "current": {
+          "text": "Haushalt",
+          "value": "me+joint"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Haushalt = me + joint. Mama wird nie mit dem Haushalt summiert.",
+        "options": [
+          {
+            "text": "Haushalt",
+            "value": "me+joint",
+            "selected": true
+          },
+          {
+            "text": "Ich (Hälfte)",
+            "value": "me",
+            "selected": false
+          },
+          {
+            "text": "Gemeinschaftskonto (Hälfte)",
+            "value": "joint",
+            "selected": false
+          },
+          {
+            "text": "Mama (verwaltet)",
+            "value": "mama",
+            "selected": false
+          }
+        ]
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Zeitraum",
+      "description": "Konsum ist vorzeichenbehaftet (Erstattungen mindern ihn). Erstattungen und Umbuchungen sind weder Einnahme noch Konsum. Sparquote nur für ganze Einheiten (Haushalt, Mama) und nur gegen Einnahmen: der externe Beitrag zum Gemeinschaftskonto fehlt noch (siehe Plan).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH s AS (\n  SELECT COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'income'), 0) AS inc,\n         COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'consumption'), 0) AS con,\n         COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'consumption' AND t.recurring), 0) AS fix\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.currency = 'EUR' AND $__timeFilter(t.booking_date)\n)\nSELECT inc / 100.0 AS \"Einnahmen\",\n       -con / 100.0 AS \"Konsum\",\n       (inc + con) / 100.0 AS \"Saldo\",\n       CASE WHEN '${scope}' IN ('me+joint', 'mama') AND inc > 0 THEN (inc + con)::float / inc END AS \"Sparquote\",\n       -fix / 100.0 AS \"Fixkosten\",\n       (inc + fix) / 100.0 AS \"Frei nach Fixkosten\",\n       CASE WHEN inc > 0 THEN -fix::float / inc END AS \"Fixkostenquote\"\nFROM s"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sparquote"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Fixkostenquote"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "id": 1
+    },
+    {
+      "type": "timeseries",
+      "title": "Einnahmen und Konsum je Monat",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT date_trunc('month', t.booking_date)::timestamp AS time,\n       COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'income'), 0) / 100.0 AS \"Einnahmen\",\n       COALESCE(-SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'consumption'), 0) / 100.0 AS \"Konsum\",\n       COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type IN ('income', 'consumption')), 0) / 100.0 AS \"Saldo\"\nFROM transactions t\nJOIN accounts a ON a.id = t.account_id\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.currency = 'EUR' AND $__timeFilter(t.booking_date)\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Saldo"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "Sparquote und Fixkostenquote, rollierend 12 Monate",
+      "description": "Sparquote = (Einnahmen − Konsum) / Einnahmen, je Fenster der letzten 12 vollen Monate. Fixkostenquote = wiederkehrender Konsum / Einnahmen. Der laufende Monat fehlt, bis er abgeschlossen ist.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH m AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon,\n         COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'income'), 0) AS inc,\n         COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'consumption'), 0) AS con,\n         COALESCE(SUM(t.amount_cents) FILTER (WHERE t.flow_type = 'consumption' AND t.recurring), 0) AS fix\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.currency = 'EUR'\n  GROUP BY 1\n),\nr AS (\n  SELECT mon,\n         SUM(inc) OVER w AS inc12, SUM(con) OVER w AS con12, SUM(fix) OVER w AS fix12,\n         MIN(mon) OVER () AS first_mon\n  FROM m\n  WINDOW w AS (ORDER BY mon RANGE BETWEEN interval '11 months' PRECEDING AND CURRENT ROW)\n)\nSELECT mon AS time,\n       CASE WHEN '${scope}' IN ('me+joint', 'mama') AND inc12 > 0 THEN (inc12 + con12)::float / inc12 END AS \"Sparquote (12 M.)\",\n       CASE WHEN inc12 > 0 THEN -fix12::float / inc12 END AS \"Fixkostenquote (12 M.)\"\nFROM r\nWHERE mon >= first_mon + interval '11 months' AND mon < date_trunc('month', now())\n  AND $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 3
+    },
+    {
+      "type": "timeseries",
+      "title": "Fixkosten vs. variabler Konsum je Monat",
+      "description": "Fixkosten = transactions.recurring (gleicher Händler, gleicher Betrag, im Rhythmus).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT date_trunc('month', t.booking_date)::timestamp AS time,\n       COALESCE(-SUM(t.amount_cents) FILTER (WHERE t.recurring), 0) / 100.0 AS \"Fixkosten (wiederkehrend)\",\n       COALESCE(-SUM(t.amount_cents) FILTER (WHERE NOT t.recurring), 0) / 100.0 AS \"Variabler Konsum\"\nFROM transactions t\nJOIN accounts a ON a.id = t.account_id\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.flow_type = 'consumption' AND t.currency = 'EUR' AND $__timeFilter(t.booking_date)\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 4
+    },
+    {
+      "type": "table",
+      "title": "Wiederkehrende Kosten (letzte 12 Monate)",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 24,
+        "h": 12
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(m.display_name, '(ohne Händler)') AS \"Händler\",\n       -r.amount_cents / 100.0 AS \"Betrag\",\n       COUNT(*) AS \"Buchungen 12 M.\",\n       -SUM(r.amount_cents) / 100.0 AS \"Summe 12 M.\",\n       MAX(r.booking_date) AS \"Zuletzt\",\n       MAX(CASE WHEN r.grp = 'none' THEN '(ohne Kategorie)'\n         WHEN starts_with(r.grp, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN substr(r.grp, 24)\n         ELSE replace(r.grp, chr(92), ' › ') END) AS \"Kategorie\"\nFROM (\n  SELECT t.merchant_id, t.amount_cents, t.booking_date,\n         COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.recurring AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n    AND t.booking_date >= now() - interval '12 months'\n) r\nLEFT JOIN merchants m ON m.id = r.merchant_id\nGROUP BY m.id, m.display_name, r.amount_cents\nORDER BY 4 DESC"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Betrag"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Summe 12 M."
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "id": 5
+    }
+  ]
+}

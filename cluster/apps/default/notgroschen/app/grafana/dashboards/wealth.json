@@ -1,0 +1,498 @@
+{
+  "uid": "finance-wealth",
+  "title": "Finanzen · Vermögen",
+  "description": "Nettovermögen aus notgroschen (account_balances). Haushalt = me + joint.",
+  "tags": ["finanzen", "notgroschen"],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-15y",
+    "to": "now"
+  },
+  "refresh": "",
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "scope",
+        "label": "Einheit",
+        "type": "custom",
+        "query": "Haushalt : me+joint,Ich (Hälfte) : me,Gemeinschaftskonto (Hälfte) : joint,Mama (verwaltet) : mama",
+        "current": {
+          "text": "Haushalt",
+          "value": "me+joint"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Haushalt = me + joint. Mama wird nie mit dem Haushalt summiert.",
+        "options": [
+          {
+            "text": "Haushalt",
+            "value": "me+joint",
+            "selected": true
+          },
+          {
+            "text": "Ich (Hälfte)",
+            "value": "me",
+            "selected": false
+          },
+          {
+            "text": "Gemeinschaftskonto (Hälfte)",
+            "value": "joint",
+            "selected": false
+          },
+          {
+            "text": "Mama (verwaltet)",
+            "value": "mama",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "name": "notgroschen",
+        "label": "Notgroschen-Konten",
+        "type": "query",
+        "query": "SELECT a.name || ' (' || a.person || ')' AS __text, a.id AS __value\nFROM accounts a\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND NOT a.portfolio AND a.active AND a.currency = 'EUR'\n  AND a.account_type IS DISTINCT FROM 'Loan account' AND a.account_type IS DISTINCT FROM 'Credit card'\nORDER BY a.name",
+        "current": {
+          "text": ["4", "45", "5", "40", "6", "57"],
+          "value": ["4", "45", "5", "40", "6", "57"]
+        },
+        "multi": true,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Konten, deren Guthaben als Notgroschen zählt.",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "notgroschen"
+        },
+        "definition": "SELECT a.name || ' (' || a.person || ')' AS __text, a.id AS __value\nFROM accounts a\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND NOT a.portfolio AND a.active AND a.currency = 'EUR'\n  AND a.account_type IS DISTINCT FROM 'Loan account' AND a.account_type IS DISTINCT FROM 'Credit card'\nORDER BY a.name",
+        "refresh": 1,
+        "sort": 0,
+        "regex": "",
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Vermögensstand (EUR, letzter Abruf)",
+      "description": "Letzter beobachteter Saldo je Konto. Depots mit Marktwert, Schulden = Kreditkonten. Fremdwährungen nicht umgerechnet (siehe Tabelle).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (\n  SELECT DISTINCT ON (ab.account_id) ab.account_id, ab.balance_at\n  FROM account_balances ab\n  WHERE ab.source = 'observed'\n  ORDER BY ab.account_id, ab.balance_at DESC\n)\nSELECT\n  SUM(ab.balance_cents) FILTER (WHERE NOT a.portfolio AND a.account_type IS DISTINCT FROM 'Loan account') / 100.0 AS \"Cash\",\n  SUM(ab.balance_cents) FILTER (WHERE a.portfolio) / 100.0 AS \"Depot\",\n  SUM(ab.balance_cents) FILTER (WHERE a.account_type = 'Loan account') / 100.0 AS \"Schulden\",\n  SUM(ab.balance_cents) / 100.0 AS \"Netto\"\nFROM latest l\nJOIN account_balances ab ON ab.account_id = l.account_id AND ab.balance_at = l.balance_at AND ab.source = 'observed'\nJOIN accounts a ON a.id = ab.account_id\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND ab.currency = 'EUR'"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "id": 1
+    },
+    {
+      "type": "stat",
+      "title": "Notgroschen",
+      "description": "Guthaben der Notgroschen-Konten / Ø monatlicher Konsum der letzten 12 vollen Monate.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 8,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (\n  SELECT DISTINCT ON (ab.account_id) ab.account_id, ab.balance_at\n  FROM account_balances ab\n  WHERE ab.source = 'observed'\n  ORDER BY ab.account_id, ab.balance_at DESC\n),\nng AS (\n  SELECT COALESCE(SUM(ab.balance_cents), 0) AS c\n  FROM latest l\nJOIN account_balances ab ON ab.account_id = l.account_id AND ab.balance_at = l.balance_at AND ab.source = 'observed'\nJOIN accounts a ON a.id = ab.account_id\n  WHERE a.id IN (${notgroschen:csv}) AND ab.currency = 'EUR'\n),\nkon AS (\n  SELECT -SUM(t.amount_cents) / 12.0 AS c\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n    AND t.booking_date >= date_trunc('month', now()) - interval '12 months'\n    AND t.booking_date < date_trunc('month', now())\n)\nSELECT ng.c / 100.0 AS \"Notgroschen\",\n       kon.c / 100.0 AS \"Konsum Ø Monat (12 M.)\",\n       ng.c / NULLIF(kon.c, 0) AS \"Monate Deckung\"\nFROM ng, kon"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Monate Deckung"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "id": 2
+    },
+    {
+      "type": "stat",
+      "title": "Stichtage",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (\n  SELECT DISTINCT ON (ab.account_id) ab.account_id, ab.balance_at\n  FROM account_balances ab\n  WHERE ab.source = 'observed'\n  ORDER BY ab.account_id, ab.balance_at DESC\n)\nSELECT MAX(l.balance_at) FILTER (WHERE NOT a.portfolio) AS \"Stand Konten\",\n       MAX(l.balance_at) FILTER (WHERE a.portfolio) AS \"Stand Depots\",\n       (SELECT COUNT(DISTINCT ps.taken_at::date) FROM portfolio_snapshots ps JOIN accounts a ON a.id = ps.account_id WHERE a.person = ANY(string_to_array('${scope}', '+'))) AS \"Depot-Stichtage\"\nFROM latest l JOIN accounts a ON a.id = l.account_id\nWHERE a.person = ANY(string_to_array('${scope}', '+'))"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stand Konten"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocalNoDateIfToday"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stand Depots"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocalNoDateIfToday"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 3
+    },
+    {
+      "type": "timeseries",
+      "title": "Vermögen über Zeit (Monatsanfang)",
+      "description": "Cash und Schulden aus der rekonstruierten Saldenhistorie. Depot und Netto erst ab dem Tag, an dem jedes Depot einmal beobachtet wurde: Depots werden nie zurückgerechnet.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH pts AS (\n  SELECT generate_series(date_trunc('month', $__timeFrom()::timestamp), now()::timestamp, interval '1 month') AS t\n  UNION\n  SELECT now()::timestamp\n),\nacc AS (\n  SELECT a.id,\n         CASE WHEN a.portfolio THEN 'Depot' WHEN a.account_type = 'Loan account' THEN 'Schulden' ELSE 'Cash' END AS cls\n  FROM accounts a\n  WHERE a.person = ANY(string_to_array('${scope}', '+'))\n),\n-- Depots are never derived; the depot line starts once every depot in scope was observed once.\nknown AS (\n  SELECT MAX(first_obs) AS since\n  FROM (\n    SELECT MIN(ab.balance_at) AS first_obs\n    FROM account_balances ab JOIN acc ON acc.id = ab.account_id\n    WHERE acc.cls = 'Depot' AND ab.source = 'observed' AND ab.currency = 'EUR'\n    GROUP BY ab.account_id\n  ) f\n),\nv AS (\n  SELECT pts.t, acc.cls, b.balance_cents + COALESCE(d.c, 0) AS balance_cents\n  FROM pts CROSS JOIN acc\n  LEFT JOIN LATERAL (\n    SELECT ab.balance_cents, ab.balance_at, ab.source FROM account_balances ab\n    WHERE ab.account_id = acc.id AND ab.currency = 'EUR' AND ab.balance_at <= pts.t\n      AND (acc.cls <> 'Depot' OR ab.source = 'observed')\n    ORDER BY ab.balance_at DESC LIMIT 1\n  ) b ON TRUE\n  LEFT JOIN LATERAL (\n    -- Roll the last point forward through later bookings: derived points stop at the last rebuild.\n    SELECT COALESCE(SUM(tx.amount_cents), 0) AS c FROM transactions tx\n    WHERE tx.account_id = acc.id AND tx.currency = 'EUR' AND tx.booking_date < pts.t::date\n      AND (tx.booking_date > b.balance_at::date OR (b.source <> 'observed' AND tx.booking_date = b.balance_at::date))\n  ) d ON acc.cls <> 'Depot' AND b.balance_at IS NOT NULL\n)\nSELECT t AS time, cls AS metric, SUM(COALESCE(balance_cents, 0)) / 100.0 AS value\nFROM v, known\nWHERE cls <> 'Depot' OR t >= known.since\nGROUP BY 1, 2\nUNION ALL\nSELECT t, 'Netto', SUM(COALESCE(balance_cents, 0)) / 100.0\nFROM v, known\nWHERE t >= known.since\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 4
+    },
+    {
+      "type": "timeseries",
+      "title": "Notgroschen und Monate Deckung",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH pts AS (\n  SELECT generate_series(date_trunc('month', $__timeFrom()::timestamp), now()::timestamp, interval '1 month') AS t\n  UNION\n  SELECT now()::timestamp\n),\nng AS (\n  SELECT pts.t, SUM(COALESCE(b.balance_cents, 0) + COALESCE(d.c, 0)) AS c\n  FROM pts CROSS JOIN accounts a\n  LEFT JOIN LATERAL (\n    SELECT ab.balance_cents, ab.balance_at, ab.source FROM account_balances ab\n    WHERE ab.account_id = a.id AND ab.currency = 'EUR' AND ab.balance_at <= pts.t\n    ORDER BY ab.balance_at DESC LIMIT 1\n  ) b ON TRUE\n  LEFT JOIN LATERAL (\n    -- Roll the last point forward through later bookings: derived points stop at the last rebuild.\n    SELECT COALESCE(SUM(tx.amount_cents), 0) AS c FROM transactions tx\n    WHERE tx.account_id = a.id AND tx.currency = 'EUR' AND tx.booking_date < pts.t::date\n      AND (tx.booking_date > b.balance_at::date OR (b.source <> 'observed' AND tx.booking_date = b.balance_at::date))\n  ) d ON b.balance_at IS NOT NULL\n  WHERE a.id IN (${notgroschen:csv})\n  GROUP BY 1\n),\nkon AS (\n  SELECT pts.t,\n         (SELECT -SUM(t.amount_cents) / 12.0\n          FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n          WHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n            AND t.booking_date >= pts.t - interval '12 months' AND t.booking_date < pts.t) AS c\n  FROM pts\n)\nSELECT ng.t AS time, ng.c / 100.0 AS \"Notgroschen\", ng.c / NULLIF(kon.c, 0) AS \"Monate Deckung\"\nFROM ng JOIN kon USING (t)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Monate Deckung"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 5
+    },
+    {
+      "type": "table",
+      "title": "Konten (letzter Stand)",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 24,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (\n  SELECT DISTINCT ON (ab.account_id) ab.account_id, ab.balance_at\n  FROM account_balances ab\n  WHERE ab.source = 'observed'\n  ORDER BY ab.account_id, ab.balance_at DESC\n)\nSELECT a.name AS \"Konto\", a.person AS \"Person\", a.account_type AS \"Art\",\n       CASE WHEN a.account_type = 'Loan account' THEN 'Schulden' WHEN a.portfolio THEN 'Depot' ELSE 'Cash' END AS \"Klasse\",\n       ab.currency AS \"Währung\", ab.balance_cents / 100.0 AS \"Saldo\", l.balance_at AS \"Stand\"\nFROM latest l\nJOIN account_balances ab ON ab.account_id = l.account_id AND ab.balance_at = l.balance_at AND ab.source = 'observed'\nJOIN accounts a ON a.id = ab.account_id\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND ab.balance_cents <> 0\nORDER BY ab.currency <> 'EUR', ab.balance_cents DESC"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Saldo"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stand"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 6
+    }
+  ]
+}

@@ -1,0 +1,443 @@
+{
+  "uid": "finance-consumption",
+  "title": "Finanzen · Konsum",
+  "description": "Konsum nach Kategorie (Ebene 3), Händlern und Händlerart aus notgroschen.",
+  "tags": ["finanzen", "notgroschen"],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "refresh": "",
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "scope",
+        "label": "Einheit",
+        "type": "custom",
+        "query": "Haushalt : me+joint,Ich (Hälfte) : me,Gemeinschaftskonto (Hälfte) : joint,Mama (verwaltet) : mama",
+        "current": {
+          "text": "Haushalt",
+          "value": "me+joint"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Haushalt = me + joint. Mama wird nie mit dem Haushalt summiert.",
+        "options": [
+          {
+            "text": "Haushalt",
+            "value": "me+joint",
+            "selected": true
+          },
+          {
+            "text": "Ich (Hälfte)",
+            "value": "me",
+            "selected": false
+          },
+          {
+            "text": "Gemeinschaftskonto (Hälfte)",
+            "value": "joint",
+            "selected": false
+          },
+          {
+            "text": "Mama (verwaltet)",
+            "value": "mama",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "name": "kategorie",
+        "label": "Kategorie (Ebene 3)",
+        "type": "query",
+        "query": "SELECT DISTINCT grp AS __value,\n       CASE WHEN grp = 'none' THEN '(ohne Kategorie)'\n         WHEN starts_with(grp, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN substr(grp, 24)\n         ELSE replace(grp, chr(92), ' › ') END AS __text\nFROM (\n  SELECT COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.flow_type = 'consumption'\n) g\nORDER BY 2",
+        "current": {
+          "text": ["All"],
+          "value": ["$__all"]
+        },
+        "multi": true,
+        "includeAll": true,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": null,
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "notgroschen"
+        },
+        "definition": "SELECT DISTINCT grp AS __value,\n       CASE WHEN grp = 'none' THEN '(ohne Kategorie)'\n         WHEN starts_with(grp, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN substr(grp, 24)\n         ELSE replace(grp, chr(92), ' › ') END AS __text\nFROM (\n  SELECT COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+')) AND t.flow_type = 'consumption'\n) g\nORDER BY 2",
+        "refresh": 1,
+        "sort": 0,
+        "regex": "",
+        "options": []
+      },
+      {
+        "name": "top",
+        "label": "Top N",
+        "type": "custom",
+        "query": "10,15,25,50",
+        "current": {
+          "text": "15",
+          "value": "15"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": null,
+        "options": [
+          {
+            "text": "10",
+            "value": "10",
+            "selected": false
+          },
+          {
+            "text": "15",
+            "value": "15",
+            "selected": true
+          },
+          {
+            "text": "25",
+            "value": "25",
+            "selected": false
+          },
+          {
+            "text": "50",
+            "value": "50",
+            "selected": false
+          }
+        ]
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Konsum nach Händlerart",
+      "description": "merchants.kind (person | business), abgeleitet. Konsum vorzeichenbehaftet.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH tx AS (\n  SELECT t.booking_date, t.amount_cents, t.merchant_id,\n         COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+'))\n    AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n    AND $__timeFilter(t.booking_date)\n),\nktx AS (SELECT * FROM tx WHERE grp IN (${kategorie:sqlstring}))\nSELECT -SUM(ktx.amount_cents) FILTER (WHERE m.kind = 'business') / 100.0 AS \"Unternehmen\",\n       -SUM(ktx.amount_cents) FILTER (WHERE m.kind = 'person') / 100.0 AS \"Privatpersonen\",\n       -SUM(ktx.amount_cents) FILTER (WHERE m.kind IS NULL) / 100.0 AS \"ohne Händler\",\n       (SUM(ktx.amount_cents) FILTER (WHERE m.kind = 'person'))::float\n         / NULLIF(SUM(ktx.amount_cents), 0) AS \"Anteil Privatpersonen\"\nFROM ktx\nLEFT JOIN merchants m ON m.id = ktx.merchant_id"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anteil Privatpersonen"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "id": 1
+    },
+    {
+      "type": "timeseries",
+      "title": "Konsum je Monat nach Kategorie (Ebene 3)",
+      "description": "Top N Kategorien im Zeitraum, der Rest als 'Übrige'. Gruppiert wie CategoryPath::GROUP_DEPTH = 3.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 11
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH tx AS (\n  SELECT t.booking_date, t.amount_cents, t.merchant_id,\n         COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+'))\n    AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n    AND $__timeFilter(t.booking_date)\n),\nktx AS (SELECT * FROM tx WHERE grp IN (${kategorie:sqlstring})),\ntop AS (SELECT grp FROM ktx GROUP BY grp ORDER BY SUM(amount_cents) ASC LIMIT $top)\nSELECT date_trunc('month', booking_date)::timestamp AS time,\n       CASE WHEN grp IN (SELECT grp FROM top) THEN CASE WHEN grp = 'none' THEN '(ohne Kategorie)'\n         WHEN starts_with(grp, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN substr(grp, 24)\n         ELSE replace(grp, chr(92), ' › ') END ELSE 'Übrige' END AS metric,\n       -SUM(amount_cents) / 100.0 AS value\nFROM ktx\nGROUP BY 1, 2\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 2
+    },
+    {
+      "type": "bargauge",
+      "title": "Konsum im Zeitraum nach Kategorie",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 10,
+        "h": 14
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH tx AS (\n  SELECT t.booking_date, t.amount_cents, t.merchant_id,\n         COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+'))\n    AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n    AND $__timeFilter(t.booking_date)\n),\nktx AS (SELECT * FROM tx WHERE grp IN (${kategorie:sqlstring}))\nSELECT CASE WHEN grp = 'none' THEN '(ohne Kategorie)'\n         WHEN starts_with(grp, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN substr(grp, 24)\n         ELSE replace(grp, chr(92), ' › ') END AS \"Kategorie\",\n       -SUM(amount_cents) / 100.0 AS \"Konsum\"\nFROM ktx\nGROUP BY grp\nORDER BY 2 DESC"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": true
+        },
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "showUnfilled": true,
+        "valueMode": "text",
+        "namePlacement": "left",
+        "sizing": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
+      "id": 3
+    },
+    {
+      "type": "table",
+      "title": "Top-Händler im Zeitraum",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 10,
+        "y": 15,
+        "w": 14,
+        "h": 14
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH tx AS (\n  SELECT t.booking_date, t.amount_cents, t.merchant_id,\n         COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+'))\n    AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n    AND $__timeFilter(t.booking_date)\n),\nktx AS (SELECT * FROM tx WHERE grp IN (${kategorie:sqlstring})),\nper AS (\n  SELECT merchant_id, -SUM(amount_cents) AS c, COUNT(*) AS n,\n         mode() WITHIN GROUP (ORDER BY grp) AS grp\n  FROM ktx\n  GROUP BY merchant_id\n)\nSELECT COALESCE(m.display_name, '(ohne Händler)') AS \"Händler\",\n       COALESCE(m.kind, '–') AS \"Art\",\n       per.c / 100.0 AS \"Konsum\",\n       per.n AS \"Buchungen\",\n       per.c / 100.0 / per.n AS \"Ø Betrag\",\n       CASE WHEN per.grp = 'none' THEN '(ohne Kategorie)'\n         WHEN starts_with(per.grp, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN substr(per.grp, 24)\n         ELSE replace(per.grp, chr(92), ' › ') END AS \"Kategorie\"\nFROM per\nLEFT JOIN merchants m ON m.id = per.merchant_id\nORDER BY per.c DESC\nLIMIT $top"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Konsum"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ø Betrag"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "id": 4
+    },
+    {
+      "type": "timeseries",
+      "title": "Konsum je Monat: Privatpersonen vs. Unternehmen",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH tx AS (\n  SELECT t.booking_date, t.amount_cents, t.merchant_id,\n         COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none') AS grp\n  FROM transactions t\nJOIN accounts a ON a.id = t.account_id\n  WHERE a.person = ANY(string_to_array('${scope}', '+'))\n    AND t.flow_type = 'consumption' AND t.currency = 'EUR'\n    AND $__timeFilter(t.booking_date)\n),\nktx AS (SELECT * FROM tx WHERE grp IN (${kategorie:sqlstring}))\nSELECT date_trunc('month', ktx.booking_date)::timestamp AS time,\n       CASE m.kind WHEN 'person' THEN 'Privatpersonen' WHEN 'business' THEN 'Unternehmen' ELSE 'ohne Händler' END AS metric,\n       -SUM(ktx.amount_cents) / 100.0 AS value\nFROM ktx\nLEFT JOIN merchants m ON m.id = ktx.merchant_id\nGROUP BY 1, 2\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 5
+    }
+  ]
+}
