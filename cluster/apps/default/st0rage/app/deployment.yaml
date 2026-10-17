@@ -28,6 +28,13 @@ spec:
         - name: st0rage
           image: nginx:alpine
           imagePullPolicy: Always
+          # Sized from 30 days of observed usage.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 48Mi
           volumeMounts:
             - mountPath: /usr/share/nginx/html/st0rage/games
               name: games

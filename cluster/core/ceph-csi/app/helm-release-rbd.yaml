@@ -61,3 +61,52 @@ spec:
     CSIDriver:
       fsGroupPolicy: "File"
       seLinuxMount: true
+
+    # Sized from 30 days of observed usage. nodeplugin.plugin.resources also
+    # backs the provisioner's csi-rbdplugin, csi-rbdplugin-controller and both
+    # liveness-prometheus containers, so it is sized for the largest of them.
+    nodeplugin:
+      plugin:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 256Mi
+          limits:
+            memory: 384Mi
+      registrar:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 48Mi
+          limits:
+            memory: 96Mi
+
+    provisioner:
+      provisioner:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
+      attacher:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
+      resizer:
+        resources:
+          requests:
+            cpu: 15m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
+      snapshotter:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
