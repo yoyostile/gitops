@@ -420,10 +420,9 @@ How the money moves and how notgroschen classifies it:
 - His monthly fixed-cost share to the joint Girokonto: `internal_transfer` on both legs, paired in `transfer_links`.
   Flows the other way exist too (the joint account pays part of a car loan to his account), also linked.
 - The partner's payments into the joint account: `internal_transfer` with no counter-leg, because her accounts are
-  not tracked. notgroschen recognises her by counterparty name (`ContributionQuery`); those rows carry no merchant, so
-  `merchants.kind` does not help. Grafana gets neither the name nor a flag, so the dashboard shows
-  "Zufluss ohne Gegenbuchung": every unlinked internal inflow on the joint account. It is mostly the partner, plus
-  occasional other unpaired transfers.
+  not tracked. notgroschen derives `transactions.external_contribution` for them, and the dashboard shows them as
+  "Beitrag Partnerin". The SQL never filters by a name. A flagged row only counts as her contribution when it has no
+  transfer link. The remaining unlinked inflows on the joint account are "Sonstige Zuflüsse".
 - Joint consumption is paid from the joint account: `flow_type = consumption` on a `joint` account. Income on the joint
   account exists as well (for example Kindergeld).
 
@@ -451,11 +450,11 @@ Row "Laufender Haushalt" (joint account only): the running cost of the shared ho
   because Reisen sits at depth 4 (`Transport › Reisen`); a depth-3 entry excludes all its children. Default:
   `Transport › Reisen` and `Elektronik`.
 - Panels: running cost per month with a 12-month average, running cost by depth-3 category, the excluded bookings
-  (merchant name only for `merchants.kind = 'business'`, otherwise "Privatperson"), and a stat comparing the average
-  running cost with the average joint inflow (from Ich, without counter-leg, income).
-- In the stat, an inflow at or above `$einmalgrenze` counts only when its exact amount recurs in at least three months.
-  The regular monthly share is above the default limit, so a plain cut-off would drop it; the recurrence rule keeps it
-  and leaves one-off top-ups out. The rule applies to linked and unlinked inflows alike.
+  (merchant name only for `merchants.kind = 'business'`, otherwise "Privatperson"), and a stat comparing the average running cost with the average joint
+  inflow (from Ich, Beitrag Partnerin, sonstige Zuflüsse, income).
+- In the stat, his linked transfers at or above `$einmalgrenze` count only when the exact amount recurs in at least
+  three months. His regular share and his top-ups look alike ("Umbuchung"), so recurrence is what separates them. The
+  partner's contributions count in full whatever the amount, because her share varies; sonstige Zuflüsse count in full.
 - There is no budget line: the budget is personal and this repo is public. Compare against your own budget.
 
 Panel SQL is in the appendix, generated with the other dashboards.
@@ -465,10 +464,9 @@ Panel SQL is in the appendix, generated with the other dashboards.
 Done in notgroschen PR #23: grants on every boot (`bin/rails db:grafana_grants`, including the Parqet block) and
 `BalanceDeriver` after each import. Still open:
 
-1. Expose the external contribution without names, for example a derived flag `transactions.external_contribution`
-   written next to `flow_type`, and grant it. Then the Grafana savings rate can divide by funding like the app.
-2. Add `GRANT SELECT (tx_a_id, tx_b_id) ON transfer_links TO grafana_ro;` to `db/grafana_grants.sql` for the Burnrate
-   dashboard. Only the two ids; `matched_by` and timestamps stay out.
+1. The Burnrate dashboard depends on `transactions.external_contribution` and its grant (notgroschen PR #26). Deploy
+   that change before this dashboard version.
+   With the flag in place, the Grafana savings rate can also divide by funding like the app.
 
 ## Rollout
 
@@ -494,8 +492,9 @@ Order matters: the role has to exist before notgroschen applies the grants.
    `kubectl -n monitoring get cm -l grafana_dashboard=1 | grep finance` (five ConfigMaps, six once Burnrate is active).
 6. In Grafana: Connections → Data sources → notgroschen → Test, then folder "Finanzen". Compare Vermögen → Vermögensstand
    with the app's Übersicht and Cashflow → Zeitraum (range = one calendar year) with the app's Jahresbilanz for that year.
-7. Burnrate, once the `transfer_links` grant is live: move `grafana/dashboards-pending/burnrate.json` to
-   `grafana/dashboards/` and add it to the `configMapGenerator` in `grafana/kustomization.yaml`.
+7. Burnrate: the version that splits "Beitrag Partnerin" needs the notgroschen change with
+   `transactions.external_contribution` (PR #26) live first. Until then its panels fail with
+   `column t.external_contribution does not exist`.
 
 ## Open questions
 
@@ -1319,9 +1318,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1337,7 +1339,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1387,9 +1391,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1405,7 +1412,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1455,9 +1464,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1473,7 +1485,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1523,9 +1537,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1541,7 +1558,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1590,9 +1609,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1608,7 +1630,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1672,9 +1696,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1690,7 +1717,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1698,7 +1727,8 @@ m AS (
 )
 SELECT mon AS time,
        xin / 100.0 AS "Von Ich",
-       ext / 100.0 AS "Zufluss ohne Gegenbuchung",
+       partner / 100.0 AS "Beitrag Partnerin",
+       other / 100.0 AS "Sonstige Zuflüsse",
        inc / 100.0 AS "Einnahmen",
        con / 100.0 AS "Konsum",
        xout / 100.0 AS "An Ich"
@@ -1756,9 +1786,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1774,7 +1807,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1813,9 +1848,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1831,7 +1869,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1842,7 +1882,8 @@ SELECT mon AS time,
        con / 100.0 AS "Konsum",
        xout / 100.0 AS "An Ich",
        xin / 100.0 AS "Von Ich",
-       ext / 100.0 AS "Zufluss ohne Gegenbuchung",
+       partner / 100.0 AS "Beitrag Partnerin",
+       other / 100.0 AS "Sonstige Zuflüsse",
        (inc + con + xout + xin + ext) / 100.0 AS "Netto"
 FROM m
 WHERE side = 'joint' AND $__timeFilter(mon)
@@ -1851,7 +1892,7 @@ ORDER BY 1
 
 #### Monatsübersicht je Seite
 
-Panel `table`, unit `` (overrides: currencyEUR, dateTimeAsLocalNoDateIfToday on 7 columns), format `table`.
+Panel `table`, unit `` (overrides: currencyEUR, dateTimeAsLocalNoDateIfToday on 8 columns), format `table`.
 
 ```sql
 WITH links AS (
@@ -1871,9 +1912,12 @@ tx AS (
          CASE
            WHEN t.flow_type = 'income' THEN 'income'
            WHEN t.flow_type = 'consumption' THEN 'consumption'
+           -- Needs transactions.external_contribution (notgroschen): the partner's payments into the joint account.
+           WHEN t.flow_type = 'internal_transfer' AND a.person = 'joint' AND t.external_contribution AND cp.person IS NULL
+             THEN 'partner'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
            WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
-             THEN 'extern'
+             THEN 'other'
          END AS kind
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
@@ -1889,7 +1933,9 @@ m AS (
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
          COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
-         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'partner'), 0) AS partner,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'other'), 0) AS other,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind IN ('partner', 'other')), 0) AS ext
   FROM months
   CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
   LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
@@ -1897,11 +1943,11 @@ m AS (
 ),
 rows AS (
   SELECT mon, CASE side WHEN 'me' THEN '1 Ich' ELSE '2 Gemeinschaftskonto' END AS seite,
-         inc, con, xout, xin, ext, inc + con + xout + xin + ext AS net
+         inc, con, xout, xin, partner, other, inc + con + xout + xin + ext AS net
   FROM m
   UNION ALL
   -- Household: transfers between the sides cancel and are left out, never double-counted.
-  SELECT mon, '3 Haushalt', SUM(inc), SUM(con), NULL, NULL, SUM(ext), SUM(inc + con + ext)
+  SELECT mon, '3 Haushalt', SUM(inc), SUM(con), NULL, NULL, SUM(partner), SUM(other), SUM(inc + con + ext)
   FROM m
   GROUP BY mon
 )
@@ -1910,7 +1956,8 @@ SELECT mon AS "Monat", substr(seite, 3) AS "Seite",
        -con / 100.0 AS "Konsum",
        -xout / 100.0 AS "An andere Seite",
        xin / 100.0 AS "Von anderer Seite",
-       ext / 100.0 AS "Zufluss ohne Gegenbuchung",
+       partner / 100.0 AS "Beitrag Partnerin",
+       other / 100.0 AS "Sonstige Zuflüsse",
        net / 100.0 AS "Netto"
 FROM rows
 WHERE $__timeFilter(mon)
@@ -1923,7 +1970,7 @@ Panel `stat`, unit `currencyEUR`, format `table`.
 
 ```sql
 WITH jc AS (
-  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+  SELECT t.id, t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
          starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
@@ -1950,13 +1997,16 @@ counter AS (
 ),
 jin AS (
   SELECT t.booking_date, t.amount_cents,
-         CASE WHEN cp.person = 'me' THEN 'von_ich' WHEN cp.person IS NULL THEN 'ohne' END AS src
+         CASE WHEN t.external_contribution AND cp.person IS NULL THEN 'partner'
+              WHEN cp.person = 'me' THEN 'von_ich'
+              WHEN cp.person IS NULL THEN 'other' END AS src
   FROM transactions t
   JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
   LEFT JOIN counter cp ON cp.tx = t.id
   WHERE t.flow_type = 'internal_transfer' AND t.amount_cents > 0 AND t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
 ),
--- An inflow at or above the limit is a one-off top-up unless its exact amount recurs in 3+ months.
+-- His linked transfers: at or above the limit a one-off top-up unless the exact amount recurs in 3+ months.
+-- The partner's contributions and other inflows count in full.
 freq AS (
   SELECT src, amount_cents, COUNT(DISTINCT date_trunc('month', booking_date)) AS months
   FROM jin
@@ -1965,7 +2015,7 @@ freq AS (
 regular AS (
   SELECT jin.src, jin.booking_date, jin.amount_cents
   FROM jin JOIN freq ON freq.src = jin.src AND freq.amount_cents = jin.amount_cents
-  WHERE jin.amount_cents < COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100 OR freq.months >= 3
+  WHERE jin.src <> 'von_ich' OR jin.amount_cents < COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100 OR freq.months >= 3
 ),
 inc AS (
   SELECT t.booking_date, t.amount_cents
@@ -1983,14 +2033,17 @@ s AS (
   SELECT
     (SELECT -SUM(amount_cents) FROM jc WHERE NOT oneoff AND NOT excl AND $__timeFilter(booking_date)) AS running,
     (SELECT SUM(amount_cents) FROM regular WHERE src = 'von_ich' AND $__timeFilter(booking_date)) AS von_ich,
-    (SELECT SUM(amount_cents) FROM regular WHERE src = 'ohne' AND $__timeFilter(booking_date)) AS ohne,
+    (SELECT SUM(amount_cents) FROM regular WHERE src = 'partner' AND $__timeFilter(booking_date)) AS partner,
+    (SELECT SUM(amount_cents) FROM regular WHERE src = 'other' AND $__timeFilter(booking_date)) AS other,
     (SELECT SUM(amount_cents) FROM inc WHERE $__timeFilter(booking_date)) AS income
 )
 SELECT COALESCE(s.running, 0) / 100.0 / NULLIF(n.months, 0) AS "Laufende Kosten Ø/Monat",
        COALESCE(s.von_ich, 0) / 100.0 / NULLIF(n.months, 0) AS "Von Ich Ø/Monat",
-       COALESCE(s.ohne, 0) / 100.0 / NULLIF(n.months, 0) AS "Ohne Gegenbuchung Ø/Monat",
+       COALESCE(s.partner, 0) / 100.0 / NULLIF(n.months, 0) AS "Beitrag Partnerin Ø/Monat",
+       COALESCE(s.other, 0) / 100.0 / NULLIF(n.months, 0) AS "Sonstige Zuflüsse Ø/Monat",
        COALESCE(s.income, 0) / 100.0 / NULLIF(n.months, 0) AS "Einnahmen Ø/Monat",
-       (COALESCE(s.von_ich, 0) + COALESCE(s.ohne, 0) + COALESCE(s.income, 0) - COALESCE(s.running, 0))
+       (COALESCE(s.von_ich, 0) + COALESCE(s.partner, 0) + COALESCE(s.other, 0) + COALESCE(s.income, 0)
+        - COALESCE(s.running, 0))
          / 100.0 / NULLIF(n.months, 0) AS "Zufluss − laufende Kosten Ø/Monat"
 FROM s, n
 ```
@@ -2001,7 +2054,7 @@ Panel `timeseries`, unit `currencyEUR`, format `time_series`.
 
 ```sql
 WITH jc AS (
-  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+  SELECT t.id, t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
          starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
@@ -2040,7 +2093,7 @@ Panel `timeseries`, unit `currencyEUR`, format `time_series`.
 
 ```sql
 WITH jc AS (
-  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+  SELECT t.id, t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
          starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
@@ -2074,7 +2127,7 @@ Panel `table`, unit `` (overrides: Betrag: currencyEUR), format `table`.
 
 ```sql
 WITH jc AS (
-  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+  SELECT t.id, t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
          starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
