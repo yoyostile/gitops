@@ -24,6 +24,6 @@ MD013:
   stern: false
 
 # MD024/no-duplicate-heading - Long docs repeat a section name under an appendix
-# parent (docs/finance-grafana-plan.md), which is not a real duplicate.
+# parent, which is not a real duplicate.
 MD024:
   siblings_only: true

@@ -17,7 +17,8 @@ spec:
 
   # CNPG initdb defaults apply; create the role and database manually.
 
-  # Table grants are not declarative in CNPG; notgroschen applies them (see docs/finance-grafana-plan.md).
+  # Table grants are not declarative in CNPG; notgroschen applies them.
+  # Dashboard design notes live in the notgroschen repo.
   managed:
     roles:
       - name: grafana_ro
