@@ -23,6 +23,9 @@ configMapGenerator:
   - name: finance-burnrate-dashboard
     files:
       - dashboards/burnrate.json
+  - name: finance-prognose-dashboard
+    files:
+      - dashboards/prognose.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
