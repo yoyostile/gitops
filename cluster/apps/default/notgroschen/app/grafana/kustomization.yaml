@@ -1,0 +1,26 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+resources:
+  - datasource.sops.yaml
+configMapGenerator:
+  - name: finance-wealth-dashboard
+    files:
+      - dashboards/wealth.json
+  - name: finance-cashflow-dashboard
+    files:
+      - dashboards/cashflow.json
+  - name: finance-consumption-dashboard
+    files:
+      - dashboards/consumption.json
+  - name: finance-depot-moneymoney-dashboard
+    files:
+      - dashboards/depot-moneymoney.json
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+    grafana_folder: "Finanzen"
+  labels:
+    grafana_dashboard: "1"

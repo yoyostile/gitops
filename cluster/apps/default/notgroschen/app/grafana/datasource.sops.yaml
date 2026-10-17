@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: grafana-datasource-notgroschen
+    labels:
+        grafana_datasource: "1"
+type: Opaque
+stringData:
+    notgroschen-datasource.yaml: ENC[AES256_GCM,data:ZC+v5Qrj8f7iVkhz1hKWISl34VjqpaaB8h8ev+KdpDqXru/mBWcKnVnaOh464ZRAIFXzns6M1HP5+MghKfYG5I71Hlog9EK8DnPAKlMFymqMQOpALUiLaiDXb3TeUJmwD/g8Vn2Xu31Ly3waXLOBPqqJbwtV5OklCf96Jc8mJErsG84SLcHXFufTucmXGn3gHvQ5k94rfSH98/QQuysqAszG9Xsq1N0IAQ6z3uffVDsNZyFkBN1yYHDS/7PKZeV7Z0aFER3r2RtgdKRTToYBOjq4pEjNAqofGpufi7Qj5UVPVQLE9UtELZHxrTulaglxcrBCyF6kMnqWq7WNTeKIqyu2KEa5PW+fxDlRrEe+1PRr6SzT6Z6k9TkZA7hZ/+RKAnC7JVw3mRvFaKDhxwoTMFBBDCcvqvcnXCF+4JLu8V6cxcNysccc4cnDlIGRkN2FjmnMuIyePOKW5yaU87enVYGEiMP8T7m2OJiZd8Wf808K3x7AEoziqqAit0p+v8QrjhK/g/nQ1OrhAMlTPJKQeuehtWIH04Z/iTxxaSfdxhPZMHz7iPvz11wz9EeRF1lWErHKAxVsvflykT8PfriSDtKrbeQFxwyxeDosdPW+3G0ykva9EVFe,iv:bCXauYzu0tWlfeG1kS/tCUZjzlWxj09quNB3mGdsTuE=,tag:lbqe6p8vNXms9dtuK6Aiag==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvOXVGQ2NuT1E5TTdaY0Zo
+            SXowWjRYRm5VNHo3SXdrNUJzZGpmNHZOeVFzCm1DVzlBRjlFYjFXc3htRmNNS3Yz
+            SzhUNzBlbnd4TE51VWJvMTY3VjloaUkKLS0tIGkvUWNCUFlLUEJKVXpJbjNuVWd1
+            dW5TOG5lY1I5eFUvU0Y2VlA2OExGQU0K26tlQcb4urRU/pF/xn4RB7Q1PAbeAaFq
+            syWldqLB6pZDZo9RUbGU02GV5vICrv//oIyTAZrmEL7ojcVM2MLpYQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1f897y4l6lrasc0rcgrkz3q4054rk7ewa6gh7g4zruk0vzjp22a9sl6fr55
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-10-17T13:24:11Z"
+    mac: ENC[AES256_GCM,data:mg9A2RG5aHMGZBRt/5u5pB1A+2n77+iguw1UAOuNxJbEsD7J/i1G3LbOakc2SCtt6UE/+JXY6W1w/ycleNSsfC9Uxnx12Jwg+EcWW+ZAMqY71iNT++Hv1/M9Nfb6LmEB/3KpGla2B3OifMiXVjm3dp8KvXzyilecPkPxRRWZob4=,iv:bRq4r3/odDGJoNaN3gKiTRKE1tIXrDAg3JKWyjgMPns=,tag:TJy7ac3d2+mUrzPcKUBPqA==,type:str]
+    version: 3.13.2
