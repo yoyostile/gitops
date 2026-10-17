@@ -24,7 +24,7 @@ spec:
         ensure: present
         login: true
         inherit: true
-        connectionLimit: 4
+        connectionLimit: 6
         comment: Grafana finance dashboards, column-level SELECT only
         passwordSecret:
           name: notgroschen-grafana-ro
