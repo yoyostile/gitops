@@ -17,6 +17,18 @@ spec:
 
   # CNPG initdb defaults apply; create the role and database manually.
 
+  # Table grants are not declarative in CNPG; notgroschen applies them (see docs/finance-grafana-plan.md).
+  managed:
+    roles:
+      - name: grafana_ro
+        ensure: present
+        login: true
+        inherit: true
+        connectionLimit: 4
+        comment: Grafana finance dashboards, column-level SELECT only
+        passwordSecret:
+          name: notgroschen-grafana-ro
+
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
