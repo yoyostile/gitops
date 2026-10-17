@@ -444,7 +444,9 @@ Definitions:
 Row "Laufender Haushalt" (joint account only): the running cost of the shared household.
 
 - `$einmalgrenze` (textbox, default 800 €): every single consumption booking at or above it, refunds included by
-  absolute value, is a one-off. Exception: `Wohnen › Wohnung` always counts as running cost.
+  absolute value, is a one-off. Exception: `Wohnen › Wohnung` with `recurring = true` (the rent) stays running cost.
+  Non-recurring housing bookings at or above the limit (deposit, its refund) are one-offs and appear in the excluded
+  table as "Wohnung, nicht wiederkehrend".
 - `$ausgeschlossen` (multi-select): categories that never count as running cost. The list holds depth 3 and depth 4,
   because Reisen sits at depth 4 (`Transport › Reisen`); a depth-3 entry excludes all its children. Default:
   `Transport › Reisen` and `Elektronik`.
@@ -1923,8 +1925,9 @@ Panel `stat`, unit `currencyEUR`, format `table`.
 WITH jc AS (
   SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
+         starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
-           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+           AND NOT (starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AND t.recurring) AS oneoff,
          EXISTS (
            SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
            WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
@@ -2000,8 +2003,9 @@ Panel `timeseries`, unit `currencyEUR`, format `time_series`.
 WITH jc AS (
   SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
+         starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
-           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+           AND NOT (starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AND t.recurring) AS oneoff,
          EXISTS (
            SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
            WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
@@ -2038,8 +2042,9 @@ Panel `timeseries`, unit `currencyEUR`, format `time_series`.
 WITH jc AS (
   SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
+         starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
-           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+           AND NOT (starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AND t.recurring) AS oneoff,
          EXISTS (
            SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
            WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
@@ -2071,8 +2076,9 @@ Panel `table`, unit `` (overrides: Betrag: currencyEUR), format `table`.
 WITH jc AS (
   SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
          t.merchant_id,
+         starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS housing,
          ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
-           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+           AND NOT (starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AND t.recurring) AS oneoff,
          EXISTS (
            SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
            WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
@@ -2089,7 +2095,9 @@ SELECT jc.booking_date AS "Datum",
        CASE WHEN m.kind = 'business' THEN m.display_name
             WHEN m.id IS NULL THEN '(ohne Händler)'
             ELSE 'Privatperson' END AS "Händler",
-       CASE WHEN jc.excl THEN 'Kategorie ausgeschlossen' ELSE 'Einmalig (über Grenze)' END AS "Grund"
+       CASE WHEN jc.excl THEN 'Kategorie ausgeschlossen'
+            WHEN jc.housing THEN 'Wohnung, nicht wiederkehrend (über Grenze)'
+            ELSE 'Einmalig (über Grenze)' END AS "Grund"
 FROM jc
 LEFT JOIN merchants m ON m.id = jc.merchant_id
 WHERE (jc.oneoff OR jc.excl) AND $__timeFilter(jc.booking_date)
