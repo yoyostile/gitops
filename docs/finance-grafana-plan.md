@@ -441,6 +441,21 @@ Definitions:
 - Coverage = Notgroschen at month end (`$notgroschen`, default ids 4, 6, 57, 40, 5) / effective burden, 12-month average.
 - The current, incomplete month is hidden by default (`$laufend`).
 
+Row "Laufender Haushalt" (joint account only): the running cost of the shared household.
+
+- `$einmalgrenze` (textbox, default 800 €): every single consumption booking at or above it, refunds included by
+  absolute value, is a one-off. Exception: `Wohnen › Wohnung` always counts as running cost.
+- `$ausgeschlossen` (multi-select): categories that never count as running cost. The list holds depth 3 and depth 4,
+  because Reisen sits at depth 4 (`Transport › Reisen`); a depth-3 entry excludes all its children. Default:
+  `Transport › Reisen` and `Elektronik`.
+- Panels: running cost per month with a 12-month average, running cost by depth-3 category, the excluded bookings
+  (merchant name only for `merchants.kind = 'business'`, otherwise "Privatperson"), and a stat comparing the average
+  running cost with the average joint inflow (from Ich, without counter-leg, income).
+- In the stat, an inflow at or above `$einmalgrenze` counts only when its exact amount recurs in at least three months.
+  The regular monthly share is above the default limit, so a plain cut-off would drop it; the recurrence rule keeps it
+  and leaves one-off top-ups out. The rule applies to linked and unlinked inflows alike.
+- There is no budget line: the budget is personal and this repo is public. Compare against your own budget.
+
 Panel SQL is in the appendix, generated with the other dashboards.
 
 ## Needs a notgroschen-side change
@@ -1248,7 +1263,7 @@ ORDER BY 1
 
 ### Finanzen · Burnrate (`burnrate.json`, uid `finance-burnrate`)
 
-Variables: `$laufend`, `$notgroschen`. Default range: `now-3y`.
+Variables: `$laufend`, `$notgroschen`, `$einmalgrenze`, `$ausgeschlossen`. Default range: `now-3y`.
 
 #### Variable `$notgroschen`
 
@@ -1258,6 +1273,26 @@ FROM accounts a
 WHERE a.person = 'me' AND NOT a.portfolio AND a.active AND a.currency = 'EUR'
   AND a.account_type IS DISTINCT FROM 'Loan account' AND a.account_type IS DISTINCT FROM 'Credit card'
 ORDER BY a.name
+```
+
+#### Variable `$ausgeschlossen`
+
+```sql
+SELECT DISTINCT p AS __value,
+       CASE WHEN p IS NULL THEN '(ohne Kategorie)'
+         WHEN starts_with(p, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN replace(substr(p, 24), chr(92), ' › ')
+         ELSE replace(p, chr(92), ' › ') END AS __text
+FROM (
+  SELECT array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)) AS p
+  FROM transactions t JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  WHERE t.flow_type = 'consumption'
+  UNION
+  SELECT array_to_string((string_to_array(t.category_path, chr(92)))[1:4], chr(92))
+  FROM transactions t JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  WHERE t.flow_type = 'consumption' AND cardinality(string_to_array(t.category_path, chr(92))) >= 4
+) x
+WHERE p IS NOT NULL
+ORDER BY 2
 ```
 
 #### Burnrate Haushalt (Konsum je Monat)
@@ -1878,4 +1913,185 @@ SELECT mon AS "Monat", substr(seite, 3) AS "Seite",
 FROM rows
 WHERE $__timeFilter(mon)
 ORDER BY mon DESC, seite
+```
+
+#### Laufende Kosten vs. Zufluss (Ø je Monat im Zeitraum)
+
+Panel `stat`, unit `currencyEUR`, format `table`.
+
+```sql
+WITH jc AS (
+  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+         t.merchant_id,
+         ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
+           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+         EXISTS (
+           SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
+           WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
+         ) AS excl
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  WHERE t.flow_type = 'consumption' AND t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+jin AS (
+  SELECT t.booking_date, t.amount_cents,
+         CASE WHEN cp.person = 'me' THEN 'von_ich' WHEN cp.person IS NULL THEN 'ohne' END AS src
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.flow_type = 'internal_transfer' AND t.amount_cents > 0 AND t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+-- An inflow at or above the limit is a one-off top-up unless its exact amount recurs in 3+ months.
+freq AS (
+  SELECT src, amount_cents, COUNT(DISTINCT date_trunc('month', booking_date)) AS months
+  FROM jin
+  GROUP BY 1, 2
+),
+regular AS (
+  SELECT jin.src, jin.booking_date, jin.amount_cents
+  FROM jin JOIN freq ON freq.src = jin.src AND freq.amount_cents = jin.amount_cents
+  WHERE jin.amount_cents < COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100 OR freq.months >= 3
+),
+inc AS (
+  SELECT t.booking_date, t.amount_cents
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  WHERE t.flow_type = 'income' AND t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+n AS (
+  SELECT COUNT(*) AS months
+  FROM generate_series(date_trunc('month', $__timeFrom()::timestamp), date_trunc('month', $__timeTo()::timestamp),
+                       interval '1 month') AS g (mon)
+  WHERE '${laufend}' = 'ja' OR g.mon < date_trunc('month', now())
+),
+s AS (
+  SELECT
+    (SELECT -SUM(amount_cents) FROM jc WHERE NOT oneoff AND NOT excl AND $__timeFilter(booking_date)) AS running,
+    (SELECT SUM(amount_cents) FROM regular WHERE src = 'von_ich' AND $__timeFilter(booking_date)) AS von_ich,
+    (SELECT SUM(amount_cents) FROM regular WHERE src = 'ohne' AND $__timeFilter(booking_date)) AS ohne,
+    (SELECT SUM(amount_cents) FROM inc WHERE $__timeFilter(booking_date)) AS income
+)
+SELECT COALESCE(s.running, 0) / 100.0 / NULLIF(n.months, 0) AS "Laufende Kosten Ø/Monat",
+       COALESCE(s.von_ich, 0) / 100.0 / NULLIF(n.months, 0) AS "Von Ich Ø/Monat",
+       COALESCE(s.ohne, 0) / 100.0 / NULLIF(n.months, 0) AS "Ohne Gegenbuchung Ø/Monat",
+       COALESCE(s.income, 0) / 100.0 / NULLIF(n.months, 0) AS "Einnahmen Ø/Monat",
+       (COALESCE(s.von_ich, 0) + COALESCE(s.ohne, 0) + COALESCE(s.income, 0) - COALESCE(s.running, 0))
+         / 100.0 / NULLIF(n.months, 0) AS "Zufluss − laufende Kosten Ø/Monat"
+FROM s, n
+```
+
+#### Laufende Kosten Gemeinschaftskonto je Monat
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH jc AS (
+  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+         t.merchant_id,
+         ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
+           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+         EXISTS (
+           SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
+           WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
+         ) AS excl
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  WHERE t.flow_type = 'consumption' AND t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM jc),
+r AS (
+  SELECT months.mon, COALESCE(-SUM(jc.amount_cents) FILTER (WHERE NOT jc.oneoff AND NOT jc.excl), 0) AS running
+  FROM months LEFT JOIN jc ON jc.mon = months.mon
+  GROUP BY 1
+),
+w AS (
+  SELECT mon, running,
+         AVG(running) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,
+         ROW_NUMBER() OVER (ORDER BY mon) AS n
+  FROM r
+)
+SELECT mon AS time,
+       running / 100.0 AS "Laufende Kosten",
+       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS "Ø 12 Monate"
+FROM w
+WHERE $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Laufende Kosten nach Kategorie (Ebene 3)
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH jc AS (
+  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+         t.merchant_id,
+         ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
+           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+         EXISTS (
+           SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
+           WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
+         ) AS excl
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  WHERE t.flow_type = 'consumption' AND t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+r AS (
+  SELECT mon, amount_cents, array_to_string((string_to_array(category_path, chr(92)))[1:3], chr(92)) AS grp
+  FROM jc
+  WHERE NOT oneoff AND NOT excl AND $__timeFilter(booking_date)
+)
+SELECT mon AS time,
+       CASE WHEN grp IS NULL THEN '(ohne Kategorie)'
+         WHEN starts_with(grp, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN replace(substr(grp, 24), chr(92), ' › ')
+         ELSE replace(grp, chr(92), ' › ') END AS metric,
+       -SUM(amount_cents) / 100.0 AS value
+FROM r
+GROUP BY 1, 2
+ORDER BY 1
+```
+
+#### Herausgenommene Buchungen
+
+Panel `table`, unit `` (overrides: Betrag: currencyEUR), format `table`.
+
+```sql
+WITH jc AS (
+  SELECT t.booking_date, date_trunc('month', t.booking_date)::timestamp AS mon, t.amount_cents, t.category_path,
+         t.merchant_id,
+         ABS(t.amount_cents) >= COALESCE(NULLIF(regexp_replace(${einmalgrenze:sqlstring}, '[^0-9]', '', 'g'), '')::bigint, 800) * 100
+           AND NOT starts_with(COALESCE(t.category_path, ''), 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92) || 'Wohnen' || chr(92) || 'Wohnung') AS oneoff,
+         EXISTS (
+           SELECT 1 FROM unnest(ARRAY[${ausgeschlossen:sqlstring}]::text[]) AS x (p)
+           WHERE starts_with(COALESCE(t.category_path, '') || chr(92), x.p || chr(92))
+         ) AS excl
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person = 'joint'
+  WHERE t.flow_type = 'consumption' AND t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+)
+SELECT jc.booking_date AS "Datum",
+       -jc.amount_cents / 100.0 AS "Betrag",
+       CASE WHEN jc.category_path IS NULL THEN '(ohne Kategorie)'
+         WHEN starts_with(jc.category_path, 'Ein-/Ausgaben' || chr(92) || 'Ausgaben' || chr(92)) THEN replace(substr(jc.category_path, 24), chr(92), ' › ')
+         ELSE replace(jc.category_path, chr(92), ' › ') END AS "Kategorie",
+       CASE WHEN m.kind = 'business' THEN m.display_name
+            WHEN m.id IS NULL THEN '(ohne Händler)'
+            ELSE 'Privatperson' END AS "Händler",
+       CASE WHEN jc.excl THEN 'Kategorie ausgeschlossen' ELSE 'Einmalig (über Grenze)' END AS "Grund"
+FROM jc
+LEFT JOIN merchants m ON m.id = jc.merchant_id
+WHERE (jc.oneoff OR jc.excl) AND $__timeFilter(jc.booking_date)
+ORDER BY 1 DESC
 ```
