@@ -1,7 +1,7 @@
 {
   "uid": "finance-depot-parqet",
   "title": "Finanzen · Depot (Parqet, ungetestet)",
-  "description": "UNGETESTET. Depot aus Parqet (parqet_* Tabellen aus notgroschen PR #22).",
+  "description": "VORLÄUFIG, visuelle Prüfung steht aus. Depot aus Parqet (parqet_* Tabellen aus notgroschen PR #22).",
   "tags": ["finanzen", "notgroschen", "parqet", "ungetestet"],
   "timezone": "browser",
   "editable": true,
@@ -62,7 +62,7 @@
     {
       "type": "stat",
       "title": "Depot laut Parqet",
-      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Marktwert, Kostenbasis und Unrealisiert aus den Positionen (pro Person). Investiertes Kapital und Gewinn gesamt aus parqet_valuations, nur für Portfolios, die ganz in der Einheit liegen.",
+      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Marktwert, Kostenbasis und Unrealisiert aus den Positionen (pro Person). Investiertes Kapital und Gewinn gesamt aus parqet_valuations, nur für Portfolios, die ganz in der Einheit liegen.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -127,7 +127,7 @@
     {
       "type": "timeseries",
       "title": "Marktwert vs. investiertes Kapital",
-      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. capitalHistory = netto eingebrachtes Kapital. Die Differenz ist der echte Gewinn inkl. realisierter Gewinne und Ausschüttungen. Je Portfolio; das ING-Portfolio mischt me und joint und erscheint daher nur im Haushalt.",
+      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. capitalHistory = netto eingebrachtes Kapital. Die Differenz ist der echte Gewinn inkl. realisierter Gewinne und Ausschüttungen. Je Portfolio; das ING-Portfolio mischt me und joint und erscheint daher nur im Haushalt. Vor 2024 ist die Historie nicht täglich; jeder Portfolio-Wert wird bis zum nächsten Punkt fortgeschrieben.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -172,7 +172,7 @@
             "fillOpacity": 10,
             "showPoints": "never",
             "pointSize": 6,
-            "spanNulls": false,
+            "spanNulls": true,
             "barAlignment": 0,
             "stacking": {
               "mode": "none",
@@ -187,7 +187,7 @@
     {
       "type": "timeseries",
       "title": "Kostenbasis der aktuellen Positionen",
-      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Kaufwert (purchaseValue) der offenen Positionen je Snapshot-Tag, pro Person über das Unterkonto.",
+      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Kaufwert (purchaseValue) der offenen Positionen je Snapshot-Tag, pro Person über das Unterkonto.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -232,7 +232,7 @@
             "fillOpacity": 10,
             "showPoints": "never",
             "pointSize": 6,
-            "spanNulls": false,
+            "spanNulls": true,
             "barAlignment": 0,
             "stacking": {
               "mode": "none",
@@ -247,7 +247,7 @@
     {
       "type": "table",
       "title": "Positionen: unrealisierter Gewinn",
-      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. ",
+      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. ",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -371,7 +371,7 @@
     {
       "type": "timeseries",
       "title": "Dividenden und Zinsen je Jahr",
-      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. ",
+      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Zinsen sind vermutlich Guthabenzinsen, die MoneyMoney bereits als Einnahme bucht: nur Parqet-Sicht, nicht zu Einnahmen addieren.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -392,7 +392,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT date_trunc('year', a.activity_date)::timestamp AS time,\n       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS \"Dividenden brutto\",\n       SUM(COALESCE(a.amount_net_cents, a.amount_cents)) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS \"Dividenden netto\",\n       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'interest') / 100.0 AS \"Zinsen brutto\"\nFROM parqet_activities a\nJOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type IN ('dividend', 'interest') AND a.currency = 'EUR'\n  AND $__timeFilter(a.activity_date)\nGROUP BY 1\nORDER BY 1"
+          "rawSql": "SELECT date_trunc('year', a.activity_date)::timestamp AS time,\n       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS \"Dividenden brutto\",\n       SUM(COALESCE(a.amount_net_cents, a.amount_cents)) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS \"Dividenden netto\",\n       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'interest') / 100.0 AS \"Zinsen (nur Parqet-Sicht, nicht zu Einnahmen addieren)\"\nFROM parqet_activities a\nJOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type IN ('dividend', 'interest') AND a.currency = 'EUR'\n  AND $__timeFilter(a.activity_date)\nGROUP BY 1\nORDER BY 1"
         }
       ],
       "options": {
@@ -431,7 +431,7 @@
     {
       "type": "timeseries",
       "title": "Gebühren und Steuern je Jahr",
-      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Vorzeichen der fees_taxes-Buchungen ist unbestätigt, daher ABS.",
+      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. fee_cents und tax_cents über alle Aktivitätsarten (Käufe tragen Gebühren, fees_taxes-Buchungen haben amount = 0).",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -452,7 +452,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT date_trunc('year', a.activity_date)::timestamp AS time,\n       SUM(COALESCE(a.fee_cents, 0)) / 100.0 AS \"Gebühren\",\n       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS \"Steuern\",\n       SUM(ABS(a.amount_cents)) FILTER (WHERE a.activity_type = 'fees_taxes') / 100.0 AS \"Gebühren/Steuern (eigene Buchung)\"\nFROM parqet_activities a\nJOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.currency = 'EUR' AND $__timeFilter(a.activity_date)\nGROUP BY 1\nORDER BY 1"
+          "rawSql": "SELECT date_trunc('year', a.activity_date)::timestamp AS time,\n       SUM(COALESCE(a.fee_cents, 0)) / 100.0 AS \"Gebühren\",\n       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS \"Steuern\"\nFROM parqet_activities a\nJOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.currency = 'EUR' AND $__timeFilter(a.activity_date)\nGROUP BY 1\nORDER BY 1"
         }
       ],
       "options": {
@@ -491,7 +491,7 @@
     {
       "type": "timeseries",
       "title": "Sparplan-Käufe je Monat (abgeleitet)",
-      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Parqet markiert Sparpläne nicht. Abgeleitet: gleiche Position, gleicher Betrag, einmal pro Monat, in mindestens 3 Monaten.",
+      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Parqet markiert Sparpläne nicht. Abgeleitet: gleiche Position, gleicher Betrag, einmal pro Monat, in mindestens 3 Monaten.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
