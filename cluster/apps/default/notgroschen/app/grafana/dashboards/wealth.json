@@ -59,8 +59,8 @@
         "type": "query",
         "query": "SELECT a.name || ' (' || a.person || ')' AS __text, a.id AS __value\nFROM accounts a\nWHERE a.person = ANY(string_to_array('${scope}', '+')) AND NOT a.portfolio AND a.active AND a.currency = 'EUR'\n  AND a.account_type IS DISTINCT FROM 'Loan account' AND a.account_type IS DISTINCT FROM 'Credit card'\nORDER BY a.name",
         "current": {
-          "text": ["4", "45", "5", "40", "6", "57"],
-          "value": ["4", "45", "5", "40", "6", "57"]
+          "text": ["4", "6", "57", "40", "5"],
+          "value": ["4", "6", "57", "40", "5"]
         },
         "multi": true,
         "includeAll": false,
