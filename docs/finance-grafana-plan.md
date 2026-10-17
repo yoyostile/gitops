@@ -1,6 +1,6 @@
 # Finance dashboards in Grafana (notgroschen)
 
-Status: four dashboards ready on branch `feat/finance-grafana`. The Parqet dashboard is written but untested and not provisioned.
+Status: four dashboards ready on branch `feat/finance-grafana`. The Parqet dashboard runs against production data but is not provisioned until a visual check.
 This repo is public. The plan and the dashboards hold SQL only, never figures, names or identifiers.
 
 ## Architecture
@@ -93,18 +93,9 @@ No `ALTER DEFAULT PRIVILEGES`: a default grant would hand every future table to 
 New tables get their own line in the same file. The Parqet block is guarded by `to_regclass`, so the file also runs
 before PR #22 is deployed.
 
-Where it should live: a notgroschen change applies `db/grafana_grants.sql` on every boot, after `db:prepare` in
-`bin/docker-entrypoint` (for example `bin/rails runner 'ActiveRecord::Base.connection.execute(File.read("db/grafana_grants.sql"))'`).
-A one-off migration is the alternative, but it runs once: if it lands before the role exists, the grants never
-happen. Running on boot heals that and any table rebuild. This is notgroschen-side work for the agent that owns that repo.
-
-Until then, the owner can save the block above as `grafana_grants.sql` and apply it once by hand after the role
-exists. It is idempotent, so the later notgroschen change does not conflict:
-
-```bash
-kubectl --kubeconfig provision/kubeconfig -n default exec -i psql-notgroschen-1 -c postgres -- \
-  psql -U postgres -d notgroschen -v ON_ERROR_STOP=1 -f - < grafana_grants.sql
-```
+Where it lives: notgroschen PR #23 ships this file as `db/grafana_grants.sql` and the task `bin/rails db:grafana_grants`,
+which `bin/docker-entrypoint` runs on every boot after `db:prepare`. The task is a no-op while the role is missing and
+never blocks the boot, so it heals itself once the role exists. No manual grant step is needed.
 
 ## Datasource
 
@@ -150,10 +141,10 @@ Rotate by generating a new password and re-encrypting both `grafana-ro-secret.so
   `COALESCE(array_to_string((string_to_array(t.category_path, chr(92)))[1:3], chr(92)), 'none')`. `chr(92)` is the
   backslash; it avoids escaping in JSON and never uses `LIKE`, which reads the backslash as an escape.
 - EUR only. Non-EUR balances appear per currency in the accounts table and are never converted.
-- Balance at time t: the last `account_balances` point at or before t, rolled forward through later bookings. Derived
-  points stop at the last `notgroschen:rebuild`, so a plain carry-forward shows stale balances after money moves between
-  savings accounts. Depots are never derived: only `observed` points count, and the depot and net lines start when
-  every depot in scope has been observed once (as `NetWorthHistoryQuery`).
+- Balance at time t: the last `account_balances` point at or before t, rolled forward through later bookings. Since
+  notgroschen PR #23 runs `BalanceDeriver` after each import, derived points are current through the last import; the
+  forward roll only covers bookings after it. Depots are never derived: only `observed` points count, and the depot and
+  net lines start when every depot in scope has been observed once (as `NetWorthHistoryQuery`).
 
 ## Dashboards (ready)
 
@@ -181,15 +172,14 @@ Definitions that need the owner's eye:
   Fixkostenquote = Fixkosten / Einnahmen.
 - Depot history exists only from the first MoneyMoney portfolio push on; it grows with every sync.
 
-## Depot from Parqet (pending, untested)
+## Depot from Parqet (pending visual check)
 
-UNTESTED. Written against notgroschen PR #22 (`feat/parqet-sync`, migration `20261017000002_create_parqet_portfolio_data`).
-The tables are not in production, so no query has seen real data. Every query was run as `grafana_ro` against the PR's
-schema in a throwaway local Postgres, empty and with a small synthetic data set: syntax, column grants, the scope rule
-and the savings-plan rule hold. The dashboard JSON is `grafana/dashboards-pending/depot-parqet.json`, deliberately not in
-`grafana/kustomization.yaml`. Rollout step 8 activates it.
+Written against notgroschen PR #22 (migration `20261017000002_create_parqet_portfolio_data`). Parqet data is now in
+production: every query ran read-only there for each scope and returns rows, and the valuation curve has no drop to
+zero. The dashboard has not been looked at in Grafana yet, so it stays in `grafana/dashboards-pending/depot-parqet.json`,
+outside `grafana/kustomization.yaml`, until the owner's visual check. Rollout step 7 activates it.
 
-Schema facts the queries rely on:
+Facts the queries rely on:
 
 - Person lives on `parqet_sub_accounts.person`; activities and holding snapshots join through `parqet_sub_account_id`.
   The joint ING sub-depot maps to `joint` there (`Parqet::PersonMapping`).
@@ -199,10 +189,16 @@ Schema facts the queries rely on:
 - "Investiertes Kapital" is `invested_capital_cents` = Parqet `capitalHistory`, net contributed capital. Marktwert minus
   that is the real gain, realised gains and payouts included. The cost basis of current holdings is a separate panel
   from `purchase_value_cents` on the snapshots.
-- Amounts are positive cents (per the PR's API fixtures). Buys: `amount_net = amount + fee`. Dividends: `amount` is gross, `amount_net = amount - tax`.
-- Parqet does not mark savings-plan executions as far as the PR shows: the activity fixtures carry no such field and the
-  sync maps none. Not confirmed against live activities. `raw` is not granted. The panel is derived instead: the same sub-account, holding and amount, once per month,
-  in at least three months.
+- Every activity amount is positive; the direction comes from `activity_type` (buy, sell, dividend, interest, deposit,
+  withdrawal, fees_taxes, transfer_in, transfer_out). Dividends: `amount` is gross, `amount_net = amount - tax`.
+- `fees_taxes` activities always have `amount_cents = 0`; their values sit in `fee_cents` and `tax_cents`. Buys carry
+  fees too, so the fee and tax panel sums `fee_cents` and `tax_cents` across all activity types.
+- Parqet has no savings-plan marker: the raw activity payload has no such key. The savings-plan panel is derived: the
+  same sub-account, holding and amount, once per month, in at least three months.
+- Interest is probably cash interest that MoneyMoney already books as income. Its series is labelled "nur Parqet-Sicht,
+  nicht zu Einnahmen addieren", and no Parqet panel sits next to income.
+- Valuation history is not daily before 2024. The valuation query carries each portfolio's last value forward to every
+  date in the union, and the time series panels connect nulls, so sparse years do not fall to zero.
 
 Dashboard `Finanzen · Depot (Parqet, ungetestet)`, uid `finance-depot-parqet`, variable `$scope`, default range `now-2y`.
 
@@ -343,7 +339,7 @@ Panel `timeseries`, unit `currencyEUR`.
 SELECT date_trunc('year', a.activity_date)::timestamp AS time,
        SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS "Dividenden brutto",
        SUM(COALESCE(a.amount_net_cents, a.amount_cents)) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS "Dividenden netto",
-       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'interest') / 100.0 AS "Zinsen brutto"
+       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'interest') / 100.0 AS "Zinsen (nur Parqet-Sicht, nicht zu Einnahmen addieren)"
 FROM parqet_activities a
 JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
 WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type IN ('dividend', 'interest') AND a.currency = 'EUR'
@@ -359,8 +355,7 @@ Panel `timeseries`, unit `currencyEUR`.
 ```sql
 SELECT date_trunc('year', a.activity_date)::timestamp AS time,
        SUM(COALESCE(a.fee_cents, 0)) / 100.0 AS "Gebühren",
-       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS "Steuern",
-       SUM(ABS(a.amount_cents)) FILTER (WHERE a.activity_type = 'fees_taxes') / 100.0 AS "Gebühren/Steuern (eigene Buchung)"
+       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS "Steuern"
 FROM parqet_activities a
 JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
 WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.currency = 'EUR' AND $__timeFilter(a.activity_date)
@@ -402,38 +397,37 @@ GROUP BY 1, 2
 ORDER BY 1
 ```
 
-Still uncertain once data arrives:
+Still uncertain:
 
-- Gebühren und Steuern: the sign of `fees_taxes` amounts is unconfirmed (the panel takes `ABS`), and whether a tax on a
-  dividend also appears as a separate `fees_taxes` activity, which would count it twice.
-- Sparplan-Käufe: the rule misses plans whose amount changes and catches any manual buy repeated at the same amount.
-  If the amount excludes a plan fee that varies, plan buys will not group. Compare against the broker's plan list.
-- Dividenden: whether `interest` activities include cash interest on the clearing accounts, which MoneyMoney already
-  books as income.
-- Valuation panels: points are summed per date with each portfolio's last value carried forward. Older rows stay as
-  first written even if Parqet recomputes them (see the Parqet section in notgroschen's CLAUDE.md).
+- Sparplan-Käufe: the derived rule misses plans whose amount changed and catches manual buys repeated at the same
+  amount. Compare against the brokers' plan lists during the visual check, or drop the panel.
+- Kostenbasis vs. investiertes Kapital: the cost basis of current holdings can exceed net contributed capital, because
+  reinvested realised gains raise it. Worth confirming against Parqet's own figures before reading it as a loss.
+- Valuation panels: rows stay as first written even if Parqet recomputes history later (see the Parqet section in
+  notgroschen's CLAUDE.md).
 - "Depot laut Parqet": in a half scope, "Investiertes Kapital" and "Gewinn gesamt" cover only the portfolios that
   lie wholly inside it, while Marktwert and Kostenbasis cover all of that person's positions.
 
 ## Needs a notgroschen-side change
 
-1. Apply `db/grafana_grants.sql` on every boot (above). Without it the datasource connects but every query fails with
-   `permission denied`.
-2. Expose the external contribution without names, for example a derived flag `transactions.external_contribution`
+Done in notgroschen PR #23: grants on every boot (`bin/rails db:grafana_grants`, including the Parqet block) and
+`BalanceDeriver` after each import. Still open:
+
+1. Expose the external contribution without names, for example a derived flag `transactions.external_contribution`
    written next to `flow_type`, and grant it. Then the Grafana savings rate can divide by funding like the app.
-3. Optional: run `BalanceDeriver` after each import. The dashboards roll forward from the last point, so this is
-   cosmetic for Grafana, but the app's own chart shows the stale carry-forward.
-4. Ship the Parqet block of `db/grafana_grants.sql` with or after PR #22.
 
 ## Rollout
 
-1. Review and merge `feat/finance-grafana`, push `main`, then `task flux:sync`.
-2. Check that the per-app Kustomization went Ready, not only `apps`:
-   `flux get ks apps-default-notgroschen`.
-3. Check the role:
-   `kubectl -n default get cluster psql-notgroschen -o jsonpath='{.status.managedRolesStatus}'` lists `grafana_ro` as reconciled.
-4. Apply the grants: the notgroschen change from above, or once by hand with the `psql` command in "Read-only role".
-5. Check least privilege, expecting the first query to succeed and the second to fail with `permission denied`:
+Order matters: the role has to exist before notgroschen applies the grants.
+
+1. Review and merge `feat/finance-grafana`, push `main`, then `task flux:sync`. This creates the role `grafana_ro`.
+2. Check that the per-app Kustomization went Ready, not only `apps`: `flux get ks apps-default-notgroschen`. Then
+   `kubectl -n default get cluster psql-notgroschen -o jsonpath='{.status.managedRolesStatus}'` lists `grafana_ro` as
+   reconciled.
+3. Deploy notgroschen PR #23. If #23 is already live, restart the notgroschen pod or run
+   `kubectl -n default exec deploy/notgroschen -- bin/rails db:grafana_grants`, so the grants are applied now that the
+   role exists.
+4. Check least privilege, expecting the first query to succeed and the second to fail with `permission denied`:
 
    ```bash
    PW=$(kubectl -n default get secret notgroschen-grafana-ro -o jsonpath='{.data.password}' | base64 -d)
@@ -441,14 +435,13 @@ Still uncertain once data arrives:
      psql "host=localhost user=grafana_ro dbname=notgroschen" -c 'SELECT count(*) FROM transactions' -c 'SELECT iban FROM accounts'
    ```
 
-6. Check the Grafana objects:
+5. Check the Grafana objects:
    `kubectl -n monitoring get secret grafana-datasource-notgroschen` and
    `kubectl -n monitoring get cm -l grafana_dashboard=1 | grep finance` (four ConfigMaps).
-7. In Grafana: Connections → Data sources → notgroschen → Test, then folder "Finanzen". Compare Vermögen → Vermögensstand
+6. In Grafana: Connections → Data sources → notgroschen → Test, then folder "Finanzen". Compare Vermögen → Vermögensstand
    with the app's Übersicht and Cashflow → Zeitraum (range = one calendar year) with the app's Jahresbilanz for that year.
-8. Parqet, once PR #22 is deployed, the first sync ran and the grants include the Parqet block: move
-   `grafana/dashboards-pending/depot-parqet.json` to `grafana/dashboards/`, add it to the `configMapGenerator` in
-   `grafana/kustomization.yaml`, check each panel against Parqet's own UI, then drop "ungetestet" from its title.
+7. Parqet, after the visual check: move `grafana/dashboards-pending/depot-parqet.json` to `grafana/dashboards/`, add it to
+   the `configMapGenerator` in `grafana/kustomization.yaml`, and drop "ungetestet" from its title in the JSON.
 
 ## Open questions
 
