@@ -1,6 +1,6 @@
 # Finance dashboards in Grafana (notgroschen)
 
-Status: four dashboards ready on branch `feat/finance-grafana`, Parqet panels pending.
+Status: four dashboards ready on branch `feat/finance-grafana`. The Parqet dashboard is written but untested and not provisioned.
 This repo is public. The plan and the dashboards hold SQL only, never figures, names or identifiers.
 
 ## Architecture
@@ -72,12 +72,26 @@ BEGIN
     GRANT SELECT (id, display_name, kind) ON merchants TO grafana_ro;
     GRANT SELECT (id, account_id, taken_at) ON portfolio_snapshots TO grafana_ro;
     GRANT SELECT (portfolio_snapshot_id, name, isin, quantity, value_cents, currency) ON holdings TO grafana_ro;
+    -- Parqet (PR #22). Never parqet_connections (OAuth tokens), never the raw jsonb columns.
+    IF to_regclass('public.parqet_valuations') IS NOT NULL THEN
+      GRANT SELECT (id, name) ON parqet_portfolios TO grafana_ro;
+      GRANT SELECT (id, parqet_portfolio_id, person) ON parqet_sub_accounts TO grafana_ro;
+      GRANT SELECT (parqet_sub_account_id, activity_type, activity_date, holding_id, isin,
+                    amount_cents, amount_net_cents, fee_cents, tax_cents, currency)
+        ON parqet_activities TO grafana_ro;
+      GRANT SELECT (parqet_portfolio_id, parqet_sub_account_id, snapshot_date, holding_id, isin, name, shares,
+                    current_value_cents, purchase_value_cents, is_sold, currency)
+        ON parqet_holding_snapshots TO grafana_ro;
+      GRANT SELECT (parqet_portfolio_id, date, market_value_cents, invested_capital_cents, currency)
+        ON parqet_valuations TO grafana_ro;
+    END IF;
   END IF;
 END $$;
 ```
 
 No `ALTER DEFAULT PRIVILEGES`: a default grant would hand every future table to Grafana, which defeats the allowlist.
-New tables (Parqet) get their own line in the same file.
+New tables get their own line in the same file. The Parqet block is guarded by `to_regclass`, so the file also runs
+before PR #22 is deployed.
 
 Where it should live: a notgroschen change applies `db/grafana_grants.sql` on every boot, after `db:prepare` in
 `bin/docker-entrypoint` (for example `bin/rails runner 'ActiveRecord::Base.connection.execute(File.read("db/grafana_grants.sql"))'`).
@@ -157,8 +171,8 @@ Units: `currencyEUR` for money, `percentunit` for rates, `none` with one decimal
 
 Definitions that need the owner's eye:
 
-- Notgroschen is the balance of the accounts picked in `$notgroschen`. The default is the day-money and savings accounts
-  between which the reserve actually moves, including the broker clearing account (ids 4, 45, 5, 40, 6, 57).
+- Notgroschen is the balance of the accounts picked in `$notgroschen`. The default is the owner's set: ids 4, 6, 57, 40
+  and 5 (day-money accounts and the broker clearing account). The dormant joint Extra-Konto (id 45) is out.
 - Months of coverage = Notgroschen / average monthly consumption over the last 12 full months.
 - Sparquote = (Einnahmen − Konsum) / Einnahmen. The app divides by funding instead (income plus the named external
   contribution to the joint account). That contribution is identified by counterparty name, a column Grafana does not
@@ -167,101 +181,239 @@ Definitions that need the owner's eye:
   Fixkostenquote = Fixkosten / Einnahmen.
 - Depot history exists only from the first MoneyMoney portfolio push on; it grows with every sync.
 
-## Depot from Parqet (pending)
+## Depot from Parqet (pending, untested)
 
-PENDING. No Parqet tables exist yet: branch `feat/parqet-sync` in notgroschen has no migrations. The table and column
-names below are a proposal, unstable until that branch lands; each query must be re-checked against the real migration.
-Each table also needs its line in `db/grafana_grants.sql`.
+UNTESTED. Written against notgroschen PR #22 (`feat/parqet-sync`, migration `20261017000002_create_parqet_portfolio_data`).
+The tables are not in production, so no query has seen real data. Every query was run as `grafana_ro` against the PR's
+schema in a throwaway local Postgres, empty and with a small synthetic data set: syntax, column grants, the scope rule
+and the savings-plan rule hold. The dashboard JSON is `grafana/dashboards-pending/depot-parqet.json`, deliberately not in
+`grafana/kustomization.yaml`. Rollout step 8 activates it.
 
-Proposed tables:
+Schema facts the queries rely on:
 
-```text
-parqet_portfolios        id, parqet_id, name, person (me | joint), account_id -> accounts (nullable)
-parqet_portfolio_values  parqet_portfolio_id, valued_on (date), market_value_cents, invested_cents
-parqet_activities        id, parqet_portfolio_id, parqet_id, activity_type (buy | sell | dividend | interest |
-                         fees_taxes | transfer_in | transfer_out | deposit | withdrawal), executed_at, isin, asset_name,
-                         shares, price, amount_cents, fee_cents, tax_cents, currency, savings_plan (bool)
-parqet_positions         parqet_portfolio_id, isin, name, shares, purchase_value_cents, market_value_cents, valued_at
-```
+- Person lives on `parqet_sub_accounts.person`; activities and holding snapshots join through `parqet_sub_account_id`.
+  The joint ING sub-depot maps to `joint` there (`Parqet::PersonMapping`).
+- `parqet_valuations` is per portfolio. ING mixes `me` and `joint`, so the valuation panels count a portfolio only when
+  every sub-account that traded or holds anything is inside the scope. In "Ich" or "Gemeinschaftskonto" the ING curve
+  drops out; per-person value comes from `parqet_holding_snapshots`.
+- "Investiertes Kapital" is `invested_capital_cents` = Parqet `capitalHistory`, net contributed capital. Marktwert minus
+  that is the real gain, realised gains and payouts included. The cost basis of current holdings is a separate panel
+  from `purchase_value_cents` on the snapshots.
+- Amounts are positive cents (per the PR's API fixtures). Buys: `amount_net = amount + fee`. Dividends: `amount` is gross, `amount_net = amount - tax`.
+- Parqet does not mark savings-plan executions as far as the PR shows: the activity fixtures carry no such field and the
+  sync maps none. Not confirmed against live activities. `raw` is not granted. The panel is derived instead: the same sub-account, holding and amount, once per month,
+  in at least three months.
 
-`person` on `parqet_portfolios` carries the household rule: the joint ING sub-depot must be `joint`.
+Dashboard `Finanzen · Depot (Parqet, ungetestet)`, uid `finance-depot-parqet`, variable `$scope`, default range `now-2y`.
 
-Marktwert vs. investiertes Kapital (timeseries, `currencyEUR`). The difference is the real gain only if
-`invested_cents` is net contributed capital (buys minus sell proceeds); Parqet's purchase value of current holdings
-excludes realised gains. Settle which one the sync stores.
+### Depot laut Parqet
 
-```sql
-SELECT v.valued_on::timestamp AS time,
-       SUM(v.market_value_cents) / 100.0 AS "Marktwert",
-       SUM(v.invested_cents) / 100.0 AS "Investiertes Kapital",
-       SUM(v.market_value_cents - v.invested_cents) / 100.0 AS "Gewinn"
-FROM parqet_portfolio_values v
-JOIN parqet_portfolios p ON p.id = v.parqet_portfolio_id
-WHERE p.person = ANY(string_to_array('${scope}', '+')) AND $__timeFilter(v.valued_on)
-GROUP BY 1
-ORDER BY 1
-```
-
-Dividenden je Jahr (bar chart, `currencyEUR`):
-
-```sql
-SELECT date_trunc('year', a.executed_at) AS time,
-       SUM(a.amount_cents) / 100.0 AS "Dividenden brutto",
-       SUM(a.amount_cents - COALESCE(a.tax_cents, 0)) / 100.0 AS "Dividenden netto"
-FROM parqet_activities a
-JOIN parqet_portfolios p ON p.id = a.parqet_portfolio_id
-WHERE p.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type = 'dividend' AND a.currency = 'EUR'
-  AND $__timeFilter(a.executed_at)
-GROUP BY 1
-ORDER BY 1
-```
-
-Gebühren und Steuern je Jahr (stacked bars, `currencyEUR`):
-
-```sql
-SELECT date_trunc('year', a.executed_at) AS time,
-       SUM(COALESCE(a.fee_cents, 0)) / 100.0 AS "Gebühren",
-       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS "Steuern"
-FROM parqet_activities a
-JOIN parqet_portfolios p ON p.id = a.parqet_portfolio_id
-WHERE p.person = ANY(string_to_array('${scope}', '+')) AND a.currency = 'EUR' AND $__timeFilter(a.executed_at)
-GROUP BY 1
-ORDER BY 1
-```
-
-Sparplan-Käufe je Monat (bars, `currencyEUR`). Needs `savings_plan`; if Parqet does not mark plan executions, the sync
-must derive it (same ISIN, same amount, monthly rhythm, like `RecurrenceDeriver`).
-
-```sql
-SELECT date_trunc('month', a.executed_at) AS time, COALESCE(a.asset_name, a.isin) AS metric,
-       SUM(a.amount_cents) / 100.0 AS value
-FROM parqet_activities a
-JOIN parqet_portfolios p ON p.id = a.parqet_portfolio_id
-WHERE p.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type = 'buy' AND a.savings_plan
-  AND a.currency = 'EUR' AND $__timeFilter(a.executed_at)
-GROUP BY 1, 2
-ORDER BY 1
-```
-
-Unrealisierter Gewinn je Position (table, `currencyEUR` and `percentunit`):
+Panel `stat`, unit `currencyEUR`.
 
 ```sql
 WITH latest AS (
-  SELECT DISTINCT ON (parqet_portfolio_id, isin) *
-  FROM parqet_positions
-  ORDER BY parqet_portfolio_id, isin, valued_at DESC
+  SELECT parqet_portfolio_id, MAX(snapshot_date) AS d
+  FROM parqet_holding_snapshots
+  GROUP BY 1
+),
+pos AS (
+  SELECT SUM(h.current_value_cents) AS mv, SUM(h.purchase_value_cents) AS pv, MAX(h.snapshot_date) AS d
+  FROM parqet_holding_snapshots h
+  JOIN latest l ON l.parqet_portfolio_id = h.parqet_portfolio_id AND l.d = h.snapshot_date
+  JOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id
+  WHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR'
+),
+eligible AS (
+  SELECT p.id
+  FROM parqet_portfolios p
+  WHERE EXISTS (SELECT 1 FROM parqet_sub_accounts s WHERE s.parqet_portfolio_id = p.id AND s.person = ANY(string_to_array('${scope}', '+')))
+    AND NOT EXISTS (
+      SELECT 1 FROM parqet_sub_accounts s
+      WHERE s.parqet_portfolio_id = p.id AND NOT (s.person = ANY(string_to_array('${scope}', '+')))
+        AND (EXISTS (SELECT 1 FROM parqet_activities a WHERE a.parqet_sub_account_id = s.id)
+             OR EXISTS (SELECT 1 FROM parqet_holding_snapshots h WHERE h.parqet_sub_account_id = s.id))
+    )
+),
+val AS (
+  SELECT SUM(v.market_value_cents) AS mv, SUM(v.invested_capital_cents) AS ic
+  FROM eligible e
+  JOIN LATERAL (
+    SELECT v.market_value_cents, v.invested_capital_cents FROM parqet_valuations v
+    WHERE v.parqet_portfolio_id = e.id AND v.currency = 'EUR'
+    ORDER BY v.date DESC LIMIT 1
+  ) v ON TRUE
 )
-SELECT COALESCE(l.name, l.isin) AS "Position", l.isin AS "ISIN",
-       SUM(l.market_value_cents) / 100.0 AS "Marktwert",
-       SUM(l.purchase_value_cents) / 100.0 AS "Kaufwert",
-       SUM(l.market_value_cents - l.purchase_value_cents) / 100.0 AS "Unrealisiert",
-       SUM(l.market_value_cents - l.purchase_value_cents)::float / NULLIF(SUM(l.purchase_value_cents), 0) AS "Rendite"
-FROM latest l
-JOIN parqet_portfolios p ON p.id = l.parqet_portfolio_id
-WHERE p.person = ANY(string_to_array('${scope}', '+'))
-GROUP BY 1, 2
-ORDER BY 5 DESC
+SELECT pos.mv / 100.0 AS "Marktwert",
+       pos.pv / 100.0 AS "Kostenbasis",
+       (pos.mv - pos.pv) / 100.0 AS "Unrealisiert",
+       val.ic / 100.0 AS "Investiertes Kapital",
+       (val.mv - val.ic) / 100.0 AS "Gewinn gesamt",
+       pos.d::timestamp AS "Stand"
+FROM pos, val
 ```
+
+### Marktwert vs. investiertes Kapital
+
+Panel `timeseries`, unit `currencyEUR`.
+
+```sql
+WITH eligible AS (
+  SELECT p.id
+  FROM parqet_portfolios p
+  WHERE EXISTS (SELECT 1 FROM parqet_sub_accounts s WHERE s.parqet_portfolio_id = p.id AND s.person = ANY(string_to_array('${scope}', '+')))
+    AND NOT EXISTS (
+      SELECT 1 FROM parqet_sub_accounts s
+      WHERE s.parqet_portfolio_id = p.id AND NOT (s.person = ANY(string_to_array('${scope}', '+')))
+        AND (EXISTS (SELECT 1 FROM parqet_activities a WHERE a.parqet_sub_account_id = s.id)
+             OR EXISTS (SELECT 1 FROM parqet_holding_snapshots h WHERE h.parqet_sub_account_id = s.id))
+    )
+),
+d AS (
+  SELECT DISTINCT v.date
+  FROM parqet_valuations v JOIN eligible e ON e.id = v.parqet_portfolio_id
+  WHERE $__timeFilter(v.date)
+),
+x AS (
+  SELECT d.date, lv.market_value_cents AS mv, lv.invested_capital_cents AS ic
+  FROM d CROSS JOIN eligible e
+  LEFT JOIN LATERAL (
+    SELECT v.market_value_cents, v.invested_capital_cents FROM parqet_valuations v
+    WHERE v.parqet_portfolio_id = e.id AND v.currency = 'EUR' AND v.date <= d.date
+    ORDER BY v.date DESC LIMIT 1
+  ) lv ON TRUE
+)
+SELECT date::timestamp AS time,
+       SUM(mv) / 100.0 AS "Marktwert",
+       SUM(ic) / 100.0 AS "Investiertes Kapital",
+       SUM(mv - ic) / 100.0 AS "Gewinn (Marktwert − Kapital)"
+FROM x
+GROUP BY 1
+ORDER BY 1
+```
+
+### Kostenbasis der aktuellen Positionen
+
+Panel `timeseries`, unit `currencyEUR`.
+
+```sql
+SELECT h.snapshot_date::timestamp AS time,
+       SUM(h.current_value_cents) / 100.0 AS "Marktwert Positionen",
+       SUM(h.purchase_value_cents) / 100.0 AS "Kostenbasis",
+       SUM(h.current_value_cents - h.purchase_value_cents) / 100.0 AS "Unrealisiert"
+FROM parqet_holding_snapshots h
+JOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR' AND $__timeFilter(h.snapshot_date)
+GROUP BY 1
+ORDER BY 1
+```
+
+### Positionen: unrealisierter Gewinn
+
+Panel `table`, unit ``.
+
+```sql
+WITH latest AS (
+  SELECT parqet_portfolio_id, MAX(snapshot_date) AS d
+  FROM parqet_holding_snapshots
+  GROUP BY 1
+)
+SELECT COALESCE(h.name, h.isin) AS "Position",
+       h.isin AS "ISIN",
+       string_agg(DISTINCT p.name || ' (' || s.person || ')', ', ') AS "Depot",
+       SUM(h.shares) AS "Stück",
+       SUM(h.current_value_cents) / 100.0 AS "Marktwert",
+       SUM(h.purchase_value_cents) / 100.0 AS "Kostenbasis",
+       SUM(h.current_value_cents - h.purchase_value_cents) / 100.0 AS "Unrealisiert",
+       SUM(h.current_value_cents - h.purchase_value_cents)::float
+         / NULLIF(SUM(h.purchase_value_cents), 0) AS "Rendite"
+FROM parqet_holding_snapshots h
+JOIN latest l ON l.parqet_portfolio_id = h.parqet_portfolio_id AND l.d = h.snapshot_date
+JOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id
+JOIN parqet_portfolios p ON p.id = h.parqet_portfolio_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR'
+GROUP BY 1, 2
+ORDER BY 7 DESC
+```
+
+### Dividenden und Zinsen je Jahr
+
+Panel `timeseries`, unit `currencyEUR`.
+
+```sql
+SELECT date_trunc('year', a.activity_date)::timestamp AS time,
+       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS "Dividenden brutto",
+       SUM(COALESCE(a.amount_net_cents, a.amount_cents)) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS "Dividenden netto",
+       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'interest') / 100.0 AS "Zinsen brutto"
+FROM parqet_activities a
+JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type IN ('dividend', 'interest') AND a.currency = 'EUR'
+  AND $__timeFilter(a.activity_date)
+GROUP BY 1
+ORDER BY 1
+```
+
+### Gebühren und Steuern je Jahr
+
+Panel `timeseries`, unit `currencyEUR`.
+
+```sql
+SELECT date_trunc('year', a.activity_date)::timestamp AS time,
+       SUM(COALESCE(a.fee_cents, 0)) / 100.0 AS "Gebühren",
+       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS "Steuern",
+       SUM(ABS(a.amount_cents)) FILTER (WHERE a.activity_type = 'fees_taxes') / 100.0 AS "Gebühren/Steuern (eigene Buchung)"
+FROM parqet_activities a
+JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.currency = 'EUR' AND $__timeFilter(a.activity_date)
+GROUP BY 1
+ORDER BY 1
+```
+
+### Sparplan-Käufe je Monat (abgeleitet)
+
+Panel `timeseries`, unit `currencyEUR`.
+
+```sql
+WITH buys AS (
+  SELECT a.parqet_sub_account_id, a.holding_id, a.isin, a.amount_cents, a.activity_date
+  FROM parqet_activities a
+  JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
+  WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type = 'buy' AND a.currency = 'EUR'
+),
+plans AS (
+  SELECT parqet_sub_account_id, holding_id, amount_cents
+  FROM buys
+  GROUP BY 1, 2, 3
+  HAVING COUNT(DISTINCT date_trunc('month', activity_date)) >= 3
+     AND COUNT(*) = COUNT(DISTINCT date_trunc('month', activity_date))
+)
+SELECT date_trunc('month', b.activity_date)::timestamp AS time,
+       COALESCE(n.name, b.isin, b.holding_id) AS metric,
+       SUM(b.amount_cents) / 100.0 AS value
+FROM buys b
+JOIN plans pl ON pl.parqet_sub_account_id = b.parqet_sub_account_id
+             AND pl.holding_id = b.holding_id AND pl.amount_cents = b.amount_cents
+LEFT JOIN LATERAL (
+  SELECT h.name FROM parqet_holding_snapshots h
+  WHERE h.holding_id = b.holding_id
+  ORDER BY h.snapshot_date DESC LIMIT 1
+) n ON TRUE
+WHERE $__timeFilter(b.activity_date)
+GROUP BY 1, 2
+ORDER BY 1
+```
+
+Still uncertain once data arrives:
+
+- Gebühren und Steuern: the sign of `fees_taxes` amounts is unconfirmed (the panel takes `ABS`), and whether a tax on a
+  dividend also appears as a separate `fees_taxes` activity, which would count it twice.
+- Sparplan-Käufe: the rule misses plans whose amount changes and catches any manual buy repeated at the same amount.
+  If the amount excludes a plan fee that varies, plan buys will not group. Compare against the broker's plan list.
+- Dividenden: whether `interest` activities include cash interest on the clearing accounts, which MoneyMoney already
+  books as income.
+- Valuation panels: points are summed per date with each portfolio's last value carried forward. Older rows stay as
+  first written even if Parqet recomputes them (see the Parqet section in notgroschen's CLAUDE.md).
+- "Depot laut Parqet": in a half scope, "Investiertes Kapital" and "Gewinn gesamt" cover only the portfolios that
+  lie wholly inside it, while Marktwert and Kostenbasis cover all of that person's positions.
 
 ## Needs a notgroschen-side change
 
@@ -271,7 +423,7 @@ ORDER BY 5 DESC
    written next to `flow_type`, and grant it. Then the Grafana savings rate can divide by funding like the app.
 3. Optional: run `BalanceDeriver` after each import. The dashboards roll forward from the last point, so this is
    cosmetic for Grafana, but the app's own chart shows the stale carry-forward.
-4. Parqet tables: add grants, settle the `invested` definition and the savings-plan flag.
+4. Ship the Parqet block of `db/grafana_grants.sql` with or after PR #22.
 
 ## Rollout
 
@@ -294,13 +446,15 @@ ORDER BY 5 DESC
    `kubectl -n monitoring get cm -l grafana_dashboard=1 | grep finance` (four ConfigMaps).
 7. In Grafana: Connections → Data sources → notgroschen → Test, then folder "Finanzen". Compare Vermögen → Vermögensstand
    with the app's Übersicht and Cashflow → Zeitraum (range = one calendar year) with the app's Jahresbilanz for that year.
+8. Parqet, once PR #22 is deployed, the first sync ran and the grants include the Parqet block: move
+   `grafana/dashboards-pending/depot-parqet.json` to `grafana/dashboards/`, add it to the `configMapGenerator` in
+   `grafana/kustomization.yaml`, check each panel against Parqet's own UI, then drop "ungetestet" from its title.
 
 ## Open questions
 
-- Is the default Notgroschen set right, especially the broker clearing account?
 - Who is in `Grafana Editors`? Editors can run any query in Explore against the granted columns.
 - Should "Ich" and "Gemeinschaftskonto" stay selectable at all, given they are half-views?
-- Parqet: which `invested` figure, and does Parqet mark savings-plan executions?
+- Parqet: keep the derived savings-plan panel, or drop it if it does not match the broker's plan list?
 
 ## Appendix: panel SQL
 
