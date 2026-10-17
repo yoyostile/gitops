@@ -20,6 +20,9 @@ configMapGenerator:
   - name: finance-depot-parqet-dashboard
     files:
       - dashboards/depot-parqet.json
+  - name: finance-burnrate-dashboard
+    files:
+      - dashboards/burnrate.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
