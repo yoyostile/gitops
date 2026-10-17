@@ -146,7 +146,7 @@ spec:
           allow_loading_unsigned_plugins: panodata-map-panel
       sidecar:
         dashboards:
-          enabled: "true"
+          enabled: true
           labelValue: "1"
           searchNamespace: "ALL"
           folderAnnotation: grafana_folder
