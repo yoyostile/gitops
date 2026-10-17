@@ -1,6 +1,7 @@
 # Finance dashboards in Grafana (notgroschen)
 
-Status: four dashboards ready on branch `feat/finance-grafana`. The Parqet dashboard runs against production data but is not provisioned until a visual check.
+Status: five dashboards provisioned (four from MoneyMoney data, one from Parqet). The Burnrate dashboard is written and
+waits in `grafana/dashboards-pending/` for one more grant (see "Burnrate").
 This repo is public. The plan and the dashboards hold SQL only, never figures, names or identifiers.
 
 ## Architecture
@@ -172,12 +173,12 @@ Definitions that need the owner's eye:
   Fixkostenquote = Fixkosten / Einnahmen.
 - Depot history exists only from the first MoneyMoney portfolio push on; it grows with every sync.
 
-## Depot from Parqet (pending visual check)
+## Depot from Parqet
 
 Written against notgroschen PR #22 (migration `20261017000002_create_parqet_portfolio_data`). Parqet data is now in
 production: every query ran read-only there for each scope and returns rows, and the valuation curve has no drop to
-zero. The dashboard has not been looked at in Grafana yet, so it stays in `grafana/dashboards-pending/depot-parqet.json`,
-outside `grafana/kustomization.yaml`, until the owner's visual check. Rollout step 7 activates it.
+zero. Every query also ran with `grafana_ro`'s privileges. The dashboard is provisioned as `grafana/dashboards/depot-parqet.json`
+for the owner's visual review.
 
 Facts the queries rely on:
 
@@ -408,6 +409,40 @@ Still uncertain:
 - "Depot laut Parqet": in a half scope, "Investiertes Kapital" and "Gewinn gesamt" cover only the portfolios that
   lie wholly inside it, while Marktwert and Kostenbasis cover all of that person's positions.
 
+## Burnrate
+
+Dashboard `Finanzen · Burnrate` (uid `finance-burnrate`, `grafana/dashboards-pending/burnrate.json`). Per month and per
+side: Ich (`person = me`), Gemeinschaftskonto (`person = joint`) and the household. Mama is never included.
+
+How the money moves and how notgroschen classifies it:
+
+- Salary lands on his Girokonto: `flow_type = income` on a `me` account.
+- His monthly fixed-cost share to the joint Girokonto: `internal_transfer` on both legs, paired in `transfer_links`.
+  Flows the other way exist too (the joint account pays part of a car loan to his account), also linked.
+- The partner's payments into the joint account: `internal_transfer` with no counter-leg, because her accounts are
+  not tracked. notgroschen recognises her by counterparty name (`ContributionQuery`); those rows carry no merchant, so
+  `merchants.kind` does not help. Grafana gets neither the name nor a flag, so the dashboard shows
+  "Zufluss ohne Gegenbuchung": every unlinked internal inflow on the joint account. It is mostly the partner, plus
+  occasional other unpaired transfers.
+- Joint consumption is paid from the joint account: `flow_type = consumption` on a `joint` account. Income on the joint
+  account exists as well (for example Kindergeld).
+
+Why `transfer_links`: categories cannot separate his transfers to the joint account from transfers between his own
+accounts (both use the same Umbuchungen paths), and matching legs by amount and date mislabels a large share of the
+partner's payments as his. The links are notgroschen's own pairing, so the dashboard reads them. Without the grant every
+panel except the joint balance fails with `permission denied for table transfer_links`.
+
+Definitions:
+
+- Household consumption = consumption on `me` + `joint` accounts. Transfers between the sides are `internal_transfer`,
+  never consumption, so nothing is counted twice. In the household rows the cross-side transfers cancel and are omitted.
+- Burn rate = consumption per month, with 3- and 12-month moving averages over a gap-free month grid.
+- Effective burden (Ich) = own consumption + transfers to the joint account − transfers back from it.
+- Coverage = Notgroschen at month end (`$notgroschen`, default ids 4, 6, 57, 40, 5) / effective burden, 12-month average.
+- The current, incomplete month is hidden by default (`$laufend`).
+
+Panel SQL is in the appendix, generated with the other dashboards.
+
 ## Needs a notgroschen-side change
 
 Done in notgroschen PR #23: grants on every boot (`bin/rails db:grafana_grants`, including the Parqet block) and
@@ -415,6 +450,8 @@ Done in notgroschen PR #23: grants on every boot (`bin/rails db:grafana_grants`,
 
 1. Expose the external contribution without names, for example a derived flag `transactions.external_contribution`
    written next to `flow_type`, and grant it. Then the Grafana savings rate can divide by funding like the app.
+2. Add `GRANT SELECT (tx_a_id, tx_b_id) ON transfer_links TO grafana_ro;` to `db/grafana_grants.sql` for the Burnrate
+   dashboard. Only the two ids; `matched_by` and timestamps stay out.
 
 ## Rollout
 
@@ -437,11 +474,11 @@ Order matters: the role has to exist before notgroschen applies the grants.
 
 5. Check the Grafana objects:
    `kubectl -n monitoring get secret grafana-datasource-notgroschen` and
-   `kubectl -n monitoring get cm -l grafana_dashboard=1 | grep finance` (four ConfigMaps).
+   `kubectl -n monitoring get cm -l grafana_dashboard=1 | grep finance` (five ConfigMaps, six once Burnrate is active).
 6. In Grafana: Connections → Data sources → notgroschen → Test, then folder "Finanzen". Compare Vermögen → Vermögensstand
    with the app's Übersicht and Cashflow → Zeitraum (range = one calendar year) with the app's Jahresbilanz for that year.
-7. Parqet, after the visual check: move `grafana/dashboards-pending/depot-parqet.json` to `grafana/dashboards/`, add it to
-   the `configMapGenerator` in `grafana/kustomization.yaml`, and drop "ungetestet" from its title in the JSON.
+7. Burnrate, once the `transfer_links` grant is live: move `grafana/dashboards-pending/burnrate.json` to
+   `grafana/dashboards/` and add it to the `configMapGenerator` in `grafana/kustomization.yaml`.
 
 ## Open questions
 
@@ -1008,4 +1045,837 @@ pos AS (
   GROUP BY COALESCE(h.name, h.isin), h.isin
 )
 SELECT *, "Wert" / NULLIF(SUM("Wert") OVER (), 0) AS "Anteil" FROM pos ORDER BY "Wert" DESC
+```
+
+### Finanzen · Depot (Parqet) (`depot-parqet.json`, uid `finance-depot-parqet`)
+
+Variables: `$scope`. Default range: `now-2y`.
+
+#### Depot laut Parqet
+
+Panel `stat`, unit `currencyEUR` (overrides: Stand: dateTimeAsLocalNoDateIfToday), format `table`.
+
+```sql
+WITH latest AS (
+  SELECT parqet_portfolio_id, MAX(snapshot_date) AS d
+  FROM parqet_holding_snapshots
+  GROUP BY 1
+),
+pos AS (
+  SELECT SUM(h.current_value_cents) AS mv, SUM(h.purchase_value_cents) AS pv, MAX(h.snapshot_date) AS d
+  FROM parqet_holding_snapshots h
+  JOIN latest l ON l.parqet_portfolio_id = h.parqet_portfolio_id AND l.d = h.snapshot_date
+  JOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id
+  WHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR'
+),
+eligible AS (
+  SELECT p.id
+  FROM parqet_portfolios p
+  WHERE EXISTS (SELECT 1 FROM parqet_sub_accounts s WHERE s.parqet_portfolio_id = p.id AND s.person = ANY(string_to_array('${scope}', '+')))
+    AND NOT EXISTS (
+      SELECT 1 FROM parqet_sub_accounts s
+      WHERE s.parqet_portfolio_id = p.id AND NOT (s.person = ANY(string_to_array('${scope}', '+')))
+        AND (EXISTS (SELECT 1 FROM parqet_activities a WHERE a.parqet_sub_account_id = s.id)
+             OR EXISTS (SELECT 1 FROM parqet_holding_snapshots h WHERE h.parqet_sub_account_id = s.id))
+    )
+),
+val AS (
+  SELECT SUM(v.market_value_cents) AS mv, SUM(v.invested_capital_cents) AS ic
+  FROM eligible e
+  JOIN LATERAL (
+    SELECT v.market_value_cents, v.invested_capital_cents FROM parqet_valuations v
+    WHERE v.parqet_portfolio_id = e.id AND v.currency = 'EUR'
+    ORDER BY v.date DESC LIMIT 1
+  ) v ON TRUE
+)
+SELECT pos.mv / 100.0 AS "Marktwert",
+       pos.pv / 100.0 AS "Kostenbasis",
+       (pos.mv - pos.pv) / 100.0 AS "Unrealisiert",
+       val.ic / 100.0 AS "Investiertes Kapital",
+       (val.mv - val.ic) / 100.0 AS "Gewinn gesamt",
+       pos.d::timestamp AS "Stand"
+FROM pos, val
+```
+
+#### Marktwert vs. investiertes Kapital
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH eligible AS (
+  SELECT p.id
+  FROM parqet_portfolios p
+  WHERE EXISTS (SELECT 1 FROM parqet_sub_accounts s WHERE s.parqet_portfolio_id = p.id AND s.person = ANY(string_to_array('${scope}', '+')))
+    AND NOT EXISTS (
+      SELECT 1 FROM parqet_sub_accounts s
+      WHERE s.parqet_portfolio_id = p.id AND NOT (s.person = ANY(string_to_array('${scope}', '+')))
+        AND (EXISTS (SELECT 1 FROM parqet_activities a WHERE a.parqet_sub_account_id = s.id)
+             OR EXISTS (SELECT 1 FROM parqet_holding_snapshots h WHERE h.parqet_sub_account_id = s.id))
+    )
+),
+d AS (
+  SELECT DISTINCT v.date
+  FROM parqet_valuations v JOIN eligible e ON e.id = v.parqet_portfolio_id
+  WHERE $__timeFilter(v.date)
+),
+x AS (
+  SELECT d.date, lv.market_value_cents AS mv, lv.invested_capital_cents AS ic
+  FROM d CROSS JOIN eligible e
+  LEFT JOIN LATERAL (
+    SELECT v.market_value_cents, v.invested_capital_cents FROM parqet_valuations v
+    WHERE v.parqet_portfolio_id = e.id AND v.currency = 'EUR' AND v.date <= d.date
+    ORDER BY v.date DESC LIMIT 1
+  ) lv ON TRUE
+)
+SELECT date::timestamp AS time,
+       SUM(mv) / 100.0 AS "Marktwert",
+       SUM(ic) / 100.0 AS "Investiertes Kapital",
+       SUM(mv - ic) / 100.0 AS "Gewinn (Marktwert − Kapital)"
+FROM x
+GROUP BY 1
+ORDER BY 1
+```
+
+#### Kostenbasis der aktuellen Positionen
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+SELECT h.snapshot_date::timestamp AS time,
+       SUM(h.current_value_cents) / 100.0 AS "Marktwert Positionen",
+       SUM(h.purchase_value_cents) / 100.0 AS "Kostenbasis",
+       SUM(h.current_value_cents - h.purchase_value_cents) / 100.0 AS "Unrealisiert"
+FROM parqet_holding_snapshots h
+JOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR' AND $__timeFilter(h.snapshot_date)
+GROUP BY 1
+ORDER BY 1
+```
+
+#### Positionen: unrealisierter Gewinn
+
+Panel `table`, unit `` (overrides: Marktwert: currencyEUR, Kostenbasis: currencyEUR, Unrealisiert: currencyEUR, Rendite: percentunit, Stück: none), format `table`.
+
+```sql
+WITH latest AS (
+  SELECT parqet_portfolio_id, MAX(snapshot_date) AS d
+  FROM parqet_holding_snapshots
+  GROUP BY 1
+)
+SELECT COALESCE(h.name, h.isin) AS "Position",
+       h.isin AS "ISIN",
+       string_agg(DISTINCT p.name || ' (' || s.person || ')', ', ') AS "Depot",
+       SUM(h.shares) AS "Stück",
+       SUM(h.current_value_cents) / 100.0 AS "Marktwert",
+       SUM(h.purchase_value_cents) / 100.0 AS "Kostenbasis",
+       SUM(h.current_value_cents - h.purchase_value_cents) / 100.0 AS "Unrealisiert",
+       SUM(h.current_value_cents - h.purchase_value_cents)::float
+         / NULLIF(SUM(h.purchase_value_cents), 0) AS "Rendite"
+FROM parqet_holding_snapshots h
+JOIN latest l ON l.parqet_portfolio_id = h.parqet_portfolio_id AND l.d = h.snapshot_date
+JOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id
+JOIN parqet_portfolios p ON p.id = h.parqet_portfolio_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR'
+GROUP BY 1, 2
+ORDER BY 7 DESC
+```
+
+#### Dividenden und Zinsen je Jahr
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+SELECT date_trunc('year', a.activity_date)::timestamp AS time,
+       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS "Dividenden brutto",
+       SUM(COALESCE(a.amount_net_cents, a.amount_cents)) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS "Dividenden netto",
+       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'interest') / 100.0 AS "Zinsen (nur Parqet-Sicht, nicht zu Einnahmen addieren)"
+FROM parqet_activities a
+JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type IN ('dividend', 'interest') AND a.currency = 'EUR'
+  AND $__timeFilter(a.activity_date)
+GROUP BY 1
+ORDER BY 1
+```
+
+#### Gebühren und Steuern je Jahr
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+SELECT date_trunc('year', a.activity_date)::timestamp AS time,
+       SUM(COALESCE(a.fee_cents, 0)) / 100.0 AS "Gebühren",
+       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS "Steuern"
+FROM parqet_activities a
+JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
+WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.currency = 'EUR' AND $__timeFilter(a.activity_date)
+GROUP BY 1
+ORDER BY 1
+```
+
+#### Sparplan-Käufe je Monat (abgeleitet)
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH buys AS (
+  SELECT a.parqet_sub_account_id, a.holding_id, a.isin, a.amount_cents, a.activity_date
+  FROM parqet_activities a
+  JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id
+  WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type = 'buy' AND a.currency = 'EUR'
+),
+plans AS (
+  SELECT parqet_sub_account_id, holding_id, amount_cents
+  FROM buys
+  GROUP BY 1, 2, 3
+  HAVING COUNT(DISTINCT date_trunc('month', activity_date)) >= 3
+     AND COUNT(*) = COUNT(DISTINCT date_trunc('month', activity_date))
+)
+SELECT date_trunc('month', b.activity_date)::timestamp AS time,
+       COALESCE(n.name, b.isin, b.holding_id) AS metric,
+       SUM(b.amount_cents) / 100.0 AS value
+FROM buys b
+JOIN plans pl ON pl.parqet_sub_account_id = b.parqet_sub_account_id
+             AND pl.holding_id = b.holding_id AND pl.amount_cents = b.amount_cents
+LEFT JOIN LATERAL (
+  SELECT h.name FROM parqet_holding_snapshots h
+  WHERE h.holding_id = b.holding_id
+  ORDER BY h.snapshot_date DESC LIMIT 1
+) n ON TRUE
+WHERE $__timeFilter(b.activity_date)
+GROUP BY 1, 2
+ORDER BY 1
+```
+
+### Finanzen · Burnrate (`burnrate.json`, uid `finance-burnrate`)
+
+Variables: `$laufend`, `$notgroschen`. Default range: `now-3y`.
+
+#### Variable `$notgroschen`
+
+```sql
+SELECT a.name || ' (' || a.person || ')' AS __text, a.id AS __value
+FROM accounts a
+WHERE a.person = 'me' AND NOT a.portfolio AND a.active AND a.currency = 'EUR'
+  AND a.account_type IS DISTINCT FROM 'Loan account' AND a.account_type IS DISTINCT FROM 'Credit card'
+ORDER BY a.name
+```
+
+#### Burnrate Haushalt (Konsum je Monat)
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+),
+b AS (
+  SELECT mon, -SUM(con) AS burn
+  FROM m
+  WHERE side IN ('me', 'joint')
+  GROUP BY mon
+),
+w AS (
+  SELECT mon, burn,
+         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3,
+         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,
+         ROW_NUMBER() OVER (ORDER BY mon) AS n
+  FROM b
+)
+SELECT mon AS time,
+       burn / 100.0 AS "Konsum",
+       CASE WHEN n >= 3 THEN ma3 / 100.0 END AS "Ø 3 Monate",
+       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS "Ø 12 Monate"
+FROM w
+WHERE $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Burnrate Ich
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+),
+b AS (
+  SELECT mon, -SUM(con) AS burn
+  FROM m
+  WHERE side IN ('me')
+  GROUP BY mon
+),
+w AS (
+  SELECT mon, burn,
+         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3,
+         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,
+         ROW_NUMBER() OVER (ORDER BY mon) AS n
+  FROM b
+)
+SELECT mon AS time,
+       burn / 100.0 AS "Konsum",
+       CASE WHEN n >= 3 THEN ma3 / 100.0 END AS "Ø 3 Monate",
+       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS "Ø 12 Monate"
+FROM w
+WHERE $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Burnrate Gemeinschaftskonto
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+),
+b AS (
+  SELECT mon, -SUM(con) AS burn
+  FROM m
+  WHERE side IN ('joint')
+  GROUP BY mon
+),
+w AS (
+  SELECT mon, burn,
+         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3,
+         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,
+         ROW_NUMBER() OVER (ORDER BY mon) AS n
+  FROM b
+)
+SELECT mon AS time,
+       burn / 100.0 AS "Konsum",
+       CASE WHEN n >= 3 THEN ma3 / 100.0 END AS "Ø 3 Monate",
+       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS "Ø 12 Monate"
+FROM w
+WHERE $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Effektive Belastung Ich
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+),
+b AS (
+  SELECT mon, -con AS own, -xout AS to_joint, xin AS from_joint, -(con + xout + xin) AS burden
+  FROM m
+  WHERE side = 'me'
+),
+w AS (
+  SELECT b.*, AVG(burden) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,
+         ROW_NUMBER() OVER (ORDER BY mon) AS n
+  FROM b
+)
+SELECT mon AS time,
+       own / 100.0 AS "Eigener Konsum",
+       to_joint / 100.0 AS "An Gemeinschaftskonto",
+       -from_joint / 100.0 AS "Zurück vom Gemeinschaftskonto",
+       burden / 100.0 AS "Belastung",
+       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS "Belastung Ø 12 Monate"
+FROM w
+WHERE $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Deckung: Notgroschen / Belastung
+
+Panel `timeseries`, unit `currencyEUR` (overrides: Monate Deckung: none, Notgroschen (Monatsende): currencyEUR, Belastung Ø 12 Monate: currencyEUR), format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+),
+b AS (
+  SELECT mon, -(con + xout + xin) AS burden FROM m WHERE side = 'me'
+),
+w AS (
+  SELECT mon, AVG(burden) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,
+         ROW_NUMBER() OVER (ORDER BY mon) AS n
+  FROM b
+),
+pts AS (SELECT mon, LEAST(mon + interval '1 month', now()::timestamp) AS t FROM w WHERE n >= 12),
+ng AS (
+  SELECT pts.mon, SUM(COALESCE(b.balance_cents, 0) + COALESCE(d.c, 0)) AS c
+  FROM pts
+  CROSS JOIN accounts a
+  LEFT JOIN LATERAL (
+    SELECT ab.balance_cents, ab.balance_at, ab.source FROM account_balances ab
+    WHERE ab.account_id = a.id AND ab.currency = 'EUR' AND ab.balance_at <= pts.t
+    ORDER BY ab.balance_at DESC LIMIT 1
+  ) b ON TRUE
+  LEFT JOIN LATERAL (
+    SELECT COALESCE(SUM(tx.amount_cents), 0) AS c FROM transactions tx
+    WHERE tx.account_id = a.id AND tx.currency = 'EUR' AND tx.booking_date < pts.t::date
+      AND (tx.booking_date > b.balance_at::date OR (b.source <> 'observed' AND tx.booking_date = b.balance_at::date))
+  ) d ON b.balance_at IS NOT NULL
+  WHERE a.id IN (${notgroschen:csv})
+  GROUP BY 1
+)
+SELECT w.mon AS time,
+       ng.c / NULLIF(w.ma12, 0) AS "Monate Deckung",
+       ng.c / 100.0 AS "Notgroschen (Monatsende)",
+       w.ma12 / 100.0 AS "Belastung Ø 12 Monate"
+FROM w
+JOIN ng ON ng.mon = w.mon
+WHERE $__timeFilter(w.mon)
+ORDER BY 1
+```
+
+#### Gemeinschaftskonto: Zuflüsse und Konsum
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+)
+SELECT mon AS time,
+       xin / 100.0 AS "Von Ich",
+       ext / 100.0 AS "Zufluss ohne Gegenbuchung",
+       inc / 100.0 AS "Einnahmen",
+       con / 100.0 AS "Konsum",
+       xout / 100.0 AS "An Ich"
+FROM m
+WHERE side = 'joint' AND $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Saldo Gemeinschaftskonto
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH pts AS (
+  SELECT generate_series(date_trunc('month', $__timeFrom()::timestamp), date_trunc('month', now()), interval '1 month') AS t
+)
+SELECT pts.t - interval '1 day' AS time,
+       SUM(COALESCE(b.balance_cents, 0) + COALESCE(d.c, 0)) / 100.0 AS "Saldo Gemeinschaftskonto (Monatsende)"
+FROM pts
+CROSS JOIN accounts a
+  LEFT JOIN LATERAL (
+    SELECT ab.balance_cents, ab.balance_at, ab.source FROM account_balances ab
+    WHERE ab.account_id = a.id AND ab.currency = 'EUR' AND ab.balance_at <= pts.t
+    ORDER BY ab.balance_at DESC LIMIT 1
+  ) b ON TRUE
+  LEFT JOIN LATERAL (
+    SELECT COALESCE(SUM(tx.amount_cents), 0) AS c FROM transactions tx
+    WHERE tx.account_id = a.id AND tx.currency = 'EUR' AND tx.booking_date < pts.t::date
+      AND (tx.booking_date > b.balance_at::date OR (b.source <> 'observed' AND tx.booking_date = b.balance_at::date))
+  ) d ON b.balance_at IS NOT NULL
+WHERE a.person = 'joint' AND NOT a.portfolio AND a.currency = 'EUR'
+GROUP BY 1
+ORDER BY 1
+```
+
+#### Ich: Monatsbilanz
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+)
+SELECT mon AS time,
+       inc / 100.0 AS "Einnahmen",
+       con / 100.0 AS "Konsum",
+       xout / 100.0 AS "An Gemeinschaftskonto",
+       xin / 100.0 AS "Von Gemeinschaftskonto",
+       (inc + con + xout + xin + ext) / 100.0 AS "Netto"
+FROM m
+WHERE side = 'me' AND $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Gemeinschaftskonto: Monatsbilanz
+
+Panel `timeseries`, unit `currencyEUR`, format `time_series`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+)
+SELECT mon AS time,
+       inc / 100.0 AS "Einnahmen",
+       con / 100.0 AS "Konsum",
+       xout / 100.0 AS "An Ich",
+       xin / 100.0 AS "Von Ich",
+       ext / 100.0 AS "Zufluss ohne Gegenbuchung",
+       (inc + con + xout + xin + ext) / 100.0 AS "Netto"
+FROM m
+WHERE side = 'joint' AND $__timeFilter(mon)
+ORDER BY 1
+```
+
+#### Monatsübersicht je Seite
+
+Panel `table`, unit `` (overrides: currencyEUR, dateTimeAsLocalNoDateIfToday on 7 columns), format `table`.
+
+```sql
+WITH links AS (
+  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl
+  UNION ALL
+  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl
+),
+counter AS (
+  SELECT l.tx, MIN(a2.person) AS person
+  FROM links l
+  JOIN transactions t2 ON t2.id = l.other
+  JOIN accounts a2 ON a2.id = t2.account_id
+  GROUP BY l.tx
+),
+tx AS (
+  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,
+         CASE
+           WHEN t.flow_type = 'income' THEN 'income'
+           WHEN t.flow_type = 'consumption' THEN 'consumption'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'
+           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0
+             THEN 'extern'
+         END AS kind
+  FROM transactions t
+  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')
+  LEFT JOIN counter cp ON cp.tx = t.id
+  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))
+),
+months AS (
+  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx
+),
+m AS (
+  SELECT months.mon, sides.side,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,
+         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext
+  FROM months
+  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)
+  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side
+  GROUP BY 1, 2
+),
+rows AS (
+  SELECT mon, CASE side WHEN 'me' THEN '1 Ich' ELSE '2 Gemeinschaftskonto' END AS seite,
+         inc, con, xout, xin, ext, inc + con + xout + xin + ext AS net
+  FROM m
+  UNION ALL
+  -- Household: transfers between the sides cancel and are left out, never double-counted.
+  SELECT mon, '3 Haushalt', SUM(inc), SUM(con), NULL, NULL, SUM(ext), SUM(inc + con + ext)
+  FROM m
+  GROUP BY mon
+)
+SELECT mon AS "Monat", substr(seite, 3) AS "Seite",
+       inc / 100.0 AS "Einnahmen",
+       -con / 100.0 AS "Konsum",
+       -xout / 100.0 AS "An andere Seite",
+       xin / 100.0 AS "Von anderer Seite",
+       ext / 100.0 AS "Zufluss ohne Gegenbuchung",
+       net / 100.0 AS "Netto"
+FROM rows
+WHERE $__timeFilter(mon)
+ORDER BY mon DESC, seite
 ```
