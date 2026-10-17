@@ -1,0 +1,951 @@
+{
+  "uid": "finance-burnrate",
+  "title": "Finanzen · Burnrate",
+  "description": "Einnahmen, Konsum und Burnrate je Seite (Ich, Gemeinschaftskonto) und für den Haushalt. Ohne Mama.",
+  "tags": ["finanzen", "notgroschen"],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-3y",
+    "to": "now"
+  },
+  "refresh": "",
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "laufend",
+        "label": "Laufender Monat",
+        "type": "custom",
+        "query": "ausblenden : nein,zeigen : ja",
+        "current": {
+          "text": "ausblenden",
+          "value": "nein"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Der laufende Monat ist unvollständig und standardmäßig ausgeblendet.",
+        "options": [
+          {
+            "text": "ausblenden",
+            "value": "nein",
+            "selected": true
+          },
+          {
+            "text": "zeigen",
+            "value": "ja",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "name": "notgroschen",
+        "label": "Notgroschen-Konten",
+        "type": "query",
+        "query": "SELECT a.name || ' (' || a.person || ')' AS __text, a.id AS __value\nFROM accounts a\nWHERE a.person = 'me' AND NOT a.portfolio AND a.active AND a.currency = 'EUR'\n  AND a.account_type IS DISTINCT FROM 'Loan account' AND a.account_type IS DISTINCT FROM 'Credit card'\nORDER BY a.name",
+        "current": {
+          "text": ["4", "6", "57", "40", "5"],
+          "value": ["4", "6", "57", "40", "5"]
+        },
+        "multi": true,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Konten, deren Guthaben als Notgroschen zählt.",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "notgroschen"
+        },
+        "definition": "SELECT a.name || ' (' || a.person || ')' AS __text, a.id AS __value\nFROM accounts a\nWHERE a.person = 'me' AND NOT a.portfolio AND a.active AND a.currency = 'EUR'\n  AND a.account_type IS DISTINCT FROM 'Loan account' AND a.account_type IS DISTINCT FROM 'Credit card'\nORDER BY a.name",
+        "refresh": 1,
+        "sort": 0,
+        "regex": "",
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Burnrate Haushalt (Konsum je Monat)",
+      "description": "Haushalt = Konsum Ich + Konsum Gemeinschaftskonto. Überträge zwischen beiden sind nie Konsum und werden nicht doppelt gezählt. Mama ist nie enthalten.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n),\nb AS (\n  SELECT mon, -SUM(con) AS burn\n  FROM m\n  WHERE side IN ('me', 'joint')\n  GROUP BY mon\n),\nw AS (\n  SELECT mon, burn,\n         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3,\n         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,\n         ROW_NUMBER() OVER (ORDER BY mon) AS n\n  FROM b\n)\nSELECT mon AS time,\n       burn / 100.0 AS \"Konsum\",\n       CASE WHEN n >= 3 THEN ma3 / 100.0 END AS \"Ø 3 Monate\",\n       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS \"Ø 12 Monate\"\nFROM w\nWHERE $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Konsum"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 60
+              }
+            ]
+          }
+        ]
+      },
+      "id": 1
+    },
+    {
+      "type": "timeseries",
+      "title": "Burnrate Ich",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n),\nb AS (\n  SELECT mon, -SUM(con) AS burn\n  FROM m\n  WHERE side IN ('me')\n  GROUP BY mon\n),\nw AS (\n  SELECT mon, burn,\n         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3,\n         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,\n         ROW_NUMBER() OVER (ORDER BY mon) AS n\n  FROM b\n)\nSELECT mon AS time,\n       burn / 100.0 AS \"Konsum\",\n       CASE WHEN n >= 3 THEN ma3 / 100.0 END AS \"Ø 3 Monate\",\n       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS \"Ø 12 Monate\"\nFROM w\nWHERE $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Konsum"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 60
+              }
+            ]
+          }
+        ]
+      },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "Burnrate Gemeinschaftskonto",
+      "description": null,
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n),\nb AS (\n  SELECT mon, -SUM(con) AS burn\n  FROM m\n  WHERE side IN ('joint')\n  GROUP BY mon\n),\nw AS (\n  SELECT mon, burn,\n         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3,\n         AVG(burn) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,\n         ROW_NUMBER() OVER (ORDER BY mon) AS n\n  FROM b\n)\nSELECT mon AS time,\n       burn / 100.0 AS \"Konsum\",\n       CASE WHEN n >= 3 THEN ma3 / 100.0 END AS \"Ø 3 Monate\",\n       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS \"Ø 12 Monate\"\nFROM w\nWHERE $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Konsum"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 60
+              }
+            ]
+          }
+        ]
+      },
+      "id": 3
+    },
+    {
+      "type": "timeseries",
+      "title": "Effektive Belastung Ich",
+      "description": "Überträge zwischen Ich und Gemeinschaftskonto sind Umbuchungen mit Gegenbuchung (transfer_links). Belastung = eigener Konsum + Überträge ans Gemeinschaftskonto − Rückflüsse vom Gemeinschaftskonto.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n),\nb AS (\n  SELECT mon, -con AS own, -xout AS to_joint, xin AS from_joint, -(con + xout + xin) AS burden\n  FROM m\n  WHERE side = 'me'\n),\nw AS (\n  SELECT b.*, AVG(burden) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,\n         ROW_NUMBER() OVER (ORDER BY mon) AS n\n  FROM b\n)\nSELECT mon AS time,\n       own / 100.0 AS \"Eigener Konsum\",\n       to_joint / 100.0 AS \"An Gemeinschaftskonto\",\n       -from_joint / 100.0 AS \"Zurück vom Gemeinschaftskonto\",\n       burden / 100.0 AS \"Belastung\",\n       CASE WHEN n >= 12 THEN ma12 / 100.0 END AS \"Belastung Ø 12 Monate\"\nFROM w\nWHERE $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Belastung.*"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(Eigener|An|Zurück).*"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 60
+              },
+              {
+                "id": "custom.stacking",
+                "value": {
+                  "mode": "normal",
+                  "group": "A"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "id": 4
+    },
+    {
+      "type": "timeseries",
+      "title": "Deckung: Notgroschen / Belastung",
+      "description": "Notgroschen am Monatsende geteilt durch die effektive Belastung Ich im Schnitt der letzten 12 Monate.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n),\nb AS (\n  SELECT mon, -(con + xout + xin) AS burden FROM m WHERE side = 'me'\n),\nw AS (\n  SELECT mon, AVG(burden) OVER (ORDER BY mon ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS ma12,\n         ROW_NUMBER() OVER (ORDER BY mon) AS n\n  FROM b\n),\npts AS (SELECT mon, LEAST(mon + interval '1 month', now()::timestamp) AS t FROM w WHERE n >= 12),\nng AS (\n  SELECT pts.mon, SUM(COALESCE(b.balance_cents, 0) + COALESCE(d.c, 0)) AS c\n  FROM pts\n  CROSS JOIN accounts a\n  LEFT JOIN LATERAL (\n    SELECT ab.balance_cents, ab.balance_at, ab.source FROM account_balances ab\n    WHERE ab.account_id = a.id AND ab.currency = 'EUR' AND ab.balance_at <= pts.t\n    ORDER BY ab.balance_at DESC LIMIT 1\n  ) b ON TRUE\n  LEFT JOIN LATERAL (\n    SELECT COALESCE(SUM(tx.amount_cents), 0) AS c FROM transactions tx\n    WHERE tx.account_id = a.id AND tx.currency = 'EUR' AND tx.booking_date < pts.t::date\n      AND (tx.booking_date > b.balance_at::date OR (b.source <> 'observed' AND tx.booking_date = b.balance_at::date))\n  ) d ON b.balance_at IS NOT NULL\n  WHERE a.id IN (${notgroschen:csv})\n  GROUP BY 1\n)\nSELECT w.mon AS time,\n       ng.c / NULLIF(w.ma12, 0) AS \"Monate Deckung\",\n       ng.c / 100.0 AS \"Notgroschen (Monatsende)\",\n       w.ma12 / 100.0 AS \"Belastung Ø 12 Monate\"\nFROM w\nJOIN ng ON ng.mon = w.mon\nWHERE $__timeFilter(w.mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Monate Deckung"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notgroschen (Monatsende)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Belastung Ø 12 Monate"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 5
+    },
+    {
+      "type": "timeseries",
+      "title": "Gemeinschaftskonto: Zuflüsse und Konsum",
+      "description": "Überträge zwischen Ich und Gemeinschaftskonto sind Umbuchungen mit Gegenbuchung (transfer_links). Zufluss ohne Gegenbuchung = Umbuchung aufs Gemeinschaftskonto ohne getrackte Gegenseite, überwiegend die Partnerin. Einnahmen auf dem Gemeinschaftskonto sind z. B. Kindergeld.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 33,
+        "w": 16,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n)\nSELECT mon AS time,\n       xin / 100.0 AS \"Von Ich\",\n       ext / 100.0 AS \"Zufluss ohne Gegenbuchung\",\n       inc / 100.0 AS \"Einnahmen\",\n       con / 100.0 AS \"Konsum\",\n       xout / 100.0 AS \"An Ich\"\nFROM m\nWHERE side = 'joint' AND $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 6
+    },
+    {
+      "type": "timeseries",
+      "title": "Saldo Gemeinschaftskonto",
+      "description": "Saldo am Monatsende aus der Saldenhistorie, ohne Depot.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 33,
+        "w": 8,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH pts AS (\n  SELECT generate_series(date_trunc('month', $__timeFrom()::timestamp), date_trunc('month', now()), interval '1 month') AS t\n)\nSELECT pts.t - interval '1 day' AS time,\n       SUM(COALESCE(b.balance_cents, 0) + COALESCE(d.c, 0)) / 100.0 AS \"Saldo Gemeinschaftskonto (Monatsende)\"\nFROM pts\nCROSS JOIN accounts a\n  LEFT JOIN LATERAL (\n    SELECT ab.balance_cents, ab.balance_at, ab.source FROM account_balances ab\n    WHERE ab.account_id = a.id AND ab.currency = 'EUR' AND ab.balance_at <= pts.t\n    ORDER BY ab.balance_at DESC LIMIT 1\n  ) b ON TRUE\n  LEFT JOIN LATERAL (\n    SELECT COALESCE(SUM(tx.amount_cents), 0) AS c FROM transactions tx\n    WHERE tx.account_id = a.id AND tx.currency = 'EUR' AND tx.booking_date < pts.t::date\n      AND (tx.booking_date > b.balance_at::date OR (b.source <> 'observed' AND tx.booking_date = b.balance_at::date))\n  ) d ON b.balance_at IS NOT NULL\nWHERE a.person = 'joint' AND NOT a.portfolio AND a.currency = 'EUR'\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 7
+    },
+    {
+      "type": "timeseries",
+      "title": "Ich: Monatsbilanz",
+      "description": "Überträge zwischen Ich und Gemeinschaftskonto sind Umbuchungen mit Gegenbuchung (transfer_links). Konsum und Abflüsse negativ.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n)\nSELECT mon AS time,\n       inc / 100.0 AS \"Einnahmen\",\n       con / 100.0 AS \"Konsum\",\n       xout / 100.0 AS \"An Gemeinschaftskonto\",\n       xin / 100.0 AS \"Von Gemeinschaftskonto\",\n       (inc + con + xout + xin + ext) / 100.0 AS \"Netto\"\nFROM m\nWHERE side = 'me' AND $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Netto"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "id": 8
+    },
+    {
+      "type": "timeseries",
+      "title": "Gemeinschaftskonto: Monatsbilanz",
+      "description": "Überträge zwischen Ich und Gemeinschaftskonto sind Umbuchungen mit Gegenbuchung (transfer_links). Zufluss ohne Gegenbuchung = Umbuchung aufs Gemeinschaftskonto ohne getrackte Gegenseite, überwiegend die Partnerin. ",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 42,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n)\nSELECT mon AS time,\n       inc / 100.0 AS \"Einnahmen\",\n       con / 100.0 AS \"Konsum\",\n       xout / 100.0 AS \"An Ich\",\n       xin / 100.0 AS \"Von Ich\",\n       ext / 100.0 AS \"Zufluss ohne Gegenbuchung\",\n       (inc + con + xout + xin + ext) / 100.0 AS \"Netto\"\nFROM m\nWHERE side = 'joint' AND $__timeFilter(mon)\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Netto"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "id": 9
+    },
+    {
+      "type": "table",
+      "title": "Monatsübersicht je Seite",
+      "description": "Überträge zwischen Ich und Gemeinschaftskonto sind Umbuchungen mit Gegenbuchung (transfer_links). Zufluss ohne Gegenbuchung = Umbuchung aufs Gemeinschaftskonto ohne getrackte Gegenseite, überwiegend die Partnerin. Haushalt: Überträge zwischen den Seiten heben sich auf und fehlen daher.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 51,
+        "w": 24,
+        "h": 14
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH links AS (\n  SELECT tl.tx_a_id AS tx, tl.tx_b_id AS other FROM transfer_links tl\n  UNION ALL\n  SELECT tl.tx_b_id, tl.tx_a_id FROM transfer_links tl\n),\ncounter AS (\n  SELECT l.tx, MIN(a2.person) AS person\n  FROM links l\n  JOIN transactions t2 ON t2.id = l.other\n  JOIN accounts a2 ON a2.id = t2.account_id\n  GROUP BY l.tx\n),\ntx AS (\n  SELECT date_trunc('month', t.booking_date)::timestamp AS mon, a.person AS side, t.amount_cents AS cents,\n         CASE\n           WHEN t.flow_type = 'income' THEN 'income'\n           WHEN t.flow_type = 'consumption' THEN 'consumption'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IN ('me', 'joint') AND cp.person <> a.person THEN 'cross'\n           WHEN t.flow_type = 'internal_transfer' AND cp.person IS NULL AND a.person = 'joint' AND t.amount_cents > 0\n             THEN 'extern'\n         END AS kind\n  FROM transactions t\n  JOIN accounts a ON a.id = t.account_id AND a.person IN ('me', 'joint')\n  LEFT JOIN counter cp ON cp.tx = t.id\n  WHERE t.currency = 'EUR' AND ('${laufend}' = 'ja' OR t.booking_date < date_trunc('month', now()))\n),\nmonths AS (\n  SELECT generate_series(MIN(mon), MAX(mon), interval '1 month') AS mon FROM tx\n),\nm AS (\n  SELECT months.mon, sides.side,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'income'), 0) AS inc,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'consumption'), 0) AS con,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents < 0), 0) AS xout,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'cross' AND tx.cents > 0), 0) AS xin,\n         COALESCE(SUM(tx.cents) FILTER (WHERE tx.kind = 'extern'), 0) AS ext\n  FROM months\n  CROSS JOIN (VALUES ('me'), ('joint')) AS sides (side)\n  LEFT JOIN tx ON tx.mon = months.mon AND tx.side = sides.side\n  GROUP BY 1, 2\n),\nrows AS (\n  SELECT mon, CASE side WHEN 'me' THEN '1 Ich' ELSE '2 Gemeinschaftskonto' END AS seite,\n         inc, con, xout, xin, ext, inc + con + xout + xin + ext AS net\n  FROM m\n  UNION ALL\n  -- Household: transfers between the sides cancel and are left out, never double-counted.\n  SELECT mon, '3 Haushalt', SUM(inc), SUM(con), NULL, NULL, SUM(ext), SUM(inc + con + ext)\n  FROM m\n  GROUP BY mon\n)\nSELECT mon AS \"Monat\", substr(seite, 3) AS \"Seite\",\n       inc / 100.0 AS \"Einnahmen\",\n       -con / 100.0 AS \"Konsum\",\n       -xout / 100.0 AS \"An andere Seite\",\n       xin / 100.0 AS \"Von anderer Seite\",\n       ext / 100.0 AS \"Zufluss ohne Gegenbuchung\",\n       net / 100.0 AS \"Netto\"\nFROM rows\nWHERE $__timeFilter(mon)\nORDER BY mon DESC, seite"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Einnahmen"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Konsum"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "An andere Seite"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Von anderer Seite"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Zufluss ohne Gegenbuchung"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Netto"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Monat"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocalNoDateIfToday"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 10
+    }
+  ]
+}
