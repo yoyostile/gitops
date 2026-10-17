@@ -1,8 +1,8 @@
 {
   "uid": "finance-depot-parqet",
-  "title": "Finanzen · Depot (Parqet, ungetestet)",
-  "description": "VORLÄUFIG, visuelle Prüfung steht aus. Depot aus Parqet (parqet_* Tabellen aus notgroschen PR #22).",
-  "tags": ["finanzen", "notgroschen", "parqet", "ungetestet"],
+  "title": "Finanzen · Depot (Parqet)",
+  "description": "Depot aus Parqet (parqet_* Tabellen aus notgroschen).",
+  "tags": ["finanzen", "notgroschen", "parqet"],
   "timezone": "browser",
   "editable": true,
   "graphTooltip": 1,
@@ -62,7 +62,7 @@
     {
       "type": "stat",
       "title": "Depot laut Parqet",
-      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Marktwert, Kostenbasis und Unrealisiert aus den Positionen (pro Person). Investiertes Kapital und Gewinn gesamt aus parqet_valuations, nur für Portfolios, die ganz in der Einheit liegen.",
+      "description": "Die Kostenbasis kann über dem investierten Kapital liegen, weil reinvestierte realisierte Gewinne sie erhöhen. Das ist kein Verlust. Marktwert, Kostenbasis und Unrealisiert aus den Positionen (pro Person). Investiertes Kapital und Gewinn gesamt aus parqet_valuations, nur für Portfolios, die ganz in der Einheit liegen.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -127,7 +127,7 @@
     {
       "type": "timeseries",
       "title": "Marktwert vs. investiertes Kapital",
-      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. capitalHistory = netto eingebrachtes Kapital. Die Differenz ist der echte Gewinn inkl. realisierter Gewinne und Ausschüttungen. Je Portfolio; das ING-Portfolio mischt me und joint und erscheint daher nur im Haushalt. Vor 2024 ist die Historie nicht täglich; jeder Portfolio-Wert wird bis zum nächsten Punkt fortgeschrieben.",
+      "description": "capitalHistory = netto eingebrachtes Kapital. Die Differenz ist der echte Gewinn inkl. realisierter Gewinne und Ausschüttungen. Je Portfolio; das ING-Portfolio mischt me und joint und erscheint daher nur im Haushalt. Vor 2024 ist die Historie nicht täglich; jeder Portfolio-Wert wird bis zum nächsten Punkt fortgeschrieben.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -187,7 +187,7 @@
     {
       "type": "timeseries",
       "title": "Kostenbasis der aktuellen Positionen",
-      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Kaufwert (purchaseValue) der offenen Positionen je Snapshot-Tag, pro Person über das Unterkonto.",
+      "description": "Die Kostenbasis kann über dem investierten Kapital liegen, weil reinvestierte realisierte Gewinne sie erhöhen. Das ist kein Verlust. Kaufwert (purchaseValue) der offenen Positionen je Snapshot-Tag, pro Person über das Unterkonto.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -230,7 +230,7 @@
             "drawStyle": "line",
             "lineWidth": 2,
             "fillOpacity": 10,
-            "showPoints": "never",
+            "showPoints": "always",
             "pointSize": 6,
             "spanNulls": true,
             "barAlignment": 0,
@@ -247,7 +247,7 @@
     {
       "type": "table",
       "title": "Positionen: unrealisierter Gewinn",
-      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. ",
+      "description": "Unrealisiert = Marktwert − Kostenbasis der offenen Position.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -371,7 +371,7 @@
     {
       "type": "timeseries",
       "title": "Dividenden und Zinsen je Jahr",
-      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Zinsen sind vermutlich Guthabenzinsen, die MoneyMoney bereits als Einnahme bucht: nur Parqet-Sicht, nicht zu Einnahmen addieren.",
+      "description": "Zinsen sind vermutlich Guthabenzinsen, die MoneyMoney bereits als Einnahme bucht: nur Parqet-Sicht, nicht zu Einnahmen addieren.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -431,7 +431,7 @@
     {
       "type": "timeseries",
       "title": "Gebühren und Steuern je Jahr",
-      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. fee_cents und tax_cents über alle Aktivitätsarten (Käufe tragen Gebühren, fees_taxes-Buchungen haben amount = 0).",
+      "description": "fee_cents und tax_cents über alle Aktivitätsarten (Käufe tragen Gebühren, fees_taxes-Buchungen haben amount = 0).",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"
@@ -491,7 +491,7 @@
     {
       "type": "timeseries",
       "title": "Sparplan-Käufe je Monat (abgeleitet)",
-      "description": "VORLÄUFIG: Abfragen gegen Produktionsdaten geprüft, visuelle Prüfung steht aus. Parqet markiert Sparpläne nicht. Abgeleitet: gleiche Position, gleicher Betrag, einmal pro Monat, in mindestens 3 Monaten.",
+      "description": "Parqet markiert Sparpläne nicht. Abgeleitet: gleiche Position, gleicher Betrag, einmal pro Monat, in mindestens 3 Monaten.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "notgroschen"

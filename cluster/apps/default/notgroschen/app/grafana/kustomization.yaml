@@ -17,6 +17,9 @@ configMapGenerator:
   - name: finance-depot-moneymoney-dashboard
     files:
       - dashboards/depot-moneymoney.json
+  - name: finance-depot-parqet-dashboard
+    files:
+      - dashboards/depot-parqet.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
