@@ -1,0 +1,552 @@
+{
+  "uid": "finance-depot-parqet",
+  "title": "Finanzen · Depot (Parqet, ungetestet)",
+  "description": "UNGETESTET. Depot aus Parqet (parqet_* Tabellen aus notgroschen PR #22).",
+  "tags": ["finanzen", "notgroschen", "parqet", "ungetestet"],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-2y",
+    "to": "now"
+  },
+  "refresh": "",
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "scope",
+        "label": "Einheit",
+        "type": "custom",
+        "query": "Haushalt : me+joint,Ich (Hälfte) : me,Gemeinschaftskonto (Hälfte) : joint,Mama (verwaltet) : mama",
+        "current": {
+          "text": "Haushalt",
+          "value": "me+joint"
+        },
+        "multi": false,
+        "includeAll": false,
+        "hide": 0,
+        "skipUrlSync": false,
+        "description": "Haushalt = me + joint. Mama wird nie mit dem Haushalt summiert.",
+        "options": [
+          {
+            "text": "Haushalt",
+            "value": "me+joint",
+            "selected": true
+          },
+          {
+            "text": "Ich (Hälfte)",
+            "value": "me",
+            "selected": false
+          },
+          {
+            "text": "Gemeinschaftskonto (Hälfte)",
+            "value": "joint",
+            "selected": false
+          },
+          {
+            "text": "Mama (verwaltet)",
+            "value": "mama",
+            "selected": false
+          }
+        ]
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Depot laut Parqet",
+      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Marktwert, Kostenbasis und Unrealisiert aus den Positionen (pro Person). Investiertes Kapital und Gewinn gesamt aus parqet_valuations, nur für Portfolios, die ganz in der Einheit liegen.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (\n  SELECT parqet_portfolio_id, MAX(snapshot_date) AS d\n  FROM parqet_holding_snapshots\n  GROUP BY 1\n),\npos AS (\n  SELECT SUM(h.current_value_cents) AS mv, SUM(h.purchase_value_cents) AS pv, MAX(h.snapshot_date) AS d\n  FROM parqet_holding_snapshots h\n  JOIN latest l ON l.parqet_portfolio_id = h.parqet_portfolio_id AND l.d = h.snapshot_date\n  JOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id\n  WHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR'\n),\neligible AS (\n  SELECT p.id\n  FROM parqet_portfolios p\n  WHERE EXISTS (SELECT 1 FROM parqet_sub_accounts s WHERE s.parqet_portfolio_id = p.id AND s.person = ANY(string_to_array('${scope}', '+')))\n    AND NOT EXISTS (\n      SELECT 1 FROM parqet_sub_accounts s\n      WHERE s.parqet_portfolio_id = p.id AND NOT (s.person = ANY(string_to_array('${scope}', '+')))\n        AND (EXISTS (SELECT 1 FROM parqet_activities a WHERE a.parqet_sub_account_id = s.id)\n             OR EXISTS (SELECT 1 FROM parqet_holding_snapshots h WHERE h.parqet_sub_account_id = s.id))\n    )\n),\nval AS (\n  SELECT SUM(v.market_value_cents) AS mv, SUM(v.invested_capital_cents) AS ic\n  FROM eligible e\n  JOIN LATERAL (\n    SELECT v.market_value_cents, v.invested_capital_cents FROM parqet_valuations v\n    WHERE v.parqet_portfolio_id = e.id AND v.currency = 'EUR'\n    ORDER BY v.date DESC LIMIT 1\n  ) v ON TRUE\n)\nSELECT pos.mv / 100.0 AS \"Marktwert\",\n       pos.pv / 100.0 AS \"Kostenbasis\",\n       (pos.mv - pos.pv) / 100.0 AS \"Unrealisiert\",\n       val.ic / 100.0 AS \"Investiertes Kapital\",\n       (val.mv - val.ic) / 100.0 AS \"Gewinn gesamt\",\n       pos.d::timestamp AS \"Stand\"\nFROM pos, val"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stand"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocalNoDateIfToday"
+              }
+            ]
+          }
+        ]
+      },
+      "id": 1
+    },
+    {
+      "type": "timeseries",
+      "title": "Marktwert vs. investiertes Kapital",
+      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. capitalHistory = netto eingebrachtes Kapital. Die Differenz ist der echte Gewinn inkl. realisierter Gewinne und Ausschüttungen. Je Portfolio; das ING-Portfolio mischt me und joint und erscheint daher nur im Haushalt.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH eligible AS (\n  SELECT p.id\n  FROM parqet_portfolios p\n  WHERE EXISTS (SELECT 1 FROM parqet_sub_accounts s WHERE s.parqet_portfolio_id = p.id AND s.person = ANY(string_to_array('${scope}', '+')))\n    AND NOT EXISTS (\n      SELECT 1 FROM parqet_sub_accounts s\n      WHERE s.parqet_portfolio_id = p.id AND NOT (s.person = ANY(string_to_array('${scope}', '+')))\n        AND (EXISTS (SELECT 1 FROM parqet_activities a WHERE a.parqet_sub_account_id = s.id)\n             OR EXISTS (SELECT 1 FROM parqet_holding_snapshots h WHERE h.parqet_sub_account_id = s.id))\n    )\n),\nd AS (\n  SELECT DISTINCT v.date\n  FROM parqet_valuations v JOIN eligible e ON e.id = v.parqet_portfolio_id\n  WHERE $__timeFilter(v.date)\n),\nx AS (\n  SELECT d.date, lv.market_value_cents AS mv, lv.invested_capital_cents AS ic\n  FROM d CROSS JOIN eligible e\n  LEFT JOIN LATERAL (\n    SELECT v.market_value_cents, v.invested_capital_cents FROM parqet_valuations v\n    WHERE v.parqet_portfolio_id = e.id AND v.currency = 'EUR' AND v.date <= d.date\n    ORDER BY v.date DESC LIMIT 1\n  ) lv ON TRUE\n)\nSELECT date::timestamp AS time,\n       SUM(mv) / 100.0 AS \"Marktwert\",\n       SUM(ic) / 100.0 AS \"Investiertes Kapital\",\n       SUM(mv - ic) / 100.0 AS \"Gewinn (Marktwert − Kapital)\"\nFROM x\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "Kostenbasis der aktuellen Positionen",
+      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Kaufwert (purchaseValue) der offenen Positionen je Snapshot-Tag, pro Person über das Unterkonto.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT h.snapshot_date::timestamp AS time,\n       SUM(h.current_value_cents) / 100.0 AS \"Marktwert Positionen\",\n       SUM(h.purchase_value_cents) / 100.0 AS \"Kostenbasis\",\n       SUM(h.current_value_cents - h.purchase_value_cents) / 100.0 AS \"Unrealisiert\"\nFROM parqet_holding_snapshots h\nJOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR' AND $__timeFilter(h.snapshot_date)\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 3
+    },
+    {
+      "type": "table",
+      "title": "Positionen: unrealisierter Gewinn",
+      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. ",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 24,
+        "h": 12
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (\n  SELECT parqet_portfolio_id, MAX(snapshot_date) AS d\n  FROM parqet_holding_snapshots\n  GROUP BY 1\n)\nSELECT COALESCE(h.name, h.isin) AS \"Position\",\n       h.isin AS \"ISIN\",\n       string_agg(DISTINCT p.name || ' (' || s.person || ')', ', ') AS \"Depot\",\n       SUM(h.shares) AS \"Stück\",\n       SUM(h.current_value_cents) / 100.0 AS \"Marktwert\",\n       SUM(h.purchase_value_cents) / 100.0 AS \"Kostenbasis\",\n       SUM(h.current_value_cents - h.purchase_value_cents) / 100.0 AS \"Unrealisiert\",\n       SUM(h.current_value_cents - h.purchase_value_cents)::float\n         / NULLIF(SUM(h.purchase_value_cents), 0) AS \"Rendite\"\nFROM parqet_holding_snapshots h\nJOIN latest l ON l.parqet_portfolio_id = h.parqet_portfolio_id AND l.d = h.snapshot_date\nJOIN parqet_sub_accounts s ON s.id = h.parqet_sub_account_id\nJOIN parqet_portfolios p ON p.id = h.parqet_portfolio_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND NOT h.is_sold AND h.currency = 'EUR'\nGROUP BY 1, 2\nORDER BY 7 DESC"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Marktwert"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Kostenbasis"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unrealisiert"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyEUR"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Rendite"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stück"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          }
+        ]
+      },
+      "id": 4
+    },
+    {
+      "type": "timeseries",
+      "title": "Dividenden und Zinsen je Jahr",
+      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. ",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 33,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT date_trunc('year', a.activity_date)::timestamp AS time,\n       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS \"Dividenden brutto\",\n       SUM(COALESCE(a.amount_net_cents, a.amount_cents)) FILTER (WHERE a.activity_type = 'dividend') / 100.0 AS \"Dividenden netto\",\n       SUM(a.amount_cents) FILTER (WHERE a.activity_type = 'interest') / 100.0 AS \"Zinsen brutto\"\nFROM parqet_activities a\nJOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type IN ('dividend', 'interest') AND a.currency = 'EUR'\n  AND $__timeFilter(a.activity_date)\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 5
+    },
+    {
+      "type": "timeseries",
+      "title": "Gebühren und Steuern je Jahr",
+      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Vorzeichen der fees_taxes-Buchungen ist unbestätigt, daher ABS.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 33,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT date_trunc('year', a.activity_date)::timestamp AS time,\n       SUM(COALESCE(a.fee_cents, 0)) / 100.0 AS \"Gebühren\",\n       SUM(COALESCE(a.tax_cents, 0)) / 100.0 AS \"Steuern\",\n       SUM(ABS(a.amount_cents)) FILTER (WHERE a.activity_type = 'fees_taxes') / 100.0 AS \"Gebühren/Steuern (eigene Buchung)\"\nFROM parqet_activities a\nJOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id\nWHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.currency = 'EUR' AND $__timeFilter(a.activity_date)\nGROUP BY 1\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 6
+    },
+    {
+      "type": "timeseries",
+      "title": "Sparplan-Käufe je Monat (abgeleitet)",
+      "description": "UNGETESTET: geschrieben gegen notgroschen PR #22 (feat/parqet-sync), Tabellen noch nicht in Produktion. Parqet markiert Sparpläne nicht. Abgeleitet: gleiche Position, gleicher Betrag, einmal pro Monat, in mindestens 3 Monaten.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "notgroschen"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "notgroschen"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH buys AS (\n  SELECT a.parqet_sub_account_id, a.holding_id, a.isin, a.amount_cents, a.activity_date\n  FROM parqet_activities a\n  JOIN parqet_sub_accounts s ON s.id = a.parqet_sub_account_id\n  WHERE s.person = ANY(string_to_array('${scope}', '+')) AND a.activity_type = 'buy' AND a.currency = 'EUR'\n),\nplans AS (\n  SELECT parqet_sub_account_id, holding_id, amount_cents\n  FROM buys\n  GROUP BY 1, 2, 3\n  HAVING COUNT(DISTINCT date_trunc('month', activity_date)) >= 3\n     AND COUNT(*) = COUNT(DISTINCT date_trunc('month', activity_date))\n)\nSELECT date_trunc('month', b.activity_date)::timestamp AS time,\n       COALESCE(n.name, b.isin, b.holding_id) AS metric,\n       SUM(b.amount_cents) / 100.0 AS value\nFROM buys b\nJOIN plans pl ON pl.parqet_sub_account_id = b.parqet_sub_account_id\n             AND pl.holding_id = b.holding_id AND pl.amount_cents = b.amount_cents\nLEFT JOIN LATERAL (\n  SELECT h.name FROM parqet_holding_snapshots h\n  WHERE h.holding_id = b.holding_id\n  ORDER BY h.snapshot_date DESC LIMIT 1\n) n ON TRUE\nWHERE $__timeFilter(b.activity_date)\nGROUP BY 1, 2\nORDER BY 1"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["sum"]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "pointSize": 6,
+            "spanNulls": false,
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "id": 7
+    }
+  ]
+}
