@@ -57,7 +57,10 @@ spec:
     # Preferred, not required: the Galera init/recovery Jobs inherit this
     # affinity and must run next to the pod whose node-local volume they
     # mount, which a required rule forbids.
+    # The empty list is load-bearing: it overwrites the required rule the
+    # operator defaulted into the live spec from antiAffinityEnabled.
     podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: []
       preferredDuringSchedulingIgnoredDuringExecution:
         - weight: 100
           podAffinityTerm:
