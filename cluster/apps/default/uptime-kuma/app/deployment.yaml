@@ -30,7 +30,7 @@ spec:
             - name: UPTIME_KUMA_DB_TYPE
               value: "mariadb"
             - name: UPTIME_KUMA_DB_HOSTNAME
-              value: "mariadb-galera.default"
+              value: "mariadb-galera-primary.default"
             - name: UPTIME_KUMA_DB_NAME
               value: "uptime-kuma"
             - name: UPTIME_KUMA_DB_USERNAME
