@@ -5,7 +5,13 @@ metadata:
   name: psql-cluster
   namespace: default
 spec:
-  instances: 1
+  instances: 2
+
+  # Zone = PVE host. radon and helium share pve02, so spreading by
+  # hostname would allow both instances on one hypervisor.
+  affinity:
+    topologyKey: topology.kubernetes.io/zone
+    podAntiAffinityType: required
 
   # Sized from 14 days of observed usage; CPU may burst.
   resources:
