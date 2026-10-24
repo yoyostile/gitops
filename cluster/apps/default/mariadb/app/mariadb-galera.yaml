@@ -54,6 +54,17 @@ spec:
 
   affinity:
     antiAffinityEnabled: true
+    # Preferred, not required: the Galera init/recovery Jobs inherit this
+    # affinity and must run next to the pod whose node-local volume they
+    # mount, which a required rule forbids.
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/instance: mariadb-galera
+            topologyKey: topology.kubernetes.io/zone
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
