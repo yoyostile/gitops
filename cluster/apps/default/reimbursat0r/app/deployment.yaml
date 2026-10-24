@@ -63,6 +63,17 @@ spec:
                   key: BIFROST_VK_NOTICE
             - name: PAPERLESS_URL
               value: "https://paperless.${SECRET_LAB_DOMAIN}"
+            # Daily due/overdue payment digest via the in-cluster relay.
+            - name: SMTP_ADDRESS
+              value: "smtp-relay.networking.svc.cluster.local"
+            - name: SMTP_PORT
+              value: "25"
+            - name: MAILER_FROM
+              value: "reimbursat0r <noreply@${SECRET_LAB_DOMAIN}>"
+            - name: APP_HOST
+              value: "reimbursat0r.${SECRET_LAB_DOMAIN}"
+            - name: REMINDER_EMAIL_TO
+              value: "jheck@me.com"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
