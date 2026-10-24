@@ -7,8 +7,8 @@ metadata:
 spec:
   mariaDbRef:
     name: mariadb-galera
-  characterSet: utf8
-  collate: utf8_general_ci
+  characterSet: utf8mb4
+  collate: utf8mb4_unicode_ci
   cleanupPolicy: Skip
   requeueInterval: 30s
   retryInterval: 5s
