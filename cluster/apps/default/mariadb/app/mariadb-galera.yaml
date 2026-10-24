@@ -17,10 +17,10 @@ spec:
         labels:
           velero.io/exclude-from-backup: "true"
 
-  replicas: 1
+  replicas: 3
 
   galera:
-    enabled: false
+    enabled: true
     config:
       reuseStorageVolume: true
 
