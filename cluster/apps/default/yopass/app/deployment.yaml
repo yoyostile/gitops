@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: yopass
+  name: yopass
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yopass
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: yopass
+    spec:
+      containers:
+        - name: yopass
+          image: docker.io/jhaals/yopass:16.0.1
+          args:
+            - --memcached=localhost:11211
+          ports:
+            - name: http
+              containerPort: 1337
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+        - name: memcached
+          image: docker.io/library/memcached:1.6.45-alpine
+          args:
+            - -m
+            - "64"
+          ports:
+            - name: memcached
+              containerPort: 11211
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 96Mi

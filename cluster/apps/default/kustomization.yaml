@@ -30,10 +30,10 @@ resources:
   - ./reimbursat0r/ks.yaml
   - ./requestbin/ks.yaml
   - ./searxng/ks.yaml
-  - ./shhh/ks.yaml
   - ./st0rage/ks.yaml
   - ./teslamate/ks.yaml
   - ./thelounge/ks.yaml
   - ./uptime-kuma/ks.yaml
+  - ./yopass/ks.yaml
   - ./zettelrobbe/ks.yaml
   - ./zigbee2mqtt/ks.yaml

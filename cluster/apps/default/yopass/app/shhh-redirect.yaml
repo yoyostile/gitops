@@ -1,16 +1,25 @@
 ---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: shhh-redirect
+  namespace: default
+spec:
+  redirectRegex:
+    regex: ^https?://shhh\.[^/]+/.*
+    replacement: https://yopass.${SECRET_LAB_DOMAIN}/
+    permanent: true
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: shhh
+  name: shhh-redirect
   namespace: default
   annotations:
-    hajimari.io/enable: "true"
-    hajimari.io/icon: "safe-square-outline"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     external-dns.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
     external-dns.kubernetes.io/cloudflare-proxied: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,default-shhh-redirect@kubernetescrd"
     external-dns/external: "true"
 spec:
   tls:
@@ -25,6 +34,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: shhh
+                name: yopass
                 port:
                   name: http
