@@ -13,6 +13,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
     external-dns/external: "true"
 spec:
+  ingressClassName: traefik
   tls:
     - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
