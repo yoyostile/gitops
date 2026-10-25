@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atuin
+  namespace: default
+  labels:
+    app: atuin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: atuin
+  template:
+    metadata:
+      labels:
+        app: atuin
+    spec:
+      # The atuin Service would inject ATUIN_PORT=tcp://...
+      enableServiceLinks: false
+      containers:
+        - name: atuin
+          image: ghcr.io/atuinsh/atuin:v18.24.2
+          args: ["start"]
+          ports:
+            - name: http
+              containerPort: 8888
+          env:
+            - name: TZ
+              value: "${TZ}"
+            - name: ATUIN_HOST
+              value: "0.0.0.0"
+            - name: ATUIN_PORT
+              value: "8888"
+            # Flip to true only while registering a new account.
+            - name: ATUIN_OPEN_REGISTRATION
+              value: "true"
+            - name: ATUIN_DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: atuin
+                  key: ATUIN_DB_URI
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
