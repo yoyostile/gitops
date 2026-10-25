@@ -34,7 +34,7 @@ spec:
               value: "8888"
             # Flip to true only while registering a new account.
             - name: ATUIN_OPEN_REGISTRATION
-              value: "true"
+              value: "false"
             - name: ATUIN_DB_URI
               valueFrom:
                 secretKeyRef:
