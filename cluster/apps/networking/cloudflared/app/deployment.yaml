@@ -28,13 +28,17 @@ spec:
               weight: 90
       containers:
         - name: cloudflared
-          image: cloudflare/cloudflared:latest
-          imagePullPolicy: Always
+          image: cloudflare/cloudflared:2026.10.3
           args:
             - tunnel
             - --config
             - /etc/cloudflared/config/config.yaml
             - run
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 2000
+            periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /ready
