@@ -459,13 +459,13 @@
     },
     {
       "type": "stat",
-      "title": "HA nicht verfügbar",
+      "title": "HA-Sensoren offline",
       "id": 8,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Bewusst neutral eingefärbt: der Wert ist dauerhaft dreistellig (abgemeldete Geräte) und taugt erst als Ampel, wenn er einmal aufgeräumt wurde. Bis dahin ist die Tendenz interessant, nicht der Absolutwert.",
+      "description": "Nur Entities, deren Ausfall etwas bedeutet: ein Raumsensor je Raum, Haustürschloss, Wärmepumpe, Netz- und Akkumessung. Alle Entities zu zählen ergab dauerhaft ~340, vor allem Buttons und abgemeldete Tracker.",
       "gridPos": {
         "h": 4,
         "w": 8,
@@ -479,7 +479,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "count(hass_entity_available == 0) or vector(0)",
+          "expr": "count(hass_entity_available{entity=~\"sensor.(wohnzimmer_aqi_wohnzimmer_temperatur|klima_kuche_temperatur|ikea_aqi_1_temperatur|tuya_temp_[12]_temperature|sonoff_thermostat_1_temperature|aqara_temp_1_temperature|timmerflotte_temp_hmd_sensor_temperatur_2|[a-z]+_timmerflotte_temp_hmd_sensor_temperatur)\",entity!~\"sensor.waschkuche_.*\"} == 0 or hass_entity_available{entity=~\"lock.eingangsbereich_nuki_smart_lock|sensor.e3_vitocal_16_aussentemperatur|sensor.vitocal_elektrische_leistung|sensor.evcc_site_evcc_grid_power|sensor.marstek_venus_soc_batterie\"} == 0) or vector(0)",
           "refId": "A",
           "range": false,
           "instant": true
@@ -511,7 +511,7 @@
                 "value": null
               },
               {
-                "color": "text",
+                "color": "red",
                 "value": 1
               }
             ]
@@ -701,7 +701,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "topk(8, 100 * kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes)",
+          "expr": "topk(8, max by (namespace, persistentvolumeclaim) (100 * kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes))",
           "refId": "B",
           "range": false,
           "instant": true,
@@ -2077,13 +2077,13 @@
     },
     {
       "type": "stat",
-      "title": "etcd-Snapshots/h",
+      "title": "etcd-Snapshots 24h",
       "id": 33,
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "k3s sichert alle 12 h, normal sind also 2. Über 1 h gemessen war der Wert fast immer 0.",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2097,7 +2097,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(rate(k3s_etcd_snapshot_save_duration_seconds_count[1h])) * 3600",
+          "expr": "max(increase(k3s_etcd_snapshot_save_duration_seconds_count[24h]))",
           "refId": "A",
           "range": false,
           "instant": true
@@ -2119,7 +2119,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "none",
-          "decimals": 1,
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -2129,8 +2129,12 @@
                 "value": null
               },
               {
-                "color": "green",
+                "color": "yellow",
                 "value": 0.5
+              },
+              {
+                "color": "green",
+                "value": 1.5
               }
             ]
           }
@@ -3850,7 +3854,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Bewusst eine feste Entity-Liste. Ungefiltert liefert die Metrik auch Gerätetemperaturen (Switch, Wechselrichter, Wärmepumpen-Interna), die nichts über einen Raum aussagen und die Skala sprengen.",
+      "description": "Bewusst eine feste Entity-Liste, ein Sensor je Raum. Ungefiltert liefert die Metrik auch Gerätetemperaturen (Switch, Wechselrichter, Wärmepumpen-Interna), die nichts über einen Raum aussagen und die Skala sprengen. Die Außentemperatur steht bei der Vitocal.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -3864,11 +3868,11 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_sensor_temperature_celsius{entity=~\"sensor.wohnzimmer_aqi_wohnzimmer_temperatur|sensor.aqara_temp_2_temperature|sensor.klima_kuche_temperatur|sensor.sonoff_thermostat_1_temperature|sensor.tuya_temp_2_temperature|sensor.tuya_temp_1_temperature|sensor.aqara_temp_1_temperature|sensor.e3_vitocal_16_aussentemperatur\"}",
+          "expr": "label_replace(label_replace(hass_sensor_temperature_celsius{entity=~\"sensor.(wohnzimmer_aqi_wohnzimmer_temperatur|klima_kuche_temperatur|ikea_aqi_1_temperatur|tuya_temp_[12]_temperature|sonoff_thermostat_1_temperature|aqara_temp_1_temperature|timmerflotte_temp_hmd_sensor_temperatur_2|[a-z]+_timmerflotte_temp_hmd_sensor_temperatur)\",entity!~\"sensor.waschkuche_.*\"}, \"room\", \"$1\", \"friendly_name\", \"(.*)\"), \"room\", \"$1\", \"friendly_name\", \"(?:AQI |Klima )?(.*) (?:Temperatur|Luftfeuchtigkeit)\")",
           "refId": "A",
           "range": true,
           "instant": false,
-          "legendFormat": "{{friendly_name}}"
+          "legendFormat": "{{room}}"
         }
       ],
       "options": {
@@ -3893,7 +3897,7 @@
           "custom": {
             "drawStyle": "line",
             "lineWidth": 1,
-            "fillOpacity": 8,
+            "fillOpacity": 0,
             "showPoints": "never",
             "spanNulls": true,
             "stacking": {
@@ -3916,7 +3920,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "Dieselben Räume wie links. Das Bad schießt beim Duschen kurz über 90 %, deshalb keine feste Obergrenze.",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -3930,11 +3934,11 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_sensor_humidity_percent",
+          "expr": "label_replace(label_replace(hass_sensor_humidity_percent{entity=~\"sensor.(wohnzimmer_aqi_wohnzimmer_luftfeuchtigkeit|klima_kuche_luftfeuchtigkeit|ikea_aqi_1_luftfeuchtigkeit|tuya_temp_[12]_humidity|sonoff_thermostat_1_humidity|aqara_temp_1_humidity|timmerflotte_temp_hmd_sensor_luftfeuchtigkeit_2|[a-z]+_timmerflotte_temp_hmd_sensor_luftfeuchtigkeit)\",entity!~\"sensor.waschkuche_.*\"}, \"room\", \"$1\", \"friendly_name\", \"(.*)\"), \"room\", \"$1\", \"friendly_name\", \"(?:AQI |Klima )?(.*) (?:Temperatur|Luftfeuchtigkeit)\")",
           "refId": "A",
           "range": true,
           "instant": false,
-          "legendFormat": "{{friendly_name}}"
+          "legendFormat": "{{room}}"
         }
       ],
       "options": {
@@ -3959,7 +3963,7 @@
           "custom": {
             "drawStyle": "line",
             "lineWidth": 1,
-            "fillOpacity": 8,
+            "fillOpacity": 0,
             "showPoints": "never",
             "spanNulls": true,
             "stacking": {
@@ -3970,8 +3974,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "min": 0,
-          "max": 100
+          "min": 30
         },
         "overrides": []
       }
@@ -4552,6 +4555,132 @@
         },
         "overrides": []
       }
+    },
+    {
+      "type": "timeseries",
+      "title": "Wärmepumpe Leistung",
+      "id": 72,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Elektrische und thermische Leistung aus der ViCare-Diagnose (REST-Sensoren in HA). Die elektrische Leistung zählt nur den Verdichter, Pumpen und Standby fehlen, die COP ist also geschönt.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 120
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatt",
+          "decimals": 2,
+          "min": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "COP"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    6,
+                    4
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_power_kw{entity=\"sensor.vitocal_elektrische_leistung\"}",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "elektrisch"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_power_kw{entity=\"sensor.vitocal_thermische_leistung\"}",
+          "refId": "B",
+          "range": true,
+          "instant": false,
+          "legendFormat": "thermisch"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max(hass_sensor_power_kw{entity=\"sensor.vitocal_thermische_leistung\"}) / max(hass_sensor_power_kw{entity=\"sensor.vitocal_elektrische_leistung\"} > 0.1)",
+          "refId": "C",
+          "range": true,
+          "instant": false,
+          "legendFormat": "COP"
+        }
+      ]
     }
   ],
   "preload": false,
