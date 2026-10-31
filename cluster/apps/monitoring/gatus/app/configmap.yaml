@@ -15,6 +15,18 @@ data:
       path: /data/data.db
 
     alerting:
+      ntfy:
+        url: http://ntfy.default.svc
+        topic: alerts
+        token: "$${NTFY_TOKEN}"
+        priority: 4
+        click: https://gatus.${SECRET_LAB_DOMAIN}
+        default-alert:
+          failure-threshold: 6
+          success-threshold: 1
+          send-on-resolved: true
+      # Only the wan group mails, and only the third person: Gatus requires a
+      # provider-level "to", which the group override replaces.
       email:
         from: "$${ALERT_EMAIL_FROM}"
         host: smtp-relay.networking.svc.cluster.local
@@ -26,14 +38,14 @@ data:
           send-on-resolved: true
         overrides:
           - group: wan
-            to: "$${ALERT_EMAIL_TO},$${ALERT_EMAIL_TO_WAN}"
+            to: "$${ALERT_EMAIL_TO_WAN}"
 
     x-http: &http
       interval: 60s
       client:
         timeout: 48s
       alerts:
-        - type: email
+        - type: ntfy
 
     x-http-insecure: &http-insecure
       interval: 60s
@@ -41,7 +53,7 @@ data:
         timeout: 48s
         insecure: true
       alerts:
-        - type: email
+        - type: ntfy
 
     x-conditions: &conditions
       - "[STATUS] >= 200"
@@ -124,7 +136,7 @@ data:
           - "[STATUS] < 300"
           - "[CERTIFICATE_EXPIRATION] > 168h"
         alerts:
-          - type: email
+          - type: ntfy
             failure-threshold: 4
       # Gatus requires >= 5m intervals for [DOMAIN_EXPIRATION], so it gets its
       # own endpoint instead of slowing the uptime check.
@@ -135,7 +147,7 @@ data:
         conditions:
           - "[DOMAIN_EXPIRATION] > 168h"
         alerts:
-          - type: email
+          - type: ntfy
             failure-threshold: 1
 
       - <<: *http
@@ -144,7 +156,7 @@ data:
         url: https://www.placetel.de
         conditions: *conditions
         alerts:
-          - type: email
+          - type: ntfy
             failure-threshold: 4
       - <<: *http
         name: web.placetel.de
@@ -152,7 +164,7 @@ data:
         url: https://web.placetel.de
         conditions: *conditions
         alerts:
-          - type: email
+          - type: ntfy
             failure-threshold: 4
 
       - name: External WAN
@@ -167,5 +179,7 @@ data:
         conditions:
           - "[CONNECTED] == true"
         alerts:
+          - type: ntfy
+            failure-threshold: 4
           - type: email
             failure-threshold: 4

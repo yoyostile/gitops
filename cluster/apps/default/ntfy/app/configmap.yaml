@@ -26,5 +26,6 @@ data:
     # Users and tokens come from the ntfy-auth Secret (NTFY_AUTH_USERS, NTFY_AUTH_TOKENS).
     auth-access:
       - "alertmanager:alerts:wo"
+      - "gatus:alerts:wo"
 
     enable-login: true
