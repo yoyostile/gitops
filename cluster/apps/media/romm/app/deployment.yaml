@@ -16,6 +16,8 @@ spec:
       labels:
         app.kubernetes.io/name: romm
     spec:
+      # Service links inject ROMM_PORT=tcp://..., which RomM reads as its listen port.
+      enableServiceLinks: false
       nodeSelector:
         topology.kubernetes.io/region: lab
       containers:
@@ -44,6 +46,12 @@ spec:
             - name: DB_USER
               value: romm
             - name: HASHEOUS_API_ENABLED
+              value: "true"
+            - name: LAUNCHBOX_API_ENABLED
+              value: "true"
+            - name: ENABLE_SCHEDULED_UPDATE_LAUNCHBOX_METADATA
+              value: "true"
+            - name: PLAYMATCH_API_ENABLED
               value: "true"
             - name: OIDC_ENABLED
               value: "true"
