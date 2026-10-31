@@ -31,7 +31,7 @@ spec:
       persistentVolume:
         storageClass: "ceph-rbd"
       env:
-        WOODPECKER_HOST: "https://woodpecker.${SECRET_LAB_DOMAIN}"
+        WOODPECKER_HOST: "https://ci.${SECRET_LAB_DOMAIN}"
         WOODPECKER_ADMIN: "yoyostile"
         WOODPECKER_OPEN: "false"
         WOODPECKER_PLUGINS_PRIVILEGED: woodpeckerci/plugin-docker-buildx

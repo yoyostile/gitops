@@ -16,10 +16,10 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - "woodpecker.${SECRET_LAB_DOMAIN}"
+        - "ci.${SECRET_LAB_DOMAIN}"
       secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
   rules:
-    - host: "woodpecker.${SECRET_LAB_DOMAIN}"
+    - host: "ci.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /api/hook

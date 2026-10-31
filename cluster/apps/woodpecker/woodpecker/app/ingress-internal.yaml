@@ -15,9 +15,9 @@ spec:
   tls:
     - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
       hosts:
-        - "woodpecker.${SECRET_LAB_DOMAIN}"
+        - "ci.${SECRET_LAB_DOMAIN}"
   rules:
-    - host: "woodpecker.${SECRET_LAB_DOMAIN}"
+    - host: "ci.${SECRET_LAB_DOMAIN}"
       http:
         paths:
           - path: /

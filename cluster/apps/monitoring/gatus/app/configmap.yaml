@@ -342,6 +342,11 @@ data:
         group: apps
         url: https://zettelrobbe.${SECRET_LAB_DOMAIN}
         conditions: *conditions
+      - <<: *http
+        name: Woodpecker
+        group: apps
+        url: https://ci.${SECRET_LAB_DOMAIN}/healthz
+        conditions: *conditions
 
       # Through Cloudflare and the tunnel; the certificate checked is
       # Cloudflare's edge certificate.
@@ -418,11 +423,6 @@ data:
           - "[STATUS] == 200"
           - "has([BODY].version) == true"
           - "[CERTIFICATE_EXPIRATION] > 168h"
-      - <<: *http
-        name: Woodpecker
-        group: public
-        url: https://woodpecker.${SECRET_LAB_DOMAIN}/healthz
-        conditions: *conditions
       - <<: *http
         name: Requestbin
         group: public
