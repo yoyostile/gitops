@@ -55,6 +55,14 @@ data:
       alerts:
         - type: ntfy
 
+    # tcp, icmp, dns and ssh endpoints.
+    x-check: &check
+      interval: 60s
+      client:
+        timeout: 10s
+      alerts:
+        - type: ntfy
+
     x-conditions: &conditions
       - "[STATUS] >= 200"
       - "[STATUS] < 300"
@@ -86,11 +94,153 @@ data:
         url: https://pve03.lab.${SECRET_LAB_DOMAIN}:8006
         conditions: *conditions-insecure
 
+      # Without ssh credentials Gatus only reads the SSH banner and ignores
+      # the conditions, but it still requires one.
+      - <<: *check
+        name: k3s-argon ssh
+        group: ssh
+        url: ssh://k3s-argon.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: &connected
+          - "[CONNECTED] == true"
+      - <<: *check
+        name: k3s-helium ssh
+        group: ssh
+        url: ssh://k3s-helium.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+      - <<: *check
+        name: k3s-krypton ssh
+        group: ssh
+        url: ssh://k3s-krypton.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+      - <<: *check
+        name: k3s-neon ssh
+        group: ssh
+        url: ssh://k3s-neon.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+      - <<: *check
+        name: k3s-radon ssh
+        group: ssh
+        url: ssh://k3s-radon.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+      - <<: *check
+        name: k3s-xenon ssh
+        group: ssh
+        url: ssh://k3s-xenon.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+      - <<: *check
+        name: pve01 ssh
+        group: ssh
+        url: ssh://pve01.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+      - <<: *check
+        name: pve02 ssh
+        group: ssh
+        url: ssh://pve02.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+      - <<: *check
+        name: pve03 ssh
+        group: ssh
+        url: ssh://pve03.lab.${SECRET_LAB_DOMAIN}:22
+        conditions: *connected
+
+      # The AdGuard hosts are looked up through the anycast resolver, so an
+      # anycast outage fails all three checks while a dead host fails one.
+      - <<: *check
+        name: Anycast DNS
+        group: dns
+        url: 3.3.3.3
+        dns: &dns-query
+          query-name: glacier.lab.${SECRET_LAB_DOMAIN}
+          query-type: A
+        conditions: &dns
+          - "[DNS_RCODE] == NOERROR"
+          - "[BODY] == pat(10.*)"
+      - <<: *check
+        name: adguard01 DNS
+        group: dns
+        url: adguard01.lab.${SECRET_LAB_DOMAIN}
+        dns: *dns-query
+        conditions: *dns
+      - <<: *check
+        name: adguard02 DNS
+        group: dns
+        url: adguard02.lab.${SECRET_LAB_DOMAIN}
+        dns: *dns-query
+        conditions: *dns
+
+      - <<: *check
+        name: Glacier NFS
+        group: services
+        url: tcp://glacier.lab.${SECRET_LAB_DOMAIN}:2049
+        conditions: *connected
+      - <<: *check
+        name: PostgreSQL
+        group: services
+        url: tcp://psql-cluster-rw.default.svc.cluster.local:5432
+        conditions: *connected
+      - <<: *check
+        name: MariaDB
+        group: services
+        url: tcp://mariadb-galera-primary.default.svc.cluster.local:3306
+        conditions: *connected
+      - <<: *check
+        name: Redis
+        group: services
+        url: tcp://redis-master.default.svc.cluster.local:6379
+        conditions: *connected
+      - <<: *check
+        name: Mosquitto
+        group: services
+        url: tcp://mosquitto.default.svc.cluster.local:1883
+        conditions: *connected
+
+      # UniFi OS answers /api/system without auth; the Network app itself
+      # (/proxy/network) needs a login.
+      - <<: *http
+        name: UniFi controller
+        group: network
+        url: https://$${UNIFI_HOST}:11443/api/system
+        ui:
+          hide-hostname: true
+          hide-url: true
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY].hardware.shortname == UOSSERVER"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *check
+        name: cgn-core-01
+        group: network
+        url: icmp://cgn-core-01.lab.${SECRET_LAB_DOMAIN}
+        conditions: *connected
+
+      - <<: *check
+        name: Cloudflare DNS
+        group: internet
+        url: icmp://1.1.1.1
+        conditions: *connected
+      - <<: *check
+        name: Google DNS
+        group: internet
+        url: icmp://8.8.8.8
+        conditions: *connected
+
       - <<: *http
         name: Authentik
         group: apps
         url: https://auth.${SECRET_LAB_DOMAIN}
-        conditions: *conditions
+        conditions:
+          - "[STATUS] >= 200"
+          - "[STATUS] < 300"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+          - "[RESPONSE_TIME] < 1500"
+      - <<: *http
+        name: evcc
+        group: apps
+        url: https://evcc.${SECRET_LAB_DOMAIN}/api/state
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY].apiReady == true"
+          - "has([BODY].grid.power) == true"
       - <<: *http
         name: Glitchtip
         group: apps
@@ -100,22 +250,53 @@ data:
         name: Grafana
         group: apps
         url: https://g.${SECRET_LAB_DOMAIN}
-        conditions: *conditions
+        conditions:
+          - "[STATUS] >= 200"
+          - "[STATUS] < 300"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+          - "[RESPONSE_TIME] < 1500"
+      # The frontend is static; a 401 from /api/ without a token proves the
+      # core answers.
       - <<: *http
         name: Home Assistant
         group: apps
-        url: https://hass.${SECRET_LAB_DOMAIN}
-        conditions: *conditions
+        url: https://hass.${SECRET_LAB_DOMAIN}/api/
+        conditions:
+          - "[STATUS] == 401"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *http
+        name: Immich
+        group: apps
+        url: https://immich.${SECRET_LAB_DOMAIN}/api/server/ping
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY].res == pong"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
       - <<: *http
         name: LibreNMS
         group: apps
         url: https://librenms.${SECRET_LAB_DOMAIN}
         conditions: *conditions
       - <<: *http
+        name: Mealie
+        group: apps
+        url: https://mealie.${SECRET_LAB_DOMAIN}/api/app/about
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY].production == true"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+          - "[RESPONSE_TIME] < 1000"
+      # Paperless has no unauthenticated API endpoint; the login page still
+      # renders through Django.
+      - <<: *http
         name: Paperless
         group: apps
         url: https://paperless.${SECRET_LAB_DOMAIN}
-        conditions: *conditions
+        conditions:
+          - "[STATUS] >= 200"
+          - "[STATUS] < 300"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+          - "[RESPONSE_TIME] < 1000"
       - <<: *http
         name: Smokeping
         group: apps
@@ -126,6 +307,140 @@ data:
         group: apps
         url: https://teslamate.${SECRET_LAB_DOMAIN}
         conditions: *conditions
+      - <<: *http
+        name: Zettelrobbe
+        group: apps
+        url: https://zettelrobbe.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+
+      # Through Cloudflare and the tunnel; the certificate checked is
+      # Cloudflare's edge certificate.
+      - <<: *http
+        name: SearXNG
+        group: public
+        url: https://search.${SECRET_LAB_DOMAIN}/healthz
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY] == OK"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *http
+        name: echoip
+        group: public
+        url: https://i.${SECRET_LAB_DOMAIN}/json
+        conditions:
+          - "[STATUS] == 200"
+          - "has([BODY].ip) == true"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *http
+        name: echo
+        group: public
+        url: https://echo.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Immich public proxy
+        group: public
+        url: https://photos.${SECRET_LAB_DOMAIN}/healthcheck
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY] == ok"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *http
+        name: heck.sh
+        group: public
+        url: https://heck.sh
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY] == pat(*heck.sh*)"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *http
+        name: ntfy
+        group: public
+        url: https://ntfy.${SECRET_LAB_DOMAIN}/v1/health
+        conditions:
+          - "[STATUS] == 200"
+          - "[BODY].healthy == true"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      # Only /hook is routed to the receiver; anything else falls through to
+      # the default backend and answers 200. The 404 comes from the
+      # notification-controller.
+      - <<: *http
+        name: Flux webhook
+        group: public
+        url: https://flux-webhook.${SECRET_LAB_DOMAIN}/hook/
+        conditions:
+          - "[STATUS] == 404"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *http
+        name: Yopass
+        group: public
+        url: https://yopass.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Plex
+        group: public
+        url: https://plex.${SECRET_LAB_DOMAIN}/identity
+        conditions: *conditions
+      - <<: *http
+        name: Seerr
+        group: public
+        url: https://request.${SECRET_LAB_DOMAIN}/api/v1/status
+        conditions:
+          - "[STATUS] == 200"
+          - "has([BODY].version) == true"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+      - <<: *http
+        name: Woodpecker
+        group: public
+        url: https://woodpecker.${SECRET_LAB_DOMAIN}/healthz
+        conditions: *conditions
+      - <<: *http
+        name: Requestbin
+        group: public
+        url: https://bin.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      # Basic auth in front, so 401 is the healthy answer.
+      - <<: *http
+        name: st0rage
+        group: public
+        url: https://st0rage.${SECRET_LAB_DOMAIN}
+        conditions:
+          - "[STATUS] == 401"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+
+      # Any internal host serves the wildcard certificate; public hosts would
+      # show Cloudflare's.
+      - name: Wildcard cert
+        group: expiry
+        url: tls://g.${SECRET_LAB_DOMAIN}:443
+        interval: 1h
+        client:
+          timeout: 10s
+        conditions:
+          - "[CONNECTED] == true"
+          - "[CERTIFICATE_EXPIRATION] > 336h"
+        alerts:
+          - type: ntfy
+            failure-threshold: 1
+      # The apex only answers ping; the probe result is irrelevant, the
+      # condition only needs the hostname for the RDAP lookup.
+      - name: ${SECRET_LAB_DOMAIN} domain
+        group: expiry
+        url: icmp://${SECRET_LAB_DOMAIN}
+        interval: 1h
+        conditions:
+          - "[DOMAIN_EXPIRATION] > 720h"
+        alerts:
+          - type: ntfy
+            failure-threshold: 1
+      - name: heck.sh domain
+        group: expiry
+        url: https://heck.sh
+        interval: 1h
+        conditions:
+          - "[DOMAIN_EXPIRATION] > 720h"
+        alerts:
+          - type: ntfy
+            failure-threshold: 1
 
       - <<: *http
         name: Myexpertcloud
