@@ -19,7 +19,7 @@ spec:
               imagePullPolicy: Always
               # The image CMD plus a heartbeat. backup.sh exits 0 when ssh
               # fails and leaves an empty export, so check the files instead.
-              # Unbraced $VARs only: Flux substitutes ${...} in this ks.
+              # Unbraced $VARs only, this ks runs Flux substitution.
               command: ["/bin/bash", "-c"]
               args:
                 - |
