@@ -17,6 +17,29 @@ spec:
             - name: mikrotik-backup
               image: ghcr.io/yoyostile/mikrotik-backup:latest
               imagePullPolicy: Always
+              # The image CMD plus a heartbeat. backup.sh exits 0 when ssh
+              # fails and leaves an empty export, so check the files instead.
+              # Unbraced $VARs only, this ks runs Flux substitution.
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  set -u -o pipefail
+                  echo "$MIKROTIK_SSH_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+                  for ROUTER in $ROUTERS; do ssh-keyscan -H $ROUTER >> ~/.ssh/known_hosts || true; done
+                  /bin/bash backup.sh 2>&1 | tee /tmp/backup.log
+                  rc=$?
+
+                  exported=$(find . -maxdepth 1 -name '*.rsc' -size +0 -printf '%f ')
+                  empty=$(find . -maxdepth 1 -name '*.rsc' -empty -printf '%f ')
+                  skipped=$(grep -o '^Warning: [^ ]*' /tmp/backup.log | cut -d' ' -f2 | tr '\n' ' ')
+                  url=$HC_PING_URL
+                  if [ $rc -ne 0 ] || [ -z "$exported" ] || [ -n "$empty" ]; then
+                    url=$url/fail
+                  fi
+                  msg="rc=$rc exported: $exported empty: $empty unreachable: $skipped"
+                  echo "$msg"
+                  curl -fsS -m 10 --retry 5 -o /dev/null --data-raw "$msg" "$url" || true
+                  exit $rc
               envFrom:
                 - secretRef:
                     name: mikrotik-backup
