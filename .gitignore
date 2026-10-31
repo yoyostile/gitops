@@ -22,3 +22,6 @@ provision/
 pvecsictl.yaml
 logs/
 utils/
+
+# Local, uncommitted overrides (tokens)
+.envrc.local
