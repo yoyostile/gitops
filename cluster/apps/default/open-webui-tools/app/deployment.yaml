@@ -52,7 +52,7 @@ spec:
               value: "https://paperless.${SECRET_LAB_DOMAIN}"
             - name: HEALTH_TARGETS
               value: >-
-                [{"name":"paperless","url":"http://paperless.default.svc.cluster.local:8000/api/","paperless_auth":true},{"name":"uptime-kuma","url":"http://uptime-kuma.default.svc.cluster.local:3001/"},{"name":"bifrost","url":"http://bifrost.default.svc.cluster.local:8080/health"},{"name":"searxng","url":"http://searxng.default.svc.cluster.local:8080/"}]
+                [{"name":"paperless","url":"http://paperless.default.svc.cluster.local:8000/api/","paperless_auth":true},{"name":"bifrost","url":"http://bifrost.default.svc.cluster.local:8080/health"},{"name":"searxng","url":"http://searxng.default.svc.cluster.local:8080/"}]
           resources:
             requests:
               memory: 32Mi

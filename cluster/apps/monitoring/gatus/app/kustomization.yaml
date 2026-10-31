@@ -8,4 +8,5 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - redirect-uptime.yaml
   - authentik-blueprint.yaml

@@ -1,0 +1,29 @@
+---
+# Deleting a blueprint does not delete what it created, so this replaces the
+# old Uptime Kuma blueprint (same ConfigMap and mount) with absent entries.
+# Drop it and the bp-uptime-kuma mount once authentik has applied it.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-uptime-kuma
+  namespace: default
+data:
+  uptime-kuma.yaml: |
+    version: 1
+    metadata:
+      name: Uptime Kuma (gitops)
+      labels:
+        blueprints.goauthentik.io/instantiate: "true"
+    entries:
+      - model: authentik_core.application
+        state: absent
+        identifiers:
+          slug: uptime-kuma
+      - model: authentik_providers_proxy.proxyprovider
+        state: absent
+        identifiers:
+          name: Provider for Uptime Kuma
+      - model: authentik_core.group
+        state: absent
+        identifiers:
+          name: Uptime Kuma

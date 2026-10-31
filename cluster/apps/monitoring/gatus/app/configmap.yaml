@@ -7,8 +7,6 @@ metadata:
 data:
   # $${VAR} survives Flux postBuild substitution as ${VAR}, which Gatus then
   # expands from the gatus Secret. A plain ${VAR} would be emptied by Flux.
-  # failure-threshold is Uptime Kuma's retries + 1 (Kuma alerts on the first
-  # failure after its retries run out).
   config.yaml: |
     storage:
       type: sqlite
