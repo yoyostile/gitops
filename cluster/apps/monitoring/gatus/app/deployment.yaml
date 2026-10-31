@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gatus
+  name: gatus
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gatus
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: gatus
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
+      containers:
+        - name: gatus
+          image: ghcr.io/twin/gatus:v5.38.0
+          env:
+            - name: GATUS_CONFIG_PATH
+              value: /config/config.yaml
+          envFrom:
+            - secretRef:
+                name: gatus
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 256Mi
+          # The image runs as root, so Gatus opens raw ICMP sockets and needs
+          # NET_RAW for the ping endpoint.
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - NET_RAW
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: config
+          configMap:
+            name: gatus
+        - name: data
+          persistentVolumeClaim:
+            claimName: gatus
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"

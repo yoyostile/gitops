@@ -1,0 +1,154 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gatus
+  namespace: monitoring
+data:
+  # $${VAR} survives Flux postBuild substitution as ${VAR}, which Gatus then
+  # expands from the gatus Secret. A plain ${VAR} would be emptied by Flux.
+  # failure-threshold is Uptime Kuma's retries + 1 (Kuma alerts on the first
+  # failure after its retries run out).
+  config.yaml: |
+    storage:
+      type: sqlite
+      path: /data/data.db
+
+    alerting:
+      email:
+        from: "$${ALERT_EMAIL_FROM}"
+        host: smtp-relay.networking.svc.cluster.local
+        port: 25
+        to: "$${ALERT_EMAIL_TO}"
+        default-alert:
+          failure-threshold: 6
+          success-threshold: 1
+          send-on-resolved: true
+        overrides:
+          - group: wan
+            to: "$${ALERT_EMAIL_TO},$${ALERT_EMAIL_TO_WAN}"
+
+    x-http: &http
+      interval: 60s
+      client:
+        timeout: 48s
+      alerts:
+        - type: email
+
+    x-http-insecure: &http-insecure
+      interval: 60s
+      client:
+        timeout: 48s
+        insecure: true
+      alerts:
+        - type: email
+
+    x-conditions: &conditions
+      - "[STATUS] >= 200"
+      - "[STATUS] < 300"
+      - "[CERTIFICATE_EXPIRATION] > 168h"
+
+    x-conditions-insecure: &conditions-insecure
+      - "[STATUS] >= 200"
+      - "[STATUS] < 300"
+
+    endpoints:
+      - <<: *http
+        name: Glacier
+        group: lab
+        url: https://glacier.lab.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: pve01
+        group: lab
+        url: https://pve01.lab.${SECRET_LAB_DOMAIN}:8006
+        conditions: *conditions
+      - <<: *http-insecure
+        name: pve02
+        group: lab
+        url: https://pve02.lab.${SECRET_LAB_DOMAIN}:8006
+        conditions: *conditions-insecure
+      - <<: *http-insecure
+        name: pve03
+        group: lab
+        url: https://pve03.lab.${SECRET_LAB_DOMAIN}:8006
+        conditions: *conditions-insecure
+
+      - <<: *http
+        name: Authentik
+        group: apps
+        url: https://auth.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Glitchtip
+        group: apps
+        url: https://glitchtip.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Grafana
+        group: apps
+        url: https://g.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Home Assistant
+        group: apps
+        url: https://hass.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: LibreNMS
+        group: apps
+        url: https://librenms.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Paperless
+        group: apps
+        url: https://paperless.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Smokeping
+        group: apps
+        url: https://smokeping.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+      - <<: *http
+        name: Teslamate
+        group: apps
+        url: https://teslamate.${SECRET_LAB_DOMAIN}
+        conditions: *conditions
+
+      - <<: *http
+        name: Myexpertcloud
+        group: external
+        url: https://www.mycmxremote.com/einloggen
+        conditions:
+          - "[STATUS] >= 200"
+          - "[STATUS] < 300"
+          - "[CERTIFICATE_EXPIRATION] > 168h"
+        alerts:
+          - type: email
+            failure-threshold: 4
+      # Gatus requires >= 5m intervals for [DOMAIN_EXPIRATION], so it gets its
+      # own endpoint instead of slowing the uptime check.
+      - name: Myexpertcloud domain
+        group: external
+        url: https://mycmxremote.com
+        interval: 1h
+        conditions:
+          - "[DOMAIN_EXPIRATION] > 168h"
+        alerts:
+          - type: email
+            failure-threshold: 1
+
+      - name: External WAN
+        group: wan
+        url: icmp://$${EXTERNAL_WAN_HOST}
+        interval: 60s
+        client:
+          timeout: 2s
+        ui:
+          hide-hostname: true
+          hide-url: true
+        conditions:
+          - "[CONNECTED] == true"
+        alerts:
+          - type: email
+            failure-threshold: 4

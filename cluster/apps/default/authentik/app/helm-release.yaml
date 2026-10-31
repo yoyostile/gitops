@@ -75,6 +75,9 @@ spec:
         - name: bp-romm
           configMap:
             name: authentik-blueprint-romm
+        - name: bp-gatus
+          configMap:
+            name: authentik-blueprint-gatus
             optional: true
       volumeMounts:
         - name: bp-grafana
@@ -103,6 +106,8 @@ spec:
           mountPath: /blueprints/mounted/app-evcc
         - name: bp-romm
           mountPath: /blueprints/mounted/app-romm
+        - name: bp-gatus
+          mountPath: /blueprints/mounted/app-gatus
   chart:
     spec:
       # renovate: registryUrl=https://charts.goauthentik.io

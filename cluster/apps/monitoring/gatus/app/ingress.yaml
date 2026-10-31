@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gatus
+  namespace: monitoring
+  annotations:
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "heart-pulse"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    external-dns.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.kubernetes.io/cloudflare-proxied: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd,networking-authentik@kubernetescrd"
+    external-dns/external: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - gatus.${SECRET_LAB_DOMAIN}
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: gatus.${SECRET_LAB_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gatus
+                port:
+                  number: 8080
