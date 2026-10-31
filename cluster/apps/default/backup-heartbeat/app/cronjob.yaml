@@ -1,0 +1,67 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-heartbeat
+  namespace: default
+spec:
+  # After mariadb-galera (02:00 local) and psql-cluster (00:00/12:00 UTC).
+  schedule: "30 3 * * *"
+  timeZone: Europe/Berlin
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: backup-heartbeat
+          restartPolicy: Never
+          containers:
+            - name: heartbeat
+              image: alpine/kubectl:1.36.4
+              command: ["/bin/sh", "-c"]
+              envFrom:
+                - secretRef:
+                    name: backup-heartbeat
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              args:
+                - |
+                  set -u
+                  now=$(date +%s)
+                  rc=0
+
+                  # Pings <url> if the ISO-8601 UTC timestamp is newer than max_age
+                  # seconds, <url>/fail otherwise. ISO-8601 UTC sorts as text.
+                  check() {
+                    name=$1 url=$2 last=$3 max_age=$4
+                    cutoff=$(date -u -d "@$((now - max_age))" +%Y-%m-%dT%H:%M:%SZ)
+                    oldest=$(printf '%s\n%s\n' "$cutoff" "$last" | sort | head -n1)
+                    if [ -n "$last" ] && [ "$oldest" = "$cutoff" ]; then
+                      msg="$name: last successful backup $last"
+                    else
+                      msg="$name: no successful backup since $cutoff (last: $last)"
+                      url="$url/fail"
+                    fi
+                    echo "$msg"
+                    curl -fsS -m 10 --retry 5 -o /dev/null --data-raw "$msg" "$url" || rc=1
+                  }
+
+                  last=$(kubectl -n default get cronjob mariadb-galera \
+                    -o jsonpath='{.status.lastSuccessfulTime}')
+                  check mariadb-galera "$MARIADB_BACKUP_PING_URL" "$last" 93600
+
+                  last=$(kubectl -n default get backups.postgresql.cnpg.io \
+                    -l cnpg.io/cluster=psql-cluster \
+                    -o jsonpath='{range .items[?(@.status.phase=="completed")]}{.status.stoppedAt}{"\n"}{end}' \
+                    | sort | tail -n1)
+                  check psql-cluster "$POSTGRES_BACKUP_PING_URL" "$last" 46800
+
+                  exit $rc

@@ -6,6 +6,7 @@ resources:
   - ./adguard-home-sync/ks.yaml
   - ./atuin/ks.yaml
   - ./authentik/ks.yaml
+  - ./backup-heartbeat/ks.yaml
   - ./bifrost/ks.yaml
   - ./dawarich/ks.yaml
   - ./echo/ks.yaml
@@ -23,6 +24,7 @@ resources:
   - ./mikrotik-backup/ks.yaml
   - ./mosquitto/ks.yaml
   - ./notgroschen/ks.yaml
+  - ./ntfy/ks.yaml
   - ./open-webui/ks.yaml
   - ./open-webui-tools/ks.yaml
   - ./paperless/ks.yaml

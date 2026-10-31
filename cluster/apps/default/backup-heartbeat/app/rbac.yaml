@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backup-heartbeat
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: backup-heartbeat
+  namespace: default
+rules:
+  # mariadb-operator runs each Backup as a CronJob of the same name.
+  - apiGroups: ["batch"]
+    resources: ["cronjobs"]
+    resourceNames: ["mariadb-galera"]
+    verbs: ["get"]
+  - apiGroups: ["postgresql.cnpg.io"]
+    resources: ["backups"]
+    verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backup-heartbeat
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: backup-heartbeat
+subjects:
+  - kind: ServiceAccount
+    name: backup-heartbeat
+    namespace: default
