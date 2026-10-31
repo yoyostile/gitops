@@ -138,6 +138,23 @@ data:
           - type: email
             failure-threshold: 1
 
+      - <<: *http
+        name: www.placetel.de
+        group: placetel
+        url: https://www.placetel.de
+        conditions: *conditions
+        alerts:
+          - type: email
+            failure-threshold: 4
+      - <<: *http
+        name: web.placetel.de
+        group: placetel
+        url: https://web.placetel.de
+        conditions: *conditions
+        alerts:
+          - type: email
+            failure-threshold: 4
+
       - name: External WAN
         group: wan
         url: icmp://$${EXTERNAL_WAN_HOST}
