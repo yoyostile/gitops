@@ -94,7 +94,7 @@ data:
           get: {
             operationId: "check_homelab_services",
             summary: "Check core homelab services",
-            description: "Checks whether core internal HTTP services respond. This is a live reachability check, not Uptime Kuma monitor history.",
+            description: "Checks whether core internal HTTP services respond. This is a live reachability check, not monitor history.",
             security: [{ bearerAuth: [] }],
             responses: {
               "200": {

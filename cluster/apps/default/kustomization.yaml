@@ -36,7 +36,6 @@ resources:
   - ./st0rage/ks.yaml
   - ./teslamate/ks.yaml
   - ./thelounge/ks.yaml
-  - ./uptime-kuma/ks.yaml
   - ./yopass/ks.yaml
   - ./zettelrobbe/ks.yaml
   - ./zigbee2mqtt/ks.yaml

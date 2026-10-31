@@ -9,7 +9,6 @@ spec:
   interval: 5m
   dependsOn:
     - name: apps-default-paperless
-    - name: apps-default-uptime-kuma
   path: ./cluster/apps/default/open-webui-tools/app
   prune: true
   wait: true

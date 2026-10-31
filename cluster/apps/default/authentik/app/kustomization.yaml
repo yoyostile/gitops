@@ -7,3 +7,4 @@ resources:
   - blueprint-external.yaml
   - blueprint-outpost.yaml
   - blueprint-identity.sops.yaml
+  - blueprint-uptime-kuma-absent.yaml

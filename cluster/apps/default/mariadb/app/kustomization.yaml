@@ -7,5 +7,4 @@ resources:
   - mariadb-galera-servicemonitor.yaml
   - homeassistant.yaml
   - librenms.yaml
-  - uptime-kuma.yaml
   - backup.yaml
