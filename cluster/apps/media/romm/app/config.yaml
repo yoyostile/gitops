@@ -8,17 +8,9 @@ metadata:
 data:
   config.yml: |
     exclude:
-      platforms:
-        # Mixed firmware for several systems, not a platform.
-        - bios
       roms:
         single_file:
           extensions:
             - txt
             - nfo
             - sav
-    system:
-      platforms:
-        Gameboy: gb
-        Playstation: psx
-        Nintendo.DS.Mega.Pack.397.Games.incl.BIOS: nds
