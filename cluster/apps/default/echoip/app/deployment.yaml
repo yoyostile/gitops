@@ -20,7 +20,7 @@ spec:
     spec:
       initContainers:
         - name: geoip-download
-          image: amazon/aws-cli:latest
+          image: amazon/aws-cli:2.39.0@sha256:6014c77975a4ae237395924cc821333f20bf87c91964a45dd4ed5f3b13b424f5
           command:
             - /bin/sh
             - -c
@@ -52,7 +52,7 @@ spec:
             - name: geoip
               mountPath: /geoip
         - name: geoip-extract
-          image: alpine:latest
+          image: alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
           command:
             - /bin/sh
             - -c
@@ -77,7 +77,8 @@ spec:
             - /geoip/GeoLite2-City.mmdb
             - -f
             - /geoip/GeoLite2-Country.mmdb
-          image: mpolden/echoip
+          # mpolden/echoip publishes no version tags, only :latest.
+          image: mpolden/echoip:latest@sha256:fa411cb4625738574621236a029fa5bbb7b6574051edf7eeb579c6991ef52e92
           imagePullPolicy: Always
           name: echoip
           ports:

@@ -19,7 +19,8 @@ spec:
         app: searxng
     spec:
       containers:
-        - image: ghcr.io/privau/searxng:latest
+        # ghcr.io/privau/searxng publishes no version tags, only :latest.
+        - image: ghcr.io/privau/searxng:latest@sha256:4c66f68d56ca0b0b08d8077e22afeac3a58610d8a403c135d330f279f1f0776c
           name: searxng
           env:
             - name: BASE_URL

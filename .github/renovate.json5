@@ -126,6 +126,35 @@
       labels: ["renovate/image", "dep/patch"],
     },
     {
+      // A tag is mutable: whoever controls the upstream account can push new
+      // content under a tag we already run, and pullPolicy Always plus the
+      // descheduler would roll it out unseen. A digest makes every content
+      // change a PR.
+      //
+      // The release-age hold only works where Renovate gets a timestamp, and
+      // for docker that is Docker Hub alone (`tag_last_pushed`). ghcr.io,
+      // lscr.io, quay.io and registry.k8s.io have none, and the default
+      // `timestamp-required` would hold every one of their updates, including
+      // the first digest pin, forever. `timestamp-optional` lets those through
+      // as before. 3 days outlasts the usual time to yank a hijacked release
+      // and, with the weekend schedule, keeps lag under about 10 days.
+      //
+      // Excluded: the owner's own images, built by Woodpecker on every push
+      // and deployed as :latest on purpose. Also the bitnami chart, a
+      // HelmRelease chart from an OCI HelmRepository, where the flux manager
+      // has no field to write a digest into.
+      matchDatasources: ["docker"],
+      matchPackageNames: [
+        "!ghcr.io/yoyostile/**",
+        "!yoyostile/**",
+        "!docker.io/yoyostile/**",
+        "!**/bitnamicharts/**",
+      ],
+      pinDigests: true,
+      minimumReleaseAge: "3 days",
+      minimumReleaseAgeBehaviour: "timestamp-optional",
+    },
+    {
       matchDatasources: ["helm"],
       matchUpdateTypes: ["major"],
       labels: ["renovate/helm", "dep/major"],
