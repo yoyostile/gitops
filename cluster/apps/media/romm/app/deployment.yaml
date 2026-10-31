@@ -1,0 +1,105 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: romm
+  namespace: media
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: romm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: romm
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: lab
+      containers:
+        - name: romm
+          image: docker.io/rommapp/romm:5.4.1
+          envFrom:
+            - secretRef:
+                name: romm
+          env:
+            - name: TZ
+              value: "Europe/Berlin"
+            - name: ROMM_BASE_URL
+              value: "https://romm.${SECRET_LAB_DOMAIN}"
+            - name: ROMM_SESSION_SECURE_COOKIE
+              value: "true"
+            - name: WEB_SERVER_CONCURRENCY
+              value: "2"
+            - name: ROMM_DB_DRIVER
+              value: postgresql
+            - name: DB_HOST
+              value: psql-cluster-rw.default
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: romm
+            - name: DB_USER
+              value: romm
+            - name: HASHEOUS_API_ENABLED
+              value: "true"
+            - name: OIDC_ENABLED
+              value: "true"
+            - name: OIDC_PROVIDER
+              value: authentik
+            - name: OIDC_CLIENT_ID
+              value: "${ROMM_OAUTH_CLIENT_ID}"
+            - name: OIDC_CLIENT_SECRET
+              value: "${ROMM_OAUTH_CLIENT_SECRET}"
+            - name: OIDC_REDIRECT_URI
+              value: "https://romm.${SECRET_LAB_DOMAIN}/api/oauth/openid"
+            # The slug must match the authentik application in authentik-blueprint.yaml.
+            - name: OIDC_SERVER_APPLICATION_URL
+              value: "https://auth.${SECRET_LAB_DOMAIN}/application/o/romm/"
+            # No auto-registration: OIDC logins link to the setup-wizard admin by email.
+            - name: OIDC_ALLOW_REGISTRATION
+              value: "false"
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /api/heartbeat
+              port: http
+          volumeMounts:
+            - name: library
+              mountPath: /romm/library/roms
+              readOnly: true
+            - name: data
+              mountPath: /romm/resources
+              subPath: resources
+            - name: data
+              mountPath: /romm/assets
+              subPath: assets
+            - name: config
+              mountPath: /romm/config
+              readOnly: true
+            - name: redis-data
+              mountPath: /redis-data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 768Mi
+      volumes:
+        # RetroGames/<platform>/ maps onto RomM's default roms/{platform}/{game} layout.
+        - name: library
+          nfs:
+            server: "glacier.lab.${SECRET_LAB_DOMAIN}"
+            path: /mnt/tank/media/games/RetroGames
+            readOnly: true
+        - name: data
+          persistentVolumeClaim:
+            claimName: romm-data
+        - name: config
+          configMap:
+            name: romm-config
+        # The bundled valkey only holds task queues and caches.
+        - name: redis-data
+          emptyDir: {}

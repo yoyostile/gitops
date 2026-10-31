@@ -5,5 +5,7 @@ resources:
   - secret.sops.yaml
   - object-store.yaml
   - cluster.yaml
+  - romm-secret.sops.yaml
+  - romm.yaml
   - backup.yaml
   - podmonitor.yaml

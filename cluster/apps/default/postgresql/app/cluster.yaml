@@ -21,6 +21,14 @@ spec:
     limits:
       memory: "1408Mi"
 
+  managed:
+    roles:
+      - name: romm
+        ensure: present
+        login: true
+        passwordSecret:
+          name: psql-romm
+
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
