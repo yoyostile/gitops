@@ -77,8 +77,9 @@ spec:
               path: /api/heartbeat
               port: http
           volumeMounts:
+            # RetroGames holds roms/{platform} and bios/{platform}.
             - name: library
-              mountPath: /romm/library/roms
+              mountPath: /romm/library
               readOnly: true
             - name: data
               mountPath: /romm/resources
