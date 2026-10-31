@@ -124,6 +124,11 @@ in
     # k3s manages the required iptables chains.
     networking.firewall.enable = false;
 
+    # flannel-wg takes this NIC's MTU minus 80, so pods get 8920 instead of 1420.
+    # virtio caps the guest at net0's mtu=, so the VM config must allow 9000
+    # first or this link setup fails.
+    networking.interfaces.${config.lab.host.interface}.mtu = 9000;
+
     hardware.graphics = lib.mkIf cfg.gpu {
       enable = true;
       extraPackages = with pkgs; [
