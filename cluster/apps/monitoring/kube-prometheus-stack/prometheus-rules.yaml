@@ -1,0 +1,132 @@
+---
+# Annotations use {{ .Labels.x }} / {{ .Value }}: Flux postBuild substitution
+# runs over this file and would mangle $-prefixed template variables.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: lab-rules
+  namespace: monitoring
+  labels:
+    # Prometheus only loads rules matching its ruleSelector.
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: lab.node
+      rules:
+        # Replaces the default NodeMemoryHighUtilization: MemAvailable does not
+        # count the reclaimable ZFS ARC, so glacier and the PVE hosts look full.
+        - alert: NodeMemoryHighUtilization
+          expr: |
+            100 - (
+              (
+                node_memory_MemAvailable_bytes{job="node-exporter"}
+                + clamp_min(node_zfs_arc_size{job="node-exporter"} - node_zfs_arc_c_min{job="node-exporter"}, 0)
+              )
+              or node_memory_MemAvailable_bytes{job="node-exporter"}
+            ) / node_memory_MemTotal_bytes{job="node-exporter"} * 100 > 90
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Host is running out of memory.
+            description: 'Memory on {{ .Labels.instance }} has been above 90% (ZFS ARC counted as free) for 15 minutes, now {{ printf "%.1f" .Value }}%.'
+    - name: lab.ceph
+      rules:
+        # AUTH_INSECURE_* checks are excluded until the legacy cephx keys are
+        # rotated; they hold the cluster at HEALTH_ERR permanently.
+        - alert: CephHealthError
+          expr: ceph_health_detail{job="ceph", severity="HEALTH_ERR", name!~"AUTH_INSECURE_.*"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Ceph health check {{ .Labels.name }} is HEALTH_ERR.
+            description: Run `ceph health detail` on a PVE host.
+        - alert: CephHealthWarning
+          expr: ceph_health_detail{job="ceph", severity="HEALTH_WARN", name!~"AUTH_INSECURE_.*"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Ceph health check {{ .Labels.name }} is HEALTH_WARN.
+            description: Run `ceph health detail` on a PVE host.
+        - alert: CephMetricsAbsent
+          expr: absent(ceph_health_status{job="ceph"})
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: No Ceph mgr is exporting metrics.
+            description: The ceph mgr prometheus module is down on all PVE hosts, so Ceph health is unmonitored.
+    - name: lab.cnpg
+      rules:
+        - alert: CNPGInstanceDown
+          expr: cnpg_collector_up == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Postgres in {{ .Labels.namespace }}/{{ .Labels.pod }} is not answering the CNPG exporter.
+        - alert: CNPGReplicationLag
+          expr: (cnpg_pg_replication_lag and on (namespace, pod) cnpg_pg_replication_in_recovery == 1) > 300
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Replica {{ .Labels.namespace }}/{{ .Labels.pod }} lags {{ printf "%.0f" .Value }}s behind the primary.
+        - alert: CNPGReplicaNotStreaming
+          expr: |
+            count by (namespace, job) (cnpg_collector_up == 1) - 1
+              > sum by (namespace, job) (cnpg_pg_replication_streaming_replicas and on (namespace, pod) cnpg_pg_replication_in_recovery == 0)
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Cluster {{ .Labels.job }} has fewer streaming replicas than instances.
+        - alert: CNPGWALArchivingFailing
+          expr: cnpg_pg_stat_archiver_last_failed_time > cnpg_pg_stat_archiver_last_archived_time
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: WAL archiving for {{ .Labels.namespace }}/{{ .Labels.pod }} is failing; point-in-time recovery is falling behind.
+    - name: lab.mariadb
+      rules:
+        - alert: GaleraNodeDown
+          expr: mysql_up{job="mariadb-galera-metrics"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: MariaDB {{ .Labels.target }} is not answering the exporter.
+        - alert: GaleraClusterDegraded
+          expr: mysql_global_status_wsrep_cluster_size{job="mariadb-galera-metrics"} < 3
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Galera node {{ .Labels.target }} sees {{ .Value }} of 3 members.
+        - alert: GaleraNodeNotReady
+          expr: mysql_global_status_wsrep_ready{job="mariadb-galera-metrics"} != 1 or mysql_global_status_wsrep_cluster_status{job="mariadb-galera-metrics"} != 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Galera node {{ .Labels.target }} is not ready or not in the primary component.
+    - name: lab.velero
+      rules:
+        - alert: VeleroBackupFailed
+          expr: velero_backup_last_status{job="velero"} != 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: The last Velero backup did not complete.
+            description: Check `velero backup get` for the failed or partially failed backup.
+        - alert: VeleroBackupLocationUnavailable
+          expr: velero_backup_location_status_gauge{job="velero"} != 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Velero backup location {{ .Labels.backup_location_name }} is unavailable.

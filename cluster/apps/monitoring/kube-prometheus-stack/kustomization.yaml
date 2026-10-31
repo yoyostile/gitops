@@ -6,6 +6,7 @@ commonAnnotations:
 resources:
   - helm-release.yaml
   - alertmanager-secret.sops.yaml
+  - prometheus-rules.yaml
   - dashboards
   - ceph-dashboards
   - authentik-blueprint.yaml
