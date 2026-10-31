@@ -21,7 +21,7 @@ spec:
       nodeSelector:
         topology.kubernetes.io/region: lab
       containers:
-        - image: waschinski/photo-stream:latest
+        - image: waschinski/photo-stream:1.5.0@sha256:48f901e66cf85620cc116b7a94e8226431afe0a34751cf9a98e3d53762284293
           imagePullPolicy: Always
           name: photo-stream
           env:

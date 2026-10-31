@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: teslamate-abrp
-          image: fetzu/teslamate-abrp:latest
+          image: fetzu/teslamate-abrp:4.0.2@sha256:a794a105a89b2762a022a660b01b2acced7f0f37ed6b7c991e7eba6a48925b18
           env:
             - name: MQTT_SERVER
               value: mosquitto.default

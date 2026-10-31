@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: smtp-relay
-          image: djjudas21/smtp-relay:latest
+          image: djjudas21/smtp-relay:0.11.0@sha256:ffd8143952f6caa5e24922aa395e04da7131ad602d5797692201bf62695a060e
           ports:
             - name: smtp
               containerPort: 25
