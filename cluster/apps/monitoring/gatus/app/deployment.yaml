@@ -6,6 +6,9 @@ metadata:
     app: gatus
   name: gatus
   namespace: monitoring
+  annotations:
+    # Gatus hot-reloads config.yaml, but env from the Secret needs a restart.
+    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   selector:
