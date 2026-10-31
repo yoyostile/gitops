@@ -1,0 +1,31 @@
+---
+# Only the forge webhook is public. GitHub posts to /api/hook; everything
+# else (UI, /authorize, API) is served by ingress-internal.yaml.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: woodpecker-external
+  namespace: woodpecker
+  annotations:
+    external-dns.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
+    external-dns.kubernetes.io/cloudflare-proxied: "true"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
+    external-dns/external: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - "woodpecker.${SECRET_LAB_DOMAIN}"
+      secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
+  rules:
+    - host: "woodpecker.${SECRET_LAB_DOMAIN}"
+      http:
+        paths:
+          - path: /api/hook
+            pathType: Exact
+            backend:
+              service:
+                name: woodpecker-server
+                port:
+                  name: http

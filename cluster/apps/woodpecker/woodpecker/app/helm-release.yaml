@@ -23,25 +23,9 @@ spec:
       persistence:
         storageClass: "ceph-rbd"
     server:
+      # Two ingresses with different classes; see ingress-*.yaml.
       ingress:
-        enabled: true
-        ingressClassName: traefik
-        annotations:
-          hajimari.io/enable: "true"
-          hajimari.io/icon: "cogs"
-          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-          external-dns.kubernetes.io/target: "${SECRET_CLOUDFLARE_TUNNEL_DOMAIN}"
-          external-dns.kubernetes.io/cloudflare-proxied: "true"
-          traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflarewarp@kubernetescrd"
-          external-dns/external: "true"
-        hosts:
-          - host: "woodpecker.${SECRET_LAB_DOMAIN}"
-            paths:
-              - path: /
-        tls:
-          - secretName: "${SECRET_LAB_DOMAIN/./-}-tls"
-            hosts:
-              - "woodpecker.${SECRET_LAB_DOMAIN}"
+        enabled: false
       persistence:
         storageClass: "ceph-rbd"
       persistentVolume:
