@@ -212,6 +212,31 @@ data:
         group: network
         url: icmp://cgn-core-01.lab.${SECRET_LAB_DOMAIN}
         conditions: *connected
+      - <<: *check
+        name: cgn-lte-01
+        group: network
+        url: icmp://cgn-lte-01.lab.${SECRET_LAB_DOMAIN}
+        conditions: *connected
+      - <<: *check
+        name: cgn-sw-basement
+        group: network
+        url: icmp://cgn-sw-basement.lab.${SECRET_LAB_DOMAIN}
+        conditions: *connected
+      - <<: *check
+        name: cgn-sw-garage
+        group: network
+        url: icmp://cgn-sw-garage.lab.${SECRET_LAB_DOMAIN}
+        conditions: *connected
+      - <<: *check
+        name: cgn-sw-studio
+        group: network
+        url: icmp://cgn-sw-studio.lab.${SECRET_LAB_DOMAIN}
+        conditions: *connected
+      - <<: *check
+        name: cgn-sw-studio-02
+        group: network
+        url: icmp://cgn-sw-studio-02.lab.${SECRET_LAB_DOMAIN}
+        conditions: *connected
 
       - <<: *check
         name: Cloudflare DNS
@@ -222,6 +247,13 @@ data:
         name: Google DNS
         group: internet
         url: icmp://8.8.8.8
+        conditions: *connected
+      # NetCologne PPPoE peer. It can change on reconnect; take the new one
+      # from the netcologne address on cgn-core-01 (/ip address, NETWORK).
+      - <<: *check
+        name: ISP gateway
+        group: internet
+        url: icmp://195.14.226.160
         conditions: *connected
 
       - <<: *http
