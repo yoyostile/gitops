@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntfy-config
+  namespace: default
+data:
+  server.yml: |
+    base-url: "https://ntfy.${SECRET_LAB_DOMAIN}"
+    listen-http: ":8080"
+    behind-proxy: true
+    upstream-base-url: "https://ntfy.sh"
+
+    cache-file: "/var/lib/ntfy/cache.db"
+    cache-duration: "24h"
+
+    attachment-cache-dir: "/var/lib/ntfy/attachments"
+    attachment-total-size-limit: "1G"
+    attachment-file-size-limit: "15M"
+    attachment-expiry-duration: "24h"
+    visitor-attachment-total-size-limit: "200M"
+    visitor-attachment-daily-bandwidth-limit: "500M"
+
+    auth-file: "/var/lib/ntfy/user.db"
+    auth-default-access: "deny-all"
+    # Users and tokens come from the ntfy-auth Secret (NTFY_AUTH_USERS, NTFY_AUTH_TOKENS).
+    auth-access:
+      - "alertmanager:alerts:wo"
+
+    enable-login: true

@@ -26,10 +26,67 @@ spec:
     nodeSelector:
       topology.kubernetes.io/region: lab
     alertmanager:
-      enabled: false
+      enabled: true
+      config:
+        route:
+          group_by: ["namespace", "alertname"]
+          group_wait: 30s
+          group_interval: 5m
+          repeat_interval: 12h
+          receiver: ntfy
+          routes:
+            # Dead man's switch: down.fyi alarms when these pings stop.
+            - receiver: healthchecks
+              matchers:
+                - alertname = "Watchdog"
+              group_wait: 0s
+              group_interval: 1m
+              repeat_interval: 1m
+            - receiver: "null"
+              matchers:
+                - alertname = "InfoInhibitor"
+        receivers:
+          - name: "null"
+          - name: ntfy
+            webhook_configs:
+              - url: "http://ntfy.default.svc/alerts?template=alertmanager"
+                send_resolved: true
+                http_config:
+                  authorization:
+                    credentials_file: /etc/alertmanager/secrets/alertmanager-receivers/ntfy-token
+          - name: healthchecks
+            webhook_configs:
+              - url_file: /etc/alertmanager/secrets/alertmanager-receivers/watchdog-url
+                send_resolved: false
+      alertmanagerSpec:
+        replicas: 1
+        secrets:
+          - alertmanager-receivers
+        nodeSelector:
+          topology.kubernetes.io/region: lab
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
+        # Keeps silences across restarts.
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: ceph-rbd
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 1Gi
     defaultRules:
       rules:
         alertmanager: false
+        # k3s runs these in-process and exposes no scrape target, so the
+        # *Down alerts fire permanently.
+        kubeControllerManager: false
+        kubeProxy: false
+        kubeSchedulerAlerting: false
         etcd: false
         kubeApiserver: false
         kubeApiserverAvailability: false

@@ -5,6 +5,7 @@ commonAnnotations:
   kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
   - helm-release.yaml
+  - alertmanager-secret.sops.yaml
   - dashboards
   - ceph-dashboards
   - authentik-blueprint.yaml
