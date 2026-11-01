@@ -253,6 +253,22 @@ data:
         group: internet
         url: icmp://195.14.226.160
         conditions: *connected
+      # cgn-core-01 routes 9.9.9.11/32 via cgn-lte-01, with a blackhole at
+      # distance 250 so the probe fails instead of leaking out via NetCologne.
+      - <<: *check
+        name: LTE uplink
+        group: internet
+        url: icmp://9.9.9.11
+        conditions: *connected
+      - <<: *check
+        name: LTE DNS
+        group: internet
+        url: 9.9.9.11
+        dns:
+          query-name: example.com
+          query-type: A
+        conditions:
+          - "[DNS_RCODE] == NOERROR"
 
       - <<: *http
         name: Authentik
