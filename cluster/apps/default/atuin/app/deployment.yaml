@@ -20,7 +20,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: atuin
-          image: ghcr.io/atuinsh/atuin:18.24.2
+          image: ghcr.io/atuinsh/atuin:18.24.4@sha256:1cb33a7126b748e0ad6d18d0f52e9bb805a98a196feccd597bf66544f58cf68e
           args: ["start"]
           ports:
             - name: http
