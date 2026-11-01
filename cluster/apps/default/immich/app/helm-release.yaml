@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: ghcr.io/immich-app/immich-server
-              tag: v3.3.5@sha256:485d546a2e31d6a8b4db8423fcba5c109de8c218d93410af115fd1ccfc4352a6
+              tag: v3.4.0-rc.1@sha256:b8aefe855463971ed5a86dd05163e15bcef2bfff3fe1d62b421a1903b8e6867b
             env:
               - name: REDIS_HOSTNAME
                 value: redis-headless
