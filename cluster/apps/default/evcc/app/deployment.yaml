@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: evcc
-          image: evcc/evcc:0.317.2@sha256:fb36290c0f080cd561db5f5dd5b2f0efca98f67ceecf1c031466d39c4ba7abae
+          image: evcc/evcc:0.318.1@sha256:2f8163ab22f04863afd86cd511c09607ba71debd9eebd65511f3d654922a80d1
           ports:
             - name: http
               containerPort: 7070
