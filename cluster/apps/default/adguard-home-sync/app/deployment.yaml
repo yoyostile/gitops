@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: adguard-home-sync
-          image: ghcr.io/bakito/adguardhome-sync:v0.9.4
+          image: ghcr.io/bakito/adguardhome-sync:v0.9.5@sha256:8c5d65ef00b54cd8c2e78ccc70722ce322cf8ca5069b669e07c1e4edcd1836c7
           envFrom:
             - secretRef:
                 name: adguard-home-sync
