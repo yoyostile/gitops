@@ -19,7 +19,7 @@ spec:
         app: echo
     spec:
       containers:
-        - image: ghcr.io/mendhak/http-https-echo:42
+        - image: ghcr.io/mendhak/http-https-echo:43@sha256:c4a81744e620ad3cfbffa97374c9c0e545bb3d132b07ebc7745cce6ddee745a1
           imagePullPolicy: Always
           name: echo
           env:
