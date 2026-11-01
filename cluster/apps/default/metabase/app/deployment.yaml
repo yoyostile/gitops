@@ -19,7 +19,7 @@ spec:
         app: metabase
     spec:
       containers:
-        - image: metabase/metabase:v0.64.3
+        - image: metabase/metabase:v0.64.3@sha256:af7d417252600549ea64c3ed1be50bdce2714054f072426223458b74ee34e57c
           imagePullPolicy: Always
           name: metabase
           envFrom:

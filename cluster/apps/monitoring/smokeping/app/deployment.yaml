@@ -34,7 +34,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
         - name: smokeping
-          image: ghcr.io/linuxserver/smokeping:version-2.7.3-r5
+          image: ghcr.io/linuxserver/smokeping:version-2.7.3-r5@sha256:98e76a92c38070016dfa9fde56fabaa18fa55f0f46fba4bf140496ccae4a47dc
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:

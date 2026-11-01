@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: adguard-exporter
-          image: ghcr.io/henrywhitaker3/adguard-exporter:v1.2.1
+          image: ghcr.io/henrywhitaker3/adguard-exporter:v1.2.1@sha256:42a9581bae4a91e6d4985415d1fe89ab9b1f50fbe2945a1c122d212d6354b747
           env:
             # Kubernetes expands only variables declared earlier in this list;
             # reuse credentials from adguard-home-sync.

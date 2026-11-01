@@ -29,7 +29,7 @@ spec:
     image:
       registry: docker.io
       repository: bitnamilegacy/redis
-      tag: 8.2.1
+      tag: 8.2.1@sha256:25bf63f3caf75af4628c0dfcf39859ad1ac8abe135be85e99699f9637b16dc28
     global:
       storageClass: "nfs-client"
       security:

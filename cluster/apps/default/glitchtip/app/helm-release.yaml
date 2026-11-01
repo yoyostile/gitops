@@ -28,7 +28,7 @@ spec:
       # Load-bearing pin: the chart's appVersion (6.2.3) is OLDER than this, so
       # dropping the tag downgrades the app against a DB already migrated by
       # 6.2.6. 6.2.2 also fails the logs.0001_initial migration (gt_rust driver).
-      tag: 6.2.6
+      tag: 6.2.6@sha256:a3d8eb1b36c1e1603d55ab32711ea3dd8115874742a781a57391a62a16e0dff6
       pullPolicy: IfNotPresent
 
     # Chart v9 sources connection settings from this Secret.
