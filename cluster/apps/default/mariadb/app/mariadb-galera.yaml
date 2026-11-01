@@ -23,9 +23,6 @@ spec:
     enabled: true
     config:
       reuseStorageVolume: true
-    recovery:
-      enabled: true
-      forceClusterBootstrapInPod: mariadb-galera-2
 
   service:
     type: LoadBalancer
