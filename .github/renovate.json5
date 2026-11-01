@@ -179,6 +179,14 @@
       ],
     },
     {
+      // ignoreUnstable only works where the versioning knows what a
+      // prerelease is. `loose` does not, so it offered immich v3.4.0-rc.1.
+      // Rules further down that set their own allowedVersions replace this
+      // one; their versionings filter prereleases themselves.
+      matchPackageNames: ["*"],
+      allowedVersions: "!/[-.](alpha|beta|rc|pre|preview|nightly)\\.?\\d*$/i",
+    },
+    {
       matchDatasources: ["docker"],
       versioning: "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z(-(?<compatibility>.*))?$",
       matchPackageNames: ["quay.io/minio/minio", "quay.io/minio/mc"],
