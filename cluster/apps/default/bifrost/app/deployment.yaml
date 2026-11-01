@@ -29,7 +29,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: bifrost
-          image: docker.io/maximhq/bifrost:v2.3.2
+          image: docker.io/maximhq/bifrost:v2.3.2@sha256:f5b18826349fe9e1c402c10d19f1cbb5567a3c800ad928580d07f72e69106ec7
           ports:
             - name: http
               containerPort: 8080

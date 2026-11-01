@@ -19,7 +19,7 @@ spec:
         topology.kubernetes.io/region: lab
       containers:
         - name: icloudpd
-          image: icloudpd/icloudpd:1.32.3
+          image: icloudpd/icloudpd:1.32.3@sha256:af2bf40cb2c1d42051793b4c3c04c825950697d7fedcd12bd8455d6952395801
           ports:
             - containerPort: 8080
           args:
