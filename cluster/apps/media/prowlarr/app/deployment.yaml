@@ -51,7 +51,7 @@ spec:
               readOnly: true
       containers:
         - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:2.6.5
+          image: lscr.io/linuxserver/prowlarr:2.7.0@sha256:04be30163fbaf48d6aeee7b5893c9f6614ffbad6d853971df0d6dcdf01c7f104
           envFrom:
             - secretRef:
                 name: prowlarr-postgres
