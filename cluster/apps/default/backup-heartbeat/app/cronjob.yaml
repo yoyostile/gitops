@@ -21,7 +21,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: heartbeat
-              image: alpine/kubectl:1.36.4
+              image: alpine/kubectl:1.37.1@sha256:a5d0fbecab3f7b6c2ab7398f1daa73a3e0ed6ece18556d21698233e9e3759cc7
               command: ["/bin/sh", "-c"]
               envFrom:
                 - secretRef:
