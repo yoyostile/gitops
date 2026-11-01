@@ -157,6 +157,9 @@ spec:
             "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
           ]
     experimental:
+      # Without this, a failed plugin download at boot (no DNS yet) leaves a Ready pod
+      # that drops every cloudflarewarp router to the echoip default backend.
+      abortOnPluginFailure: true
       plugins:
         cloudflarewarp:
           moduleName: github.com/BilikoX/cloudflarewarp
