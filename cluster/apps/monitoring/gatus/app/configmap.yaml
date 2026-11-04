@@ -249,14 +249,14 @@ data:
       # NetCologne PPPoE peer. It can change on reconnect; take the new one
       # from the netcologne address on cgn-core-01 (/ip address, NETWORK).
       - <<: *check
-        name: ISP gateway
+        name: NetCologne
         group: internet
         url: icmp://195.14.226.160
         conditions: *connected
       # cgn-core-01 routes 9.9.9.11/32 via cgn-lte-01, with a blackhole at
       # distance 250 so the probe fails instead of leaking out via NetCologne.
       - <<: *check
-        name: LTE uplink
+        name: LTE
         group: internet
         url: icmp://9.9.9.11
         conditions: *connected
@@ -530,7 +530,7 @@ data:
 
       # Felix's NetCologne line, not ours. Hostname hidden because the page
       # would show his home address.
-      - name: Felix internet (NetCologne)
+      - name: Felix NetCologne
         group: wan
         url: icmp://$${EXTERNAL_WAN_HOST}
         interval: 60s
