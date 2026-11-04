@@ -528,7 +528,9 @@ data:
           - type: ntfy
             failure-threshold: 4
 
-      - name: External WAN
+      # Felix's NetCologne line, not ours. Hostname hidden because the page
+      # would show his home address.
+      - name: Felix internet (NetCologne)
         group: wan
         url: icmp://$${EXTERNAL_WAN_HOST}
         interval: 60s
