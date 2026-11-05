@@ -1,0 +1,262 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hc-bridge
+  namespace: default
+  annotations:
+    # The script uses JS template literals (${...}), which Flux would substitute.
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+data:
+  bridge.mjs: |
+    // Home Connect -> MQTT bridge for the EU-Data-Act consumption values the HA
+    // home_connect integration drops (it only keeps status keys aiohomeconnect knows).
+    // No dependencies: Node fetch for OAuth + SSE, a minimal MQTT 3.1.1 publisher.
+    import net from "node:net";
+
+    const API = "https://api.home-connect.com";
+    const { HC_CLIENT_ID, HC_CLIENT_SECRET, HC_REFRESH_TOKEN } = process.env;
+    const MQTT_HOST = process.env.MQTT_HOST ?? "mosquitto.default.svc.cluster.local";
+    const MQTT_PORT = Number(process.env.MQTT_PORT ?? 1883);
+    const PREFIX = "hc-bridge";
+
+    const log = (...a) => console.log(new Date().toISOString(), ...a);
+
+    // ---------------------------------------------------------------- MQTT
+    // QoS 0 only, no subscriptions. Retained messages keep HA's state across restarts.
+    let sock = null;
+    let mqttReady = false;
+    const queue = [];
+
+    function encLen(n) {
+      const out = [];
+      do {
+        let b = n % 128;
+        n = Math.floor(n / 128);
+        if (n > 0) b |= 0x80;
+        out.push(b);
+      } while (n > 0);
+      return Buffer.from(out);
+    }
+    const str = (s) => {
+      const b = Buffer.from(s, "utf8");
+      return Buffer.concat([Buffer.from([b.length >> 8, b.length & 0xff]), b]);
+    };
+
+    function mqttConnect() {
+      sock = net.connect(MQTT_PORT, MQTT_HOST);
+      sock.on("connect", () => {
+        const vh = Buffer.concat([str("MQTT"), Buffer.from([4, 0x02, 0, 60])]);
+        const payload = str(`${PREFIX}-${process.pid}`);
+        sock.write(Buffer.concat([Buffer.from([0x10]), encLen(vh.length + payload.length), vh, payload]));
+      });
+      sock.on("data", (d) => {
+        if (d[0] === 0x20 && d[3] === 0) {
+          mqttReady = true;
+          log("mqtt connected");
+          while (queue.length) sock.write(queue.shift());
+        }
+      });
+      sock.on("error", (e) => log("mqtt error", e.message));
+      sock.on("close", () => {
+        mqttReady = false;
+        setTimeout(mqttConnect, 5000);
+      });
+    }
+    setInterval(() => mqttReady && sock.write(Buffer.from([0xc0, 0])), 30_000);
+
+    function publish(topic, payload, retain = true) {
+      const body = Buffer.concat([str(topic), Buffer.from(typeof payload === "string" ? payload : JSON.stringify(payload))]);
+      const pkt = Buffer.concat([Buffer.from([0x30 | (retain ? 1 : 0)]), encLen(body.length), body]);
+      if (mqttReady) sock.write(pkt);
+      else queue.push(pkt);
+    }
+
+    // ---------------------------------------------------------------- OAuth
+    let accessToken = null;
+    let tokenExpiry = 0;
+
+    async function token() {
+      if (accessToken && Date.now() < tokenExpiry - 300_000) return accessToken;
+      const r = await fetch(`${API}/security/oauth/token`, {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: HC_REFRESH_TOKEN,
+          client_id: HC_CLIENT_ID,
+          client_secret: HC_CLIENT_SECRET,
+        }),
+      });
+      if (!r.ok) throw new Error(`token refresh ${r.status} ${await r.text()}`);
+      const j = await r.json();
+      accessToken = j.access_token;
+      tokenExpiry = Date.now() + j.expires_in * 1000;
+      return accessToken;
+    }
+
+    async function api(path) {
+      const r = await fetch(`${API}${path}`, {
+        headers: { authorization: `Bearer ${await token()}`, accept: "application/vnd.bsh.sdk.v1+json" },
+      });
+      if (!r.ok) throw new Error(`${path} ${r.status}`);
+      return (await r.json()).data;
+    }
+
+    // ---------------------------------------------------------------- HA discovery
+    const appliances = new Map(); // haId -> {name, brand, vib, lastCount, program}
+    const announced = new Set();
+
+    const SESSION = {
+      // uid in ProgramSessionSummary.Latest details -> sensor; mapping derived from a
+      // washer drum-clean (no detergent) and a dark wash with i-DOS 2, cross-checked
+      // against the Nous plug (543 Wh reported, 580 Wh metered).
+      628: { id: "last_energy", name: "Letztes Programm Energie", unit: "Wh", dc: "energy", sc: "measurement" },
+      623: { id: "last_water", name: "Letztes Programm Wasser", unit: "L", dc: "water", sc: "measurement", f: (v) => v / 1000 },
+      630: { id: "last_duration", name: "Letztes Programm Dauer", unit: "min", dc: "duration", sc: "measurement", f: (v) => Math.round(v / 60) },
+      8197: { id: "last_idos1", name: "Letztes Programm i-DOS 1", unit: "mL", dc: "volume", sc: "measurement" },
+      8199: { id: "last_idos2", name: "Letztes Programm i-DOS 2", unit: "mL", dc: "volume", sc: "measurement" },
+    };
+
+    function device(haId) {
+      const a = appliances.get(haId) ?? {};
+      return {
+        identifiers: [`${PREFIX}_${haId}`],
+        name: `${a.name ?? haId} Verbrauch`,
+        manufacturer: a.brand,
+        model: a.vib,
+        via_device: undefined,
+      };
+    }
+
+    function announce(haId, id, cfg) {
+      const key = `${haId}/${id}`;
+      if (announced.has(key)) return;
+      announced.add(key);
+      publish(`homeassistant/sensor/${PREFIX}_${haId}/${id}/config`, {
+        name: cfg.name,
+        unique_id: `${PREFIX}_${haId}_${id}`,
+        state_topic: `${PREFIX}/${haId}/${id}`,
+        unit_of_measurement: cfg.unit,
+        device_class: cfg.dc,
+        state_class: cfg.sc,
+        icon: cfg.icon,
+        device: device(haId),
+      });
+    }
+
+    function state(haId, id, cfg, value) {
+      announce(haId, id, cfg);
+      publish(`${PREFIX}/${haId}/${id}`, String(value));
+    }
+
+    // "BSH.Common.Status.Program.All.Water.Consumed" -> lifetime counter sensor.
+    function consumedSensor(item) {
+      const part = item.key.replace(/^.*Status\./, "").replace(/\.Consumed$/, "").replace(/\./g, "_").toLowerCase();
+      const id = `total_${part}`;
+      // ...Program.All.Energy.Consumed and ...Softener.All.Consumed both name the quantity.
+      const what = item.key.split(".").slice(0, -1).filter((p) => p !== "All").pop();
+      const label = { Energy: "Energie", Water: "Wasser", Softener: "Weichspüler", Detergent: "Waschmittel" }[what] ?? what;
+      if (item.unit === "Wh") return [id, { name: `Gesamt ${label}`, unit: "Wh", dc: "energy", sc: "total_increasing" }, item.value];
+      if (item.unit === "ml" && what === "Water")
+        return [id, { name: `Gesamt ${label}`, unit: "L", dc: "water", sc: "total_increasing" }, item.value / 1000];
+      return [id, { name: `Gesamt ${label}`, unit: item.unit === "ml" ? "mL" : item.unit, dc: item.unit === "ml" ? "volume" : undefined, sc: "total_increasing" }, item.value];
+    }
+
+    function handleItem(haId, item) {
+      if (/\.Consumed$/.test(item.key) && typeof item.value === "number") {
+        const [id, cfg, v] = consumedSensor(item);
+        return state(haId, id, cfg, v);
+      }
+      if (item.key === "BSH.Common.Status.Program.All.Count.Completed") {
+        return state(haId, "programs_completed", { name: "Programme abgeschlossen", sc: "total_increasing", icon: "mdi:counter" }, item.value);
+      }
+      if (item.key === "BSH.Common.Root.ActiveProgram" && item.value) {
+        const a = appliances.get(haId);
+        if (a) a.program = String(item.value).split(".").pop();
+        return;
+      }
+      if (item.key === "BSH.Common.Status.ProgramSessionSummary.Latest" && item.value?.sequence) {
+        const details = Object.fromEntries((item.value.sequence[0]?.details ?? []).map((d) => [d.uid, d.value]));
+        const a = appliances.get(haId) ?? {};
+        // A summary for a program that did not complete repeats the previous run's
+        // figures; only a grown lifetime count (uid 616) means a new finished run.
+        if (details[616] === undefined || details[616] === a.lastCount) return;
+        a.lastCount = details[616];
+        for (const [uid, cfg] of Object.entries(SESSION)) {
+          if (details[uid] !== undefined) state(haId, cfg.id, cfg, cfg.f ? cfg.f(details[uid]) : details[uid]);
+        }
+        state(haId, "last_end", { name: "Letztes Programm Ende", dc: "timestamp" }, item.value.end);
+        if (a.program) state(haId, "last_program", { name: "Letztes Programm", icon: "mdi:washing-machine" }, a.program);
+        log(haId, "session", JSON.stringify(details));
+      }
+    }
+
+    // ---------------------------------------------------------------- SSE
+    async function seed() {
+      const { homeappliances } = await api("/api/homeappliances");
+      for (const a of homeappliances) {
+        appliances.set(a.haId, { name: a.name, brand: a.brand, vib: a.vib, lastCount: undefined });
+        if (!a.connected) continue;
+        try {
+          const { status } = await api(`/api/homeappliances/${a.haId}/status`);
+          for (const s of status) handleItem(a.haId, s);
+        } catch (e) {
+          log("seed", a.haId, e.message);
+        }
+      }
+      log("appliances", [...appliances.values()].map((a) => a.name).join(", "));
+    }
+
+    async function stream() {
+      const r = await fetch(`${API}/api/homeappliances/events`, {
+        headers: { authorization: `Bearer ${await token()}`, accept: "text/event-stream" },
+      });
+      if (!r.ok) throw new Error(`events ${r.status}`);
+      log("event stream open");
+      const reader = r.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      let ev = { event: "", data: "", id: "" };
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) throw new Error("event stream closed");
+        buf += dec.decode(value, { stream: true });
+        let nl;
+        while ((nl = buf.indexOf("\n")) >= 0) {
+          const line = buf.slice(0, nl).replace(/\r$/, "");
+          buf = buf.slice(nl + 1);
+          if (line === "") {
+            if (ev.data && ["STATUS", "EVENT", "NOTIFY"].includes(ev.event)) {
+              try {
+                const j = JSON.parse(ev.data);
+                for (const it of j.items ?? []) handleItem(j.haId ?? ev.id, it);
+              } catch (e) {
+                log("bad event", e.message);
+              }
+            }
+            ev = { event: "", data: "", id: "" };
+          } else if (line.startsWith("event:")) ev.event = line.slice(6).trim();
+          else if (line.startsWith("data:")) ev.data += line.slice(5).trim();
+          else if (line.startsWith("id:")) ev.id = line.slice(3).trim();
+        }
+      }
+    }
+
+    async function main() {
+      mqttConnect();
+      // Home Connect allows 1000 calls/day per client and user; seed() costs one per
+      // appliance, so only a stream that held for a while resets the backoff.
+      for (let backoff = 5; ; backoff = Math.min(backoff * 2, 300)) {
+        const started = Date.now();
+        try {
+          await seed();
+          await stream();
+        } catch (e) {
+          if (Date.now() - started > 600_000) backoff = 5;
+          log("error", e.message, `retry in ${backoff}s`);
+        }
+        await new Promise((r) => setTimeout(r, backoff * 1000));
+      }
+    }
+    main();

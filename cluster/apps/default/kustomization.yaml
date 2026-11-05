@@ -14,6 +14,7 @@ resources:
   - ./echoip/ks.yaml
   - ./glitchtip/ks.yaml
   - ./hajimari/ks.yaml
+  - ./hc-bridge/ks.yaml
   - ./heck-sh/ks.yaml
   - ./icloudpd/ks.yaml
   - ./immich/ks.yaml

@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hc-bridge
+  namespace: default
+  labels:
+    app: hc-bridge
+spec:
+  replicas: 1
+  strategy:
+    # Two instances would each open an event stream against the same rate limit.
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hc-bridge
+  template:
+    metadata:
+      labels:
+        app: hc-bridge
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: hc-bridge
+          image: docker.io/library/node:26.3.0-alpine3.22@sha256:c7932b9e5e337b0e733d6e16abc1b0e104759e8b05e59ed56586cce967d26dfe
+          command: ["node", "/app/bridge.mjs"]
+          envFrom:
+            - secretRef:
+                name: hc-bridge
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 5m
+            limits:
+              memory: 96Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: app
+              mountPath: /app
+              readOnly: true
+      volumes:
+        - name: app
+          configMap:
+            name: hc-bridge
