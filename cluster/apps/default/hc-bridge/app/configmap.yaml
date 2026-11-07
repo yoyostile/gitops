@@ -108,14 +108,12 @@ data:
     const announced = new Set();
 
     const SESSION = {
-      // uid in ProgramSessionSummary.Latest details -> sensor; mapping derived from a
-      // washer drum-clean (no detergent) and a dark wash with i-DOS 2, cross-checked
-      // against the Nous plug (543 Wh reported, 580 Wh metered).
+      // uid in ProgramSessionSummary.Latest details -> sensor, cross-checked against the
+      // Nous plug (543 Wh reported, 580 Wh metered). 8197-8200 are not i-DOS doses: 8199
+      // stays 70 whatever is dosed and 8200 fell from 70 to 0, so they are left out.
       628: { id: "last_energy", name: "Letztes Programm Energie", unit: "Wh", dc: "energy", sc: "measurement" },
       623: { id: "last_water", name: "Letztes Programm Wasser", unit: "L", dc: "water", sc: "measurement", f: (v) => v / 1000 },
       630: { id: "last_duration", name: "Letztes Programm Dauer", unit: "min", dc: "duration", sc: "measurement", f: (v) => Math.round(v / 60) },
-      8197: { id: "last_idos1", name: "Letztes Programm i-DOS 1", unit: "mL", dc: "volume", sc: "measurement" },
-      8199: { id: "last_idos2", name: "Letztes Programm i-DOS 2", unit: "mL", dc: "volume", sc: "measurement" },
     };
 
     function device(haId) {
@@ -128,6 +126,9 @@ data:
         via_device: undefined,
       };
     }
+
+    // Sensors published by earlier versions; an empty retained config removes them from HA.
+    const RETIRED = ["last_idos1", "last_idos2"];
 
     function announce(haId, id, cfg) {
       const key = `${haId}/${id}`;
@@ -197,6 +198,7 @@ data:
       const { homeappliances } = await api("/api/homeappliances");
       for (const a of homeappliances) {
         appliances.set(a.haId, { name: a.name, brand: a.brand, vib: a.vib, lastCount: undefined });
+        for (const id of RETIRED) publish(`homeassistant/sensor/${PREFIX}_${a.haId}/${id}/config`, "");
         if (!a.connected) continue;
         try {
           const { status } = await api(`/api/homeappliances/${a.haId}/status`);
