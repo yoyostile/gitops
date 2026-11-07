@@ -9,4 +9,4 @@ spec:
   url: oci://ghcr.io/sergelogvinov/charts/proxmox-csi-plugin
   ref:
     tag: 0.5.13
-    digest: sha256:575e6d4ccce99d25c49cfc530d3df7cb18765925c432e0f2d6fcdf5366cfc034
+    digest: sha256:0ae5deab01aea1298e0c0c7c39594a667bc2d61798abb2e1b975eacfdcec0881
