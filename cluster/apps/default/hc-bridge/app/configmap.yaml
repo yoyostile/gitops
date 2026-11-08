@@ -164,6 +164,29 @@ data:
       return [id, { name: `Gesamt ${label}`, unit: item.unit === "ml" ? "mL" : item.unit, dc: item.unit === "ml" ? "volume" : undefined, sc: "total_increasing" }, item.value];
     }
 
+    // The hob reports no consumption, only a power level per zone ("...PowerLevel.85" is
+    // level 8.5 of 9). Estimate: linear up to 2.2 kW per zone at level 9, 3.7 kW boost
+    // (Neff V68PYX4B0 datasheet), plus the integrated extractor whenever it runs.
+    const HOB_ZONE_W = 2200;
+    const HOB_BOOST_W = 3700;
+    const HOB_FAN_W = 100;
+    const hobs = new Map(); // haId -> {zones: {zone: W}, fan: bool}
+    function hob(haId, item) {
+      const h = hobs.get(haId) ?? { zones: {}, fan: false };
+      hobs.set(haId, h);
+      const v = String(item.value);
+      const zone = item.key.match(/\.Zone\.(\d+)\.(PowerLevel|State)$/);
+      if (zone?.[2] === "PowerLevel") {
+        const level = v.split(".").pop();
+        h.zones[zone[1]] = level === "Off" ? 0 : /^\d+$/.test(level) ? (HOB_ZONE_W * Number(level)) / 90 : HOB_BOOST_W;
+      } else if (zone?.[2] === "State" && !v.endsWith(".Active")) h.zones[zone[1]] = 0;
+      else if (item.key === "Cooking.Hob.Setting.Ventilation") h.fan = !v.endsWith(".Off");
+      else if (item.key === "BSH.Common.Status.OperationState" && v.endsWith(".Inactive")) h.zones = {};
+      else return;
+      const w = Object.values(h.zones).reduce((s, x) => s + x, 0) + (h.fan ? HOB_FAN_W : 0);
+      state(haId, "power_estimate", { name: "Leistung geschätzt", unit: "W", dc: "power", sc: "measurement" }, Math.round(w));
+    }
+
     function handleItem(haId, item) {
       if (/\.Consumed$/.test(item.key) && typeof item.value === "number") {
         const [id, cfg, v] = consumedSensor(item);
@@ -176,6 +199,9 @@ data:
         const a = appliances.get(haId);
         if (a) a.program = String(item.value).split(".").pop();
         return;
+      }
+      if (item.key.startsWith("Cooking.Hob.") || (hobs.has(haId) && item.key === "BSH.Common.Status.OperationState")) {
+        return hob(haId, item);
       }
       if (item.key === "BSH.Common.Status.ProgramSessionSummary.Latest" && item.value?.sequence) {
         const details = Object.fromEntries((item.value.sequence[0]?.details ?? []).map((d) => [d.uid, d.value]));
