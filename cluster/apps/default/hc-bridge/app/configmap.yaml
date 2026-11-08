@@ -108,12 +108,16 @@ data:
     const announced = new Set();
 
     const SESSION = {
-      // uid in ProgramSessionSummary.Latest details -> sensor, cross-checked against the
-      // Nous plug (543 Wh reported, 580 Wh metered). 8197-8200 are not i-DOS doses: 8199
-      // stays 70 whatever is dosed and 8200 fell from 70 to 0, so they are left out.
+      // uid in ProgramSessionSummary.Latest details -> sensor. Names are from the washer's
+      // own FeatureMapping (hcpy profile download); uids are per appliance model.
       628: { id: "last_energy", name: "Letztes Programm Energie", unit: "Wh", dc: "energy", sc: "measurement" },
       623: { id: "last_water", name: "Letztes Programm Wasser", unit: "L", dc: "water", sc: "measurement", f: (v) => v / 1000 },
       630: { id: "last_duration", name: "Letztes Programm Dauer", unit: "min", dc: "duration", sc: "measurement", f: (v) => Math.round(v / 60) },
+      8198: { id: "last_detergent", name: "Letztes Programm Waschmittel", unit: "mL", dc: "volume", sc: "measurement", icon: "mdi:bottle-tonic" },
+      8200: { id: "last_softener", name: "Letztes Programm Weichspüler", unit: "mL", dc: "volume", sc: "measurement", icon: "mdi:flower" },
+      // 65535 means the load was not measured.
+      1041: { id: "last_load", name: "Letztes Programm Beladung", unit: "kg", dc: "weight", sc: "measurement", f: (v) => (v === 65535 ? undefined : v / 1000) },
+      1042: { id: "last_spin", name: "Letztes Programm Schleuderdrehzahl", unit: "rpm", sc: "measurement", icon: "mdi:rotate-right" },
     };
 
     function device(haId) {
@@ -211,7 +215,8 @@ data:
         if (details[616] === undefined || details[616] === a.lastCount) return;
         a.lastCount = details[616];
         for (const [uid, cfg] of Object.entries(SESSION)) {
-          if (details[uid] !== undefined) state(haId, cfg.id, cfg, cfg.f ? cfg.f(details[uid]) : details[uid]);
+          const v = details[uid] === undefined || !cfg.f ? details[uid] : cfg.f(details[uid]);
+          if (v !== undefined) state(haId, cfg.id, cfg, v);
         }
         state(haId, "last_end", { name: "Letztes Programm Ende", dc: "timestamp" }, item.value.end);
         if (a.program) state(haId, "last_program", { name: "Letztes Programm", icon: "mdi:washing-machine" }, a.program);
