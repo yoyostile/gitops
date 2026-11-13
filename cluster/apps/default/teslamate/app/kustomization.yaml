@@ -8,3 +8,4 @@ resources:
   - ingress.yaml
   - abrp.yaml
   - authentik-blueprint.yaml
+  - cost-sync

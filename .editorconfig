@@ -1,0 +1,6 @@
+root = true
+
+# The remove-tabs pre-commit hook rejects tabs, so shfmt has to indent with spaces.
+[*.sh]
+indent_style = space
+indent_size = 2
