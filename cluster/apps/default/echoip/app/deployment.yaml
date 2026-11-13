@@ -21,14 +21,15 @@ spec:
       initContainers:
         # GeoLite2 allows 30 downloads per 24h per account; each pod start uses 3.
         - name: geoip-download
-          image: alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
+          # Not busybox wget: it gets a 401 on MaxMind's redirect to R2.
+          image: curlimages/curl:8.22.0@sha256:58adaa4e8dca9c988bae2aba4ab3434a0bb2da16bbe3f92dec39ec7785166777
           command:
             - /bin/sh
             - -c
             - |
               set -e
               for edition in ASN City Country; do
-                wget -q -O "/geoip/GeoLite2-$${edition}.tar.gz" \
+                curl -fsSL -o "/geoip/GeoLite2-$${edition}.tar.gz" \
                   "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-$${edition}&license_key=$${MAXMIND_LICENSE_KEY}&suffix=tar.gz"
               done
           env:
