@@ -9,6 +9,11 @@ metadata:
 spec:
   type: LoadBalancer
   loadBalancerIP: 172.16.38.225
+  # externalTrafficPolicy Cluster SNATs LB traffic to 10.42.x.0, so postfix's
+  # MYNETWORKS cannot tell LAN senders apart. Filter here instead.
+  loadBalancerSourceRanges:
+    - 10.0.0.0/24 # lab hosts (PVE, glacier)
+    - 10.42.0.0/16 # pods that dial the LB IP instead of the ClusterIP
   selector:
     app: smtp-relay
   ports:
