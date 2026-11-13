@@ -11,9 +11,9 @@ if ! wget -qO "$sessions" -T 30 "$EVCC_URL"; then
 fi
 
 # The JSON goes in as a file, it outgrows a single argv entry.
-# allocate.sql aborts on anything but a non-empty JSON array.
+# allocate.psql aborts on anything but a non-empty JSON array.
 psql -X -q \
   -v sessions_file="$sessions" \
   -v net_price="${NET_PRICE:-0.2316}" \
   -v dry_run="${DRY_RUN:-0}" \
-  -f "$(dirname "$0")/allocate.sql"
+  -f "$(dirname "$0")/allocate.psql"

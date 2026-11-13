@@ -9,7 +9,7 @@ configMapGenerator:
   - name: teslamate-cost-sync
     files:
       - sync.sh
-      - allocate.sql
+      - allocate.psql
     options:
       annotations:
         kustomize.toolkit.fluxcd.io/substitute: disabled
