@@ -13,7 +13,7 @@ spec:
   # Broker allows anonymous clients, so this list is the only access control.
   # Both LAN clients need a static DHCP lease or they lose MQTT on an IP change.
   loadBalancerSourceRanges:
-    - 10.0.10.47/32 # hass (incl. hcpy)
+    - 10.0.10.47/32 # Home Assistant VM (incl. hcpy)
     - 10.0.10.58/32 # Nuki "Wohnzimmer"
     - 10.42.0.0/16 # pods that dial the LB IP instead of the ClusterIP
   selector:

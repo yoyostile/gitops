@@ -19,35 +19,24 @@ spec:
         app: echoip
     spec:
       initContainers:
+        # GeoLite2 allows 30 downloads per 24h per account; each pod start uses 3.
         - name: geoip-download
-          image: amazon/aws-cli:2.39.5@sha256:0cea63506f28774b70b1a3dd1934f49bc202d9784dee23370acc81438e8d0292
+          image: alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
           command:
             - /bin/sh
             - -c
             - |
               set -e
-              aws configure set default.s3.addressing_style path
-              ENDPOINT="http://garage-proxy.networking:30188"
-              BUCKET="random"
-              aws s3 cp "s3://$${BUCKET}/random/GeoLite2-ASN_20260211.tar.gz" /geoip/ --endpoint-url "$${ENDPOINT}"
-              aws s3 cp "s3://$${BUCKET}/random/GeoLite2-City_20260210.tar.gz" /geoip/ --endpoint-url "$${ENDPOINT}"
-              aws s3 cp "s3://$${BUCKET}/random/GeoLite2-Country_20260210.tar.gz" /geoip/ --endpoint-url "$${ENDPOINT}"
+              for edition in ASN City Country; do
+                wget -q -O "/geoip/GeoLite2-$${edition}.tar.gz" \
+                  "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-$${edition}&license_key=$${MAXMIND_LICENSE_KEY}&suffix=tar.gz"
+              done
           env:
-            - name: AWS_ACCESS_KEY_ID
+            - name: MAXMIND_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: cluster-secrets
-                  key: GARAGE_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: cluster-secrets
-                  key: GARAGE_KEY_SECRET
-            - name: AWS_DEFAULT_REGION
-              valueFrom:
-                secretKeyRef:
-                  name: cluster-secrets
-                  key: GARAGE_REGION
+                  name: echoip-maxmind
+                  key: MAXMIND_LICENSE_KEY
           volumeMounts:
             - name: geoip
               mountPath: /geoip
