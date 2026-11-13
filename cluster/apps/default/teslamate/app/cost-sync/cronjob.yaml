@@ -1,0 +1,63 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: teslamate-cost-sync
+  namespace: default
+spec:
+  schedule: "*/30 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 70
+            runAsGroup: 70
+          containers:
+            - name: cost-sync
+              image: postgres:18-alpine@sha256:1018733457011bf88d81db98cf43aac6d5150afc18787dbe204771fedf80ff95
+              command: ["/bin/sh", "/scripts/sync.sh"]
+              env:
+                - name: PGHOST
+                  value: psql-cluster-rw.default
+                - name: PGDATABASE
+                  value: teslamate
+                - name: PGUSER
+                  value: teslamate
+                - name: PGPASSWORD
+                  value: "${SECRET_TESLAMATE_POSTGRES_PASSWORD}"
+                - name: EVCC_URL
+                  value: http://evcc.default.svc.cluster.local:7070/api/sessions
+                - name: NET_PRICE
+                  value: "0.2316"
+                - name: DRY_RUN
+                  value: "1"
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: scripts
+              configMap:
+                name: teslamate-cost-sync
+            - name: tmp
+              emptyDir: {}

@@ -1,0 +1,15 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# Flux SSA requires a namespace on generated resources.
+namespace: default
+resources:
+  - cronjob.yaml
+configMapGenerator:
+  - name: teslamate-cost-sync
+    files:
+      - sync.sh
+      - allocate.sql
+    options:
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
