@@ -1,3 +1,3 @@
 [codespell]
-# German labels in Home Assistant entity names
-ignore-words-list = programm,ende
+# German labels in Home Assistant entity names, and hass (Home Assistant)
+ignore-words-list = programm,ende,hass
