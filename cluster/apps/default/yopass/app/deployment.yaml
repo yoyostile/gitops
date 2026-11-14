@@ -33,7 +33,7 @@ spec:
             limits:
               memory: 128Mi
         - name: memcached
-          image: docker.io/library/memcached:1.6.45-alpine@sha256:6a089e37cbb8acd75c80c6c0667fe57ec54db68782fb1b3afb1d0eb265e50070
+          image: docker.io/library/memcached:1.6.45-alpine@sha256:084fb554292d1447bc2c68b80c2331b98834514f56c866bc21a61be3c2ee376d
           args:
             - -m
             - "64"
