@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=https://schemas.recyclarr.dev/v8/config-schema.json
+radarr:
+  radarr:
+    base_url: http://radarr.media.svc.cluster.local:7878
+    api_key: !env_var RADARR_API_KEY
+
+    quality_definition:
+      type: movie
+
+    quality_profiles:
+      - trash_id: 79faa9943cef2f510b997b1f2a9f3ea6 # [German] Remux + WEB 2160p
+        name: Remux + WEB 2160p (GER)
+        reset_unmatched_scores:
+          enabled: true
+        # The guide allows 2160p only. 1080p as a separate, lower quality let an
+        # English 2160p release replace a German 1080p one. In one group the CF
+        # score decides, and the German boosters rank German above resolution.
+        qualities:
+          - name: Merged QPs
+            qualities:
+              - Remux-2160p
+              - Bluray-2160p
+              - WEBDL-2160p
+              - WEBRip-2160p
+              - Remux-1080p
+              - Bluray-1080p
+              - WEBDL-1080p
+              - WEBRip-1080p
+        upgrade:
+          allowed: true
+          until_quality: Merged QPs
+          # German DL + German 2160p Booster. The guide's 35000 is unreachable,
+          # so with a minimum step of 1 every REPACK replaced a 60 GB remux.
+          until_score: 20000
+        min_upgrade_format_score: 1000
+
+    # No Golden Rule UHD: its "x265 (no HDR/DV)" scores -35000 and would reject
+    # German 1080p x265 encodes, now that 1080p shares the group with 2160p.
+    custom_format_groups:
+      add:
+        - trash_id: 0ca61b4b233178d07113082a7acff72d # [Unwanted] Unwanted Formats German
+        - trash_id: 7fc2751eef7e6bdc70b74136e5e35c76 # [HDR Formats] DV (w/o HDR fallback)
+      skip:
+        - ff204bbcecdd487d1cefcefdbf0c278d # [Optional] Golden Rule UHD
+        # Audio scores (up to +5000) would trigger upgrades for a better audio track.
+        - 9d5acd8f1da78dfbae788182f7605200 # [Audio] Audio Formats
+
+sonarr:
+  sonarr:
+    base_url: http://sonarr.media.svc.cluster.local:8989
+    api_key: !env_var SONARR_API_KEY
+
+    quality_definition:
+      type: series
+
+    quality_profiles:
+      - trash_id: 08cececf1840290f6fd490b7d79e8642 # [German] UHD Remux + WEB
+        name: UHD Remux + WEB (GER)
+        reset_unmatched_scores:
+          enabled: true
+        # Same reasoning as Radarr. HDTV stays allowed here because German TV
+        # recordings are sometimes the only German source for a series.
+        qualities:
+          - name: Merged QPs
+            qualities:
+              - Bluray-2160p Remux
+              - Bluray-2160p
+              - WEBDL-2160p
+              - WEBRip-2160p
+              - HDTV-2160p
+              - Bluray-1080p Remux
+              - Bluray-1080p
+              - WEBDL-1080p
+              - WEBRip-1080p
+              - HDTV-1080p
+        upgrade:
+          allowed: true
+          until_quality: Merged QPs
+          until_score: 20000
+        min_upgrade_format_score: 1000
+
+    custom_format_groups:
+      add:
+        - trash_id: 6f0872eebfc95b1f93474b7ac866ced0 # [Unwanted] Unwanted Formats German
+        - trash_id: d776a1ea912a117d66d83b880ff2055d # [HDR Formats] DV (w/o HDR fallback)
+      skip:
+        - e3f37512790f00d0e89e54fe5e790d1c # [Optional] Golden Rule UHD
