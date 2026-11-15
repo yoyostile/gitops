@@ -60,6 +60,34 @@ radarr:
           until_score: 10700
         min_upgrade_format_score: 500
 
+      # Assigned per user by a Seerr override rule. Capped at 1080p to save disk.
+      # English matters more than German here: DE+EN > EN > DE only (fallback).
+      - trash_id: 2b90e905c99490edc7c7a5787443748b # [German] HD Bluray + WEB
+        name: HD (EN+DE)
+        reset_unmatched_scores:
+          enabled: true
+        # German-only dubs score -10000 (see custom_formats) and stay a fallback.
+        min_format_score: -10000
+        qualities:
+          - name: HD
+            qualities:
+              - Bluray-1080p
+              - WEBDL-1080p
+              - WEBRip-1080p
+        upgrade:
+          allowed: true
+          until_quality: HD
+          # German DL + German 1080p Booster + 1080p.
+          until_score: 11700
+        min_upgrade_format_score: 1000
+
+    custom_formats:
+      - trash_ids:
+          - 86bc3115eb4e9873ac96904a4a68e19e # German (German dub without the original audio)
+        assign_scores_to:
+          - name: HD (EN+DE)
+            score: -10000
+
     # No Golden Rule: its x265 formats score -35000 and would reject German x265
     # encodes, which are common at 1080p.
     custom_format_groups:
@@ -128,6 +156,32 @@ sonarr:
           until_quality: HD
           until_score: 10700
         min_upgrade_format_score: 500
+
+      # Same rules as the Radarr "HD (EN+DE)" profile.
+      - trash_id: dca7e5e9e99c703bcbdaaa471dd40e98 # [German] HD Bluray + WEB
+        name: HD (EN+DE)
+        reset_unmatched_scores:
+          enabled: true
+        min_format_score: -10000
+        qualities:
+          - name: HD
+            qualities:
+              - Bluray-1080p
+              - WEBDL-1080p
+              - WEBRip-1080p
+              - HDTV-1080p
+        upgrade:
+          allowed: true
+          until_quality: HD
+          until_score: 11700
+        min_upgrade_format_score: 1000
+
+    custom_formats:
+      - trash_ids:
+          - 8a9fcdbb445f2add0505926df3bb7b8a # German
+        assign_scores_to:
+          - name: HD (EN+DE)
+            score: -10000
 
     custom_format_groups:
       add:
