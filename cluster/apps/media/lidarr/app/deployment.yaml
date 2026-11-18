@@ -21,7 +21,7 @@ spec:
         topology.kubernetes.io/region: lab
       containers:
         - name: lidarr
-          image: lscr.io/linuxserver/lidarr:3.1.6@sha256:d5707cfe084da21a3864c7ef0edd9c0543b5e26c79c551f84dad5ef8683af8c7
+          image: lscr.io/linuxserver/lidarr:3.1.6@sha256:8fb40ada166dd1880cb1b166df5bcbb081107523f20ab60df05c313e2052a467
           # image: blampe/lidarr:latest
           envFrom:
             - secretRef:
