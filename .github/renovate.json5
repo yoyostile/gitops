@@ -96,6 +96,15 @@
       ],
       datasourceTemplate: "helm",
     },
+    {
+      customType: "regex",
+      description: "Container images in NixOS oci-containers",
+      managerFilePatterns: ["/nix/.+\\.nix$/"],
+      matchStrings: [
+        'image = "(?<depName>[^":@]+):(?<currentValue>[^"@]+)@(?<currentDigest>sha256:[a-f0-9]+)";',
+      ],
+      datasourceTemplate: "docker",
+    },
   ],
   packageRules: [
     {
@@ -195,6 +204,13 @@
       matchDatasources: ["docker"],
       versioning: "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
       matchPackageNames: ["docker.io/maximhq/bifrost"],
+    },
+    {
+      // docker versioning reads `-nbxyz27` as a compatibility suffix that must
+      // match exactly, so nbxyz28 would never be offered.
+      matchDatasources: ["docker"],
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-nbxyz(?<build>\\d+)$",
+      matchPackageNames: ["ghcr.io/netbootxyz/netbootxyz"],
     },
     {
       // lscr.io/linuxserver/lidarr carries one stray `8.1.2135` tag that is

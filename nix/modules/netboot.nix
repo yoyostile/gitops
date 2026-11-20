@@ -36,7 +36,9 @@ in
     virtualisation.oci-containers = {
       backend = "docker";
       containers.netbootxyz = {
-        image = "ghcr.io/netbootxyz/netbootxyz";
+        # Bumped by Renovate, but merging does not deploy: netboot01 needs a
+        # nixos-rebuild before the new image runs.
+        image = "ghcr.io/netbootxyz/netbootxyz:0.7.6-nbxyz27@sha256:109e60b2d0090a6b34a5ac67e7ccc623991f7291ab25c37040fd2e554a14d7fe";
         environment = {
           NGINX_PORT = "80";
           WEB_APP_PORT = "3000";
