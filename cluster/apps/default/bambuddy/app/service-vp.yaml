@@ -1,0 +1,83 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bambuddy-vp
+  namespace: default
+spec:
+  type: LoadBalancer
+  # Must match VIRTUAL_PRINTER_ADVERTISE_ADDRESS / _PASV_ADDRESS in deployment.yaml.
+  loadBalancerIP: "172.16.38.211"
+  externalTrafficPolicy: Local
+  # The virtual printer is guarded only by its access code.
+  loadBalancerSourceRanges:
+    - 10.0.10.0/24 # home LAN
+    - 100.64.0.0/10 # tailnet
+  selector:
+    app.kubernetes.io/name: bambuddy
+  ports:
+    - name: bind
+      port: 3000
+      targetPort: 3000
+      protocol: TCP
+    - name: bind-tls
+      port: 3002
+      targetPort: 3002
+      protocol: TCP
+    - name: mqtt
+      port: 8883
+      targetPort: 8883
+      protocol: TCP
+    - name: ftps
+      port: 990
+      targetPort: 990
+      protocol: TCP
+    - name: tunnel
+      port: 6000
+      targetPort: 6000
+      protocol: TCP
+    - name: rtsps
+      port: 322
+      targetPort: 322
+      protocol: TCP
+    # FTP passive slice of the first non-proxy virtual printer.
+    - name: pasv-0
+      port: 50000
+      targetPort: 50000
+      protocol: TCP
+    - name: pasv-1
+      port: 50001
+      targetPort: 50001
+      protocol: TCP
+    - name: pasv-2
+      port: 50002
+      targetPort: 50002
+      protocol: TCP
+    - name: pasv-3
+      port: 50003
+      targetPort: 50003
+      protocol: TCP
+    - name: pasv-4
+      port: 50004
+      targetPort: 50004
+      protocol: TCP
+    - name: pasv-5
+      port: 50005
+      targetPort: 50005
+      protocol: TCP
+    - name: pasv-6
+      port: 50006
+      targetPort: 50006
+      protocol: TCP
+    - name: pasv-7
+      port: 50007
+      targetPort: 50007
+      protocol: TCP
+    - name: pasv-8
+      port: 50008
+      targetPort: 50008
+      protocol: TCP
+    - name: pasv-9
+      port: 50009
+      targetPort: 50009
+      protocol: TCP
