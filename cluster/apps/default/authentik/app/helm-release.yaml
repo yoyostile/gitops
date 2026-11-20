@@ -79,6 +79,10 @@ spec:
           configMap:
             name: authentik-blueprint-gatus
             optional: true
+        - name: bp-bambuddy
+          configMap:
+            name: authentik-blueprint-bambuddy
+            optional: true
       volumeMounts:
         - name: bp-grafana
           mountPath: /blueprints/mounted/app-grafana
@@ -108,6 +112,8 @@ spec:
           mountPath: /blueprints/mounted/app-romm
         - name: bp-gatus
           mountPath: /blueprints/mounted/app-gatus
+        - name: bp-bambuddy
+          mountPath: /blueprints/mounted/app-bambuddy
   chart:
     spec:
       # renovate: registryUrl=https://charts.goauthentik.io
