@@ -6,6 +6,7 @@ resources:
   - ./adguard-home-sync/ks.yaml
   - ./atuin/ks.yaml
   - ./authentik/ks.yaml
+  - ./bambuddy/ks.yaml
   - ./backup-heartbeat/ks.yaml
   - ./bifrost/ks.yaml
   - ./dawarich/ks.yaml

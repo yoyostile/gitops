@@ -1,0 +1,11 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: psql-cluster-bambuddy
+  namespace: default
+spec:
+  name: bambuddy
+  owner: bambuddy
+  cluster:
+    name: psql-cluster

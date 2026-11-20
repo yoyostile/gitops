@@ -1,0 +1,83 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bambuddy
+  namespace: default
+spec:
+  replicas: 1
+  # RWO volume: a rolling update deadlocks on the attach.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bambuddy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bambuddy
+    spec:
+      # Service links inject BAMBUDDY_* vars, which Bambuddy logs as possible typos on every start.
+      enableServiceLinks: false
+      # The printer sits on the lab IoT VLAN.
+      nodeSelector:
+        topology.kubernetes.io/region: lab
+      containers:
+        - name: bambuddy
+          image: ghcr.io/maziggy/bambuddy:1.3.1@sha256:3b63f6b02ab77075716a6295d6f8ca27b98283580753b911b3841dcd9972a110
+          # Starts as root on purpose: the entrypoint chowns /app/data, then drops to PUID via gosu.
+          # Keep NET_BIND_SERVICE: python carries it as a file capability and cannot exec without it.
+          envFrom:
+            - secretRef:
+                name: bambuddy
+          env:
+            - name: TZ
+              value: "${TZ}"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: psql-bambuddy
+                  key: password
+            # The password lands in the URL unescaped, so it must stay URL-safe.
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://bambuddy:$(DB_PASSWORD)@psql-cluster-rw.default:5432/bambuddy"
+            # The default pool (20 + 60) would claim most of the shared cluster's 100 connections.
+            - name: DB_POOL_SIZE
+              value: "5"
+            - name: DB_MAX_OVERFLOW
+              value: "5"
+          ports:
+            - name: http
+              containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: bambuddy-data

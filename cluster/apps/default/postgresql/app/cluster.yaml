@@ -28,6 +28,11 @@ spec:
         login: true
         passwordSecret:
           name: psql-romm
+      - name: bambuddy
+        ensure: present
+        login: true
+        passwordSecret:
+          name: psql-bambuddy
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
