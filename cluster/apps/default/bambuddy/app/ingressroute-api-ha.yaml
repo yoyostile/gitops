@@ -1,0 +1,20 @@
+---
+# Bambuddy's login is off, so its API ignores API keys. Only Home Assistant gets the API
+# without Authentik; everyone else (the browser UI included) still goes through it.
+# Needs traefik-internal's externalTrafficPolicy: Local, or ClientIP sees a node IP.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bambuddy-api-ha
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`bambuddy.${SECRET_LAB_DOMAIN}`) && PathPrefix(`/api`) && ClientIP(`10.0.10.47/32`)
+      services:
+        - name: bambuddy
+          port: 8000
+  tls:
+    secretName: "${SECRET_LAB_DOMAIN/./-}-tls"

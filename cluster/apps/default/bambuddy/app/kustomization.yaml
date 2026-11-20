@@ -9,4 +9,5 @@ resources:
   - service.yaml
   - service-vp.yaml
   - ingress.yaml
+  - ingressroute-api-ha.yaml
   - authentik-blueprint.yaml
