@@ -61,16 +61,6 @@ spec:
                 value: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
               - name: TZ
                 value: "Europe/Berlin"
-              - name: TRANSFORMERS_CACHE
-                value: /cache
-              - name: MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL
-                value: ViT-B-32__openai
-              - name: MACHINE_LEARNING_PRELOAD__CLIP__VISUAL
-                value: ViT-B-32__openai
-              - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__RECOGNITION
-                value: buffalo_l
-              - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
-                value: buffalo_l
             # Sized from 14 days of observed usage; imports need burst memory.
             resources:
               requests:
@@ -161,23 +151,17 @@ spec:
                   value: /cache/huggingface-xet
                 - name: MPLCONFIGDIR
                   value: /cache/matplotlib-config
-                - name: MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL
-                  value: ViT-B-32__openai
-                - name: MACHINE_LEARNING_PRELOAD__CLIP__VISUAL
-                  value: ViT-B-32__openai
-                - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__RECOGNITION
-                  value: buffalo_l
-                - name: MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION
-                  value: buffalo_l
-              # Sized from 14 days of observed usage.
+                - name: MACHINE_LEARNING_MODEL_REVISION
+                  value: v2
+              # Fallback only: Immich's ML URL list tries sn0w (native CoreML, me.r4r3.immich-ml
+              # LaunchAgent) first. Models load on demand instead of preloading.
               resources:
                 requests:
                   cpu: 115m
-                  memory: 3072Mi
+                  memory: 1Gi
                   gpu.intel.com/i915: "1"
                 limits:
-                  # Bound model memory while allowing observed 2–4 GiB peaks.
-                  memory: 6Gi
+                  memory: 8Gi
                   gpu.intel.com/i915: "1"
       controller:
         replicas: 1
