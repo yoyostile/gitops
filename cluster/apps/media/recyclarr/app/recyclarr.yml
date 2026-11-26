@@ -4,6 +4,11 @@ radarr:
     base_url: http://radarr.media.svc.cluster.local:7878
     api_key: !env_var RADARR_API_KEY
 
+    # With prefer_and_upgrade a PROPER outranks the CF score, so an English
+    # PROPER blocks every later German release.
+    media_management:
+      propers_and_repacks: do_not_prefer
+
     quality_definition:
       type: movie
 
@@ -104,6 +109,9 @@ sonarr:
   sonarr:
     base_url: http://sonarr.media.svc.cluster.local:8989
     api_key: !env_var SONARR_API_KEY
+
+    media_management:
+      propers_and_repacks: do_not_prefer
 
     quality_definition:
       type: series
