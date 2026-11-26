@@ -51,7 +51,7 @@ spec:
             - name: CUSTOM_BASE_URL
               value: "http://bifrost.default.svc.cluster.local:8080/v1"
             - name: CUSTOM_MODEL
-              value: "lyceum/z-ai/glm-5.2-instant"
+              value: "lyceum/z-ai/glm-5.3-flash"
             - name: CUSTOM_API_KEY
               valueFrom:
                 secretKeyRef:
