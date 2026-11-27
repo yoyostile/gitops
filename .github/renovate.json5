@@ -1,252 +1,330 @@
 {
   enabled: true,
-  semanticCommits: "enabled",
-  dependencyDashboard: true,
-  dependencyDashboardTitle: "Renovate Dashboard",
-  suppressNotifications: ["prIgnoreNotification"],
-  rebaseWhen: "conflicted",
-  schedule: ["every weekend"],
-  "pre-commit": {
+  semanticCommits: 'enabled',
+  dependencyDashboard: {
+    enabled: true,
+    title: 'Renovate Dashboard',
+  },
+  suppressNotifications: [
+    'prIgnoreNotification',
+  ],
+  rebaseWhen: 'conflicted',
+  schedule: [
+    'every weekend',
+  ],
+  'pre-commit': {
     enabled: true,
   },
   flux: {
-    managerFilePatterns: ["/cluster/.+\\.ya?ml$/"],
+    managerFilePatterns: [
+      '/cluster/.+\\.ya?ml$/',
+    ],
   },
-  "helm-values": {
-    managerFilePatterns: ["/cluster/.+\\.ya?ml$/"],
+  'helm-values': {
+    managerFilePatterns: [
+      '/cluster/.+\\.ya?ml$/',
+    ],
   },
   kubernetes: {
     managerFilePatterns: [
-      "/cluster/.+\\.ya?ml$/",
-      "/provision/ansible/playbooks/templates/.+\\.ya?ml.j2$/",
+      '/cluster/.+\\.ya?ml$/',
+      '/provision/ansible/playbooks/templates/.+\\.ya?ml.j2$/',
     ],
   },
-  // The nix manager ships `enabled: false`, so it silently does nothing until
-  // switched on here. Default managerFilePatterns already match nix/flake.nix.
   nix: {
     enabled: true,
-    // disko and sops-nix are pinned by rev only in flake.lock, so nothing but
-    // lockFileMaintenance can ever move them. Run it weekly inside the
-    // repo-wide weekend window so routine NixOS updates do not wait a month.
     lockFileMaintenance: {
       enabled: true,
-      schedule: ["* 0-5 * * 0"],
+      schedule: [
+        '* 0-5 * * 0',
+      ],
     },
   },
   customManagers: [
     {
-      customType: "regex",
-      description: "Process CRD dependencies",
-      managerFilePatterns: ["/cluster/.+\\.ya?ml$/"],
-      matchStrings: [
-        "registryUrl=(?<registryUrl>\\S+) chart=(?<depName>\\S+)\n.*?(?<currentValue>[^-\\s]*)\n",
-        "datasource=(?<datasource>\\S+) image=(?<depName>\\S+)\n.*?-\\s(.*?)/(?<currentValue>[^/]+)/[^/]+\n",
+      customType: 'regex',
+      description: 'Process CRD dependencies',
+      managerFilePatterns: [
+        '/cluster/.+\\.ya?ml$/',
       ],
-      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}helm{{/if}}",
+      matchStrings: [
+        'registryUrl=(?<registryUrl>\\S+) chart=(?<depName>\\S+)\n.*?(?<currentValue>[^-\\s]*)\n',
+        'datasource=(?<datasource>\\S+) image=(?<depName>\\S+)\n.*?-\\s(.*?)/(?<currentValue>[^/]+)/[^/]+\n',
+      ],
+      datasourceTemplate: '{{#if datasource}}{{{datasource}}}{{else}}helm{{/if}}',
     },
     {
-      customType: "regex",
-      description: "Process various dependencies",
-      managerFilePatterns: ["/ansible/.+\\.ya?ml$/", "/cluster/.+\\.ya?ml$/"],
+      customType: 'regex',
+      description: 'Process various dependencies',
+      managerFilePatterns: [
+        '/ansible/.+\\.ya?ml$/',
+        '/cluster/.+\\.ya?ml$/',
+      ],
       matchStrings: [
         'datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?"(?<currentValue>.*)"\n',
       ],
-      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
-      versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+      datasourceTemplate: '{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}',
+      versioningTemplate: '{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}',
     },
     {
-      customType: "regex",
-      description: "Process raw GitHub URLs",
-      managerFilePatterns: ["/cluster/.+\\.ya?ml$/"],
-      matchStrings: [
-        "https:\\/\\/raw.githubusercontent.com\\/(?<depName>[\\w\\d\\-_]+\\/[\\w\\d\\-_]+)\\/(?<currentValue>[\\w\\d\\.\\-_]+)\\/.*",
+      customType: 'regex',
+      description: 'Process raw GitHub URLs',
+      managerFilePatterns: [
+        '/cluster/.+\\.ya?ml$/',
       ],
-      datasourceTemplate: "github-releases",
-      versioningTemplate: "semver",
-    },
-    {
-      customType: "regex",
-      managerFilePatterns: ["/cluster/.+\\.ya?ml$/"],
       matchStrings: [
-        "registryUrl=(?<registryUrl>.*?)\n *chart: (?<depName>.*?)\n *version: (?<currentValue>.*)\n",
+        'https:\\/\\/raw.githubusercontent.com\\/(?<depName>[\\w\\d\\-_]+\\/[\\w\\d\\-_]+)\\/(?<currentValue>[\\w\\d\\.\\-_]+)\\/.*',
       ],
-      datasourceTemplate: "helm",
+      datasourceTemplate: 'github-releases',
+      versioningTemplate: 'semver',
     },
     {
-      customType: "regex",
-      managerFilePatterns: ["/cluster/crds/cert-manager/.+\\.ya?ml$/"],
+      customType: 'regex',
+      managerFilePatterns: [
+        '/cluster/.+\\.ya?ml$/',
+      ],
       matchStrings: [
-        "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/",
+        'registryUrl=(?<registryUrl>.*?)\n *chart: (?<depName>.*?)\n *version: (?<currentValue>.*)\n',
       ],
-      datasourceTemplate: "helm",
+      datasourceTemplate: 'helm',
     },
     {
-      customType: "regex",
-      managerFilePatterns: ["/cluster/crds/traefik/.+\\.ya?ml$/"],
+      customType: 'regex',
+      managerFilePatterns: [
+        '/cluster/crds/cert-manager/.+\\.ya?ml$/',
+      ],
       matchStrings: [
-        "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n *tag: v(?<currentValue>.*)\n",
+        'registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/',
       ],
-      datasourceTemplate: "helm",
+      datasourceTemplate: 'helm',
     },
     {
-      customType: "regex",
-      description: "Container images in NixOS oci-containers",
-      managerFilePatterns: ["/nix/.+\\.nix$/"],
+      customType: 'regex',
+      managerFilePatterns: [
+        '/cluster/crds/traefik/.+\\.ya?ml$/',
+      ],
+      matchStrings: [
+        'registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n *tag: v(?<currentValue>.*)\n',
+      ],
+      datasourceTemplate: 'helm',
+    },
+    {
+      customType: 'regex',
+      description: 'Container images in NixOS oci-containers',
+      managerFilePatterns: [
+        '/nix/.+\\.nix$/',
+      ],
       matchStrings: [
         'image = "(?<depName>[^":@]+):(?<currentValue>[^"@]+)@(?<currentDigest>sha256:[a-f0-9]+)";',
       ],
-      datasourceTemplate: "docker",
+      datasourceTemplate: 'docker',
     },
   ],
   packageRules: [
     {
-      matchDatasources: ["helm"],
+      matchDatasources: [
+        'helm',
+      ],
       separateMinorPatch: true,
       ignoreDeprecated: true,
     },
     {
-      matchDatasources: ["docker"],
+      matchDatasources: [
+        'docker',
+      ],
       enabled: true,
-      commitMessageTopic: "container image {{depName}}",
-      commitMessageExtra: "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
-      matchUpdateTypes: ["major", "minor", "patch"],
+      commitMessageTopic: 'container image {{depName}}',
+      commitMessageExtra: 'to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}',
+      matchUpdateTypes: [
+        'major',
+        'minor',
+        'patch',
+      ],
     },
     {
-      matchDatasources: ["docker"],
-      matchUpdateTypes: ["major"],
-      labels: ["renovate/image", "dep/major"],
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      labels: [
+        'renovate/image',
+        'dep/major',
+      ],
     },
     {
-      matchDatasources: ["docker"],
-      matchUpdateTypes: ["minor"],
-      labels: ["renovate/image", "dep/minor"],
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      labels: [
+        'renovate/image',
+        'dep/minor',
+      ],
     },
     {
-      matchDatasources: ["docker"],
-      matchUpdateTypes: ["patch"],
-      labels: ["renovate/image", "dep/patch"],
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      labels: [
+        'renovate/image',
+        'dep/patch',
+      ],
     },
     {
-      // A tag is mutable: whoever controls the upstream account can push new
-      // content under a tag we already run, and pullPolicy Always plus the
-      // descheduler would roll it out unseen. A digest makes every content
-      // change a PR.
-      //
-      // The release-age hold only works where Renovate gets a timestamp, and
-      // for docker that is Docker Hub alone (`tag_last_pushed`). ghcr.io,
-      // lscr.io, quay.io and registry.k8s.io have none, and the default
-      // `timestamp-required` would hold every one of their updates, including
-      // the first digest pin, forever. `timestamp-optional` lets those through
-      // as before. 3 days outlasts the usual time to yank a hijacked release
-      // and, with the weekend schedule, keeps lag under about 10 days.
-      //
-      // Excluded: the owner's own images, built by Woodpecker on every push
-      // and deployed as :latest on purpose.
-      matchDatasources: ["docker"],
+      matchDatasources: [
+        'docker',
+      ],
       matchPackageNames: [
-        "!ghcr.io/yoyostile/**",
-        "!yoyostile/**",
-        "!docker.io/yoyostile/**",
+        '!ghcr.io/yoyostile/**',
+        '!yoyostile/**',
+        '!docker.io/yoyostile/**',
       ],
       pinDigests: true,
-      minimumReleaseAge: "3 days",
-      minimumReleaseAgeBehaviour: "timestamp-optional",
+      minimumReleaseAge: '3 days',
+      minimumReleaseAgeBehaviour: 'timestamp-optional',
     },
     {
-      matchDatasources: ["helm"],
-      matchUpdateTypes: ["major"],
-      labels: ["renovate/helm", "dep/major"],
-    },
-    {
-      matchDatasources: ["helm"],
-      matchUpdateTypes: ["minor"],
-      labels: ["renovate/helm", "dep/minor"],
-    },
-    {
-      matchDatasources: ["helm"],
-      matchUpdateTypes: ["patch"],
-      labels: ["renovate/helm", "dep/patch"],
-    },
-    {
-      matchDatasources: ["docker", "github-releases"],
-      versioning: "loose",
-      matchPackageNames: [
-        "ghcr.io/onedr0p/plex",
-        "lscr.io/linuxserver/plex",
-        "ghcr.io/immich-app/immich-server",
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      labels: [
+        'renovate/helm',
+        'dep/major',
       ],
     },
     {
-      // Flux tags releases as v2.x.y, the FluxInstance takes the bare version.
-      matchDatasources: ["github-releases"],
-      matchPackageNames: ["fluxcd/flux2"],
-      extractVersion: "^v(?<version>.+)$",
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      labels: [
+        'renovate/helm',
+        'dep/minor',
+      ],
     },
     {
-      // ignoreUnstable only works where the versioning knows what a
-      // prerelease is. `loose` does not, so it offered immich v3.4.0-rc.1.
-      // Rules further down that set their own allowedVersions replace this
-      // one; their versionings filter prereleases themselves.
-      matchPackageNames: ["*"],
-      allowedVersions: "!/[-.](alpha|beta|rc|pre|preview|nightly)\\.?\\d*$/i",
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      labels: [
+        'renovate/helm',
+        'dep/patch',
+      ],
     },
     {
-      matchDatasources: ["docker"],
-      versioning: "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z(-(?<compatibility>.*))?$",
-      matchPackageNames: ["quay.io/minio/minio", "quay.io/minio/mc"],
-    },
-    {
-      matchDatasources: ["docker"],
-      versioning: "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
-      matchPackageNames: ["docker.io/maximhq/bifrost"],
-    },
-    {
-      // docker versioning reads `-nbxyz27` as a compatibility suffix that must
-      // match exactly, so nbxyz28 would never be offered.
-      matchDatasources: ["docker"],
-      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-nbxyz(?<build>\\d+)$",
-      matchPackageNames: ["ghcr.io/netbootxyz/netbootxyz"],
-    },
-    {
-      // lscr.io/linuxserver/lidarr carries one stray `8.1.2135` tag that is
-      // really app version 0.8.1.2135. Renovate sorts 8 > 3 and "upgrades"
-      // into it, which downgrades Lidarr from 3.x to 0.8.x. The old binary
-      // then cannot read quality id 37 (ALAC 24bit) and every quality-profile
-      // read 500s. Real releases are the 2.x/3.x plain-semver line.
-      matchDatasources: ["docker"],
-      matchPackageNames: ["lscr.io/linuxserver/lidarr"],
-      allowedVersions: "!/^8\\./",
-    },
-    {
-      // firecrawl's chart comes from their Git repo and every image is pinned
-      // by digest in the HelmRelease postRenderer, so the tag in `values` is
-      // inert — kustomize replaces it with the digest. Bumping the tag alone
-      // changes nothing at runtime. These two are firecrawl's own subchart
-      // dependencies: upstream still ships `image: rabbitmq:3-management`, so
-      // moving ahead of it buys nothing. Both follow firecrawl, not us; the
-      // effective version moves with the digest.
-      matchDatasources: ["docker"],
+      matchDatasources: [
+        'docker',
+        'github-releases',
+      ],
+      versioning: 'loose',
       matchPackageNames: [
-        "docker.io/library/rabbitmq",
-        "docker.io/library/redis",
+        'ghcr.io/onedr0p/plex',
+        'lscr.io/linuxserver/plex',
+        'ghcr.io/immich-app/immich-server',
+      ],
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+      ],
+      matchPackageNames: [
+        'fluxcd/flux2',
+      ],
+      extractVersion: '^v(?<version>.+)$',
+    },
+    {
+      matchPackageNames: [
+        '*',
+      ],
+      allowedVersions: '!/[-.](alpha|beta|rc|pre|preview|nightly)\\.?\\d*$/i',
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z(-(?<compatibility>.*))?$',
+      matchPackageNames: [
+        'quay.io/minio/minio',
+        'quay.io/minio/mc',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$',
+      matchPackageNames: [
+        'docker.io/maximhq/bifrost',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-nbxyz(?<build>\\d+)$',
+      matchPackageNames: [
+        'ghcr.io/netbootxyz/netbootxyz',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchPackageNames: [
+        'lscr.io/linuxserver/lidarr',
+      ],
+      allowedVersions: '!/^8\\./',
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchPackageNames: [
+        'docker.io/library/rabbitmq',
+        'docker.io/library/redis',
       ],
       enabled: false,
     },
     {
-      // Moves the nixpkgs branch in flake.nix (nixos-26.05 -> next release).
-      // A NixOS release upgrade, not a routine bump — hence dep/major.
-      matchManagers: ["nix"],
-      matchDepNames: ["nixpkgs"],
-      commitMessageTopic: "nixpkgs channel",
-      labels: ["renovate/nix", "dep/major"],
+      matchManagers: [
+        'nix',
+      ],
+      matchDepNames: [
+        'nixpkgs',
+      ],
+      commitMessageTopic: 'nixpkgs channel',
+      labels: [
+        'renovate/nix',
+        'dep/major',
+      ],
       automerge: false,
     },
     {
-      // One PR refreshing every flake input. disko and sops-nix `follows`
-      // nixpkgs, so splitting them per-input would land inconsistent closures.
-      matchManagers: ["nix"],
-      matchUpdateTypes: ["lockFileMaintenance"],
-      labels: ["renovate/nix", "dep/patch"],
+      matchManagers: [
+        'nix',
+      ],
+      matchUpdateTypes: [
+        'lockFileMaintenance',
+      ],
+      labels: [
+        'renovate/nix',
+        'dep/patch',
+      ],
       automerge: false,
     },
   ],
