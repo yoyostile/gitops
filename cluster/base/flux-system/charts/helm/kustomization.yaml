@@ -30,5 +30,4 @@ resources:
   - onedev-charts.yaml
   - proxmox-csi-charts.yaml
   - rook-ceph-charts.yaml
-  - stakater-charts.yaml
   - woodpecker-charts.yaml
