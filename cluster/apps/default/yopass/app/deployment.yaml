@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: yopass
-          image: docker.io/jhaals/yopass:16.0.1@sha256:6e45ce6c6c694a094643e433c45e36d66d516a3a70235321186e4c061942d6d0
+          image: docker.io/jhaals/yopass:16.2.0@sha256:6e245cd019198164117a77a01b8c5e0437b639e261fa6cacd0c54d5ea732cd53
           args:
             - --memcached=localhost:11211
           ports:
