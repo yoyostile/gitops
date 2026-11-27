@@ -38,7 +38,7 @@ in
       containers.netbootxyz = {
         # Bumped by Renovate, but merging does not deploy: netboot01 needs a
         # nixos-rebuild before the new image runs.
-        image = "ghcr.io/netbootxyz/netbootxyz:0.7.6-nbxyz27@sha256:109e60b2d0090a6b34a5ac67e7ccc623991f7291ab25c37040fd2e554a14d7fe";
+        image = "ghcr.io/netbootxyz/netbootxyz:0.7.6-nbxyz28@sha256:a3af92f8447d4df33e7d18607c968db792a6b2da0db9c2255ceb7f45e01897bd";
         environment = {
           NGINX_PORT = "80";
           WEB_APP_PORT = "3000";
