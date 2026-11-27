@@ -45,6 +45,13 @@ spec:
               # Prevent public traffic from falling back to the node uplink.
               ip route replace unreachable default
               sleep infinity
+          # The apk install on every start needs far more than the idle tunnel.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 128Mi
           volumeMounts:
             - name: wg
               mountPath: /secret

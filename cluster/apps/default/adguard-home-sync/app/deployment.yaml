@@ -24,3 +24,9 @@ spec:
             - name: CRON
               value: "*/15 * * * *"
           args: ["run"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 48Mi
+            limits:
+              memory: 80Mi

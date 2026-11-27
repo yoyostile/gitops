@@ -11,7 +11,19 @@ spec:
     name: mariadb-operator
     namespace: mariadb-operator
   values:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 160Mi
+      limits:
+        memory: 256Mi
     webhook:
       cert:
         certManager:
           enabled: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 112Mi

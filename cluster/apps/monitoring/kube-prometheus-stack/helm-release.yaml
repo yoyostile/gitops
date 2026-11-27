@@ -204,6 +204,13 @@ spec:
         plugins:
           allow_loading_unsigned_plugins: panodata-map-panel
       sidecar:
+        # Covers both the dashboard and the datasource sidecar.
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 160Mi
         dashboards:
           enabled: true
           labelValue: "1"
@@ -304,7 +311,37 @@ spec:
               resources:
                 requests:
                   storage: 50Gi
+    kube-state-metrics:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 96Mi
+        limits:
+          memory: 192Mi
+    prometheusOperator:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 80Mi
+        limits:
+          memory: 160Mi
+      # Passed to the operator as --config-reloader-* flags, so it sizes the
+      # config-reloader sidecar of Prometheus and Alertmanager and never shows
+      # up in this chart's rendered output.
+      prometheusConfigReloader:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 80Mi
     prometheus-node-exporter:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 64Mi
       hostRootFsMount:
         enabled: false
       # Normalize node-exporter instances to node names across discovery methods.

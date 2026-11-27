@@ -36,6 +36,12 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
           volumeMounts:
             - name: config
               mountPath: /etc/searxng

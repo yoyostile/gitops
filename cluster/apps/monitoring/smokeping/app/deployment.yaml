@@ -55,6 +55,12 @@ spec:
             initialDelaySeconds: 30
             timeoutSeconds: 10
             failureThreshold: 5
+          resources:
+            requests:
+              cpu: 10m
+              memory: 96Mi
+            limits:
+              memory: 1792Mi
           volumeMounts:
             - name: config
               mountPath: /config

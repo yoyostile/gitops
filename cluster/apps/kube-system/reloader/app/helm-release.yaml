@@ -19,3 +19,11 @@ spec:
       retries: 3
   values:
     fullnameOverride: reloader
+    reloader:
+      deployment:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi

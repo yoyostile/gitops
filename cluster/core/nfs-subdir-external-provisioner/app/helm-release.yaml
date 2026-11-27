@@ -24,6 +24,12 @@ spec:
       retries: 3
   values:
     replicaCount: 1
+    resources:
+      requests:
+        cpu: 10m
+        memory: 48Mi
+      limits:
+        memory: 80Mi
     rbac:
       create: true
     nfs:
