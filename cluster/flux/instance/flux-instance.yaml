@@ -1,0 +1,61 @@
+---
+apiVersion: fluxcd.controlplane.io/v1
+kind: FluxInstance
+metadata:
+  name: flux
+  namespace: flux-system
+  annotations:
+    # Deleting the FluxInstance uninstalls Flux, so garbage collection must
+    # never reach it.
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  distribution:
+    # The running flux-operator only installs Flux versions it embeds, so a
+    # Flux bump needs an operator release that ships it.
+    # renovate: datasource=github-releases depName=fluxcd/flux2
+    version: "2.10.0"
+    registry: ghcr.io/fluxcd
+  components:
+    - source-controller
+    - kustomize-controller
+    - helm-controller
+    - notification-controller
+  cluster:
+    type: kubernetes
+    multitenant: false
+    networkPolicy: false
+    domain: cluster.local
+  sync:
+    kind: GitRepository
+    url: https://github.com/yoyostile/gitops
+    ref: refs/heads/main
+    path: ./cluster/base
+    interval: 1m
+  kustomize:
+    patches:
+      - target:
+          kind: Deployment
+          name: source-controller
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --helm-index-max-size=130000000
+      - target:
+          kind: Deployment
+          name: (kustomize-controller|helm-controller)
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --feature-gates=CancelHealthCheckOnNewRevision=true
+      # cluster/base holds SOPS-encrypted secrets, and sync has no decryption
+      # field of its own.
+      - target:
+          kind: Kustomization
+          name: flux-system
+        patch: |
+          - op: add
+            path: /spec/decryption
+            value:
+              provider: sops
+              secretRef:
+                name: sops-age
