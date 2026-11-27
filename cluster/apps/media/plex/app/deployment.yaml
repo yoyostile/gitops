@@ -83,6 +83,7 @@ spec:
           nfs:
             server: "${SECRET_NFS_HOST}"
             path: "${SECRET_NFS_ST0RAGE_PATH}"
+        # Disk-backed on purpose: a tmpfs transcode dir counts against the
+        # node's RAM, and one transcode ate ~5 GB on a 12 GB node.
         - name: transcode
-          emptyDir:
-            medium: Memory
+          emptyDir: {}
