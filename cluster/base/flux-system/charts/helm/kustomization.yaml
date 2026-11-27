@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - airbyte-charts.yaml
   - authentik-charts.yaml
-  - bitnami-charts.yaml
   - bootc-charts.yaml
   - ceph-csi-charts.yaml
   - deliveryhero-charts.yaml

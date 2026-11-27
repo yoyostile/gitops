@@ -149,15 +149,12 @@
       // and, with the weekend schedule, keeps lag under about 10 days.
       //
       // Excluded: the owner's own images, built by Woodpecker on every push
-      // and deployed as :latest on purpose. Also the bitnami chart, a
-      // HelmRelease chart from an OCI HelmRepository, where the flux manager
-      // has no field to write a digest into.
+      // and deployed as :latest on purpose.
       matchDatasources: ["docker"],
       matchPackageNames: [
         "!ghcr.io/yoyostile/**",
         "!yoyostile/**",
         "!docker.io/yoyostile/**",
-        "!**/bitnamicharts/**",
       ],
       pinDigests: true,
       minimumReleaseAge: "3 days",
