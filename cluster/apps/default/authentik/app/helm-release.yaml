@@ -83,6 +83,10 @@ spec:
           configMap:
             name: authentik-blueprint-bambuddy
             optional: true
+        - name: bp-flux-web
+          configMap:
+            name: authentik-blueprint-flux-web
+            optional: true
       volumeMounts:
         - name: bp-grafana
           mountPath: /blueprints/mounted/app-grafana
@@ -114,6 +118,8 @@ spec:
           mountPath: /blueprints/mounted/app-gatus
         - name: bp-bambuddy
           mountPath: /blueprints/mounted/app-bambuddy
+        - name: bp-flux-web
+          mountPath: /blueprints/mounted/app-flux-web
   chart:
     spec:
       # renovate: registryUrl=https://charts.goauthentik.io

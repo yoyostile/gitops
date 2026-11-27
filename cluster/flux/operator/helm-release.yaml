@@ -19,4 +19,10 @@ spec:
   values:
     priorityClassName: system-cluster-critical
     web:
-      enabled: false
+      # Without an authentication config the UI stays read-only, since actions
+      # need an authenticated user. authentik forward auth gates the Ingress.
+      enabled: true
+      networkPolicy:
+        # flux-system runs without NetworkPolicies, like networkPolicy: false
+        # in the FluxInstance.
+        create: false
