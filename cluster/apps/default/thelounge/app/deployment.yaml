@@ -18,7 +18,7 @@ spec:
         kubernetes.io/hostname: k3s2
       containers:
         - name: thelounge
-          image: ghcr.io/thelounge/thelounge:4.5.2@sha256:16eaa53fd6bfc648d99f5c38ae391bd5404079e876856ef9793e4397630b27c2
+          image: ghcr.io/thelounge/thelounge:4.5.2@sha256:5c3776545c24c8e04ce9520d8aab7320209043aad246ac710dc3339bfda4c772
           ports:
             - name: http
               containerPort: 9000
