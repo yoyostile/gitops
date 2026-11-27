@@ -7,7 +7,6 @@ resources:
   - bitnami-charts.yaml
   - bootc-charts.yaml
   - ceph-csi-charts.yaml
-  - cnpg-charts.yaml
   - deliveryhero-charts.yaml
   - descheduler-charts.yaml
   - ealenn-charts.yaml
