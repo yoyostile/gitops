@@ -25,3 +25,11 @@ spec:
     wal:
       compression: gzip
       maxParallel: 4
+  # Applies to the sidecar in every Postgres instance pod. Its working set is
+  # mostly page cache from streaming WAL and base backups, so the request
+  # follows RSS. No limit, since a kill fails the running backup.
+  instanceSidecarConfiguration:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
