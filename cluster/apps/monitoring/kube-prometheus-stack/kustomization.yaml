@@ -4,6 +4,7 @@ kind: Kustomization
 commonAnnotations:
   kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
+  - oci-repository.yaml
   - helm-release.yaml
   - alertmanager-secret.sops.yaml
   - prometheus-rules.yaml

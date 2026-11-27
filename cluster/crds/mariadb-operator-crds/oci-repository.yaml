@@ -1,0 +1,15 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: mariadb-operator-crds
+  namespace: kube-system
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  url: oci://ghcr.io/mariadb-operator/charts/mariadb-operator-crds
+  ref:
+    tag: 26.10.2
+    digest: sha256:d2d7b7a925a0d4a113575749440ebe4610905d0c0040efd439076ff1cbe072b2

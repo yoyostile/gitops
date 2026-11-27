@@ -1,0 +1,15 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: velero
+  namespace: velero
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  url: oci://ghcr.io/vmware-tanzu/charts/velero
+  ref:
+    tag: 12.2.3
+    digest: sha256:48404adeb1ca512dce13f9dd82357733553d8e0f3f06d140ad3e50710b94f06f
