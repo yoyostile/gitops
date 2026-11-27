@@ -23,13 +23,14 @@ Also have a look at this great chart:
 
 ```text
 cluster/
-├── base/flux-system/   # Flux controllers, GitRepository, HelmRepositories, encrypted secrets
+├── base/               # Root Kustomization: HelmRepositories, encrypted secrets, the Kustomizations below
+├── flux/               # Flux Operator and the FluxInstance that installs Flux
 ├── crds/               # Custom Resource Definitions
 ├── core/               # Infrastructure components
 └── apps/               # Applications, organized by namespace
 ```
 
-Flux reconciles in order: `base` → `crds` → `core` → `apps`.
+Flux reconciles in order: `base` → `crds` → `core` → `apps`. `flux` hangs off `base` and depends on nothing else.
 
 ## 🔐 Secrets
 

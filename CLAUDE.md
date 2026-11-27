@@ -33,7 +33,8 @@ Lint/format configs live in `.github/linters/`.
 Flux applies resources in a strict dependency chain:
 
 ```text
-cluster/base/flux-system    (Flux controllers, GitRepository, HelmRepositories, encrypted secrets)
+cluster/base                (root Kustomization flux-system: HelmRepositories, encrypted secrets, the Kustomizations below)
+        ├──→ cluster/flux   (flux-operator HelmRelease, then the FluxInstance; no dependency on crds/core/apps)
         ↓
 cluster/crds                (CRDs: cert-manager, prometheus-operator, mariadb-operator, metallb, traefik)
         ↓
@@ -41,6 +42,15 @@ cluster/core                (Infrastructure: cert-manager, metallb, external-dns
         ↓
 cluster/apps                (Applications, organized by namespace)
 ```
+
+### Flux installation
+
+The Flux Operator owns the Flux controllers and the root `flux-system` GitRepository and Kustomization. Git declares them in `cluster/flux/instance/flux-instance.yaml`, not in Flux manifests.
+
+- Flux version, components, controller flags and the root sync (including its SOPS decryption) are FluxInstance fields or `.spec.kustomize.patches`.
+- The operator stamps its objects `kustomize.toolkit.fluxcd.io/ssa: Ignore`, so a Kustomization that also applies them changes nothing.
+- The operator only installs Flux versions it embeds. Bump the flux-operator chart before the FluxInstance version.
+- Deleting the FluxInstance uninstalls Flux. It carries `kustomize.toolkit.fluxcd.io/prune: disabled` for that reason.
 
 ### Application Structure
 
