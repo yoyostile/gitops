@@ -45,10 +45,11 @@ spec:
 
   storage:
     storageClass: "proxmox-data-ext4"
+    size: 20Gi
     pvcTemplate:
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 10Gi
+          storage: 20Gi
       storageClassName: "proxmox-data-ext4"
