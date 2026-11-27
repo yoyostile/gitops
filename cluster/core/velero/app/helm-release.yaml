@@ -6,15 +6,10 @@ metadata:
   namespace: velero
 spec:
   interval: 5m
-  chart:
-    spec:
-      chart: velero
-      version: 12.2.3
-      sourceRef:
-        kind: HelmRepository
-        name: vmware-tanzu-charts
-        namespace: flux-system
-      interval: 5m
+  chartRef:
+    kind: OCIRepository
+    name: velero
+    namespace: velero
   install:
     crds: Create
     remediation:
