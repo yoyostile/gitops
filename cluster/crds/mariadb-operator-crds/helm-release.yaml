@@ -6,11 +6,7 @@ metadata:
   namespace: kube-system
 spec:
   interval: 5m
-  chart:
-    spec:
-      chart: mariadb-operator-crds
-      version: 26.10.2
-      sourceRef:
-        kind: HelmRepository
-        name: mariadb-operator-charts
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: mariadb-operator-crds
+    namespace: kube-system

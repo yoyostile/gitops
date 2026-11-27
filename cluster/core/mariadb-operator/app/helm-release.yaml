@@ -6,14 +6,10 @@ metadata:
   namespace: mariadb-operator
 spec:
   interval: 5m
-  chart:
-    spec:
-      chart: mariadb-operator
-      version: 26.10.2
-      sourceRef:
-        kind: HelmRepository
-        name: mariadb-operator-charts
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: mariadb-operator
+    namespace: mariadb-operator
   values:
     webhook:
       cert:

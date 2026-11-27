@@ -21,7 +21,6 @@ resources:
   - influxdata-charts.yaml
   - kasten-charts.yaml
   - longhorn-charts.yaml
-  - mariadb-operator-charts.yaml
   - metrics-server-charts.yaml
   - midokura-charts.yaml
   - minecraft-server-charts.yaml

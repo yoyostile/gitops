@@ -1,0 +1,15 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: mariadb-operator
+  namespace: mariadb-operator
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  url: oci://ghcr.io/mariadb-operator/charts/mariadb-operator
+  ref:
+    tag: 26.10.2
+    digest: sha256:3aba87defba96ee2be9a41192ef528a32e85c765a8162923aee4d6bd44246647
