@@ -102,6 +102,11 @@ in
     };
 
     ## Storage
+    # ceph-csi maps volumes with the kernel RBD client, which needs Linux 7.0+
+    # for cephx aes256k keys. The 26.05 default is 6.18; drop this once the
+    # NixOS default kernel is 7.x.
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+
     boot.kernelModules = [
       "rbd"
       "overlay"
