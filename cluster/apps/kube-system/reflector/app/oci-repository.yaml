@@ -1,0 +1,15 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: reflector
+  namespace: kube-system
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  url: oci://ghcr.io/emberstack/helm-charts/reflector
+  ref:
+    tag: 10.0.74
+    digest: sha256:50842a2bf237d17cbb08745ed05efb7218c251d84ec61888d017c5b413ea9721
