@@ -2,7 +2,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - secret.sops.yaml
   - configmap.yaml
   - pvc.yaml
   - deployment.yaml
@@ -10,3 +9,11 @@ resources:
   - ingress.yaml
   - redirect-uptime.yaml
   - authentik-blueprint.yaml
+# Gatus hot-reloads config.yaml, so only the Secret's env needs a restart.
+# The manifest is patched onto an empty generator, whose name hash rolls the
+# pod on every edit. Flux decrypts SOPS patches before the build.
+secretGenerator:
+  - name: gatus
+    namespace: monitoring
+patches:
+  - path: secret.sops.yaml
