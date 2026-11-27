@@ -4,8 +4,6 @@ kind: HelmRelease
 metadata:
   name: immich
   namespace: default
-  annotations:
-    configmap.reloader.stakater.com/reload: "immich-values"
 spec:
   interval: 5m
   chart:
@@ -30,10 +28,6 @@ spec:
     defaultPodOptions:
       nodeSelector:
         topology.kubernetes.io/region: lab
-
-    global:
-      annotations:
-        reloader.stakater.com/auto: "true"
 
     controllers:
       main:
