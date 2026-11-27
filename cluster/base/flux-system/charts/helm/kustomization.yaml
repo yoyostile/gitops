@@ -22,7 +22,6 @@ resources:
   - immich-charts.yaml
   - infracloudio-charts.yaml
   - influxdata-charts.yaml
-  - jetstack-charts.yaml
   - kasten-charts.yaml
   - longhorn-charts.yaml
   - mariadb-operator-charts.yaml
