@@ -38,6 +38,5 @@ resources:
   - proxmox-csi-charts.yaml
   - rook-ceph-charts.yaml
   - stakater-charts.yaml
-  - traefik-charts.yaml
   - vmware-tanzu-charts.yaml
   - woodpecker-charts.yaml
