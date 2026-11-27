@@ -4,6 +4,8 @@ kind: ConfigMap
 metadata:
   name: cluster-settings
   namespace: flux-system
+  labels:
+    reconcile.fluxcd.io/watch: Enabled
 data:
   METALLB_LB_RANGE: 172.16.38.200-172.16.38.254
   METALLB_TRAEFIK_ADDR: 172.16.38.200
