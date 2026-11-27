@@ -24,6 +24,12 @@ spec:
     remediation:
       retries: 3
   values:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 320Mi
+      limits:
+        memory: 768Mi
     persistence:
       enabled: true
       storageClass: proxmox-data-ext4

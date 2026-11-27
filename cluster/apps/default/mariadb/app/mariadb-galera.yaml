@@ -19,10 +19,25 @@ spec:
 
   replicas: 3
 
+  # No memory limit. An OOM kill drops a Galera node, which can force a full
+  # SST instead of a clean rejoin. The request is sized for the primary, since
+  # any replica can take over that role and its buffer pool.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 1280Mi
+
   galera:
     enabled: true
     config:
       reuseStorageVolume: true
+    agent:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 96Mi
 
   service:
     type: LoadBalancer
@@ -47,6 +62,13 @@ spec:
 
   metrics:
     enabled: true
+    exporter:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 24Mi
+        limits:
+          memory: 64Mi
 
   tls:
     enabled: false

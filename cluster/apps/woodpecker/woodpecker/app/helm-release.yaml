@@ -13,6 +13,12 @@ spec:
   values:
     agent:
       replicaCount: 1
+      resources:
+        requests:
+          cpu: 10m
+          memory: 48Mi
+        limits:
+          memory: 112Mi
       env:
         WOODPECKER_BACKEND_K8S_STORAGE_CLASS: "ceph-rbd"
         # Filesystem-mode Ceph RBD pipeline volumes must be RWO.
@@ -23,6 +29,12 @@ spec:
       persistence:
         storageClass: "ceph-rbd"
     server:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 48Mi
+        limits:
+          memory: 112Mi
       # Two ingresses with different classes; see ingress-*.yaml.
       ingress:
         enabled: false

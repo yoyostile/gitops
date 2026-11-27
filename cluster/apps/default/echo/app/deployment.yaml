@@ -28,4 +28,10 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
+          resources:
+            requests:
+              cpu: 10m
+              memory: 96Mi
+            limits:
+              memory: 192Mi
       restartPolicy: Always

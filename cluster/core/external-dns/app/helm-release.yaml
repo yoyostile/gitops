@@ -24,6 +24,12 @@ spec:
       retries: 3
   values:
     replicaCount: 1
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        memory: 224Mi
     rbac:
       create: true
     sources:
@@ -72,6 +78,12 @@ spec:
     nodeSelector:
       topology.kubernetes.io/region: lab
     replicaCount: 1
+    resources:
+      requests:
+        cpu: 10m
+        memory: 112Mi
+      limits:
+        memory: 224Mi
     rbac:
       create: true
     sources:
@@ -86,6 +98,12 @@ spec:
           repository: ghcr.io/mirceanton/external-dns-provider-mikrotik
           tag: v1.6.3@sha256:5794c1572153346e030a7de898e58c1fb81e6bd2f3eea563aabfa6d64ed199e0
           pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
         env:
           - name: LOG_FORMAT
             value: json

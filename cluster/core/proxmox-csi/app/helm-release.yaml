@@ -35,3 +35,14 @@ spec:
           storageclass.kubernetes.io/is-default-class: "false"
         # Leave allowedTopologies unset so WaitForFirstConsumer uses the
         # scheduler-selected node's region and zone.
+
+    # node.resources renders nowhere; the node plugin container reads
+    # node.plugin.resources.
+    node:
+      plugin:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 112Mi
