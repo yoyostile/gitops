@@ -32,7 +32,6 @@ resources:
   - nfs-subdir-external-provisioner-charts.yaml
   - node-feature-discovery-charts.yaml
   - onedev-charts.yaml
-  - prometheus-community-charts.yaml
   - proxmox-csi-charts.yaml
   - rook-ceph-charts.yaml
   - stakater-charts.yaml
