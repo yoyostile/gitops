@@ -1,0 +1,15 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: metallb
+  namespace: metallb-system
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  url: oci://quay.io/metallb/chart/metallb
+  ref:
+    tag: 0.16.2
+    digest: sha256:3980cbdddacec6e55c47b787461e057280e69808ad6f5190d2603d8c39733860

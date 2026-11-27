@@ -25,7 +25,6 @@ resources:
   - kasten-charts.yaml
   - longhorn-charts.yaml
   - mariadb-operator-charts.yaml
-  - metallb-charts.yaml
   - metrics-server-charts.yaml
   - midokura-charts.yaml
   - minecraft-server-charts.yaml
