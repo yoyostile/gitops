@@ -16,10 +16,6 @@ spec:
   dependsOn:
     # The database, its role and the psql-bambuddy secret live there.
     - name: apps-default-postgresql
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
   postBuild:
     substitute: {}
     substituteFrom:

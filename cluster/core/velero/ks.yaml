@@ -15,10 +15,6 @@ spec:
     name: flux-system
   dependsOn:
     - name: core-namespaces
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
   postBuild:
     substitute: {}
     substituteFrom:
