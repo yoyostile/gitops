@@ -15,8 +15,6 @@ spec:
     metadata:
       labels:
         app: open-webui-tools
-      annotations:
-        reloader.stakater.com/auto: "true"
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -44,7 +42,7 @@ spec:
             - name: PAPERLESS_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: zettelrobbe-secrets
+                  name: zettelrobbe-secrets-open-webui-tools
                   key: PAPERLESS_API_TOKEN
             - name: PAPERLESS_URL
               value: "http://paperless.default.svc.cluster.local:8000"

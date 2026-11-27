@@ -2,9 +2,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - configmap.yaml
-  - secret.sops.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+# ntfy reads server.yml and applies auth-users/auth-tokens only at startup.
+# The manifests are patched onto empty generators, whose name hash rolls the
+# pod on every edit. Flux decrypts SOPS patches before the build.
+configMapGenerator:
+  - name: ntfy-config
+    namespace: default
+secretGenerator:
+  - name: ntfy-auth
+    namespace: default
+patches:
+  - path: configmap.yaml
+  - path: secret.sops.yaml

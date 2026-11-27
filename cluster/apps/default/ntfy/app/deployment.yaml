@@ -5,9 +5,6 @@ metadata:
   labels:
     app: ntfy
   name: ntfy
-  annotations:
-    # ntfy applies auth-users/auth-tokens only at startup.
-    reloader.stakater.com/auto: "true"
   namespace: default
 spec:
   replicas: 1

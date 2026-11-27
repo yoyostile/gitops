@@ -8,3 +8,19 @@ resources:
   - service.yaml
   - ingress.yaml
   - authentik-blueprint.yaml
+# Copies of the bifrost and open-webui-tools Secrets under their own names:
+# the owners' hashed names cannot be referenced from here. Each manifest is
+# patched onto an empty generator, whose name hash rolls the pod on every edit.
+# Flux decrypts SOPS patches before the build.
+secretGenerator:
+  - name: bifrost-secrets-open-webui
+  - name: open-webui-tools-secrets-open-webui
+patches:
+  - path: ../../bifrost/app/secret.sops.yaml
+    target:
+      kind: Secret
+      name: bifrost-secrets-open-webui
+  - path: ../../open-webui-tools/app/secret.sops.yaml
+    target:
+      kind: Secret
+      name: open-webui-tools-secrets-open-webui

@@ -3,8 +3,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: default
 resources:
-  - secret.sops.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+# The manifest is patched onto an empty generator, whose name hash rolls the
+# pod on every edit. Flux decrypts SOPS patches before the build.
+secretGenerator:
+  - name: zettelrobbe-secrets
+patches:
+  - path: secret.sops.yaml

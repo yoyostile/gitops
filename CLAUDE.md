@@ -68,6 +68,17 @@ Flux Kustomizations use `postBuild.substituteFrom` to inject variables from:
 
 Use `${VARIABLE_NAME}` syntax in manifests. When substitution is not needed, set `substitute: {}` to explicitly disable it.
 
+### Restarting pods on config changes
+
+A ConfigMap or Secret that a pod reads at startup comes from a kustomize generator, so its name hash rolls the pod on every edit.
+The manifest (SOPS-encrypted or not) is listed under `patches` and lands on an empty `configMapGenerator`/`secretGenerator` of the same name.
+Flux decrypts SOPS patches before the build.
+The hash covers the manifest before substitution, so a `cluster-settings`/`cluster-secrets` change does not roll the pod.
+
+Another app cannot reference a hashed name.
+It patches the same file onto its own generator with a `target` (see `open-webui`).
+Reloader stays only for open-webui, which reads reflector's copy of `cluster-secrets`.
+
 ### Namespace Organization
 
 Apps are grouped under `cluster/apps/` by namespace: `cnpg`, `default`, `kube-system`, `media`, `monitoring`, `networking`, `woodpecker`. To add an app, create its directory under the appropriate namespace and add it to that namespace's `kustomization.yaml`.

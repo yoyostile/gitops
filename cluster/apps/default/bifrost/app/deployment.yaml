@@ -18,9 +18,6 @@ spec:
     metadata:
       labels:
         app: bifrost
-      annotations:
-        # Secret edits alone do not roll the pod; config.json does (ConfigMap hash).
-        reloader.stakater.com/auto: "true"
     spec:
       securityContext:
         runAsUser: 1000

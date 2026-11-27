@@ -4,14 +4,13 @@ kind: Kustomization
 # Flux SSA requires a namespace on generated resources.
 namespace: default
 resources:
-  - secret.sops.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
 # Regenerate governance.pricing_overrides in config.json with:
-#   LYCEUM_API_KEY=$(kubectl -n default get secret bifrost-secrets \
-#       -o jsonpath='{.data.LYCEUM_API_KEY}' | base64 -d) \
+#   LYCEUM_API_KEY=$(sops -d --extract '["stringData"]["LYCEUM_API_KEY"]' \
+#       cluster/apps/default/bifrost/app/secret.sops.yaml) \
 #     python3 cluster/apps/default/bifrost/app/gen-lyceum-pricing.py
 # Keep config_store enabled for governance and virtual keys. The name hash
 # restarts Bifrost when its startup-only configuration changes.
@@ -20,3 +19,9 @@ configMapGenerator:
   - name: bifrost-config
     files:
       - config.json
+# The manifest is patched onto an empty generator, whose name hash rolls the
+# pod on every edit. Flux decrypts SOPS patches before the build.
+secretGenerator:
+  - name: bifrost-secrets
+patches:
+  - path: secret.sops.yaml

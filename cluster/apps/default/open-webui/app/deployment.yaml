@@ -6,6 +6,10 @@ metadata:
   namespace: default
   labels:
     app: open-webui
+  annotations:
+    # cluster-secrets here is reflector's copy, which Flux never renders, so
+    # no name hash can follow it. Reloader restarts the pod instead.
+    secret.reloader.stakater.com/reload: cluster-secrets
 spec:
   replicas: 1
   # RWO volume + SQLite: do not start a second pod during upgrades.
@@ -18,8 +22,6 @@ spec:
     metadata:
       labels:
         app: open-webui
-      annotations:
-        reloader.stakater.com/auto: "true"
     spec:
       containers:
         - name: open-webui
@@ -92,22 +94,22 @@ spec:
             - name: BIFROST_VK_GENERAL
               valueFrom:
                 secretKeyRef:
-                  name: bifrost-secrets
+                  name: bifrost-secrets-open-webui
                   key: BIFROST_VK_GENERAL
             - name: BIFROST_VK_TENSORX
               valueFrom:
                 secretKeyRef:
-                  name: bifrost-secrets
+                  name: bifrost-secrets-open-webui
                   key: BIFROST_VK_TENSORX
             - name: BIFROST_VK_OPENROUTER
               valueFrom:
                 secretKeyRef:
-                  name: bifrost-secrets
+                  name: bifrost-secrets-open-webui
                   key: BIFROST_VK_OPENROUTER
             - name: BIFROST_VK_HETZNER
               valueFrom:
                 secretKeyRef:
-                  name: bifrost-secrets
+                  name: bifrost-secrets-open-webui
                   key: BIFROST_VK_HETZNER
             - name: OPENAI_API_KEYS
               value: "$(BIFROST_VK_GENERAL);$(BIFROST_VK_OPENROUTER);$(BIFROST_VK_HETZNER)"
@@ -119,7 +121,7 @@ spec:
             - name: OPEN_WEBUI_TOOLS_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: open-webui-tools-secrets
+                  name: open-webui-tools-secrets-open-webui
                   key: API_KEY
             # Seeds fresh databases; existing instances retain Admin Settings.
             - name: TOOL_SERVER_CONNECTIONS
