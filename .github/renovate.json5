@@ -185,6 +185,12 @@
       ],
     },
     {
+      // Flux tags releases as v2.x.y, the FluxInstance takes the bare version.
+      matchDatasources: ["github-releases"],
+      matchPackageNames: ["fluxcd/flux2"],
+      extractVersion: "^v(?<version>.+)$",
+    },
+    {
       // ignoreUnstable only works where the versioning knows what a
       // prerelease is. `loose` does not, so it offered immich v3.4.0-rc.1.
       // Rules further down that set their own allowedVersions replace this

@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-instance
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  # The FluxInstance CRD ships with the operator chart.
+  dependsOn:
+    - name: flux-operator
+  path: ./cluster/flux/instance
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
